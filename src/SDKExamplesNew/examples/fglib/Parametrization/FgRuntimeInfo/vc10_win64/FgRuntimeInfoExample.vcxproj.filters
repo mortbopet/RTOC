@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FgRuntimeInfoExample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\DmaMemWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\FgWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\FgExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\DisplayWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{F7490DFD-3051-41D9-9A72-297D12E5D867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{62954A35-DE71-47D1-803D-FA5B7646C1A8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

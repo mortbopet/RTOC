@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SgcAcquisitionExample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\DmaMemWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fglib\Acquisition\AcqBlock\FgAcqBlockExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fglib\Initialization\FgDmaChannel\FgDmaChannelExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\DisplayWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\FgWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\FgExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\SgcWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\SgcExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Discovery_Automatic\SgcAutoDiscoveryExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\fg_pixel.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{7A8D1473-E461-44C1-8ECF-E8B9F9E16C7B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{F6E2ABA6-7832-46C6-85C6-0C399C41E26D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

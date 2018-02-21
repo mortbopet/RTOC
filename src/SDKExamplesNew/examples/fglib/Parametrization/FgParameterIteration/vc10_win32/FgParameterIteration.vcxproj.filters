@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\FgParameterIterationExample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Initialization\FgDmaChannel\FgDmaChannelExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Initialization\FgAppletIterator\FgAppletIteratorExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\DmaMemWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\DisplayWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\FgWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\FgExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{5C777CB1-A70A-4EF5-85CF-EEE712EF8A3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{52DABCD6-8604-46F7-AAB0-1911EAEFF4BF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FgInitConfigExample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\DisplayWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\DmaMemWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\FgWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\ExampleHelper\FgExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\ExampleHelper\fg_pixel.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{9096D4D9-5527-4F0D-A2E5-689BC5517A04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{A957280A-C195-4B9F-9073-B4E8961A9630}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

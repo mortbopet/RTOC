@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\SgcAutoDiscoveryExample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\DmaMemWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\fglib\Acquisition\AcqBlock\FgAcqBlockExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\DisplayWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\FgWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\FgExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\SgcWrapper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ExampleHelper\SgcExample.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{2969E897-0CD6-40A8-9C1B-B3B619C173B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helper">
+      <UniqueIdentifier>{90949FF4-85D2-4894-AC6B-8B973B7A4AA2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
