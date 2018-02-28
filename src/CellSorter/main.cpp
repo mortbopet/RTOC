@@ -1,9 +1,11 @@
 #include <iostream>
 
+#include "prettyprint.h"
+
 using namespace std;
 
 int main()
 {
-    cout << "Hello World!" << endl;
+    PP::header("CellSorter");
     return 0;
 }
