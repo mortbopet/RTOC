@@ -3,7 +3,8 @@ This should act as a chronological todo-list in preparation of rewriting Lise
 Aagesens Matlab-scripts for her M.Sc.-thesis, fall 2017.
 As a starting-point this includes _"CellSorter.m"_ and _"FeatureVector.m"_.
 
-#### Classes to declare for
+#### Classes to declare
+We could specialize a library for the type of data Lise is working with; I'm think a custom type for the __RBCs__.
 
 
 
@@ -56,13 +57,15 @@ As a starting-point this includes _"CellSorter.m"_ and _"FeatureVector.m"_.
   - [ ] [save](https://se.mathworks.com/help/matlab/ref/save.html):
     Save variables to to file (pretty basic yea yea)
 
+#### Functions to declare in C++ for "FeatureVector.m"
+None not already mentioned.
 
 
 
-  
 
 
 
 ###### Notes:
 A lot of the functions show up in connection with OpenCV and c++ when googling/goofing around. It might be initially smart to check out OpenCV -> pros/cons etc.
 If there's anything we can skip to program from the bottom; that might be a super nice!
+Btw: [OpenCV + OpenCL](https://opencv.org/platforms/opencl.html)
