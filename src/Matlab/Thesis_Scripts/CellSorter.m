@@ -1,11 +1,15 @@
-% ------------------------------------------------------------------------- % This script is created by Lise Aagesen for her M.Sc. thesis in the fall
+% -------------------------------------------------------------------------
+% This script is created by Lise Aagesen for her M.Sc. thesis in the fall
 % of 2017. It is intended for registration and feature extraction of RBC
 % recordings for a subsequent RBC classification (fetal vs adult).
 % -------------------------------------------------------------------------
-%% Prepare l i s t s of discarded and accepted frames
-donor = 'D1'; mkdir 'D1'
+
+%% Prepare lists of discarded and accepted frames
+donor = 'D1';
+mkdir 'D1'
 % image location :
-path1a = 'F:\Lise Aagesen master thesis\RBCdata\AdultDonors'; path1b = '\AllDonorsDay1\AllDonorsDay1\081116D1';
+path1a = 'F:\Lise Aagesen master thesis\RBCdata\AdultDonors';
+path1b = '\AllDonorsDay1\AllDonorsDay1\081116D1';
 path1 = strcat (path1a , path1b );
 path2 = strcat(path1,'\Img',donor);
 path3 = strcat(path1, '\RBCs' ); % for storing results
@@ -33,6 +37,7 @@ se_edge = strel('rectangle',[1 30]);%SE for extracting channel edge
 cellNum = 0; % used for cell registration
 
 tracker = []; % used for cell registration
+
 % struct for storing features of RBCs
 RBCs = struct('inlet',[],'outlet',[],'yref',[],'label','', ...
             'frame',[],'centroid',{{}},'box',{{}},'pixellist',{{}}, ...
@@ -108,7 +113,7 @@ for i = 1:size(acc,1) % loop through accepted frames
     if cc.NumObjects < 1
         continue
     end
-    
+
     % If there are cells :
     % BLOB circularity
     areas = cat(1, celldata.Area);
@@ -117,23 +122,23 @@ for i = 1:size(acc,1) % loop through accepted frames
 
     for k = 1:cc.NumObjects % loop over detected BLOBs
         if round(celldata(k).Centroid(2) - 5.5) > 0 && ...
-              round(celldata(k).Centroid(2) + 5.5) < size(im,1) && ...
-              round(celldata(k).Centroid(1) - 22.5 ) > 0 && ...
-              round(celldata(k).Centroid(1) + 22.5) < size(im,2)
+           round(celldata(k).Centroid(2) + 5.5) < size(im,1) && ...
+           round(celldata(k).Centroid(1) - 22.5) > 0 && ...
+           round(celldata(k).Centroid(1) + 22.5) < size(im,2)
 
             % gradient score
-            im2 = im(round(celldata(k).Centroid(2)-5.5): ...
-                    round(celldata(k).Centroid(2)+5.5), ...
-                    round(celldata(k).Centroid(1)-22.5): ...
-                    round(celldata(k).Centroid(1)+22.5 ));
+            im2 = im(round(celldata(k).Centroid(2) - 5.5): ...
+                     round(celldata(k).Centroid(2) + 5.5), ...
+                     round(celldata(k).Centroid(1) - 22.5): ...
+                     round(celldata(k).Centroid(1) + 22.5));
             ime = edge(im2,'Canny');
             ime = ime(6:7 ,:);
             s1 = sum(ime(:));
             % symmetry about vertical axis
-            im3 = im(round(celldata(k).Centroid(2)-4.5): ...
-                    round(celldata(k).Centroid(2)+4.5), ...
-                    round(celldata(k).Centroid(1)-22.5): ...
-                    round(celldata(k).Centroid(1)+22.5 ));
+            im3 = im(round(celldata(k).Centroid(2) - 4.5): ...
+                     round(celldata(k).Centroid(2) + 4.5), ...
+                     round(celldata(k).Centroid(1) - 22.5): ...
+                     round(celldata(k).Centroid(1) + 22.5));
             im3 = (im3-min(im3(:))) / (max(im3(:)) -min(im3(:)));
             d1 = imabsdiff(im3, fliplr (im3));
             s2 = sum(d1(:)) / celldata(k).MajorAxisLength;
