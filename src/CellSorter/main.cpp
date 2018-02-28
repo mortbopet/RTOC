@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "prettyprint.h"
+#include "rbc.h"
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 
@@ -11,6 +11,8 @@ int main(int argc, char **argv) {
     printf("usage: DisplayImage.out <Image_Path>\n");
     return -1;
   }
+
+  RBC a;
 
   Mat image;
   image = imread(argv[1], 1);
