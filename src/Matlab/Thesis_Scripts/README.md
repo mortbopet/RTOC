@@ -24,7 +24,7 @@ We could specialize a library for the type of data Lise is working with; I'm thi
     short description
   - [ ] [imread](https://se.mathworks.com/help/matlab/ref/imread.html):
     short description
-  - [ ] [imabsdiff](https://se.mathworks.com/help/matlab/ref/imabsdiff.html):
+  - [ ] [imabsdiff](https://se.mathworks.com/help/images/ref/imabsdiff.html):
     short description
   - [ ] [imclose](https://se.mathworks.com/help/images/ref/imclose.html):
     short description
@@ -56,6 +56,8 @@ We could specialize a library for the type of data Lise is working with; I'm thi
     Remove fields from structure
   - [ ] [save](https://se.mathworks.com/help/matlab/ref/save.html):
     Save variables to to file (pretty basic yea yea)
+
+
 
 #### Functions to declare in C++ for "FeatureVector.m"
 None not already mentioned.
