@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.8)
 project(CheckDevices)
 
 find_package( OpenCV REQUIRED )
 find_package( OpenCL REQUIRED )
+
+
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 include_directories( ${OpenCL_INCLUDE_DIRS} )
 link_directories( ${OpenCV_LIBRARY})
