@@ -1,0 +1,25 @@
+﻿function;;;;;;;progress;;;;
+Matlab Name;OpenCV Name;Custom Name;Description;Matlab Ref-link;OpenCV Ref-link;Custom Ref;Prototyping;Awaiting Test;Tested;Implemented;Done
+textscan;;;;;;;;;;;
+str2double;;;;;;;;;;;
+extraBetween;;;;;;;;;;;
+strel;;;;;;; ; ; ;;
+rgb2gray;;;Convert color pic to grayscale;;;; ; ; ;;
+im2double;;;convert image to type double-array;;;; ; ; ;;
+imread;imread;-;read image to array;;;; ; ;x;;
+imabsdiff;absdiff;-;get absolute difference between two images;;;; ;x; ;;
+imclose;close;-;Morphologically close image;;;; ; ; ;;
+bwareaopen;;;;;;; ; ; ;;
+imcomplement;invert // bitwise_not;-;;;;; ; ; ;;
+imbinarize;threshold;-;;;;; ; ; ;;
+bwpropfilt;;;extract objects from bin image using properties;;;; ; ; ;;
+bwconncomp;;;;;;; ; ; ;;
+regionprops;;;;;;; ; ; ;;
+cat;;;;;;; ; ; ;;
+imclearborder;;;;;;; ; ; ;;
+edge;;;;;;; ; ; ;;
+fliplr;;;;;;; ; ; ;;
+cell2mat;;;;;;; ; ; ;;
+vec2mat;;;;;;; ; ; ;;
+rmfield;;;;;;; ; ; ;;
+;;;;;;; ; ; ;;
