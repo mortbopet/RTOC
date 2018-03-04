@@ -16,7 +16,7 @@ int main() {
 
     vector<string> a;
 
-    FF::get_files_sorted(_PATH_DATA, a, FF::FF_ONLY_FILE);
+    FF::get_files_sorted(a, _PATH_DATA, FF::FF_ONLY_FILE);
 
     FF::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED,_PATH_DISCARDED);
 
