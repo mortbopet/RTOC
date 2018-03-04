@@ -129,9 +129,6 @@ namespace FF {
             cout << *i << endl;
     }
 
-    Mat imfix(const Mat& img1, const Mat& img2) {
-        return img1 - img2;
-    }
 
     /**
      *
@@ -192,11 +189,13 @@ namespace FF {
                 if (critbank[i] <= lim1 && critbank[i-nd] <= lim1) {
                     // Write to declined
                     fs_dis << img_path1 << endl;
-
                 } else {
                     // Write to accepted
                     fs_acc << img_path1 << endl;
                 }
+            } else {
+                // Write to declined
+                fs_dis << img_path1 << endl;
             }
         }
 
