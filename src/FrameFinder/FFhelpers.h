@@ -9,6 +9,9 @@
 #include <boost/filesystem.hpp>
 #include <fstream>
 
+using namespace std;
+using namespace cv;
+
 
 namespace FF {
 
@@ -18,7 +21,7 @@ namespace FF {
      */
     struct path_leaf_string
     {
-        std::string operator()(const boost::filesystem::directory_entry& entry) const
+        string operator()(const boost::filesystem::directory_entry& entry) const
         {
             return entry.path().leaf().string();
         }
@@ -28,14 +31,22 @@ namespace FF {
      *  struct to handle filename with corresponding number
      *  makes it possible to sort after number instead of after string
      */
-    struct file_num
+    struct file_with_id
     {
-        std::string filename;
+        string filename;
         int num;
 
-        bool operator < ( const file_num& rhs ) const { return num < rhs.num; }
+        bool operator < ( const file_with_id& rhs ) const { return num < rhs.num; }
     };
 
+    /**
+     * File list mode enum
+     *
+     *  0   :   Load full path to vector<string>
+     *  1   :   Load only file-bame to vector<string>
+     *
+     *  More options?
+     */
     enum FILE_LIST_MODE {
         FF_FULL_PATH,
         FF_ONLY_FILE
@@ -49,7 +60,7 @@ namespace FF {
      * @param last  :   last delimiter
      * @return      :   extracted string
      */
-    std::string extractBetween(const std::string& src, const std::string& first, const std::string& last) {
+    string extractBetween(const string& src, const string& first, const string& last) {
         unsigned long a = src.find(first);
         unsigned long b = src.find(last);
         return src.substr(a+1, b - a);
@@ -64,12 +75,12 @@ namespace FF {
      * @param   files   :   vector<string> with file names
      * @return          :   Files found
      */
-    int get_files(const std::string& folder, std::vector<std::string>& v) {
+    int get_files(const string& folder, vector<string>& v) {
         try {
             boost::filesystem::path p(folder);
             boost::filesystem::directory_iterator start(p);
             boost::filesystem::directory_iterator end;
-            std::transform(start, end, std::back_inserter(v), path_leaf_string());
+            transform(start, end, back_inserter(v), path_leaf_string());
         } catch (...) {
             return -1;
         }
@@ -81,8 +92,8 @@ namespace FF {
      * @param folder
      * @param files
      */
-    int get_files_sorted(const std::string& folder, std::vector<std::string>& files, const int mode) {
-        std::vector<file_num> fn;
+    int get_files_sorted(vector<string>& files, const string& folder, const int mode) {
+        vector<file_with_id> fn;
 
         int count = get_files(folder, files);
 
@@ -91,11 +102,11 @@ namespace FF {
         }
 
         for (int i = 0; i < count; i++) {
-            fn.push_back(file_num());
+            fn.push_back(file_with_id());
             fn[i].filename = files[i];
-            fn[i].num = (int) std::strtol(extractBetween(files[i],"_",".").c_str(),nullptr,10);
+            fn[i].num = (int) strtol(extractBetween(files[i],"_",".").c_str(),nullptr,10);
         }
-        std::sort(fn.begin(),fn.end());
+        sort(fn.begin(),fn.end());
 
         for (int i = 0; i < count; i++) {
             if (mode == FF_FULL_PATH) {
@@ -113,63 +124,83 @@ namespace FF {
     /**
      *  For debugging, print contents of stringvec
      */
-    void print_files(std::vector<std::string>& v) {
-        for (std::vector<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
-            std::cout << *i << std::endl;
+    void print_files(vector<string>& v) {
+        for (vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
+            cout << *i << endl;
     }
 
-    cv::Mat imfix(const cv::Mat& img1, const cv::Mat& img2) {
+    Mat imfix(const Mat& img1, const Mat& img2) {
         return img1 - img2;
     }
 
-    void accept_or_reject(std::vector<std::string>& images, const std::string& img_folder, const std::string& path_acc, const std::string& path_dis) {
-        std::fstream fs_acc;
-        std::fstream fs_dis;
+    /**
+     *
+     * DESCRIPTION HERE
+     *
+     *
+     * @param images        :   vector<string>  :   full list of images
+     * @param img_folder    :   string          :   path to image folder
+     * @param path_acc      :   string          :   path to "accepted" txt-file
+     * @param path_dis      :   string          :   path to "discarded" txt-file
+     *
+     * TODO:
+     *  It should be able to easily change <nd> and <lim1> parameters!
+     */
+    void accept_or_reject(const vector<string>& images,
+                          const string& img_folder,
+                          const string& path_acc,
+                          const string& path_dis) {
+
+        // Initialize streams
+        fstream fs_acc;
+        fstream fs_dis;
 
         // Open files for output | append
-        fs_acc.open(path_acc, std::fstream::out | std::fstream::app);
-        fs_dis.open(path_dis, std::fstream::out | std::fstream::app);
+        fs_acc.open(path_acc, fstream::out | fstream::app);
+        fs_dis.open(path_dis, fstream::out | fstream::app);
 
         unsigned long l = images.size();    // Images in total
         int nd = 3;                         // neighbour distance
         double lim1 = 0.0354;               // intensity threshold
-        std::vector<double> critbank(l,0);  // intensity array
+        vector<double> critbank(l,0);  // intensity array
 
         // Initialize image arrays
-        cv::Mat img_buf1;
-        cv::Mat img_buf2;
+        Mat img_buf1;
+        Mat img_buf2;
 
         // Initialize path placeholders
-        std::string img_path1;
-        std::string img_path2;
+        string img_path1;
+        string img_path2;
 
+        // Loop through all pictures
         for (int i = 0; i < l; i++) {
             if (i - nd > 0) {
                 // Set full path
                 img_path1 = img_folder + '/' + images[i];
                 img_path2 = img_folder + '/' + images[i-nd];
                 // Read images (grayscale)
-                img_buf1 = cv::imread(img_path1, cv::IMREAD_GRAYSCALE);
-                img_buf2 = cv::imread(img_path2, cv::IMREAD_GRAYSCALE);
+                img_buf1 = imread(img_path1, IMREAD_GRAYSCALE);
+                img_buf2 = imread(img_path2, IMREAD_GRAYSCALE);
                 // Subtract images
                 img_buf1 -= img_buf2;
                 // Get max/intensity
-                cv::minMaxIdx(img_buf1, nullptr, &critbank[i]);
+                minMaxIdx(img_buf1, nullptr, &critbank[i]);
                 // Normalize intensity
                 critbank[i] /= 255;
             }
             if (i > 10) {
                 if (critbank[i] <= lim1 && critbank[i-nd] <= lim1) {
                     // Write to declined
-                    fs_dis << img_path1 << std::endl;
+                    fs_dis << img_path1 << endl;
 
                 } else {
                     // Write to accepted
-                    fs_acc << img_path1 << std::endl;
+                    fs_acc << img_path1 << endl;
                 }
             }
         }
-        // Close files/fstreams
+
+        // Close fstreams
         fs_acc.close();
         fs_dis.close();
     }
