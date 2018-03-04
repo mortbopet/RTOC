@@ -93,16 +93,14 @@ namespace FF {
      * @param files
      */
     int get_files_sorted(vector<string>& files, const string& folder, const int mode) {
-        vector<file_with_id> fn;
-
         int count = get_files(folder, files);
-
         if (count < 0) {
             return -1;
         }
 
+        vector<file_with_id> fn(count);
+        
         for (int i = 0; i < count; i++) {
-            fn.push_back(file_with_id());
             fn[i].filename = files[i];
             fn[i].num = (int) strtol(extractBetween(files[i],"_",".").c_str(),nullptr,10);
         }
