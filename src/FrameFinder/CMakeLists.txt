@@ -15,7 +15,7 @@ link_directories( ${OpenCL_LIBRARY})
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp FFhelpers.h)
+set(SOURCE_FILES main.cpp FFhelpers.h timer.h)
 add_executable(FrameFinder ${SOURCE_FILES})
 
 target_link_libraries( FrameFinder ${OpenCV_LIBS} )
