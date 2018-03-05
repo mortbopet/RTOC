@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 
 #include "FFhelpers.h"
 #include "timer.h"
@@ -19,6 +20,9 @@ int main() {
     Timer t;
 
     vector<string> a;
+
+    remove(_PATH_ACCEPTED);
+    remove(_PATH_DISCARDED);
 
     tic(t);
     FF::get_files_sorted(a, _PATH_DATA, FF::FF_ONLY_FILE);
