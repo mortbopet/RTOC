@@ -131,50 +131,6 @@ namespace FF {
     }
 
     /**
-     * Get intensity from two images
-     *
-     * @param crit          :   int     :
-     * @param img_path1     :   string  :
-     * @param img_path2     :   string  :
-     */
-    void get_crit(double &crit, const string &img_path1, const string &img_path2) {
-        cv::Mat img_buf1;
-        cv::Mat img_buf2;
-        // Read images (grayscale)
-        img_buf1 = cv::imread(img_path1, cv::IMREAD_GRAYSCALE);
-        img_buf2 = cv::imread(img_path2, cv::IMREAD_GRAYSCALE);
-        // Subtract images
-        img_buf1 -= img_buf2;
-        // Get max/intensity
-        minMaxIdx(img_buf1, nullptr, &crit);
-        // Normalize intensity
-        crit /= 255;
-
-    }
-
-    void print_accept_result(fstream &fs_acc,
-                             fstream &fs_dis,
-                             const string &img_path1,
-                             const vector<double> &critbank,
-                             const double &lim1,
-                             const int &i,
-                             const int &nd) {
-        if (i > 10) {
-            if (critbank[i] <= lim1 && critbank[i - nd] <= lim1) {
-                // Write to declined
-                fs_dis << img_path1 << endl;
-            } else {
-                // Write to accepted
-                fs_acc << img_path1 << endl;
-            }
-        } else {
-            // Write to declined
-            fs_dis << img_path1 << endl;
-        }
-    }
-
-
-    /**
      * Accept_or_reject
      *
      *
@@ -201,34 +157,35 @@ namespace FF {
         fs_dis.open(path_dis, fstream::out | fstream::app);
 
         unsigned long l = images.size();    // Images in total
-        int nd = 3;                         // neighbour distance
         double lim1 = 0.0354;               // intensity threshold
-        vector<double> critbank(l, 0);       // intensity array
+
+        double crit = 0.0;
 
         // Initialize path placeholders
-        string img_path1;
+        string img_path;
         string img_path2;
 
+        cv::Mat lastMoved;
+        cv::Mat nextFrame;
+
+        // Read first image (grayscale)
+        img_path = img_folder + '/' + images[0];
+        lastMoved = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
+        cv::namedWindow("test window",cv::WINDOW_NORMAL);
         // Loop through all pictures
-        for (int i = 0; i < l; i++) {
-            if (i - nd > 0) {
-                // Set full path
-                img_path1 = img_folder + '/' + images[i];
-                img_path2 = img_folder + '/' + images[i - nd];
-                // Get critical value
-                get_crit(critbank[i], img_path1, img_path2);
-            }
-            if (i > 10) {
-                if (critbank[i] <= lim1 && critbank[i - nd] <= lim1) {
-                    // Write to declined
-                    fs_dis << img_path1 << endl;
-                } else {
-                    // Write to accepted
-                    fs_acc << img_path1 << endl;
-                }
+        for (int i = 1; i < l; i++) {
+            // Set full path
+            img_path = img_folder + '/' + images[i];
+
+            nextFrame = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
+            minMaxIdx(lastMoved - nextFrame, nullptr, &crit);
+            crit /= 255;
+
+            if (crit <= lim1) {
+                fs_dis << img_path << endl;
             } else {
-                // Write to declined
-                fs_dis << img_path1 << endl;
+                fs_acc << img_path << endl;
+                lastMoved = nextFrame;
             }
         }
 
