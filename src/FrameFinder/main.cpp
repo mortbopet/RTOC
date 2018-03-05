@@ -2,8 +2,10 @@
 
 #include "FFhelpers.h"
 #include "timer.h"
+#include <thread>
 
 using namespace std;
+using namespace timer;
 
 /**
  * Set _PATH_DATA to the folder in which your images recide
@@ -14,17 +16,18 @@ using namespace std;
 #define _PATH_DISCARDED "./discarded.txt"
 
 int main() {
-    chrono::steady_clock::time_point t0;
+    Timer t;
 
     vector<string> a;
 
-    timer::tic(t0);
+    tic(t);
     FF::get_files_sorted(a, _PATH_DATA, FF::FF_ONLY_FILE);
-    timer::tocp(t0);
+    toc(t);
 
-    timer::tic(t0);
+    tic(t);
     FF::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED,_PATH_DISCARDED);
-    timer::tocp(t0);
+    toc(t);
+
 
     return 0;
 

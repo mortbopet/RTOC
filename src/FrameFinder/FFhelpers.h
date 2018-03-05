@@ -8,6 +8,9 @@
 #include <opencv/cv.hpp>
 #include <boost/filesystem.hpp>
 #include <fstream>
+#include <thread>
+#include <vector>
+
 
 using namespace std;
 using namespace cv;
@@ -19,10 +22,8 @@ namespace FF {
      *  Helper for extracting path leaf from
      *  boost filesystem path
      */
-    struct path_leaf_string
-    {
-        string operator()(const boost::filesystem::directory_entry& entry) const
-        {
+    struct path_leaf_string {
+        string operator()(const boost::filesystem::directory_entry &entry) const {
             return entry.path().leaf().string();
         }
     };
@@ -31,12 +32,11 @@ namespace FF {
      *  struct to handle filename with corresponding number
      *  makes it possible to sort after number instead of after string
      */
-    struct file_with_id
-    {
+    struct file_with_id {
         string filename;
         int num;
 
-        bool operator < ( const file_with_id& rhs ) const { return num < rhs.num; }
+        bool operator<(const file_with_id &rhs) const { return num < rhs.num; }
     };
 
     /**
@@ -60,10 +60,10 @@ namespace FF {
      * @param last  :   last delimiter
      * @return      :   extracted string
      */
-    string extractBetween(const string& src, const string& first, const string& last) {
+    string extractBetween(const string &src, const string &first, const string &last) {
         unsigned long a = src.find(first);
         unsigned long b = src.find(last);
-        return src.substr(a+1, b - a);
+        return src.substr(a + 1, b - a);
 
     }
 
@@ -75,7 +75,7 @@ namespace FF {
      * @param   files   :   vector<string> with file names
      * @return          :   Files found
      */
-    int get_files(const string& folder, vector<string>& v) {
+    int get_files(const string &folder, vector<string> &v) {
         try {
             boost::filesystem::path p(folder);
             boost::filesystem::directory_iterator start(p);
@@ -86,13 +86,14 @@ namespace FF {
         }
         return (int) v.size();
     }
+
     /**
      * Extension to get_files(), but sorts the output
      *
      * @param folder
      * @param files
      */
-    int get_files_sorted(vector<string>& files, const string& folder, const int mode) {
+    int get_files_sorted(vector<string> &files, const string &folder, const int mode) {
         vector<file_with_id> fn;
 
         int count = get_files(folder, files);
@@ -104,9 +105,9 @@ namespace FF {
         for (int i = 0; i < count; i++) {
             fn.push_back(file_with_id());
             fn[i].filename = files[i];
-            fn[i].num = (int) strtol(extractBetween(files[i],"_",".").c_str(),nullptr,10);
+            fn[i].num = (int) strtol(extractBetween(files[i], "_", ".").c_str(), nullptr, 10);
         }
-        sort(fn.begin(),fn.end());
+        sort(fn.begin(), fn.end());
 
         for (int i = 0; i < count; i++) {
             if (mode == FF_FULL_PATH) {
@@ -124,15 +125,58 @@ namespace FF {
     /**
      *  For debugging, print contents of stringvec
      */
-    void print_files(vector<string>& v) {
+    void print_files(vector<string> &v) {
         for (vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
             cout << *i << endl;
     }
 
+    /**
+     * Get intensity from two images
+     *
+     * @param crit          :   int     :
+     * @param img_path1     :   string  :
+     * @param img_path2     :   string  :
+     */
+    void get_crit(double &crit, const string &img_path1, const string &img_path2) {
+        cv::Mat img_buf1;
+        cv::Mat img_buf2;
+        // Read images (grayscale)
+        img_buf1 = cv::imread(img_path1, cv::IMREAD_GRAYSCALE);
+        img_buf2 = cv::imread(img_path2, cv::IMREAD_GRAYSCALE);
+        // Subtract images
+        img_buf1 -= img_buf2;
+        // Get max/intensity
+        minMaxIdx(img_buf1, nullptr, &crit);
+        // Normalize intensity
+        crit /= 255;
+
+    }
+
+    void print_accept_result(fstream &fs_acc,
+                             fstream &fs_dis,
+                             const string &img_path1,
+                             const vector<double> &critbank,
+                             const double &lim1,
+                             const int &i,
+                             const int &nd) {
+        if (i > 10) {
+            if (critbank[i] <= lim1 && critbank[i - nd] <= lim1) {
+                // Write to declined
+                fs_dis << img_path1 << endl;
+            } else {
+                // Write to accepted
+                fs_acc << img_path1 << endl;
+            }
+        } else {
+            // Write to declined
+            fs_dis << img_path1 << endl;
+        }
+    }
+
 
     /**
+     * Accept_or_reject
      *
-     * DESCRIPTION HERE
      *
      *
      * @param images        :   vector<string>  :   full list of images
@@ -143,10 +187,10 @@ namespace FF {
      * TODO:
      *  It should be able to easily change <nd> and <lim1> parameters!
      */
-    void accept_or_reject(const vector<string>& images,
-                          const string& img_folder,
-                          const string& path_acc,
-                          const string& path_dis) {
+    void accept_or_reject(const vector<string> &images,
+                          const string &img_folder,
+                          const string &path_acc,
+                          const string &path_dis) {
 
         // Initialize streams
         fstream fs_acc;
@@ -159,11 +203,7 @@ namespace FF {
         unsigned long l = images.size();    // Images in total
         int nd = 3;                         // neighbour distance
         double lim1 = 0.0354;               // intensity threshold
-        vector<double> critbank(l,0);  // intensity array
-
-        // Initialize image arrays
-        Mat img_buf1;
-        Mat img_buf2;
+        vector<double> critbank(l, 0);       // intensity array
 
         // Initialize path placeholders
         string img_path1;
@@ -174,19 +214,12 @@ namespace FF {
             if (i - nd > 0) {
                 // Set full path
                 img_path1 = img_folder + '/' + images[i];
-                img_path2 = img_folder + '/' + images[i-nd];
-                // Read images (grayscale)
-                img_buf1 = imread(img_path1, IMREAD_GRAYSCALE);
-                img_buf2 = imread(img_path2, IMREAD_GRAYSCALE);
-                // Subtract images
-                img_buf1 -= img_buf2;
-                // Get max/intensity
-                minMaxIdx(img_buf1, nullptr, &critbank[i]);
-                // Normalize intensity
-                critbank[i] /= 255;
+                img_path2 = img_folder + '/' + images[i - nd];
+                // Get critical value
+                get_crit(critbank[i], img_path1, img_path2);
             }
             if (i > 10) {
-                if (critbank[i] <= lim1 && critbank[i-nd] <= lim1) {
+                if (critbank[i] <= lim1 && critbank[i - nd] <= lim1) {
                     // Write to declined
                     fs_dis << img_path1 << endl;
                 } else {

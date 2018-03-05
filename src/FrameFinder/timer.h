@@ -11,6 +11,11 @@
 
 namespace timer {
 
+    class Timer {
+    public:
+        std::chrono::steady_clock::time_point tick;
+    };
+
     enum TIME_MODE {
         TM_TICKS,
         TM_NANOSECONDS,
@@ -19,48 +24,41 @@ namespace timer {
         TM_SECONDS
     };
 
-    inline void tic(std::chrono::steady_clock::time_point& t0) {
+    inline void tic(Timer& t0) {
         // Set tic
-        t0 = std::chrono::steady_clock::now();
+        t0.tick = std::chrono::steady_clock::now();
     };
 
-    inline double toc(const std::chrono::steady_clock::time_point& t0, const int timemode) {
+    inline void toc(const Timer& timer) {
         // Get toc
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-        // Return count
-        switch (timemode) {
-            case TM_TICKS:
-            case TM_NANOSECONDS:
-                return std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-            case TM_MICROSECONDS:
-                return std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-            case TM_MILLISECONDS:
-                return std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
-            case TM_SECONDS:
-                return std::chrono::duration_cast<std::chrono::seconds>(t1 - t0).count();
-            default :
-                return -1;
-        }
-
-    }
-    inline void tocp(const std::chrono::steady_clock::time_point& t0) {
-        // Get toc
-        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+        std::chrono::steady_clock::time_point t0 = timer.tick;
         std::string string_to_print = "Elapsed time: ";
-        long duration = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+        long duration = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
 
-        if (duration > 60000) {
+        if (duration > 60000000) {
             duration /= 60000;
             string_to_print += std::to_string(duration) + " minutes.";
-        } else if (duration > 1000) {
-            duration /= 1000;
+        } else if (duration > 1000000) {
+            duration /= 1000000;
             string_to_print += std::to_string(duration) + " seconds.";
-        } else {
+        } else if (duration > 1000){
+            duration /= 1000;
             string_to_print += std::to_string(duration) + " milliseconds.";
+        } else {
+            string_to_print += std::to_string(duration) + " microseconds.";
         }
         std::cout << string_to_print << std::endl;
     }
+    inline double toc(const Timer& timer, int overload) {
+        // Get toc
+        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+        std::chrono::steady_clock::time_point t0 = timer.tick;
+        std::string string_to_print = "Elapsed time: ";
+        long duration = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+        return duration /= 1000000;
 
+    }
 }
 
 
