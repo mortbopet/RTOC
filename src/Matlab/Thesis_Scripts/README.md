@@ -9,7 +9,6 @@ We could specialize a library for the type of data Lise is working with; I'm thi
 
 
 #### Functions to declare in C++ for "CellSorter.m"
-
   - [ ] [textscan](https://se.mathworks.com/help/matlab/ref/textscan.html):
     Loads a text/data-file to string array
   - [ ] [str2double](https://se.mathworks.com/help/matlab/ref/str2double.html):
@@ -25,9 +24,9 @@ We could specialize a library for the type of data Lise is working with; I'm thi
   - [ ] [imread](https://se.mathworks.com/help/matlab/ref/imread.html):
     short description
   - [ ] [imabsdiff](https://se.mathworks.com/help/images/ref/imabsdiff.html):
-    short description
+    Absolute difference of two images
   - [ ] [imclose](https://se.mathworks.com/help/images/ref/imclose.html):
-    short description
+    Morphologically close image
   - [ ] [bwareaopen](https://se.mathworks.com/help/images/ref/bwareaopen.html):
     short description
   - [ ] [imcomplement](https://se.mathworks.com/help/images/ref/imcomplement.html):
@@ -56,7 +55,6 @@ We could specialize a library for the type of data Lise is working with; I'm thi
     Remove fields from structure
   - [ ] [save](https://se.mathworks.com/help/matlab/ref/save.html):
     Save variables to to file (pretty basic yea yea)
-
 
 
 #### Functions to declare in C++ for "FeatureVector.m"

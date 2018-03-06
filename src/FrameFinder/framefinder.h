@@ -9,8 +9,6 @@
 #include <fstream>
 #include <opencv/cv.hpp>
 
-using namespace std;
-using namespace cv;
 
 namespace FF {
 
@@ -116,65 +114,63 @@ void print_files(vector<string>& v) {
         cout << *i << endl;
 }
 
-/**
- *
- * DESCRIPTION HERE
- *
- *
- * @param images        :   vector<string>  :   full list of images
- * @param img_folder    :   string          :   path to image folder
- * @param path_acc      :   string          :   path to "accepted" txt-file
- * @param path_dis      :   string          :   path to "discarded" txt-file
- *
- * TODO:
- *  It should be able to easily change <nd> and <lim1> parameters!
- */
-void accept_or_reject(const vector<string>& images, const string& img_folder, const string& path_acc,
-                      const string& path_dis) {
-    // Initialize streams
-    fstream fs_acc;
-    fstream fs_dis;
 
-    // Open files for output | append
-    fs_acc.open(path_acc, fstream::out | fstream::app);
-    fs_dis.open(path_dis, fstream::out | fstream::app);
+    /**
+     * Accept_or_reject
+     *
+     *
+     *
+     * @param images        :   vector<string>  :   full list of images
+     * @param img_folder    :   string          :   path to image folder
+     * @param path_acc      :   string          :   path to "accepted" txt-file
+     * @param path_dis      :   string          :   path to "discarded" txt-file
+     *
+     * TODO:
+     *  It should be able to easily change <nd> and <lim1> parameters!
+     */
+    void accept_or_reject(const std::vector<std::string> &images,
+                          const std::string &img_folder,
+                          const std::string &path_acc,
+                          const std::string &path_dis) {
 
-    unsigned long l = images.size();  // Images in total
-    int nd = 3;                       // neighbour distance
-    double lim1 = 0.0354;             // intensity threshold
-    vector<double> critbank(l, 0);    // intensity array
+        // Initialize streams
+        std::fstream fs_acc;
+        std::fstream fs_dis;
 
-    // Initialize image arrays
-    Mat img_buf1;
-    Mat img_buf2;
+        // Open files for output | append
+        fs_acc.open(path_acc, std::fstream::out | std::fstream::app);
+        fs_dis.open(path_dis, std::fstream::out | std::fstream::app);
 
-    // Initialize path placeholders
-    string img_path1;
-    string img_path2;
+        unsigned long l = images.size();    // Images in total
+        double lim1 = 0.0354;               // intensity threshold
 
-    // Loop through all pictures
-    for (int i = 0; i < l; i++) {
-        if (i - nd > 0) {
+        double crit = 0.0;
+
+        // Initialize path placeholders
+        std::string img_path;
+        std::string img_path2;
+
+        cv::Mat lastMoved;
+        cv::Mat nextFrame;
+
+        // Read first image (grayscale)
+        img_path = img_folder + '/' + images[0];
+        lastMoved = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
+        cv::namedWindow("test window",cv::WINDOW_NORMAL);
+        // Loop through all pictures
+        for (int i = 1; i < l; i++) {
             // Set full path
-            img_path1 = img_folder + '/' + images[i];
-            img_path2 = img_folder + '/' + images[i - nd];
-            // Read images (grayscale)
-            img_buf1 = imread(img_path1, IMREAD_GRAYSCALE);
-            img_buf2 = imread(img_path2, IMREAD_GRAYSCALE);
-            // Subtract images
-            img_buf1 -= img_buf2;
-            // Get max/intensity
-            minMaxIdx(img_buf1, nullptr, &critbank[i]);
-            // Normalize intensity
-            critbank[i] /= 255;
-        }
-        if (i > 10) {
-            if (critbank[i] <= lim1 && critbank[i - nd] <= lim1) {
-                // Write to declined
-                fs_dis << img_path1 << endl;
+            img_path = img_folder + '/' + images[i];
+
+            nextFrame = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
+            minMaxIdx(lastMoved - nextFrame, nullptr, &crit);
+            crit /= 255;
+
+            if (crit <= lim1) {
+                fs_dis << img_path << std::endl;
             } else {
-                // Write to accepted
-                fs_acc << img_path1 << endl;
+                fs_acc << img_path << std::endl;
+                lastMoved = nextFrame;
             }
         } else {
             // Write to declined
