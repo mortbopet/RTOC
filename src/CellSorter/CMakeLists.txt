@@ -10,5 +10,5 @@ add_executable(${PROJECT_NAME}
     "main.cpp"
     "prettyprint.h"
     "rbc.h"
-)
+        CShelper.h)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
