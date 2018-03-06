@@ -10,109 +10,116 @@
 #include <opencv/cv.hpp>
 
 
-namespace FF {
+namespace framefinder {
 
-/**
- *  Helper for extracting path leaf from
- *  boost filesystem path
- */
-struct path_leaf_string {
-    string operator()(const boost::filesystem::directory_entry& entry) const { return entry.path().leaf().string(); }
-};
+    /**
+     *  Helper for extracting path leaf from
+     *  boost filesystem path
+     */
+    struct path_leaf_string {
+        std::string operator()(const boost::filesystem::directory_entry& entry) const { return entry.path().leaf().string(); }
+    };
 
-/**
- *  struct to handle filename with corresponding number
- *  makes it possible to sort after number instead of after string
- */
-struct file_with_id {
-    string filename;
-    int num;
+    /**
+     *  struct to handle filename with corresponding number
+     *  makes it possible to sort after number instead of after string
+     */
+    struct file_with_id {
+        std::string filename;
+        int num;
 
-    bool operator<(const file_with_id& rhs) const { return num < rhs.num; }
-};
+        bool operator<(const file_with_id& rhs) const { return num < rhs.num; }
+    };
 
-/**
- * File list mode enum
- *
- *  0   :   Load full path to vector<string>
- *  1   :   Load only file-bame to vector<string>
- *
- *  More options?
- */
-enum FILE_LIST_MODE { FF_FULL_PATH, FF_ONLY_FILE };
+    /**
+     * File list mode enum
+     *
+     *  0   :   Load full path to vector<string>
+     *  1   :   Load only file-bame to vector<string>
+     *
+     *  More options?
+     */
+    enum FILE_LIST_MODE { FF_FULL_PATH, FF_ONLY_FILE };
 
-/**
- * Gets string between two delimiters (assuming only one instance of last delimiter)
- * @param src   :   string to search in
- * @param first :   first delimiter
- * @param last  :   last delimiter
- * @return      :   extracted string
- */
-string extractBetween(const string& src, const string& first, const string& last) {
-    unsigned long a = src.find(first);
-    unsigned long b = src.find(last);
-    return src.substr(a + 1, b - a);
-}
-
-/**
- * Function name should explain enough
- * takes address of folder path and the address for the results
- *
- * @param   folder  :   path to folder
- * @param   files   :   vector<string> with file names
- * @return          :   Files found
- */
-int get_files(const string& folder, vector<string>& v) {
-    try {
-        boost::filesystem::path p(folder);
-        boost::filesystem::directory_iterator start(p);
-        boost::filesystem::directory_iterator end;
-        transform(start, end, back_inserter(v), path_leaf_string());
-    } catch (...) {
-        return -1;
-    }
-    return (int)v.size();
-}
-/**
- * Extension to get_files(), but sorts the output
- *
- * @param folder
- * @param files
- */
-int get_files_sorted(vector<string>& files, const string& folder, const int mode) {
-    int count = get_files(folder, files);
-    if (count < 0) {
-        return -1;
+    /**
+     * Gets string between two delimiters (assuming only one instance of last delimiter)
+     * @param src   :   string to search in
+     * @param first :   first delimiter
+     * @param last  :   last delimiter
+     * @return      :   extracted std::string
+     */
+    std::string extractBetween(const std::string& src,
+                               const std::string& first,
+                               const std::string& last) {
+        unsigned long a = src.find(first);
+        unsigned long b = src.find(last);
+        return src.substr(a + 1, b - a);
     }
 
-    vector<file_with_id> fn(count);
-
-    for (int i = 0; i < count; i++) {
-        fn[i].filename = files[i];
-        fn[i].num = (int)strtol(extractBetween(files[i], "_", ".").c_str(), nullptr, 10);
-    }
-    sort(fn.begin(), fn.end());
-
-    for (int i = 0; i < count; i++) {
-        if (mode == FF_FULL_PATH) {
-            files[i] = folder + "/" + fn[i].filename;
-        } else if (mode == FF_ONLY_FILE) {
-            files[i] = fn[i].filename;
-        } else {
-            // Return error finish code
+    /**
+     * Function name should explain enough
+     * takes address of folder path and the address for the results
+     *
+     * @param   folder  :   path to folder
+     * @param   files   :   vector<string> with file names
+     * @return          :   Files found
+     */
+    int get_files(const std::string& folder, std::vector<std::string>& v) {
+        try {
+            boost::filesystem::path p(folder);
+            boost::filesystem::directory_iterator start(p);
+            boost::filesystem::directory_iterator end;
+            transform(start, end, back_inserter(v), path_leaf_string());
+        } catch (...) {
             return -1;
         }
+        return (int)v.size();
     }
-    return 0;
-}
+    /**
+     * Extension to get_files(), but sorts the output
+     *
+     * @param folder
+     * @param files
+     */
+    int get_files_sorted(std::vector<std::string>& files,
+                         const std::string& folder,
+                         const int mode) {
+        // Get size and return if negative
+        int count = get_files(folder, files);
+        if (count < 0) {
+            return -1;
+        }
+        // Allocate vector
+        std::vector<file_with_id> fn((unsigned) count);
 
-/**
- *  For debugging, print contents of stringvec
- */
-void print_files(vector<string>& v) {
-    for (vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
-        cout << *i << endl;
-}
+        // Get file-numbers and sort
+        for (int i = 0; i < count; i++) {
+            fn[i].filename = files[i];
+            fn[i].num = (int)strtol(extractBetween(files[i], "_", ".").c_str(), nullptr, 10);
+        }
+        sort(fn.begin(), fn.end());
+
+        // Insert sorted file-names
+        for (int i = 0; i < count; i++) {
+            if (mode == FF_FULL_PATH) {
+                files[i] = folder + "/" + fn[i].filename;
+            } else if (mode == FF_ONLY_FILE) {
+                files[i] = fn[i].filename;
+            } else {
+                // Return error finish code
+                return -1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *  For debugging, print contents of stringvec
+     */
+    void print_files(std::vector<std::string>& v) {
+        for (std::vector<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
+            std::cout << *i << std::endl;
+    }
 
 
     /**
@@ -156,7 +163,7 @@ void print_files(vector<string>& v) {
         // Read first image (grayscale)
         img_path = img_folder + '/' + images[0];
         lastMoved = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
-        cv::namedWindow("test window",cv::WINDOW_NORMAL);
+
         // Loop through all pictures
         for (int i = 1; i < l; i++) {
             // Set full path
@@ -172,16 +179,12 @@ void print_files(vector<string>& v) {
                 fs_acc << img_path << std::endl;
                 lastMoved = nextFrame;
             }
-        } else {
-            // Write to declined
-            fs_dis << img_path1 << endl;
         }
+        // Close fstreams
+        fs_acc.close();
+        fs_dis.close();
     }
 
-    // Close fstreams
-    fs_acc.close();
-    fs_dis.close();
-}
 }  // namespace FF
 
 #endif  // FRAMEFINDER_FFHELPERS_H
