@@ -12,8 +12,8 @@ using namespace timer;
  * Set _PATH_DATA to the folder in which your images recide
  *
  */
-#define _PATH_DATA      "/Users/jl/Downloads/fagprojekt/data/ImgD1/"
-#define _PATH_ACCEPTED  "./accepted.txt"
+#define _PATH_DATA "../../data/ImgD1/"
+#define _PATH_ACCEPTED "./accepted.txt"
 #define _PATH_DISCARDED "./discarded.txt"
 
 int main() {
@@ -34,5 +34,4 @@ int main() {
 
 
     return 0;
-
 }
