@@ -6,7 +6,6 @@
 #define FRAMEFINDER_TICTOC_H
 
 #include <iostream>
-#include <ctime>
 #include <chrono>
 
 namespace timer {

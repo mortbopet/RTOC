@@ -12,9 +12,6 @@
 #include <vector>
 
 
-using namespace std;
-using namespace cv;
-
 
 namespace FF {
 
@@ -23,7 +20,7 @@ namespace FF {
      *  boost filesystem path
      */
     struct path_leaf_string {
-        string operator()(const boost::filesystem::directory_entry &entry) const {
+        std::string operator()(const boost::filesystem::directory_entry &entry) const {
             return entry.path().leaf().string();
         }
     };
@@ -33,7 +30,7 @@ namespace FF {
      *  makes it possible to sort after number instead of after string
      */
     struct file_with_id {
-        string filename;
+        std::string filename;
         int num;
 
         bool operator<(const file_with_id &rhs) const { return num < rhs.num; }
@@ -55,12 +52,12 @@ namespace FF {
 
     /**
      * Gets string between two delimiters (assuming only one instance of last delimiter)
-     * @param src   :   string to search in
+     * @param src   :   std::string to search in
      * @param first :   first delimiter
      * @param last  :   last delimiter
-     * @return      :   extracted string
+     * @return      :   extracted std::string
      */
-    string extractBetween(const string &src, const string &first, const string &last) {
+    std::string extractBetween(const std::string &src, const std::string &first, const std::string &last) {
         unsigned long a = src.find(first);
         unsigned long b = src.find(last);
         return src.substr(a + 1, b - a);
@@ -75,7 +72,7 @@ namespace FF {
      * @param   files   :   vector<string> with file names
      * @return          :   Files found
      */
-    int get_files(const string &folder, vector<string> &v) {
+    int get_files(const std::string &folder, std::vector<std::string> &v) {
         try {
             boost::filesystem::path p(folder);
             boost::filesystem::directory_iterator start(p);
@@ -93,8 +90,8 @@ namespace FF {
      * @param folder
      * @param files
      */
-    int get_files_sorted(vector<string> &files, const string &folder, const int mode) {
-        vector<file_with_id> fn;
+    int get_files_sorted(std::vector<std::string> &files, const std::string &folder, const int mode) {
+        std::vector<file_with_id> fn;
 
         int count = get_files(folder, files);
 
@@ -125,9 +122,9 @@ namespace FF {
     /**
      *  For debugging, print contents of stringvec
      */
-    void print_files(vector<string> &v) {
-        for (vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
-            cout << *i << endl;
+    void print_files(std::vector<std::string> &v) {
+        for (std::vector<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
+            std::cout << *i << std::endl;
     }
 
     /**
@@ -143,18 +140,18 @@ namespace FF {
      * TODO:
      *  It should be able to easily change <nd> and <lim1> parameters!
      */
-    void accept_or_reject(const vector<string> &images,
-                          const string &img_folder,
-                          const string &path_acc,
-                          const string &path_dis) {
+    void accept_or_reject(const std::vector<std::string> &images,
+                          const std::string &img_folder,
+                          const std::string &path_acc,
+                          const std::string &path_dis) {
 
         // Initialize streams
-        fstream fs_acc;
-        fstream fs_dis;
+        std::fstream fs_acc;
+        std::fstream fs_dis;
 
         // Open files for output | append
-        fs_acc.open(path_acc, fstream::out | fstream::app);
-        fs_dis.open(path_dis, fstream::out | fstream::app);
+        fs_acc.open(path_acc, std::fstream::out | std::fstream::app);
+        fs_dis.open(path_dis, std::fstream::out | std::fstream::app);
 
         unsigned long l = images.size();    // Images in total
         double lim1 = 0.0354;               // intensity threshold
@@ -162,8 +159,8 @@ namespace FF {
         double crit = 0.0;
 
         // Initialize path placeholders
-        string img_path;
-        string img_path2;
+        std::string img_path;
+        std::string img_path2;
 
         cv::Mat lastMoved;
         cv::Mat nextFrame;
@@ -182,9 +179,9 @@ namespace FF {
             crit /= 255;
 
             if (crit <= lim1) {
-                fs_dis << img_path << endl;
+                fs_dis << img_path << std::endl;
             } else {
-                fs_acc << img_path << endl;
+                fs_acc << img_path << std::endl;
                 lastMoved = nextFrame;
             }
         }
