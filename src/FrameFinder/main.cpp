@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "FFhelpers.h"
+#include "framefinder.h"
 #include "timer.h"
 #include <thread>
 
@@ -25,11 +25,11 @@ int main() {
     remove(_PATH_DISCARDED);
 
     tic(t);
-    FF::get_files_sorted(a, _PATH_DATA, FF::FF_ONLY_FILE);
+    framefinder::get_files_sorted(a, _PATH_DATA, framefinder::FF_ONLY_FILE);
     toc(t);
 
     tic(t);
-    FF::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED,_PATH_DISCARDED);
+    framefinder::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED,_PATH_DISCARDED);
     toc(t);
 
 

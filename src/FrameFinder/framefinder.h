@@ -13,7 +13,7 @@
 
 
 
-namespace FF {
+namespace framefinder {
 
     /**
      *  Helper for extracting path leaf from
