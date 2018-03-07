@@ -21,9 +21,8 @@ int main() {
     remove(_PATH_DISCARDED);
 
     tic(t);
-    std::cout << framefinder::get_files_sorted(a, _PATH_DATA, framefinder::FF_FULL_PATH) << std::endl;
+    framefinder::get_files_sorted(a, _PATH_DATA, framefinder::FF_FULL_PATH);
     toc(t);
-    std::cout << a.size() << std::endl;
 
     tic(t);
     framefinder::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED, _PATH_DISCARDED);
