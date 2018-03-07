@@ -1,13 +1,12 @@
-#include <iostream>
 #include <stdio.h>
+#include <iostream>
 
+#include <thread>
 #include "framefinder.h"
 #include "timer.h"
-#include <thread>
 
 using namespace std;
 using namespace timer;
-
 
 #define _PATH_DATA "../../../data/ImgD1/"
 #define _PATH_ACCEPTED "./accepted.txt"
@@ -27,9 +26,8 @@ int main() {
     std::cout << a.size() << std::endl;
 
     tic(t);
-    framefinder::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED,_PATH_DISCARDED);
+    framefinder::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED, _PATH_DISCARDED);
     toc(t);
-
 
     return 0;
 }
