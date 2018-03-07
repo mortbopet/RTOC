@@ -8,11 +8,8 @@
 using namespace std;
 using namespace timer;
 
-/**
- * Set _PATH_DATA to the folder in which your images recide
- *
- */
-#define _PATH_DATA "../../data/ImgD1/"
+
+#define _PATH_DATA "../../../data/ImgD1/"
 #define _PATH_ACCEPTED "./accepted.txt"
 #define _PATH_DISCARDED "./discarded.txt"
 
@@ -25,8 +22,9 @@ int main() {
     remove(_PATH_DISCARDED);
 
     tic(t);
-    framefinder::get_files_sorted(a, _PATH_DATA, framefinder::FF_ONLY_FILE);
+    std::cout << framefinder::get_files_sorted(a, _PATH_DATA, framefinder::FF_FULL_PATH) << std::endl;
     toc(t);
+    std::cout << a.size() << std::endl;
 
     tic(t);
     framefinder::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED,_PATH_DISCARDED);
