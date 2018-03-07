@@ -60,11 +60,11 @@ namespace framefinder {
      * Function name should explain enough
      * takes address of folder path and the address for the results
      *
-     * @param   folder  :   path to folder
-     * @param   files   :   vector<string> with file names
+     * @param   files   :   path to folder
+     * @param   folder  :   vector<string> with file names
      * @return          :   Files found
      */
-    int get_files(const std::string& folder, std::vector<std::string>& v) {
+    int get_files(std::vector<std::string>& v, const std::string& folder) {
         try {
             boost::filesystem::path p(folder);
             boost::filesystem::directory_iterator start(p);
@@ -78,14 +78,17 @@ namespace framefinder {
     /**
      * Extension to get_files(), but sorts the output
      *
-     * @param folder
-     * @param files
+     * @param files     :   vector<string>  :   Container for found filenames
+     * @param folder    :   string          :   Path to folder
+     * @param mode      :   FILE_LIST_MODE  :   Set output mode
+     * @return          :   int             :   error code
      */
     int get_files_sorted(std::vector<std::string>& files,
                          const std::string& folder,
                          const int mode) {
+
         // Get size and return if negative
-        int count = get_files(folder, files);
+        int count = get_files(files, folder);
         if (count < 0) {
             return -1;
         }
