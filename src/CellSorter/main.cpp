@@ -1,7 +1,5 @@
-
-
-//#include "rbc.h"
-#include "CShelper.h"
+#include "analyzer.cpp"
+#include "process.cpp"
 #include <opencv/cv.hpp>
 #include <iostream>
 #include <fstream>
@@ -10,7 +8,6 @@
 #include <stdio.h>
 
 using namespace cv;
-using namespace CS;
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -20,12 +17,7 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    Mat image;
-    string imagePath = "/Users/eskidlbs/Desktop/data/ImgD1/";
-    string textPath = "/Users/eskidlbs/Desktop/data/";
-
-    // Manual inputs:
-
+    // Constructing struct for properties of test setup.
     Properties testSetup;
 
     testSetup.inlet = 65;
@@ -36,27 +28,24 @@ int main(int argc, char **argv) {
     testSetup.se_RBC = getStructuringElement(MORPH_ELLIPSE, Size(15,15));
     testSetup.se_noiseremoval = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
     testSetup.cellNum = 0;
+    testSetup.imagePath = "/Users/eskidlbs/Desktop/data/ImgD1/";
+    testSetup.textPath = "/Users/eskidlbs/Desktop/data/";
 
-    RBC test;
+    testSetup.loadImageNames();
+    testSetup.selectBackground("SIMPLE", testSetup.bg);
 
-    // Gets accepted/discarded images
-    string accepted, discarded;
-    AccDis patient1;    // Information about patient1
-    Mat bg;             // Background
-    patient1 = loadImageNames(textPath, patient1);
-    // Selects background of images (comes from the two closest discarded)
-    bg = selectBackground("SIMPLE", imagePath, patient1, bg);
-
+    analyzer test1;
+    analyzer::IMG_PROCESS_TYPES testList = analyzer::IMG_PROCESS_TYPES::PRESET;
+    test1.IMG_PROCESS_TYPES =
 
     // Subtracts background and edges
-    Mat im;         // initialize frame
     string imgPath; // initialize path to string
 
-    int temp = 0;
-    while (patient1.acceptedImages.back() != patient1.acceptedImages[temp]) { // Goes through all accepted images
-        temp += 1;
-        imgPath = imagePath + patient1.acceptedImages[temp];
-        subtractBackground(imgPath, bg, im, testSetup);
-    }
-    return 0;
+    //int temp = 0;
+    //while (patient1.acceptedImages.back() != patient1.acceptedImages[temp]) { // Goes through all accepted images
+    //    temp += 1;
+    //    imgPath = imagePath + patient1.acceptedImages[temp];
+    //    subtractBackground(imgPath, bg, im, testSetup);
+    //}
+    //return 0;
 }
