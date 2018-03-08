@@ -36,13 +36,15 @@ int main(int argc, char **argv) {
     //waitKey(0);
 
     // Manual inputs:
-    int inlet = 65;             // Bottom corner of constriction inlet
-    int outlet = 603;           // Bottom corner of constriction outlet
-    int yref = 52;              // Vertical center of inlet
-    float edge_thres = 0.272;   // Threshold for extracting channel edge
-    Mat se_edge = getStructuringElement(MORPH_RECT, Size(1,20));    // SE for extracting channel edge (SE = structuring element).
-    int cellNum = 0;            // Used for cell registration
-    int tracker[] = {};         // Used for cell registration
+
+    Setup testSetup;
+
+    testSetup.inlet = 65;
+    testSetup.outlet = 603;
+    testSetup.yref = 52;
+    testSetup.edge_thres = 0.272;
+    testSetup.se_edge = getStructuringElement(MORPH_RECT, Size(1,30));
+    testSetup.cellNum = 0;
 
     RBC test;
 
@@ -51,19 +53,21 @@ int main(int argc, char **argv) {
     AccDis patient1;    // Information about patient1
     Mat bg;             // Background
     patient1 = loadImageNames(textPath, patient1);
-
     // Selects background of images (comes from the two closest discarded)
     bg = selectBackground("SIMPLE", imagePath, patient1, bg);
 
     // Displays background
-    namedWindow("Display window", WINDOW_AUTOSIZE);
-    imshow("Display window", bg);
-    waitKey(0);
+    // namedWindow("Display window", WINDOW_AUTOSIZE);
+    // imshow("Display window", bg);
+    // waitKey(0);
 
     // Subtracts background and edges
+    Mat im;      //initialize frame
+    string imgPath;
+    // FOR LOOP BEGIN
 
-
-
+    imgPath = imagePath + patient1.acceptedImages[0];    // Replace '0' with iteratable constant
+    subtractBackground(imgPath, bg, im, testSetup);
 
 
     //accepted, discarded = loadImageNames(textPath);

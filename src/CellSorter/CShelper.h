@@ -24,12 +24,23 @@ namespace CS {
         int m_gradient;
     };
 
+    struct Setup {
+        int inlet; // Bottom corner of constriction inlet
+        int outlet; // Bottom corner of constriction outlet
+        int yref; // Vertical center of inlet
+        int cellNum; // Used for cell registration
+        //int tracker[] = {}; // Used for cell registration
+        float edge_thres; // Threshold for extracting channel edge
+        cv::Mat se_edge; // SE for extracting channel edge (SE = structuring element).
+
+    };
+
     struct AccDis {
         std::vector<std::string> acceptedImages, discardedImages;
     };
 
     AccDis loadImageNames(std::string path, AccDis ret) {
-         std::ifstream inFile;
+        std::ifstream inFile;
         std::string temp;
         inFile.open(path + "_Discarded.txt"); // Gets name of accepted files
         while (std::getline(inFile, temp)) {
@@ -53,7 +64,42 @@ namespace CS {
         return bg;
     }
 
-    void subtractBackground () {
+    void subtractBackground (std::string path, cv::Mat bg, cv::Mat im, Setup setup) {
+        cv::Mat diff, bg_edge, temp;
+
+        im = cv::imread(path, cv::IMREAD_GRAYSCALE);//, cv::IMREAD_GRAYSCALE); // Loads image
+
+        cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
+        cv::imshow("Display window", im);
+        //cv::waitKey(0);
+
+        cv::absdiff(im, bg, diff); // Outputs absolute difference into 'diff'
+        cv::imshow("Display window", diff);
+        //cv::waitKey(0);
+
+        cv::threshold(bg, bg_edge, setup.edge_thres*255, 255, cv::THRESH_BINARY_INV);
+        cv::imshow("Display window", bg_edge);
+        //cv::waitKey(0);
+
+        cv::morphologyEx(bg_edge, bg_edge, cv::MORPH_CLOSE, setup.se_edge);
+        cv::imshow("Display window", bg_edge);
+        //cv::waitKey(0);
+
+        //cv::Mat sub = bg_edge.rowRange(1,120).colRange(setup.inlet-10, setup.inlet+10);
+        for (int i = 0; i < 120; i++) { // temp solution for setting values to 0.
+            for (int j = 0; j < 27; j++) {
+                bg_edge.at<float>(i, setup.inlet+j-10) = 0;
+            }
+        }
+
+        cv::morphologyEx(bg_edge,bg_edge, cv::MORPH_OPEN,100);
+        cv::imshow("Display window", bg_edge);
+        //cv::waitKey(0);
+
+
+
+
+
         /* 1) Get difference between image and background
          * 2) Taking all values of background edge, which are lower than edge_thres
          * 3) Doing morphologically close image on background edge
