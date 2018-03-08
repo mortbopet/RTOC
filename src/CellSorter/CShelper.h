@@ -4,17 +4,18 @@
 
 #ifndef CELLSORTER_CSHELPER_H
 #define CELLSORTER_CSHELPER_H
+#include <iostream>
+#include <fstream>
 
-#include <opencv2/core.hpp>
+#include <opencv/cv.hpp>
 
-using namespace cv;
 
 namespace CS {
     // Functions for file loading
     struct RBC {
         std::string m_label;
-        Point_<int> m_centroid;
-        Rect_<int> m_boundingBox;
+        cv::Point_<int> m_centroid;
+        cv::Rect_<int> m_boundingBox;
         int m_frameNo;
         int m_circularity;
         int m_eccentricity;
@@ -23,12 +24,33 @@ namespace CS {
         int m_gradient;
     };
 
-    void selectBackground () {
-        /* 1) Select all frames discarded before given image
-         * 2) Select all frames discarded after given image
-         * 3) Take the closest of those images and choose the one closest to the image on both sides
-         * 4) Take the average of those backgrounds as a gray image
-         */
+    struct AccDis {
+        std::vector<std::string> acceptedImages, discardedImages;
+    };
+
+    AccDis loadImageNames(std::string path, AccDis ret) {
+         std::ifstream inFile;
+        std::string temp;
+        inFile.open(path + "_Discarded.txt"); // Gets name of accepted files
+        while (std::getline(inFile, temp)) {
+            ret.discardedImages.push_back(temp);
+        }
+        inFile.close();
+        inFile.open(path + "_Accepted.txt"); // Gets name of accepted files
+        while (std::getline(inFile, temp)) {
+            ret.acceptedImages.push_back(temp);
+        }
+        inFile.close();
+        return ret;
+    }
+
+    cv::Mat selectBackground (std::string mode, std::string path, AccDis patient, cv::Mat bg) {// string discarded) { // mode is method of determining background
+        std::string imgPath;
+        if (mode == "SIMPLE") {
+            imgPath = path + patient.discardedImages[0]; // Loads very first discarded picture
+            bg = cv::imread(imgPath, cv::IMREAD_GRAYSCALE); // Sets as background
+        }
+        return bg;
     }
 
     void subtractBackground () {
