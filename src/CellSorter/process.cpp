@@ -8,8 +8,6 @@ void erosion::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
     cv::morphologyEx(img, img, cv::MORPH_OPEN, props.se_noiseremoval);
 }
 
-void erosion::setBorderType(cv::BorderTypes type) {}
-
 void dilation::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
     cv::morphologyEx(img, img, cv::MORPH_CLOSE, props.se_RBC);
 }

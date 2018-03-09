@@ -11,7 +11,8 @@ class process {
 public:
     process();  // Constructor
 
-    virtual void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) = 0;  // General function for doing processing.
+    virtual void doProcessing(cv::Mat& img, cv::Mat& bg,
+                              patient props) = 0;  // General function for doing processing.
 
 private:
     std::vector<ParameterBase*> m_parameters;
@@ -19,9 +20,8 @@ private:
 
 class erosion : public process {
 public:
+    erosion() {}
     void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
-
-    Parameter<int> m_testParameter;
 };
 
 class dilation : public process {
