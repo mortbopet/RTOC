@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <opencv/cv.hpp>
-#include "analyzer.h"
+#include "lib/analyzer.h"
 
 using namespace cv;
 using namespace std;
@@ -33,7 +33,8 @@ int main(int argc, char** argv) {
     if (option == 1) {
         int testPicture = 65;  // Number of accepted picture to show
         testAnalyze.m_img =
-            imread(testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[testPicture], IMREAD_GRAYSCALE);
+            imread(testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[testPicture],
+                   IMREAD_GRAYSCALE);
 
         // Loads and runs commands
         testAnalyze.loadRBCPreset();
@@ -45,8 +46,8 @@ int main(int argc, char** argv) {
         while (testAnalyze.m_patient.acc.back() != testAnalyze.m_patient.acc[n]) {
             n += 1;
             cout << n << endl;
-            testAnalyze.m_img =
-                imread(testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[n], IMREAD_GRAYSCALE);
+            testAnalyze.m_img = imread(
+                testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[n], IMREAD_GRAYSCALE);
             testAnalyze.loadRBCPreset();
             testAnalyze.runProcesses();
             testAnalyze.showImg();
