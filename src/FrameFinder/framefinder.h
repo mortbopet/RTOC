@@ -59,31 +59,34 @@ std::string extractBetween(const std::string& src, const std::string& first, con
  * Function name should explain enough
  * takes address of folder path and the address for the results
  *
- * @param   folder  :   path to folder
- * @param   files   :   vector<string> with file names
+ * @param   files   :   path to folder
+ * @param   folder  :   vector<string> with file names
  * @return          :   Files found
  */
-int get_files(const std::string& folder, std::vector<std::string>& v) {
+int get_files(std::vector<std::string>& files, const std::string& folder) {
     try {
         boost::filesystem::path p(folder);
         boost::filesystem::directory_iterator start(p);
         boost::filesystem::directory_iterator end;
-        transform(start, end, back_inserter(v), path_leaf_string());
+        transform(start, end, back_inserter(files), path_leaf_string());
     } catch (...) {
         return -1;
     }
-    return (int)v.size();
+    return (int)files.size();
 }
+
 /**
  * Extension to get_files(), but sorts the output
  *
- * @param folder
- * @param files
+ * @param files     :   vector<string>  :   Container for found filenames
+ * @param folder    :   string          :   Path to folder
+ * @param mode      :   FILE_LIST_MODE  :   Set output mode
+ * @return          :   int             :   error code
  */
 int get_files_sorted(std::vector<std::string>& files, const std::string& folder, const int mode) {
-    // Get size and return if negative
-    int count = get_files(folder, files);
-    if (count < 0) {
+    // Get size and return if empty or error
+    int count = get_files(files, folder);
+    if (count <= 0) {
         return -1;
     }
     // Allocate vector
@@ -148,19 +151,18 @@ void accept_or_reject(const std::vector<std::string>& images, const std::string&
 
     // Initialize path placeholders
     std::string img_path;
-    std::string img_path2;
 
     cv::Mat lastMoved;
     cv::Mat nextFrame;
 
     // Read first image (grayscale)
-    img_path = img_folder + '/' + images[0];
+    img_path = images[0];
     lastMoved = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
 
     // Loop through all pictures
     for (int i = 1; i < l; i++) {
         // Set full path
-        img_path = img_folder + '/' + images[i];
+        img_path = images[i];
 
         nextFrame = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
         minMaxIdx(lastMoved - nextFrame, nullptr, &crit);
