@@ -10,5 +10,5 @@ add_executable(${PROJECT_NAME}
     "main.cpp"
     "prettyprint.h"
     "rbc.h"
-        analyzer.h process.h analyzer.cpp process.cpp)
+        analyzer.h process.h analyzer.cpp process.cpp patient.h)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})

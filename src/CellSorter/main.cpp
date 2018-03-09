@@ -1,51 +1,54 @@
-#include "analyzer.cpp"
-#include "process.cpp"
-#include <opencv/cv.hpp>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 #include <stdio.h>
+#include <fstream>
+#include <opencv/cv.hpp>
+#include "analyzer.h"
 
 using namespace cv;
 using namespace std;
 
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv) {
     if (argc != 2) {
         printf("usage: DisplayImage.out <Image_Path>\n");
         return -1;
     }
 
-    // Constructing struct for properties of test setup.
-    Properties testSetup;
+    //// Set path to image data and to _Accepted.txt and _Discarded.txt
+    string localImagePath = "/Users/eskidlbs/Desktop/data/ImgD1/";
+    string localTextPath = "/Users/eskidlbs/Desktop/data/";
 
-    testSetup.inlet = 65;
-    testSetup.outlet = 603;
-    testSetup.yref = 52;
-    testSetup.edge_thres = 0.272*15;
-    testSetup.se_edge = getStructuringElement(MORPH_RECT, Size(1,30));
-    testSetup.se_RBC = getStructuringElement(MORPH_ELLIPSE, Size(15,15));
-    testSetup.se_noiseremoval = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
-    testSetup.cellNum = 0;
-    testSetup.imagePath = "/Users/eskidlbs/Desktop/data/ImgD1/";
-    testSetup.textPath = "/Users/eskidlbs/Desktop/data/";
+    // Initializing
+    analyzer testAnalyze;
 
-    testSetup.loadImageNames();
-    testSetup.selectBackground("SIMPLE", testSetup.bg);
+    // Sets patient to default. More functions to come to change parameters
+    testAnalyze.loadPatientPreset(localImagePath, localTextPath);
 
-    analyzer test1;
-    analyzer::IMG_PROCESS_TYPES testList = analyzer::IMG_PROCESS_TYPES::PRESET;
-    test1.IMG_PROCESS_TYPES =
+    // Loads lists of images and gets background
+    testAnalyze.loadImageNames();
+    testAnalyze.selectBG();
 
-    // Subtracts background and edges
-    string imgPath; // initialize path to string
+    //// CHOSE OPTION FOR OPERATION
+    int option = 1; // temporary solution
 
-    //int temp = 0;
-    //while (patient1.acceptedImages.back() != patient1.acceptedImages[temp]) { // Goes through all accepted images
-    //    temp += 1;
-    //    imgPath = imagePath + patient1.acceptedImages[temp];
-    //    subtractBackground(imgPath, bg, im, testSetup);
-    //}
-    //return 0;
+    // OPTION 1: Load 1 picture
+    if (option == 1) {
+        int testPicture = 65;  // Number of accepted picture to show
+        testAnalyze.m_img =
+            imread(testAnalyze.patient.imagePath + testAnalyze.patient.acc[testPicture], IMREAD_GRAYSCALE);
+
+        // Loads and runs commands
+        testAnalyze.loadRBCPreset();
+        testAnalyze.runProcesses();
+        testAnalyze.showImg();
+    } else if (option == 2) {
+        // OPTION 2: Loop through all pictures
+        int n = 0;
+        while (testAnalyze.patient.acc.back() != testAnalyze.patient.acc[n]) {
+            n += 1;
+            cout << n << endl;
+            testAnalyze.m_img = imread(testAnalyze.patient.imagePath + testAnalyze.patient.acc[n], IMREAD_GRAYSCALE);
+            testAnalyze.loadRBCPreset();
+            testAnalyze.runProcesses();
+            testAnalyze.showImg();
+        }
+    }
 }

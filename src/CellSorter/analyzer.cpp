@@ -1,50 +1,46 @@
-//
-// Created by Eskild Børsting Sørensen on 08/03/2018.
-//
-
 #include "analyzer.h"
 
-void analyzer::makeList(std::vector<IMG_PROCESS_TYPES> processes) {
-    // Takes input from string and converts it into vector used for class.'
-    for(const auto& command : processes){ // Goes through all processes
-        switch(command){
-            case IMG_PROCESS_TYPES::PRESET {
-                setupRBCPreset();
-            }
-        }
-    }
-
-
-    for (int i = 0; i < sizeof(commands); i++) {  // CHANGE TO ENUM CLASS
-        if (commands[i].compare("SUB_BG")) {      // SUB_BG: Adds all required operations for subtracting background.
-            list.push_back("abs_diff");
-            list.push_back("make_binary");
-            list.push_back("remove_noise");
-            list.push_back("fill_cell");
-        } else {  // If no pre-defined functions are chosen, the single function is added to vector
-            list.push_back(commands[i]);
-        }
-    }
-    std::reverse(list.begin(), list.end());  // Reverses list to do the functions in correct order.
+void analyzer::loadRBCPreset() {
+    m_processes.push_back(new absoluteDiff);
+    m_processes.push_back(new normalize);
+    m_processes.push_back(new binarize);
+    m_processes.push_back(new erosion);
+    m_processes.push_back(new dilation);
 }
 
-void analyzer::runProcesses(){
+void analyzer::loadPatientPreset(std::string img, std::string txt) {
+    patient.defaultSettings(img, txt);
+}
 
-    for(const auto& process : m_processes){
-        process.doProcessing(m_img);
+void analyzer::loadImageNames() {
+    std::ifstream inFile;
+    std::string temp;
+    inFile.open(patient.imagePath + "_Discarded.txt");  // Gets name of accepted files
+    while (std::getline(inFile, temp)) {
+        patient.dis.push_back(temp);
     }
-
-
-    while (!list.empty()) {
-        switch(list.pop_back()){
-            case "abs_diff":
-                cv::absdiff(props.im, props.bg, diff);  // Outputs absolute difference into 'diff'
-
-        }
+    inFile.close();
+    inFile.open(patient.imagePath + "_Accepted.txt");  // Gets name of accepted files
+    while (std::getline(inFile, temp)) {
+        patient.acc.push_back(temp);
     }
-};
+    inFile.close();
+}
+void analyzer::selectBG() {
+    std::string imgPath;
+    imgPath = patient.imagePath + patient.dis[0];      // Loads very first discarded picture
+    m_bg = cv::imread(imgPath, cv::IMREAD_GRAYSCALE);  // Sets as background
+}
 
-void analyzer::setupRBCPreset() { // Default preset with values
-    // Setup background subtraction
-    // (...)
+void analyzer::runProcesses() {
+    for (int i = 0; i < (int)m_processes.size(); i++) {
+        m_processes[i]->doProcessing(m_img, m_bg, patient);
+    }
+    m_processes.clear();
+}
+
+void analyzer::showImg() {
+    cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
+    cv::imshow("Display window", m_img);
+    cv::waitKey(0);
 }
