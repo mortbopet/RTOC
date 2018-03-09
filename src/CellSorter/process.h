@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <opencv/cv.hpp>
+#include "parameter.h"
 #include "patient.h"
 
 class process {
@@ -11,13 +12,16 @@ public:
     process();  // Constructor
 
     virtual void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) = 0;  // General function for doing processing.
+
+private:
+    std::vector<ParameterBase*> m_parameters;
 };
 
 class erosion : public process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
 
-    void setBorderType(cv::BorderTypes type);
+    Parameter<int> m_testParameter;
 };
 
 class dilation : public process {

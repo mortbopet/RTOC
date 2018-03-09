@@ -21,7 +21,7 @@ public:
 
     void showImg();
 
-    patient patient; // Struct of parameters
+    patient m_patient;  // Struct of parameters
     cv::Mat m_img;
     cv::Mat m_bg;
 

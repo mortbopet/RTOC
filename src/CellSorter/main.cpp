@@ -27,13 +27,13 @@ int main(int argc, char** argv) {
     testAnalyze.selectBG();
 
     //// CHOSE OPTION FOR OPERATION
-    int option = 1; // temporary solution
+    int option = 1;  // temporary solution
 
     // OPTION 1: Load 1 picture
     if (option == 1) {
         int testPicture = 65;  // Number of accepted picture to show
         testAnalyze.m_img =
-            imread(testAnalyze.patient.imagePath + testAnalyze.patient.acc[testPicture], IMREAD_GRAYSCALE);
+            imread(testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[testPicture], IMREAD_GRAYSCALE);
 
         // Loads and runs commands
         testAnalyze.loadRBCPreset();
@@ -42,10 +42,11 @@ int main(int argc, char** argv) {
     } else if (option == 2) {
         // OPTION 2: Loop through all pictures
         int n = 0;
-        while (testAnalyze.patient.acc.back() != testAnalyze.patient.acc[n]) {
+        while (testAnalyze.m_patient.acc.back() != testAnalyze.m_patient.acc[n]) {
             n += 1;
             cout << n << endl;
-            testAnalyze.m_img = imread(testAnalyze.patient.imagePath + testAnalyze.patient.acc[n], IMREAD_GRAYSCALE);
+            testAnalyze.m_img =
+                imread(testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[n], IMREAD_GRAYSCALE);
             testAnalyze.loadRBCPreset();
             testAnalyze.runProcesses();
             testAnalyze.showImg();
