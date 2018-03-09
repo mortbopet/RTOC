@@ -13,14 +13,19 @@ find_package(OpenCV REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
+
 # Define all source and header files from src/tst
-file(GLOB LIB_TST tst/*.cpp)
+file(GLOB TST_SRC tst/*.cpp)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-add_executable(${PROJECT_NAME} main.cpp ${LIB_SOURCES} ${LIB_HEADERS})
 
-add_executable(${TEST_EXECUTABLE} ${LIB_TST} ${LIB_SOURCES} ${LIB_HEADERS})
+# Create executable for cellsorter
+add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} ${CellSorter_LIB})
+# Create executable for test project
+add_executable(${TEST_EXECUTABLE} ${TST_SRC})
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${CellSorter_LIB})
+target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
+
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
