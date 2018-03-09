@@ -1,6 +1,7 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
+#include <iostream>
 #include <memory>
 #include <typeinfo>
 #include <vector>
@@ -11,14 +12,35 @@
  * This is done because it is unallowed to have a member function that is declared both virtual and
  * templated.
 */
+using namespace std;
+
 class ParameterBase {
 public:
-    // Through getInfo() we can derive the type of Parameter<T> and
-    // static_cast<Parameter<T>>(ParameterBase)
-    virtual const char* getInfo() const = 0;
-};
+    enum class Type { ENUMERABLE, VALUE };
 
-using namespace std;
+    // Through getInfo() we can derive the type of Parameter<T> and know which setters/getters to
+    // use
+    virtual const char* getInfo() const = 0;
+
+    virtual const pair<int, int>* getIntRange() const { return nullptr; }
+    virtual const pair<double, double>* getDblRange() const { return nullptr; }
+    virtual const vector<string>* getOptions() const { return nullptr; }
+    virtual void setRange(int, int) {}
+    virtual void setRange(double, double) {}
+    virtual void setOptions(vector<std::pair<int, string>>) {}
+
+    void printInfo() const {
+        const string type = string(this->getInfo());
+        if (type == "int") {
+            cout << this->getIntRange() << endl;
+        } else if (type == "double") {
+            cout << this->getDblRange() << endl;
+        } else {
+            // enumerable type;
+            cout << this->getOptions() << endl;
+        }
+    }
+};
 
 /**
  * Operators:
@@ -30,13 +52,15 @@ using namespace std;
 template <typename T>
 class Parameter : public ParameterBase {
 public:
-    Parameter(vector<ParameterBase*> parent, std::string name, T initialValue = T());
+    Parameter(vector<ParameterBase*>& parent, std::string name, T initialValue = T());
 
-    const vector<T>& getOptions() { return m_options; }
-    void setOptions(vector<pair<T, string>> options);
+    const pair<int, int>* getIntRange() const override { return nullptr; }
+    const pair<double, double>* getDblRange() const override { return nullptr; }
+    const vector<string>* getOptions() const override { return nullptr; }
 
-    const pair<T, T>& getRange() { return m_range; }
-    void setRange(T low, T high);
+    void setRange(int start, int stop) override;
+    void setRange(double start, double stop) override;
+    void setOptions(vector<std::pair<int, string>>) override;
 
     void setName(string name) { m_name = name; }
 
@@ -65,23 +89,27 @@ private:
 };
 
 template <typename T>
-Parameter<T>::Parameter(vector<ParameterBase*> parentProcessContainer, std::string name, T v)
+Parameter<T>::Parameter(vector<ParameterBase*>& parentProcessContainer, std::string name, T v)
     : m_name(name), m_val(v) {
     // Upon construction, append parameter to parent process' Parameter container
     parentProcessContainer.push_back(this);
-    m_val = v;
 }
 
 template <typename T>
-void Parameter<T>::setOptions(vector<pair<T, string>> options) {
-    m_isRanged = false;
-    m_options = options;
-}
-
-template <typename T>
-void Parameter<T>::setRange(T low, T high) {
+void Parameter<T>::setRange(int start, int stop) {
     m_isRanged = true;
-    m_range = std::pair<T, T>(low, high);
+    m_range = std::pair<T, T>(T(start), T(stop));
+}
+template <typename T>
+void Parameter<T>::setRange(double start, double stop) {
+    m_isRanged = true;
+    // m_range = std::pair<T, T>(T(start), T(stop));
+}
+
+template <typename T>
+void Parameter<T>::setOptions(vector<std::pair<int, string>> options) {
+    m_isRanged = false;
+    // m_options = options;
 }
 
 // Declare smart pointer types for some common operators
