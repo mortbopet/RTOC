@@ -7,10 +7,8 @@ find_package(OpenCV REQUIRED)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME}
-        "main.cpp"
-        "prettyprint.h"
-        "rbc.h"
-        "../FrameFinder/timer.h"
-        "../FrameFinder/framefinder.h"
-)
+    "main.cpp"
+    "prettyprint.h"
+    "rbc.h"
+        analyzer.h process.h analyzer.cpp process.cpp patient.h)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
