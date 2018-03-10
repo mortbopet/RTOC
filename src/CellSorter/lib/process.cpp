@@ -9,11 +9,11 @@ void erosion::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
 }
 
 void dilation::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
-    cv::morphologyEx(img, img, cv::MORPH_CLOSE, props.se_RBC);
+    cv::morphologyEx(img, img, m_morphType.getValue(), props.se_RBC);
 }
 
 void binarize::doProcessing(cv::Mat& img, cv::Mat& Null, patient props) {
-    cv::threshold(img, img, props.edge_thres, 255, cv::THRESH_BINARY);
+    cv::threshold(img, img, props.edge_thres, m_maxVal.getValue(), cv::THRESH_BINARY);
 }
 
 void normalize::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {

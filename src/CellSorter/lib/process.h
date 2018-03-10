@@ -4,8 +4,21 @@
 #include <fstream>
 #include <iostream>
 #include <opencv/cv.hpp>
+#include <string>
+
 #include "parameter.h"
 #include "patient.h"
+
+namespace {
+#define PARAMETER_CONTAINER m_parameters
+
+// Shorthand macros for creating process parameter member values
+#define CREATE_ENUM_PARM(type, name, displayName) \
+    EnumParameter<type> name = EnumParameter<type>(PARAMETER_CONTAINER, displayName)
+
+#define CREATE_VALUE_PARM(type, name, displayName) \
+    ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName)
+}
 
 class process {
 public:
@@ -14,8 +27,8 @@ public:
     virtual void doProcessing(cv::Mat& img, cv::Mat& bg,
                               patient props) = 0;  // General function for doing processing.
 
-private:
-    std::vector<ParameterBase*> m_parameters;
+protected:
+    std::vector<ParameterBase*> PARAMETER_CONTAINER;
 };
 
 class erosion : public process {
@@ -25,12 +38,17 @@ public:
 };
 
 class dilation : public process {
+public:
     void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
+
+    CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology type");
 };
 
 class binarize : public process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
+
+    CREATE_VALUE_PARM(double, m_maxVal, "Edge threshold");
 };
 
 class normalize : public process {
