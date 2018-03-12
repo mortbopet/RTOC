@@ -5,6 +5,13 @@
 
 // Unit testing for Parameter class
 
+void printer(const std::vector<string> a) {
+    for (const auto& item : a) {
+        cout << item << " ";
+    }
+    cout << endl;
+}
+
 int tst_parameterClass() {
     std::vector<ParameterBase*> parameters;
 
@@ -42,35 +49,20 @@ int tst_parameterClass() {
 
     // Loop through $parameters, deduce the parameter type and print the valid options/ranges
     for (auto& parameter : parameters) {
-        switch (parameter->getType()) {
-            case ParameterType::INT: {
-                auto p = static_cast<ValueParameter<int>*>(parameter);
-                cout << p->getRange().first << " " << p->getRange().second << endl;
-                break;
-            }
-            case ParameterType::CHAR: {
-                auto p = static_cast<ValueParameter<char>*>(parameter);
-                cout << p->getRange().first << " " << p->getRange().second << endl;
-                break;
-            }
-            case ParameterType::FLOAT: {
-                auto p = static_cast<ValueParameter<float>*>(parameter);
-                cout << p->getRange().first << " " << p->getRange().second << endl;
-                break;
-            }
-            case ParameterType::DOUBLE: {
-                auto p = static_cast<ValueParameter<double>*>(parameter);
-                cout << p->getRange().first << " " << p->getRange().second << endl;
-                break;
-            }
-            case ParameterType::ENUM: {
-                auto p = static_cast<EnumParameter<int>*>(parameter);
-                vector<string> options = p->getOptions();
-                for (const auto& option : options) {
-                    cout << option << endl;
-                }
-                break;
-            }
+        const auto& options = parameter->getOptions();
+        if (options[0] == typeid(int).name()) {
+            // GUI can spawn an editor that accepts integer values in
+            cout << "integer detected, gui spawns integer editor" << endl;
+            printer(options);
+        } else if (options[0] == typeid(double).name()) {
+            // GUI can spawn an editor that accepts floating point values
+            cout << "double detected, gui spawns integer editor" << endl;
+            printer(options);
+        } else {
+            // GUI can spawn an editor that accepts ENUMs - gui will generate a combobox with values
+            // that options provides
+            cout << "enum detected, gui spawns integer editor" << endl;
+            printer(options);
         }
     }
 
