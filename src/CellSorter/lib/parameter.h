@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <sstream>
 #include <typeinfo>
 #include <vector>
 
@@ -17,7 +18,7 @@
 /** @p Interfacing into a ParameterBase
  * calling ParameterBase::getOptions() will return a string vector
  *
- * vector<string> a:
+ * stringstream a:
  *  a[0] = type (ie. int, float, ENUM type
  *  the values following the type is dependant on the type.
  *  for float/int:
@@ -33,7 +34,13 @@ class ParameterBase {
 public:
     ParameterBase(string name) : m_name(name) {}
     void setModifiable(bool val) { m_isModifiable = val; }
-    const vector<string>& getOptions() const { return m_options; }
+    stringstream getOptions() const {
+        stringstream s;
+        for (const auto& i : m_options) {
+            s << i << ' ';
+        }
+        return s;
+    }
 
     // String based setters and getters, used through GUI
     virtual const string getValueStr() const = 0;

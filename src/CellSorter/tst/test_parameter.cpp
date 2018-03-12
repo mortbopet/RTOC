@@ -49,19 +49,30 @@ int tst_parameterClass() {
 
     // Loop through $parameters, deduce the parameter type and print the valid options/ranges
     for (auto& parameter : parameters) {
-        const auto& options = parameter->getOptions();
-        if (options[0] == typeid(int).name()) {
+        auto optionStream = parameter->getOptions();
+        std::string type;
+        optionStream >> type;
+        if (type == typeid(int).name()) {
             // GUI can spawn an editor that accepts integer values in
             cout << "integer detected, gui spawns integer editor" << endl;
-            printer(options);
-        } else if (options[0] == typeid(double).name()) {
+            int high, low;
+            optionStream >> low >> high;
+            cout << low << ' ' << high << endl;
+        } else if (type == typeid(double).name()) {
             // GUI can spawn an editor that accepts floating point values
             cout << "double detected, gui spawns integer editor" << endl;
-            printer(options);
+            double high, low;
+            optionStream >> low >> high;
+            cout << low << ' ' << high << endl;
         } else {
             // GUI can spawn an editor that accepts ENUMs - gui will generate a combobox with values
             // that options provides
             cout << "enum detected, gui spawns integer editor" << endl;
+            std::vector<string> options;
+            string option;
+            while (optionStream >> option) {
+                options.push_back(option);
+            }
             printer(options);
         }
     }
