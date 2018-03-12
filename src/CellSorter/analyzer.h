@@ -11,11 +11,15 @@ class analyzer {
 public:
     void loadRBCPreset();
 
+    void loadRBCPreset2();
+
     void loadPatientPreset(std::string img, std::string txt);
 
     void loadImageNames();
 
     void selectBG();
+
+    void selectBG2(int n);
 
     void runProcesses();
 
