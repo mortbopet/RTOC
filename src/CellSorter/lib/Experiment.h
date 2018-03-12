@@ -8,13 +8,13 @@
 #include <sstream>
 #include <string>
 
-//// Patient
-/* Struct for each patient. Used as a container for parameters.
+//// Experient
+/* Struct for each Experiment. Used as a container for parameters.
  * More functions can be created to change those parameters
  * or set different presets.
  */
 
-struct patient {
+struct Experiment {
     int inlet;    // Bottom corner of constriction inlet
     int outlet;   // Bottom corner of constriction outlet
     int yref;     // Vertical center of inlet

@@ -1,25 +1,40 @@
-#include "process.h"
+#include "Process.h"
+#include <opencv/cv.hpp>
 
-process::process(void) {}
+Process::Process(void) {}
 
-void process::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {}
+void Process::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {}
 
-void erosion::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
-    cv::morphologyEx(img, img, cv::MORPH_OPEN, props.se_noiseremoval);
+Morph::Morph() {
+    m_morphType.setOptions(map<cv::MorphTypes, string>{{cv::MorphTypes::MORPH_CLOSE, "Closing"},
+                                                       {cv::MorphTypes::MORPH_OPEN, "Opening"}});
+    m_morphValueX.setRange(0, 100);
+    m_morphValueY.setRange(0, 100);
 }
 
-void dilation::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
-    cv::morphologyEx(img, img, m_morphType.getValue(), props.se_RBC);
+void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
+    if ((m_morphType.getValue() == cv::MORPH_CLOSE) ||
+        (m_morphType.getValue() == cv::MORPH_OPEN)) {  // if-else statement for choosing correct
+                                                       // structuring element for operation
+        cv::morphologyEx(
+            img, img, m_morphType.getValue(),
+            cv::getStructuringElement(
+                cv::MORPH_ELLIPSE, cv::Size(m_morphValueX.getValue(), m_morphValueY.getValue())));
+    }
 }
 
-void binarize::doProcessing(cv::Mat& img, cv::Mat& Null, patient props) {
+Binarize::Binarize() {
+    m_maxVal.setRange(0,255);
+}
+
+void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     cv::threshold(img, img, props.edge_thres, m_maxVal.getValue(), cv::THRESH_BINARY);
 }
 
-void normalize::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
+void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     cv::normalize(img, img, 255, 0);  // 3rd arguemnt controls range of normalization output.
 }
 
-void absoluteDiff::doProcessing(cv::Mat& img, cv::Mat& bg, patient props) {
+void AbsoluteDiff::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
     cv::absdiff(img, bg, img);  // Outputs absolute difference into 'diff'
 }

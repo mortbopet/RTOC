@@ -7,7 +7,7 @@
 #include <string>
 
 #include "parameter.h"
-#include "patient.h"
+#include "Experiment.h"
 
 namespace {
 #define PARAMETER_CONTAINER m_parameters
@@ -15,50 +15,52 @@ namespace {
 // Shorthand macros for creating process parameter member values
 #define CREATE_ENUM_PARM(type, name, displayName) \
     EnumParameter<type> name = EnumParameter<type>(PARAMETER_CONTAINER, displayName)
+#define CREATE_ENUM_PARM_DEFAULT(type, name, displayName, default) \
+    EnumParameter<type> name = EnumParameter<type>(PARAMETER_CONTAINER, displayName, default)
 
 #define CREATE_VALUE_PARM(type, name, displayName) \
     ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName)
+#define CREATE_VALUE_PARM_DEFAULT(type, name, displayName, default) \
+    ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName, default)
 }
 
-class process {
+class Process {
 public:
-    process();  // Constructor
+    Process();  // Constructor
 
     virtual void doProcessing(cv::Mat& img, cv::Mat& bg,
-                              patient props) = 0;  // General function for doing processing.
+                              const Experiment& props) const = 0;  // General function for doing processing.
 
 protected:
     std::vector<ParameterBase*> PARAMETER_CONTAINER;
 };
 
-class erosion : public process {
+class Morph : public Process {
 public:
-    erosion() {}
-    void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
-};
-
-class dilation : public process {
-public:
-    void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override; // CHANGE TO CONST OVERRIDE
+    Morph();
 
     CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology type");
+    CREATE_VALUE_PARM(int, m_morphValueX, "Structural element X-axis");
+    CREATE_VALUE_PARM(int, m_morphValueY, "Structural element Y-axis");
 };
 
-class binarize : public process {
+class Binarize : public Process {
 public:
-    void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+    Binarize();
 
-    CREATE_VALUE_PARM(double, m_maxVal, "Edge threshold");
+    CREATE_VALUE_PARM_DEFAULT(double, m_maxVal, "Edge threshold", 255);
 };
 
-class normalize : public process {
+class Normalize : public Process {
 public:
-    void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
 };
 
-class absoluteDiff : public process {
+class AbsoluteDiff : public Process {
 public:
-    void doProcessing(cv::Mat& img, cv::Mat& bg, patient props) override;
+    void doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const override;
 };
 
 #endif  // CELLSORTER_PROCESS_H
