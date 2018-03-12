@@ -7,9 +7,18 @@
 
 #include <boost/filesystem.hpp>
 #include <fstream>
+#include <vector>
 #include <opencv/cv.hpp>
 
-namespace framefinder {
+
+struct Frame {
+    cv::Mat image;
+    std::string filename;
+    int id;
+    bool accepted;
+
+    bool operator<(const Frame& rhs) const { return id < rhs.id; }
+};
 
 /**
  *  Helper for extracting path leaf from
@@ -21,26 +30,26 @@ struct path_leaf_string {
     }
 };
 
-/**
- *  struct to handle filename with corresponding number
- *  makes it possible to sort after number instead of after string
- */
-struct file_with_id {
-    std::string filename;
-    int num;
-
-    bool operator<(const file_with_id& rhs) const { return num < rhs.num; }
-};
 
 /**
- * File list mode enum
+ * Function name should explain enough
+ * takes address of folder path and the address for the results
  *
- *  0   :   Load full path to vector<string>
- *  1   :   Load only file-bame to vector<string>
- *
- *  More options?
+ * @param   files   :   path to folder
+ * @param   folder  :   vector<string> with file names
+ * @return          :   Files found
  */
-enum FILE_LIST_MODE { FF_FULL_PATH, FF_ONLY_FILE };
+int files_from_folder(std::vector<std::string> &files, const std::string &folder) {
+    try {
+        boost::filesystem::path p(folder);
+        boost::filesystem::directory_iterator start(p);
+        boost::filesystem::directory_iterator end;
+        transform(start, end, back_inserter(files), path_leaf_string());
+    } catch (...) {
+        return -1;
+    }
+    return (int)files.size();
+}
 
 /**
  * Gets string between two delimiters (assuming only one instance of last delimiter)
@@ -56,26 +65,6 @@ std::string extractBetween(const std::string& src, const std::string& first, con
 }
 
 /**
- * Function name should explain enough
- * takes address of folder path and the address for the results
- *
- * @param   files   :   path to folder
- * @param   folder  :   vector<string> with file names
- * @return          :   Files found
- */
-int get_files(std::vector<std::string>& files, const std::string& folder) {
-    try {
-        boost::filesystem::path p(folder);
-        boost::filesystem::directory_iterator start(p);
-        boost::filesystem::directory_iterator end;
-        transform(start, end, back_inserter(files), path_leaf_string());
-    } catch (...) {
-        return -1;
-    }
-    return (int)files.size();
-}
-
-/**
  * Extension to get_files(), but sorts the output
  *
  * @param files     :   vector<string>  :   Container for found filenames
@@ -83,103 +72,75 @@ int get_files(std::vector<std::string>& files, const std::string& folder) {
  * @param mode      :   FILE_LIST_MODE  :   Set output mode
  * @return          :   int             :   error code
  */
-int get_files_sorted(std::vector<std::string>& files, const std::string& folder, const int mode) {
+int get_files(std::vector<Frame> &files, const std::string &folder) {
+    std::vector<std::string> file_paths;
     // Get size and return if empty or error
-    int count = get_files(files, folder);
+    int count = files_from_folder(file_paths, folder);
     if (count <= 0) {
         return -1;
     }
     // Allocate vector
-    std::vector<file_with_id> fn((unsigned)count);
-
-    // Get file-numbers and sort
+    std::vector<Frame> fn((unsigned)count);
+    // Get file-numbers and accept_or_reject
     for (int i = 0; i < count; i++) {
-        fn[i].filename = files[i];
-        fn[i].num = (int)strtol(extractBetween(files[i], "_", ".").c_str(), nullptr, 10);
+        auto id = (int)strtol(extractBetween(file_paths[i], "_", ".").c_str(), nullptr, 10);
+        Frame f = {cv::Mat(), file_paths[i], id, false};
+        fn[i] = f;
     }
+
     sort(fn.begin(), fn.end());
 
-    // Insert sorted file-names
-    for (int i = 0; i < count; i++) {
-        if (mode == FF_FULL_PATH) {
-            files[i] = folder + "/" + fn[i].filename;
-        } else if (mode == FF_ONLY_FILE) {
-            files[i] = fn[i].filename;
-        } else {
-            // Return error finish code
-            return -1;
-        }
-    }
-    return 0;
-}
+    files = fn;
 
-/**
- *  For debugging, print contents of stringvec
- */
-void print_files(std::vector<std::string>& v) {
-    for (std::vector<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
-        std::cout << *i << std::endl;
+    return 0;
 }
 
 /**
  * Accept_or_reject
  *
- *
- *
- * @param images        :   vector<string>  :   full list of images
+ * @param frames        :   vector<string>  :   full list of images
  * @param img_folder    :   string          :   path to image folder
  * @param path_acc      :   string          :   path to "accepted" txt-file
  * @param path_dis      :   string          :   path to "discarded" txt-file
  *
- * TODO:
- *  It should be able to easily change <nd> and <lim1> parameters!
  */
-void accept_or_reject(const std::vector<std::string>& images, const std::string& img_folder,
-                      const std::string& path_acc, const std::string& path_dis) {
-    // Initialize streams
-    std::fstream fs_acc;
-    std::fstream fs_dis;
-
-    // Open files for output | append
-    fs_acc.open(path_acc, std::fstream::out | std::fstream::app);
-    fs_dis.open(path_dis, std::fstream::out | std::fstream::app);
-
-    unsigned long l = images.size();  // Images in total
-    double lim1 = 0.0354;             // intensity threshold
-
+void accept_or_reject(std::vector<Frame> &frames, const std::string &img_folder, const double &threshold) {
     double crit = 0.0;
 
-    // Initialize path placeholders
-    std::string img_path;
-
-    cv::Mat lastMoved;
-    cv::Mat nextFrame;
-
-    // Read first image (grayscale)
-    img_path = images[0];
-    lastMoved = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
+    cv::Mat lastMoved = cv::imread(img_folder + "/" + frames[0].filename, cv::IMREAD_GRAYSCALE);;
 
     // Loop through all pictures
-    for (int i = 1; i < l; i++) {
-        // Set full path
-        img_path = images[i];
-
-        nextFrame = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
-        minMaxIdx(lastMoved - nextFrame, nullptr, &crit);
+    for (auto &frame : frames) {
+        std::string img_path = img_folder + "/" + frame.filename;
+        frame.image = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
+        minMaxIdx(lastMoved - frame.image, nullptr, &crit);
         crit /= 255;
 
-        if (crit <= lim1) {
-            fs_dis << img_path << std::endl;
+        if (crit <= threshold) {
+            // Discard
+            frame.accepted = false;
         } else {
-            fs_acc << img_path << std::endl;
-            lastMoved = nextFrame;
+            // Accept
+            frame.accepted = true;
+            lastMoved = frame.image;
         }
     }
-    // Close fstreams
-    fs_acc.close();
-    fs_dis.close();
 }
 
-}  // namespace framefinder
+void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output) {
+    for (const Frame& f : frames) {
+        if (f.accepted) {
+            output.emplace_back(f);
+        }
+    }
+}
+
+void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) {
+    for (const Frame& f : frames) {
+        if (!f.accepted) {
+            output.push_back(f);
+        }
+    }
+}
 
 #endif  // FRAMEFINDER_FFHELPERS_H
