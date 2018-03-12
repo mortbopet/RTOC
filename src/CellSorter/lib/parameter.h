@@ -76,7 +76,10 @@ public:
     void setRange(T start, T stop);
 
     void setValue(T v) { m_val = v; }
-    const T& getValue() const { return m_val; }
+    const T& getValue() const {
+        assert(m_isInitialized);
+        return m_val;
+    }
 
     const string getValueStr() const override;
     void setValueStr(string) override;
@@ -169,7 +172,7 @@ EnumParameter<T>::EnumParameter(vector<ParameterBase*>& parentProcessContainer, 
 
 template <typename T>
 void EnumParameter<T>::setOptions(map<T, string> options) {
-    assert(m_isInitialized);
+    m_isInitialized = true;
     m_enumOptions = options;
     updateOptions();
 }
