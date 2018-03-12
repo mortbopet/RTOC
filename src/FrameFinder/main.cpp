@@ -1,32 +1,36 @@
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 
-#include <thread>
 #include "framefinder.h"
 #include "timer.h"
 
-using namespace std;
-using namespace timer;
-
-#define _PATH_DATA "../../../data/ImgD1/"
-#define _PATH_ACCEPTED "./accepted.txt"
-#define _PATH_DISCARDED "./discarded.txt"
+#define _PATH_DATA "/Users/jl/Dropbox/DTU/04_Semester4/fagprojekt/data/ImgD1/"
 
 int main() {
-    Timer t;
+    timer::Timer t;
 
-    vector<string> a;
-
-    remove(_PATH_ACCEPTED);
-    remove(_PATH_DISCARDED);
+    std::vector<Frame> a, b, c;
 
     tic(t);
-    framefinder::get_files_sorted(a, _PATH_DATA, framefinder::FF_FULL_PATH);
+    get_files(a, _PATH_DATA);
+    std::cout << "Found: " << a.size() << std::endl;
     toc(t);
 
     tic(t);
-    framefinder::accept_or_reject(a, _PATH_DATA, _PATH_ACCEPTED, _PATH_DISCARDED);
+    accept_or_reject(a, _PATH_DATA, (double) 0.0352);
+    std::cout << "Checked: " << a.size() << std::endl;
     toc(t);
 
+    tic(t);
+    get_accepted(a, b);
+    std::cout << "Accepted: " << b.size() << std::endl;
+    toc(t);
+
+    tic(t);
+    get_rejected(a, c);
+    std::cout << "Rejected: " << c.size() << std::endl;
+    toc(t);
+
+    std::cout << "Total: " << b.size() + c.size() << std::endl;
     return 0;
 }
