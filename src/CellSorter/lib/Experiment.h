@@ -34,6 +34,7 @@ struct Experiment {
         inlet = 65;
         outlet = 603;
         yref = 52;
+        intensity_threshold = 0.0354;
         edge_thres = 0.272 * 15;
         se_edge = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(1, 30));
         se_RBC = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15));

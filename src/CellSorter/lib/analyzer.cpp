@@ -28,7 +28,7 @@ void analyzer::loadImageNames() {
     std::vector<Frame> frames;
     std::string img_folder = m_Experiment.imagePath;
     get_files(frames, img_folder);
-    accept_or_reject(frames, img_folder,m_Experiment.intensity_threshold);
+    accept_or_reject(frames, img_folder, m_Experiment.intensity_threshold);
     get_accepted(frames,m_Experiment.acc);
     get_rejected(frames,m_Experiment.dis);
 }
