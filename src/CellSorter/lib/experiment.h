@@ -1,11 +1,7 @@
-#ifndef CELLSORTER_PROPERTIES_H
-#define CELLSORTER_PROPERTIES_H
+#ifndef EXPERIMENT_H
+#define EXPERIMENT_H
 
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
 #include <opencv/cv.hpp>
-#include <sstream>
 #include <string>
 
 //// Experient
@@ -25,7 +21,8 @@ struct Experiment {
     cv::Mat se_RBC;           // SE for extracting channel edge
     cv::Mat se_noiseremoval;  // SE for removing noise
     std::vector<std::string> acc, dis;
-    std::string imagePath, textPath;  // Holds information about path to images and to _Accepted.txt and _Discarded.txt
+    std::string imagePath,
+        textPath;  // Holds information about path to images and to _Accepted.txt and _Discarded.txt
 
     void defaultSettings(std::string imgPath, std::string checkPath) {
         inlet = 65;
@@ -41,4 +38,4 @@ struct Experiment {
     }
 };
 
-#endif  // CELLSORTER_PROPERTIES_H
+#endif  // EXPERIMENT_H
