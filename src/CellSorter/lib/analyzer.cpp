@@ -3,24 +3,31 @@
 
 void analyzer::loadRBCPreset() {
     m_processes.push_back(new AbsoluteDiff);
-    m_processes.push_back(new Normalize);
-    m_processes.push_back(new Binarize);
+
+    auto normalizeDEFAULT = new Normalize();
+    normalizeDEFAULT->m_normalizeStrength.setValue(0xfff);
+    m_processes.push_back(normalizeDEFAULT);
+
+    auto binarizeDEFAULT = new Binarize();
+    binarizeDEFAULT->m_maxVal.setValue(255);
+    binarizeDEFAULT->m_edgeThreshold.setValue(50);
+    m_processes.push_back(binarizeDEFAULT);
 
     // Doing morph open and close
     auto morphDEFAULT = new Morph();
     morphDEFAULT->m_morphType.setValue(cv::MORPH_OPEN);
-    morphDEFAULT->m_morphValueX.setValue(2);
-    morphDEFAULT->m_morphValueY.setValue(2);
+    morphDEFAULT->m_morphValueX.setValue(3);
+    morphDEFAULT->m_morphValueY.setValue(3);
     m_processes.push_back(morphDEFAULT);
 
     morphDEFAULT = new Morph();
     morphDEFAULT->m_morphType.setValue(cv::MORPH_CLOSE);
     morphDEFAULT->m_morphValueX.setValue(15);
-    morphDEFAULT->m_morphValueY.setValue(15);
+    morphDEFAULT->m_morphValueY.setValue(10);
     m_processes.push_back(morphDEFAULT);
 }
 
-void analyzer::loadPatientPreset(std::string img, std::string txt) {
+void analyzer::loadExperimentPreset(std::string img, std::string txt) {
     m_Experiment.defaultSettings(img, txt);
 }
 
@@ -37,10 +44,9 @@ void analyzer::selectBG() {
 }
 
 void analyzer::runProcesses() {
-    for(const auto& process : m_processes){
+    for (const auto& process : m_processes) {
         process->doProcessing(m_img, m_bg, m_Experiment);
     }
-    resetProcesses();
 }
 
 void analyzer::resetProcesses() {

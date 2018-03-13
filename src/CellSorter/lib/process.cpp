@@ -24,15 +24,20 @@ void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const 
 }
 
 Binarize::Binarize() {
+    m_edgeThreshold.setRange(0,255);
     m_maxVal.setRange(0,255);
 }
 
 void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    cv::threshold(img, img, props.edge_thres, m_maxVal.getValue(), cv::THRESH_BINARY);
+    cv::threshold(img, img, m_edgeThreshold.getValue(), m_maxVal.getValue(), cv::THRESH_BINARY);
+}
+
+Normalize::Normalize() {
+    m_normalizeStrength.setRange(0,0xffff);
 }
 
 void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    cv::normalize(img, img, 255, 0);  // 3rd arguemnt controls range of normalization output.
+    cv::normalize(img, img, m_normalizeStrength.getValue(), 0);  // 3rd arguemnt controls range of normalization output.
 }
 
 void AbsoluteDiff::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
