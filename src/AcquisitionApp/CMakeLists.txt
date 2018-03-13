@@ -13,10 +13,13 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES
-    main.cpp )
+file(GLOB LIB_SOURCES src/*.cpp)
+file(GLOB LIB_HEADERS src/*.h)
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_library(AcquisitionApp_lib ${LIB_SOURCES} ${LIB_HEADERS})
+
+add_executable(${PROJECT_NAME} main.cpp)
+
 
 # SiliconSoftware runtime directories
 include_directories($ENV{SISODIR5}/include)
@@ -28,3 +31,6 @@ target_link_libraries( ${PROJECT_NAME}
     $ENV{SISODIR5}/lib/visualc/siso_genicam.lib
     $ENV{SISODIR5}/lib/visualc/display_lib.lib
 )
+
+# Link AcquisitionApp lib
+target_link_libraries(${PROJECT_NAME} AcquisitionApp_lib)

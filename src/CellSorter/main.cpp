@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     // Initializing
     analyzer testAnalyze;
 
-    // Sets patient to default. More functions to come to change parameters
+    // Sets Experiment to default. More functions to come to change parameters
     testAnalyze.loadPatientPreset(localImagePath, localTextPath);
 
     // Loads lists of images and gets background
@@ -27,13 +27,13 @@ int main(int argc, char** argv) {
     testAnalyze.selectBG();
 
     //// CHOSE OPTION FOR OPERATION
-    int option = 1;  // temporary solution
+    int option = 2;  // temporary solution
 
     // OPTION 1: Load 1 picture
     if (option == 1) {
         int testPicture = 65;  // Number of accepted picture to show
         testAnalyze.m_img =
-            imread(testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[testPicture],
+            imread(testAnalyze.m_Experiment.imagePath + testAnalyze.m_Experiment.acc[testPicture],
                    IMREAD_GRAYSCALE);
 
         // Loads and runs commands
@@ -43,11 +43,11 @@ int main(int argc, char** argv) {
     } else if (option == 2) {
         // OPTION 2: Loop through all pictures
         int n = 0;
-        while (testAnalyze.m_patient.acc.back() != testAnalyze.m_patient.acc[n]) {
+        while (testAnalyze.m_Experiment.acc.back() != testAnalyze.m_Experiment.acc[n]) {
             n += 1;
             cout << n << endl;
             testAnalyze.m_img = imread(
-                testAnalyze.m_patient.imagePath + testAnalyze.m_patient.acc[n], IMREAD_GRAYSCALE);
+                testAnalyze.m_Experiment.imagePath + testAnalyze.m_Experiment.acc[n], IMREAD_GRAYSCALE);
             testAnalyze.loadRBCPreset();
             testAnalyze.runProcesses();
             testAnalyze.showImg();

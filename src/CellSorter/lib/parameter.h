@@ -1,6 +1,7 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
+#include <assert.h>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -54,6 +55,8 @@ protected:
     std::vector<string> m_options;
     string m_name;
     bool m_isModifiable = true;
+    bool m_isInitialized = false;  // Set when setting range or options. Assert is thrown if this is
+                                   // not done, to force implementer to set range or options
 
 private:
     // Private assignment operator. This ensures us that even though the Parameter is declared as a
@@ -73,7 +76,10 @@ public:
     void setRange(T start, T stop);
 
     void setValue(T v) { m_val = v; }
-    const T& getValue() const { return m_val; }
+    const T& getValue() const {
+        assert(m_isInitialized);
+        return m_val;
+    }
 
     const string getValueStr() const override;
     void setValueStr(string) override;
@@ -87,7 +93,7 @@ private:
 
 template <typename T>
 const string ValueParameter<T>::getValueStr() const {
-    return std::to_string(m_val);
+    return std::to_string(getValue());
 }
 
 template <typename T>
@@ -113,6 +119,7 @@ ValueParameter<T>::ValueParameter(vector<ParameterBase*>& parentProcessContainer
 
 template <typename T>
 void ValueParameter<T>::setRange(T start, T stop) {
+    m_isInitialized = true;
     m_range = std::pair<T, T>(start, stop);
     updateOptions();
 }
@@ -137,7 +144,10 @@ public:
     void setOptions(map<T, string>);
 
     void setValue(T v) { m_val = v; }
-    const T& getValue() const { return m_val; }
+    const T& getValue() const {
+        assert(m_isInitialized);
+        return m_val;
+    }
 
     const string getValueStr() const override;
     void setValueStr(string) override;
@@ -162,6 +172,7 @@ EnumParameter<T>::EnumParameter(vector<ParameterBase*>& parentProcessContainer, 
 
 template <typename T>
 void EnumParameter<T>::setOptions(map<T, string> options) {
+    m_isInitialized = true;
     m_enumOptions = options;
     updateOptions();
 }
@@ -179,6 +190,7 @@ void EnumParameter<T>::updateOptions() {
 
 template <typename T>
 const string EnumParameter<T>::getValueStr() const {
+    assert(m_isInitialized);
     for (const auto& v : m_enumOptions) {
         if (v.first == m_val) {
             return v.second;

@@ -1,31 +1,4 @@
-#ifndef FRAMEFINDER_FFHELPERS_H
-#define FRAMEFINDER_FFHELPERS_H
-
-#include <boost/filesystem.hpp>
-#include <fstream>
-#include <vector>
-#include <opencv/cv.hpp>
-
-
-struct Frame {
-    cv::Mat image;
-    std::string filename;
-    int id;
-    bool accepted;
-
-    bool operator<(const Frame& rhs) const { return id < rhs.id; }
-};
-
-/**
- *  Helper for extracting path leaf from
- *  boost filesystem path
- */
-struct path_leaf_string {
-    std::string operator()(const boost::filesystem::directory_entry& entry) const {
-        return entry.path().leaf().string();
-    }
-};
-
+#include "framefinder.h"
 
 /**
  * Function name should explain enough
@@ -138,5 +111,3 @@ void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) 
         }
     }
 }
-
-#endif  // FRAMEFINDER_FFHELPERS_H
