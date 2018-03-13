@@ -3,14 +3,13 @@
 
 #include "timer.h"
 
-enum TIME_MODE { MICROSECONDS, MILLISECONDS, SECONDS, MINUTES };
 
-inline void tic(Timer& t0) {
+inline void Timer::tic(Timer& t0) {
     // Set tic
     t0.time_point = std::chrono::steady_clock::now();
 };
 
-inline long toc(const Timer& timer) {
+inline long Timer::toc(const Timer& timer) {
     // Get toc
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point t0 = timer.time_point;
@@ -29,7 +28,7 @@ inline long toc(const Timer& timer) {
     return duration;
 }
 
-inline double toc(const Timer& timer, int time_mode) {
+inline double Timer::toc(const Timer& timer, int time_mode) {
     // Get toc
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point t0 = timer.time_point;
