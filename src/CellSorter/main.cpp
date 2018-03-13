@@ -46,8 +46,9 @@ int main(int argc, char** argv) {
         while (testAnalyze.m_Experiment.acc.back() != testAnalyze.m_Experiment.acc[n]) {
             n += 1;
             cout << n << endl;
-            testAnalyze.m_img = imread(
-                testAnalyze.m_Experiment.imagePath + testAnalyze.m_Experiment.acc[n], IMREAD_GRAYSCALE);
+            testAnalyze.m_img =
+                imread(testAnalyze.m_Experiment.imagePath + testAnalyze.m_Experiment.acc[n],
+                       IMREAD_GRAYSCALE);
             testAnalyze.loadRBCPreset();
             testAnalyze.runProcesses();
             testAnalyze.showImg();

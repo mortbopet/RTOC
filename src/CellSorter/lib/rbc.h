@@ -3,9 +3,6 @@
 
 #include <opencv/cv.hpp>
 
-
-
-
 class RBC {
 private:
     std::string m_label;

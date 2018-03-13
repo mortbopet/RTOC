@@ -40,11 +40,11 @@ void analyzer::loadImageNames() {
 void analyzer::selectBG() {
     std::string imgPath;
     imgPath = m_Experiment.imagePath + m_Experiment.dis[0];  // Loads very first discarded picture
-    m_bg = cv::imread(imgPath, cv::IMREAD_GRAYSCALE);  // Sets as background
+    m_bg = cv::imread(imgPath, cv::IMREAD_GRAYSCALE);        // Sets as background
 }
 
 void analyzer::runProcesses() {
-    for(const auto& process : m_processes){
+    for (const auto& process : m_processes) {
         process->doProcessing(m_img, m_bg, m_Experiment);
     }
     resetProcesses();
