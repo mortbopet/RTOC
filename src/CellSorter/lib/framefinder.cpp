@@ -40,6 +40,17 @@ std::string extractBetween(const std::string& src, const std::string& first,
     unsigned long b = src.find(last);
     return src.substr(a + 1, b - a);
 }
+/**
+ * Overload function with less inputs
+ *  should be faster
+ * @param src   :   string to search in
+ * @return      :   string between delimiters
+ */
+std::string extractBetween(const std::string& src) {
+    unsigned long a = src.find('_');
+    unsigned long b = src.find('.');
+    return src.substr(a + 1, b - a);
+}
 
 /**
  * Extension to get_files(), but sorts the output
@@ -60,7 +71,7 @@ int get_files(std::vector<Frame>& files, const std::string& folder) {
     std::vector<Frame> fn((unsigned)count);
     // Get file-numbers and accept_or_reject
     for (int i = 0; i < count; i++) {
-        auto id = (int)strtol(extractBetween(file_paths[i], "_", ".").c_str(), nullptr, 10);
+        auto id = (int)strtol(extractBetween(file_paths[i]).c_str(), nullptr, 10);
         Frame f = {cv::Mat(), file_paths[i], id, false};
         fn[i] = f;
     }
