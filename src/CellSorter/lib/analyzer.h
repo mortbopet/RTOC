@@ -2,8 +2,8 @@
 #define CELLSORTER_CSHELPER_H
 #include <fstream>
 #include <iostream>
-#include "Experiment.h"
-#include "Process.h"
+#include "experiment.h"
+#include "process.h"
 
 #include <opencv/cv.hpp>
 
