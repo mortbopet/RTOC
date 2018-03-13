@@ -19,12 +19,13 @@ struct Experiment {
     int cellNum;  // Used for cell registration
     // int tracker[] = {}; // Used for cell registration
     double intensity_threshold;
-    double edge_thres;         // Threshold for extracting channel edge
+    double edge_thres;        // Threshold for extracting channel edge
     cv::Mat se_edge;          // SE for extracting channel edge (SE = structuring element).
     cv::Mat se_RBC;           // SE for extracting channel edge
     cv::Mat se_noiseremoval;  // SE for removing noise
     std::vector<Frame> acc, dis;
-    std::string imagePath, textPath;  // Holds information about path to images and to _Accepted.txt and _Discarded.txt
+    std::string imagePath,
+        textPath;  // Holds information about path to images and to _Accepted.txt and _Discarded.txt
 
     void defaultSettings(std::string imgPath, std::string checkPath) {
         inlet = 65;

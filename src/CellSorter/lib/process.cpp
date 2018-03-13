@@ -32,11 +32,12 @@ void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) con
 }
 
 Normalize::Normalize() {
-    m_normalizeStrength.setRange(0,0xffff);
+    m_normalizeStrength.setRange(0, 0xffff);
 }
 
 void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    cv::normalize(img, img, m_normalizeStrength.getValue(), 0);  // 3rd arguemnt controls range of normalization output.
+    cv::normalize(img, img, m_normalizeStrength.getValue(),
+                  0);  // 3rd arguemnt controls range of normalization output.
 }
 
 void AbsoluteDiff::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {

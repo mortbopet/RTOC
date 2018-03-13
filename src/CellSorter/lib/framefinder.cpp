@@ -1,7 +1,7 @@
 #include "framefinder.h"
 
 inline bool exists(const std::string& path) {
-    return stat(path.c_str(), nullptr ) == 0;
+    return stat(path.c_str(), nullptr) == 0;
 }
 
 /**
@@ -12,7 +12,7 @@ inline bool exists(const std::string& path) {
  * @param   folder  :   vector<string> with file names
  * @return          :   Files found
  */
-int files_from_folder(std::vector<std::string> &files, const std::string &folder) {
+int files_from_folder(std::vector<std::string>& files, const std::string& folder) {
     if (!exists(folder)) {
         throw std::string("Folder doesn't exist.");
     }

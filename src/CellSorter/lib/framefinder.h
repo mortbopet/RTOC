@@ -1,13 +1,12 @@
 #ifndef FRAMEFINDER_FFHELPERS_H
 #define FRAMEFINDER_FFHELPERS_H
 
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <opencv/cv.hpp>
 #include <vector>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 
 struct Frame {
     cv::Mat image;
@@ -29,10 +28,12 @@ struct path_leaf_string {
 };
 
 inline bool exists(const std::string& path);
-int files_from_folder(std::vector<std::string> &files, const std::string &folder);
-std::string extractBetween(const std::string& src, const std::string& first, const std::string& last);
-int get_files(std::vector<Frame> &files, const std::string &folder);
-void accept_or_reject(std::vector<Frame> &frames, const std::string &img_folder, const double &threshold);
+int files_from_folder(std::vector<std::string>& files, const std::string& folder);
+std::string extractBetween(const std::string& src, const std::string& first,
+                           const std::string& last);
+int get_files(std::vector<Frame>& files, const std::string& folder);
+void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
+                      const double& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 

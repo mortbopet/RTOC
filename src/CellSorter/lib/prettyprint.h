@@ -22,6 +22,6 @@ void header(string in) {
     }
     cout << endl;
 }
-}
+}  // namespace PP
 
 #endif

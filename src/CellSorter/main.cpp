@@ -7,7 +7,6 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, char** argv) {
-
     //// Set path to image data and to _Accepted.txt and _Discarded.txt
     string localImagePath = "../../../data/ImgD1/";
     string localTextPath = "../../../data/";
@@ -38,7 +37,8 @@ int main(int argc, char** argv) {
     } else if (option == 2) {
         // OPTION 2: Loop through all pictures
         testAnalyze.loadRBCPreset();
-        while (testAnalyze.m_Experiment.acc.back().filename != testAnalyze.m_Experiment.acc[n].filename) {
+        while (testAnalyze.m_Experiment.acc.back().filename !=
+               testAnalyze.m_Experiment.acc[n].filename) {
             n += 1;
             // cout << n << endl;
             testAnalyze.m_img = testAnalyze.m_Experiment.acc[n].image;
@@ -78,8 +78,8 @@ int main(int argc, char** argv) {
             for (int i = 0; i < contours.size(); i++) {
                 printf(" * Contour[%d] - Area (M_00) = %.2f - Area OpenCV: %.2f - Length: %.2f \n",
                        i, mu[i].m00, contourArea(contours[i]), arcLength(contours[i], true));
-                //drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
-                //circle(drawing, mc[i], 4, color, -1, 8, 0);
+                // drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+                // circle(drawing, mc[i], 4, color, -1, 8, 0);
             }
 
             namedWindow("Contours", WINDOW_AUTOSIZE);

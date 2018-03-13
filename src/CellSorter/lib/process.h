@@ -22,7 +22,7 @@ namespace {
     ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName)
 #define CREATE_VALUE_PARM_DEFAULT(type, name, displayName, default) \
     ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName, default)
-}
+}  // namespace
 
 class Process {
 public:
