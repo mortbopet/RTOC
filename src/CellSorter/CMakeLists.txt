@@ -7,6 +7,7 @@ project(CellSorter)
 
 #Environment variable $OpenCV_DIR must be set to the "build" folder of OpenCV
 find_package(OpenCV REQUIRED)
+find_package( Boost COMPONENTS system filesystem REQUIRED)
 
 # Define all source and header files in src/
 
@@ -29,3 +30,6 @@ add_executable(${TEST_EXECUTABLE} ${TST_SRC})
 target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
+
+# Link Boost libraries
+target_link_libraries( ${PROJECT_NAME} Boost::system Boost::filesystem)

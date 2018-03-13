@@ -33,9 +33,7 @@ int main(int argc, char** argv) {
     // OPTION 1: Load 1 picture
     if (option == 1) {
         int testPicture = 65;  // Number of accepted picture to show
-        testAnalyze.m_img =
-            imread(testAnalyze.m_Experiment.imagePath + testAnalyze.m_Experiment.acc[testPicture],
-                   IMREAD_GRAYSCALE);
+        testAnalyze.m_img = testAnalyze.m_Experiment.acc[testPicture].image;
 
         // Loads and runs commands
         testAnalyze.loadRBCPreset();
@@ -44,12 +42,10 @@ int main(int argc, char** argv) {
     } else if (option == 2) {
         // OPTION 2: Loop through all pictures
         testAnalyze.loadRBCPreset();
-        while (testAnalyze.m_Experiment.acc.back() != testAnalyze.m_Experiment.acc[n]) {
+        while (testAnalyze.m_Experiment.acc.back().filename != testAnalyze.m_Experiment.acc[n].filename) {
             n += 1;
             // cout << n << endl;
-            testAnalyze.m_img =
-                imread(testAnalyze.m_Experiment.imagePath + testAnalyze.m_Experiment.acc[n],
-                       IMREAD_GRAYSCALE);
+            testAnalyze.m_img = testAnalyze.m_Experiment.acc[n].image;
             testAnalyze.runProcesses();
 
             Mat canny_output;
