@@ -1,5 +1,4 @@
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#pragma once
 
 #include <assert.h>
 #include <iostream>
@@ -220,4 +219,15 @@ using UniqueEnumPtr = std::unique_ptr<EnumParameter<T>>;
 template <typename T>
 using SharedEnumPtr = std::shared_ptr<EnumParameter<T>>;
 
-#endif  // PARAMETER_H
+// Function for receiving range/options from a parameter
+template <typename T>
+void getRange(stringstream& stream, T& low, T& high) {
+    stream >> low >> high;
+}
+
+inline void getOptions(stringstream& stream, std::vector<string>& options) {
+    string str;
+    while (stream >> str) {
+        options.push_back(str);
+    }
+}
