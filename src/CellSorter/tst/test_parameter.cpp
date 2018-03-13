@@ -56,18 +56,18 @@ int tst_parameterClass() {
             // GUI can spawn an editor that accepts integer values in
             cout << "integer detected, gui spawns integer editor" << endl;
             int high, low;
-            getParameterRange<int>(optionStream, low, high);
+            getRange<int>(optionStream, low, high);
         } else if (type == typeid(double).name()) {
             // GUI can spawn an editor that accepts floating point values
             cout << "double detected, gui spawns integer editor" << endl;
             double high, low;
-            getParameterRange<double>(optionStream, low, high);
+            getRange<double>(optionStream, low, high);
         } else {
             // GUI can spawn an editor that accepts ENUMs - gui will generate a combobox with values
             // that options provides
             cout << "enum detected, gui spawns integer editor" << endl;
             std::vector<string> options;
-            getParameterOptions(optionStream, options);
+            getOptions(optionStream, options);
             printer(options);
         }
     }
