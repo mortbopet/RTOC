@@ -1,4 +1,5 @@
 #include "analyzer.h"
+#include "framefinder.h"
 
 void analyzer::loadRBCPreset() {
     m_processes.push_back(new AbsoluteDiff);
@@ -24,23 +25,15 @@ void analyzer::loadPatientPreset(std::string img, std::string txt) {
 }
 
 void analyzer::loadImageNames() {
-    std::ifstream inFile;
-    std::string temp;
-    inFile.open(m_Experiment.imagePath + "_Discarded.txt");  // Gets name of accepted files
-    while (std::getline(inFile, temp)) {
-        m_Experiment.dis.push_back(temp);
-    }
-    inFile.close();
-    inFile.open(m_Experiment.imagePath + "_Accepted.txt");  // Gets name of accepted files
-    while (std::getline(inFile, temp)) {
-        m_Experiment.acc.push_back(temp);
-    }
-    inFile.close();
+    std::vector<Frame> frames;
+    std::string img_folder = m_Experiment.imagePath;
+    get_files(frames, img_folder);
+    accept_or_reject(frames, img_folder,m_Experiment.intensity_threshold);
+    get_accepted(frames,m_Experiment.acc);
+    get_rejected(frames,m_Experiment.dis);
 }
 void analyzer::selectBG() {
-    std::string imgPath;
-    imgPath = m_Experiment.imagePath + m_Experiment.dis[0];  // Loads very first discarded picture
-    m_bg = cv::imread(imgPath, cv::IMREAD_GRAYSCALE);  // Sets as background
+    m_bg = m_Experiment.dis[0].image;  // Sets as background
 }
 
 void analyzer::runProcesses() {
