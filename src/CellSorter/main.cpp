@@ -7,10 +7,6 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        printf("usage: DisplayImage.out <Image_Path>\n");
-        return -1;
-    }
 
     //// Set path to image data and to _Accepted.txt and _Discarded.txt
     string localImagePath = "/Users/eskidlbs/Desktop/data/ImgD1/";
