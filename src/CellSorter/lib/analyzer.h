@@ -11,7 +11,7 @@ class analyzer {
 public:
     void loadRBCPreset();
 
-    void loadPatientPreset(std::string img, std::string txt);
+    void loadExperimentPreset(std::string img, std::string txt);
 
     void loadImageNames();
 

@@ -52,12 +52,16 @@ public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     Binarize();
 
-    CREATE_VALUE_PARM_DEFAULT(double, m_maxVal, "Edge threshold", 255);
+    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge threshold");
+    CREATE_VALUE_PARM(double, m_maxVal, "Maximum binary value");
 };
 
 class Normalize : public Process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+    Normalize();
+
+    CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize strength");
 };
 
 class AbsoluteDiff : public Process {

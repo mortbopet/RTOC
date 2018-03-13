@@ -1,5 +1,9 @@
 #include "framefinder.h"
 
+inline bool exists(const std::string& path) {
+    return stat(path.c_str(), nullptr ) == 0;
+}
+
 /**
  * Function name should explain enough
  * takes address of folder path and the address for the results
@@ -8,14 +12,17 @@
  * @param   folder  :   vector<string> with file names
  * @return          :   Files found
  */
-int files_from_folder(std::vector<std::string>& files, const std::string& folder) {
+int files_from_folder(std::vector<std::string> &files, const std::string &folder) {
+    if (!exists(folder)) {
+        throw std::string("Folder doesn't exist.");
+    }
     try {
         boost::filesystem::path p(folder);
         boost::filesystem::directory_iterator start(p);
         boost::filesystem::directory_iterator end;
         transform(start, end, back_inserter(files), path_leaf_string());
     } catch (...) {
-        return -1;
+        throw std::string("Error reading from file");
     }
     return (int)files.size();
 }
