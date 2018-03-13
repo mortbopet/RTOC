@@ -6,7 +6,7 @@ int test_framefinder() {
 
     /// Filedetector test
     if (!exists("./Makefile")) {
-      throw std::string("Error in exists(const std::string& path)");
+        throw std::string("Error in exists(const std::string& path)");
     }
     if (!exists("./CMakeFiles/")) {
         throw std::string("Error in exists(const std::string& path)");
@@ -15,14 +15,14 @@ int test_framefinder() {
     /// Filelist getter test
     // Test files_from_folder from build dir
     std::vector<std::string> files;
-    if (files_from_folder(files,default_testdir) == 0) {
+    if (files_from_folder(files, default_testdir) == 0) {
         throw std::string("Error using files_from_folder()");
     }
 
     /// String extractor test
     // Test 1
     std::string a = "some_test.here";
-    if (extractBetween(a,"_",".") != "test") {
+    if (extractBetween(a, "_", ".") != "test") {
         throw std::string("Error in extractBetween()");
     }
     if (extractBetween(a) != "test") {
@@ -32,7 +32,7 @@ int test_framefinder() {
     /// Test get_files method
     // Test 1
     std::vector<Frame> f0;
-    if (get_files(f0,default_testdir) != 0) {
+    if (get_files(f0, default_testdir) != 0) {
         throw std::string("Error finding files");
     }
 
@@ -53,16 +53,15 @@ int test_framefinder() {
     if (f0.size() != 10) {
         throw std::string("Wrong size of Frame-vector");
     }
-    
-    get_accepted(f0,f0_acc);
-    get_rejected(f0,f0_dis);
+
+    get_accepted(f0, f0_acc);
+    get_rejected(f0, f0_dis);
     if (f0_acc.size() != 6) {
         throw std::string("Wrong size of accepted frames");
     }
     if (f0_dis.size() != 4) {
         throw std::string("Wrong size of discarded frames");
     }
-
 
     return 0;
 }

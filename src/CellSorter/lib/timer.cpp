@@ -3,7 +3,6 @@
 
 #include "timer.h"
 
-
 inline void Timer::tic(Timer& t0) {
     // Set tic
     t0.time_point = std::chrono::steady_clock::now();
