@@ -9,8 +9,8 @@ using namespace std;
 int main(int argc, char** argv) {
 
     //// Set path to image data and to _Accepted.txt and _Discarded.txt
-    string localImagePath = "/Users/eskidlbs/Desktop/data/ImgD1/";
-    string localTextPath = "/Users/eskidlbs/Desktop/data/";
+    string localImagePath = "../../../data/ImgD1/";
+    string localTextPath = "../../../data/";
 
     // Initializing
     analyzer testAnalyze;
