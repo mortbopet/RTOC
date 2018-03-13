@@ -17,7 +17,7 @@ int main() {
     toc(t);
 
     tic(t);
-    accept_or_reject(a, _PATH_DATA, (double) 0.0352);
+    accept_or_reject(a, _PATH_DATA, (double)0.0352);
     std::cout << "Checked: " << a.size() << std::endl;
     toc(t);
 

@@ -1,8 +1,8 @@
+#include <sys/stat.h>
+#include <chrono>
 #include <iostream>
 #include <opencv/cv.hpp>
 #include <opencv2/core/ocl.hpp>
-#include <sys/stat.h>
-#include <chrono>
 
 using namespace cv;
 using namespace std;
@@ -12,7 +12,6 @@ signed long toc(std::chrono::time_point<std::chrono::high_resolution_clock> tic)
     std::chrono::duration<signed long, std::nano> out = toc - tic;
     return out.count();
 }
-
 
 int main() {
     // Create OpenCL context
@@ -43,8 +42,6 @@ int main() {
     cout << "-------------------------------------------------------------------" << endl;
     cout << endl;
 
-
-
     // Init Stuff
     Mat image;
     String image_path = "/home/jenslindahl/CLionProjects/HelloCLCV/clion_logo.png";
@@ -55,7 +52,7 @@ int main() {
     image = imread(image_path, CV_LOAD_IMAGE_COLOR);
     if (image.data) {
         // Show Image
-        namedWindow("window name",WINDOW_AUTOSIZE);
+        namedWindow("window name", WINDOW_AUTOSIZE);
         imshow("window name", image);
     } else {
         cout << "error reading file - correct name or wha'?" << endl;

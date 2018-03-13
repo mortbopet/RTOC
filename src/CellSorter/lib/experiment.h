@@ -1,11 +1,7 @@
-#ifndef CELLSORTER_PROPERTIES_H
-#define CELLSORTER_PROPERTIES_H
+#ifndef EXPERIMENT_H
+#define EXPERIMENT_H
 
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
 #include <opencv/cv.hpp>
-#include <sstream>
 #include <string>
 
 #include "framefinder.h"
@@ -45,4 +41,4 @@ struct Experiment {
     }
 };
 
-#endif  // CELLSORTER_PROPERTIES_H
+#endif  // EXPERIMENT_H

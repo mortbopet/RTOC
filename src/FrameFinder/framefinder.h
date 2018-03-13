@@ -3,9 +3,8 @@
 
 #include <boost/filesystem.hpp>
 #include <fstream>
-#include <vector>
 #include <opencv/cv.hpp>
-
+#include <vector>
 
 struct Frame {
     cv::Mat image;
@@ -26,7 +25,6 @@ struct path_leaf_string {
     }
 };
 
-
 /**
  * Function name should explain enough
  * takes address of folder path and the address for the results
@@ -35,7 +33,7 @@ struct path_leaf_string {
  * @param   folder  :   vector<string> with file names
  * @return          :   Files found
  */
-int files_from_folder(std::vector<std::string> &files, const std::string &folder) {
+int files_from_folder(std::vector<std::string>& files, const std::string& folder) {
     try {
         boost::filesystem::path p(folder);
         boost::filesystem::directory_iterator start(p);
@@ -54,7 +52,8 @@ int files_from_folder(std::vector<std::string> &files, const std::string &folder
  * @param last  :   last delimiter
  * @return      :   extracted std::string
  */
-std::string extractBetween(const std::string& src, const std::string& first, const std::string& last) {
+std::string extractBetween(const std::string& src, const std::string& first,
+                           const std::string& last) {
     unsigned long a = src.find(first);
     unsigned long b = src.find(last);
     return src.substr(a + 1, b - a);
@@ -68,7 +67,7 @@ std::string extractBetween(const std::string& src, const std::string& first, con
  * @param mode      :   FILE_LIST_MODE  :   Set output mode
  * @return          :   int             :   error code
  */
-int get_files(std::vector<Frame> &files, const std::string &folder) {
+int get_files(std::vector<Frame>& files, const std::string& folder) {
     std::vector<std::string> file_paths;
     // Get size and return if empty or error
     int count = files_from_folder(file_paths, folder);
@@ -100,13 +99,15 @@ int get_files(std::vector<Frame> &files, const std::string &folder) {
  * @param path_dis      :   string          :   path to "discarded" txt-file
  *
  */
-void accept_or_reject(std::vector<Frame> &frames, const std::string &img_folder, const double &threshold) {
+void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
+                      const double& threshold) {
     double crit = 0.0;
 
-    cv::Mat lastMoved = cv::imread(img_folder + "/" + frames[0].filename, cv::IMREAD_GRAYSCALE);;
+    cv::Mat lastMoved = cv::imread(img_folder + "/" + frames[0].filename, cv::IMREAD_GRAYSCALE);
+    ;
 
     // Loop through all pictures
-    for (auto &frame : frames) {
+    for (auto& frame : frames) {
         std::string img_path = img_folder + "/" + frame.filename;
         frame.image = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
         minMaxIdx(lastMoved - frame.image, nullptr, &crit);

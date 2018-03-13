@@ -6,8 +6,8 @@
 #include <opencv/cv.hpp>
 #include <string>
 
+#include "experiment.h"
 #include "parameter.h"
-#include "Experiment.h"
 
 namespace {
 #define PARAMETER_CONTAINER m_parameters
@@ -28,8 +28,9 @@ class Process {
 public:
     Process();  // Constructor
 
-    virtual void doProcessing(cv::Mat& img, cv::Mat& bg,
-                              const Experiment& props) const = 0;  // General function for doing processing.
+    virtual void
+    doProcessing(cv::Mat& img, cv::Mat& bg,
+                 const Experiment& props) const = 0;  // General function for doing processing.
 
 protected:
     std::vector<ParameterBase*> PARAMETER_CONTAINER;
@@ -37,7 +38,8 @@ protected:
 
 class Morph : public Process {
 public:
-    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override; // CHANGE TO CONST OVERRIDE
+    void doProcessing(cv::Mat& img, cv::Mat&,
+                      const Experiment& props) const override;  // CHANGE TO CONST OVERRIDE
     Morph();
 
     CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology type");

@@ -1,4 +1,4 @@
-#include "Process.h"
+#include "process.h"
 #include <opencv/cv.hpp>
 
 Process::Process(void) {}
@@ -24,8 +24,7 @@ void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const 
 }
 
 Binarize::Binarize() {
-    m_edgeThreshold.setRange(0,255);
-    m_maxVal.setRange(0,255);
+    m_maxVal.setRange(0, 255);
 }
 
 void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {

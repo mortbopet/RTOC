@@ -3,9 +3,8 @@
 
 #include <boost/filesystem.hpp>
 #include <fstream>
-#include <vector>
 #include <opencv/cv.hpp>
-
+#include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
 
