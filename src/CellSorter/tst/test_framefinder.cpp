@@ -1,18 +1,22 @@
 #include <string>
 #include "../lib/framefinder.h"
-#include "../lib/prettyprint.h"
+
 
 int test_framefinder() {
     std::string default_testdir = "./";
 
-    PP::header("FrameFinder Test");
-
     /// Filedetector test
     if (!exists("./Makefile")) {
-        throw std::string("Error in exists(const std::string& path)");
+        return -1;
+    }
+    if (exists("./Makefilex")) {
+        return -1;
     }
     if (!exists("./CMakeFiles/")) {
-        throw std::string("Error in exists(const std::string& path)");
+        return -1;
+    }
+    if (exists("./CMakeFilesx/")) {
+        return -1;
     }
     std::cout << "exists() passed" << std::endl;
 
@@ -20,7 +24,7 @@ int test_framefinder() {
     // Test files_from_folder from build dir
     std::vector<std::string> files;
     if (files_from_folder(files, default_testdir) == 0) {
-        throw std::string("Error using files_from_folder()");
+        return -1;
     }
     std::cout << "file_from_folder() passed" << std::endl;
 
@@ -28,10 +32,10 @@ int test_framefinder() {
     // Test 1
     std::string a = "some_test.here";
     if (extractBetween(a, "_", ".") != "test") {
-        throw std::string("Error in extractBetween()");
+        return -1;
     }
     if (extractBetween(a) != "test") {
-        throw std::string("Error in extractBetween()");
+        return -1;
     }
     std::cout << "extractBetween() passed" << std::endl;
 
@@ -39,13 +43,13 @@ int test_framefinder() {
     // Test 1
     std::vector<Frame> f0;
     if (get_files(f0, default_testdir) != 0) {
-        throw std::string("Error finding files");
+        return -1;
     }
 
     // Clear vector and test if proper empty
     f0.clear();
     if (!f0.empty()) {
-        throw std::string("Error clearing std::vector<Frame>");
+        return -1;
     }
 
     // Test 2
@@ -57,21 +61,21 @@ int test_framefinder() {
         f0.push_back({cv::Mat(), "./", i, (i > 3)});
     }
     if (f0.size() != 10) {
-        throw std::string("Wrong size of Frame-vector");
+        return -1;
     }
     std::cout << "std::vector<Frame> passed" << std::endl;
 
     get_accepted(f0, f0_acc);
     get_rejected(f0, f0_dis);
     if (f0_acc.size() != 6) {
-        throw std::string("Wrong size of accepted frames");
+        return -1;
     }
     std::cout << "get_accepted() passed" << std::endl;
     if (f0_dis.size() != 4) {
-        throw std::string("Wrong size of discarded frames");
+        return -1;
     }
     std::cout << "get_rejected() passed" << std::endl;
 
-    std::cout << " FrameFinder passed" << std::endl;
+    std::cout << "FrameFinder passed" << std::endl;
     return 0;
 }

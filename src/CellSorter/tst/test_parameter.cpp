@@ -12,7 +12,7 @@ void printer(const std::vector<string> a) {
     cout << endl;
 }
 
-int tst_parameterClass() {
+int test_parameterClass() {
     std::vector<ParameterBase*> parameters;
 
     // Create various parameters for testing - this is how parameters are created in Process

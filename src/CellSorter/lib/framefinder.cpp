@@ -1,7 +1,10 @@
 #include "framefinder.h"
 
+
+
 bool exists(const std::string& path) {
-    return stat(path.c_str(), nullptr) != 0;
+    struct stat buf;
+    return stat(path.c_str(), &buf) == 0;
 }
 
 /**
@@ -14,7 +17,7 @@ bool exists(const std::string& path) {
  */
 int files_from_folder(std::vector<std::string>& files, const std::string& folder) {
     if (!exists(folder)) {
-        throw std::string("Folder doesn't exist.");
+        return -1;
     }
     try {
         boost::filesystem::path p(folder);
