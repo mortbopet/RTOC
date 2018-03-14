@@ -33,3 +33,4 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
 
 # Link Boost libraries
 target_link_libraries( ${PROJECT_NAME} Boost::system Boost::filesystem)
+target_link_libraries( ${TEST_EXECUTABLE} Boost::system Boost::filesystem)

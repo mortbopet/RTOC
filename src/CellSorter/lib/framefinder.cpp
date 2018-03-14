@@ -1,7 +1,7 @@
 #include "framefinder.h"
 
-inline bool exists(const std::string& path) {
-    return stat(path.c_str(), nullptr) == 0;
+bool exists(const std::string& path) {
+    return stat(path.c_str(), nullptr) != 0;
 }
 
 /**
@@ -38,7 +38,7 @@ std::string extractBetween(const std::string& src, const std::string& first,
                            const std::string& last) {
     unsigned long a = src.find(first);
     unsigned long b = src.find(last);
-    return src.substr(a + 1, b - a);
+    return src.substr(a + 1, b - a - 1);
 }
 /**
  * Overload function with less inputs
@@ -49,7 +49,7 @@ std::string extractBetween(const std::string& src, const std::string& first,
 std::string extractBetween(const std::string& src) {
     unsigned long a = src.find('_');
     unsigned long b = src.find('.');
-    return src.substr(a + 1, b - a);
+    return src.substr(a + 1, b - a - 1);
 }
 
 /**
