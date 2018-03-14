@@ -27,7 +27,7 @@ struct path_leaf_string {
     }
 };
 
-inline bool exists(const std::string& path);
+bool exists(const std::string& path);
 int files_from_folder(std::vector<std::string>& files, const std::string& folder);
 std::string extractBetween(const std::string& src, const std::string& first,
                            const std::string& last);
