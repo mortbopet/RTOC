@@ -27,7 +27,7 @@ void analyzer::loadRBCPreset() {
     m_processes.push_back(morphDEFAULT);
 }
 
-void analyzer::loadExperimentPreset(std::string img, std::string txt) {
+void analyzer::loadExperimentPreset(const std::string& img, const std::string& txt) {
     m_Experiment.defaultSettings(img, txt);
 }
 
