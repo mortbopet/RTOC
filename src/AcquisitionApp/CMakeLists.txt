@@ -18,15 +18,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 
-# set UI include directory
-set ( UIS
- src/*.ui
-)
-
-set ( RESOURCES
- resources/*.qrc
-)
-
 # Find Qt5Core and Qt5Widgets
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -43,7 +34,18 @@ file(GLOB LIB_HEADERS
     src/*.h
     SiliconSoftwareSrc/*.h)
 
-add_library(AcquisitionApp_lib ${LIB_SOURCES} ${LIB_HEADERS})
+# set Qt specific files
+file ( GLOB UIS
+ src/*.ui
+)
+
+file ( GLOB RESOURCES
+ resources/*.qrc
+)
+
+
+
+add_library(AcquisitionApp_lib ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
 
 add_executable(${PROJECT_NAME} main.cpp)
 
