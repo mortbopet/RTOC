@@ -13,6 +13,29 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOUIC ON)
+
+# set UI include directory
+set ( UIS
+ src/*.ui
+)
+
+set ( RESOURCES
+ resources/*.qrc
+)
+
+# Find Qt5Core and Qt5Widgets
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+
+# For finding Qt includes
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+include_directories(${Qt5Core_INCLUDE_DIRS})
+
 file(GLOB LIB_SOURCES
     src/*.cpp
     SiliconSoftwareSrc/*.cpp)
@@ -37,4 +60,4 @@ target_link_libraries( ${PROJECT_NAME}
 )
 
 # Link AcquisitionApp lib
-target_link_libraries(${PROJECT_NAME} AcquisitionApp_lib)
+target_link_libraries(${PROJECT_NAME} AcquisitionApp_lib  Qt5::Core Qt5::Widgets)
