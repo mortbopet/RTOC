@@ -27,7 +27,7 @@ int32_t Acquisitor::run(char* path) {
         mDisplay = DisplayWrapper::create(std::weak_ptr<DmaMemWrapper>(mDmaHandle), dmaPort,
                                           std::weak_ptr<FgWrapper>(mFgHandle));
         SgcBoardHandle* board = initialiseBoard(mFgHandle->getFgHandle());
-        std::vector<std::pair<std::string, SgcCameraHandle*>> cameras = discoverCameras(board);
+        // std::vector<std::pair<std::string, SgcCameraHandle*>> cameras = discoverCameras(board);
 
         mCamera = selectCamera(board);
 
@@ -48,7 +48,7 @@ int32_t Acquisitor::run(char* path) {
 
 void Acquisitor::acquisitionSgc(Fg_Struct* fgHandle, uint32_t dmaPort, dma_mem* dmaHandle,
                                 SgcCameraHandle* cameraHandle) {
-    uint32_t MaxPics = 5000;
+    uint32_t MaxPics = GRAB_INFINITE;
 
     frameindex_t bufNr = 0;
     bool isError = false;
@@ -63,11 +63,19 @@ void Acquisitor::acquisitionSgc(Fg_Struct* fgHandle, uint32_t dmaPort, dma_mem* 
     while (!isError) {
         bufNr = Fg_getImageEx(fgHandle, SEL_ACT_IMAGE, 0, dmaPort, waitDurationInMs, dmaHandle);
 
-        isError = bufNr < 0;
-        if (isError)
-            throwLastFgError();
+        if (bufNr < 0) {
+            if (bufNr == FG_TIMEOUT_ERR) {
+                // No more frame
+                break;
+            } else {
+                throwLastFgError();
+            }
+        }
 
         drawBuffer((int)bufNr);
+
+        // Access a pointer to an image in the buffer denoted by bufNr
+        void* pos = Fg_getImagePtrEx(fgHandle, bufNr, dmaPort, dmaHandle);
 
         // Unblock the buffer
         Fg_setStatusEx(fgHandle, FG_UNBLOCK, bufNr, dmaPort, dmaHandle);
