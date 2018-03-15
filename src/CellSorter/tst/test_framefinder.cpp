@@ -1,6 +1,6 @@
+#include <iostream>
 #include <string>
 #include "../lib/framefinder.h"
-
 
 int test_framefinder() {
     std::string default_testdir = "./";
