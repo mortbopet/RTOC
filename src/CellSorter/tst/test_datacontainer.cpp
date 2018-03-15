@@ -3,14 +3,14 @@
 #include <iostream>
 
 int test_datacontainer() {
-    auto dataObjectPtr = new DataObject(0x1001);
-    delete dataObjectPtr;
+    int dataFlags = data::Area | data::Circularity;
 
-    DataContainer container;
-    container.setDataFlags(0b1001);
+    DataContainer container(dataFlags);
+
     container.appendNew();
-    container.setValue(0, data::Area, 2);
-    assert(container.getValue<int>(0, data::Area) == 2);
+    container.setValue(0, data::Area, 12345678);
+
+    assert(container.getValue<int>(0, data::Area) == 12345678);
 
     std::cout << "test_datacontainer() passed" << std::endl;
 

@@ -13,16 +13,14 @@ enum DataFlags {
     Circularity = 1 << 1,
     Eccentricity = 1 << 2,
     Major_axis = 1 << 3,
-    Minor_axis = 1 << 4,
+    Minor_axis = 1 << 4
 };
-
-#define TYPEPAIR(type) std::pair<const char*, size_t>(typeid(type).name(), sizeof(type))
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
 // This mapping is used by DataObject for memory allocation
-static std::map<DataFlags, std::pair<const char*, size_t>> typeMap{{Area, TYPEPAIR(int)},
-                                                                   {Circularity, TYPEPAIR(double)},
-                                                                   {Major_axis, TYPEPAIR(bool)}};
+static std::map<DataFlags, size_t> typeMap{{Area, sizeof(int)},
+                                           {Circularity, sizeof(double)},
+                                           {Major_axis, sizeof(float)}};
 }  // namespace data
 
 /**
@@ -31,7 +29,7 @@ static std::map<DataFlags, std::pair<const char*, size_t>> typeMap{{Area, TYPEPA
  */
 class DataObject {
 public:
-    DataObject(long dataFlags);
+    DataObject(long dataFlags, size_t size);
     ~DataObject();
 
     template <typename T>
@@ -44,6 +42,7 @@ private:
     size_t getBytesToData(data::DataFlags flag);
 
     void* m_memory = nullptr;
+    int m_dataFlags;
     size_t m_size;  // Total allocated memory space
 };
 
@@ -72,6 +71,7 @@ void DataObject::setValue(data::DataFlags dataFlag, T value) {
 class DataContainer {
 public:
     DataContainer();
+    DataContainer(long flags);
     ~DataContainer();
 
     void setDataFlags(data::DataFlags flag);  // sets ALL data flags
@@ -89,10 +89,13 @@ public:
     void setValue(int i, data::DataFlags dataFlag, T value);
 
 private:
+    void calculateObjectSize();
+
     std::vector<DataObject*> m_data;
     int m_dataFlags = 0;
 
     bool m_locked = false;
+    size_t m_objectSize;
 };
 
 template <typename T>
