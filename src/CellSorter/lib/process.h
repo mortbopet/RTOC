@@ -81,4 +81,16 @@ public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     RegionProps();
 };
+
+class ClearBorder : public Process {
+public:
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+};
+
+class Fill : public Process {
+public:
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+};
+
+
 #endif  // CELLSORTER_PROCESS_H

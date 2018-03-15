@@ -49,8 +49,30 @@ void Canny::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const
     cv::Canny(img, img, m_lowThreshold.getValue(), m_highThreshold.getValue());
 }
 
+void ClearBorder::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+    for (size_t i = 0; i < contours.size(); i++)
+    {
+        cv::Rect bounding_rect = cv::boundingRect(contours[i]);
+        cv::Rect test_rect = bounding_rect & cv::Rect(1, 1, img.cols - 2, img.rows - 2);
+        if (bounding_rect != test_rect)
+        {
+            cv::drawContours(img, contours, (int)i, cv::Scalar(0),-1);
+        }
+    }
+}
+
+void Fill::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
+    // Assert that the image has been binarized
+    cv::Mat img_inv;
+    cv::bitwise_not(img,img_inv);
+    cv::floodFill(img_inv, cv::Point(0,0), cv::Scalar(0));
+    cv::bitwise_or(img, img_inv, img);
+}
+
 RegionProps::RegionProps() {
-    // Set parameter ranges if needed
+
 }
 
 void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {

@@ -24,10 +24,9 @@ struct Experiment {
     cv::Mat se_RBC;           // SE for extracting channel edge
     cv::Mat se_noiseremoval;  // SE for removing noise
     std::vector<Frame> acc, dis;
-    std::string imagePath,
-        textPath;  // Holds information about path to images and to _Accepted.txt and _Discarded.txt
+    std::string imagePath;
 
-    void defaultSettings(std::string imgPath, std::string checkPath) {
+    void defaultSettings(const std::string& imgPath) {
         inlet = 65;
         outlet = 603;
         yref = 52;
@@ -38,7 +37,6 @@ struct Experiment {
         se_noiseremoval = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2));
         cellNum = 0;
         imagePath = imgPath;
-        textPath = checkPath;
     }
 };
 
