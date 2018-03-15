@@ -38,8 +38,7 @@ protected:
 
 class Morph : public Process {
 public:
-    void doProcessing(cv::Mat& img, cv::Mat&,
-                      const Experiment& props) const override;  // CHANGE TO CONST OVERRIDE
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     Morph();
 
     CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology type");
@@ -69,4 +68,17 @@ public:
     void doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const override;
 };
 
+class Canny : public Process {
+public:
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+
+    CREATE_VALUE_PARM(double, m_lowThreshold, "Low threshold");    // first threshold
+    CREATE_VALUE_PARM(double, m_highThreshold, "High threshold");    // second threshold
+};
+
+class RegionProps : public Process {
+public:
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+    RegionProps();
+};
 #endif  // CELLSORTER_PROCESS_H

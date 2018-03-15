@@ -44,3 +44,15 @@ void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) co
 void AbsoluteDiff::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
     cv::absdiff(img, bg, img);  // Outputs absolute difference into 'diff'
 }
+
+void Canny::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+    cv::Canny(img, img, m_lowThreshold.getValue(), m_highThreshold.getValue());
+}
+
+RegionProps::RegionProps() {
+    // Set parameter ranges if needed
+}
+
+void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+    // Do stuff
+}

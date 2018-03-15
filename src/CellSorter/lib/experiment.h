@@ -6,7 +6,7 @@
 
 #include "framefinder.h"
 
-//// Experient
+//// Experiment
 /* Struct for each Experiment. Used as a container for parameters.
  * More functions can be created to change those parameters
  * or set different presets.
