@@ -13,30 +13,47 @@
  */
 
 struct Experiment {
+    //// Setting range for min and max values of accepted RBC's
+    int convex_MIN; // min value of convex area to be accepted
+    int convex_MAX; // max value of convex area to be accepted
+    int majorAxisLength_MIN; // min value of major axis length to be accepted
+    int majorAxisLength_MAX; // max value of major axis length to be accepted
+    double solidity_MIN; // min value of solidity of the RBC to be accepted
+    double solidity_MAX; // max value of solidity of the RBC to be accepted. This should be left as 1
+
     int inlet;    // Bottom corner of constriction inlet
     int outlet;   // Bottom corner of constriction outlet
-    int yref;     // Vertical center of inlet
     int cellNum;  // Used for cell registration
-    // int tracker[] = {}; // Used for cell registration
-    double intensity_threshold;
-    double edge_thres;        // Threshold for extracting channel edge
-    cv::Mat se_edge;          // SE for extracting channel edge (SE = structuring element).
-    cv::Mat se_RBC;           // SE for extracting channel edge
-    cv::Mat se_noiseremoval;  // SE for removing noise
     std::vector<Frame> acc, dis;
     std::string imagePath;
 
-    void defaultSettings(const std::string& imgPath) {
-        inlet = 65;
-        outlet = 603;
-        yref = 52;
-        intensity_threshold = 0.0354;
-        edge_thres = 0.272 * 15;
-        se_edge = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(1, 30));
-        se_RBC = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15));
-        se_noiseremoval = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2));
+    void defaultSettings(std::string imgPath, std::string checkPath) {
+        convex_MIN = 200;
+        convex_MAX = 1450;
+        majorAxisLength_MIN = 0;
+        majorAxisLength_MAX = 65;
+        solidity_MIN = 0.87;
+        solidity_MAX = 1;
+
+        inlet = 60;
+        outlet = 200;
         cellNum = 0;
         imagePath = imgPath;
+    }
+
+    void setConvex_Range(int min, int max) {
+        convex_MIN = min;
+        convex_MAX = max;
+    }
+
+    void setMajorAxisLength_Range(int min, int max) {
+        majorAxisLength_MIN = min;
+        majorAxisLength_MAX = max;
+    }
+
+    void setSolidity_Range(int min, int max) {
+        solidity_MIN = min;
+        solidity_MAX = max;
     }
 };
 
