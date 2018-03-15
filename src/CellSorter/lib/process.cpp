@@ -1,4 +1,5 @@
 #include "process.h"
+#include <math.h>
 #include <opencv/cv.hpp>
 
 Process::Process(void) {}
@@ -75,6 +76,73 @@ RegionProps::RegionProps() {
 
 }
 
+/** PROTO / DEMO / NOT IMPLEMENTED / WARNING / HEJ / !!!
+    Naive written:
+    Very redudant, how to make this very super smart(?)
+ */
 void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
-    // Do stuff
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+
+    // for every contour -> new regionprops object with m_parameters
+    for (const std::vector<cv::Point>& contour : contours) {
+        if ("Area") {
+            auto area = cv::contourArea(contour);
+            // return area
+        }
+        if ("BoundingBox") {
+            cv::Rect bbox = cv::boundingRect(contour);
+            // return bbox
+        }
+        if ("Centroid") {
+            cv::Moments m = cv::moments(contour, true);
+            auto cx = int(m.m10/m.m00);
+            auto cy = int(m.m01/m.m00);
+            int centroid[2] = {cx,cy};
+            // return centroid
+        }
+        if ("Circularity") {
+            auto area = cv::contourArea(contour);
+            auto perimeter = cv::arcLength(contour, true);
+            auto circ = 4 * M_PI * area / perimeter;
+            // return circ
+        }
+        if ("GradientScore") {
+            cv::Moments m = cv::moments(contour, true);
+            auto cx = int(m.m10/m.m00);
+            auto cy = int(m.m01/m.m00);
+            int c[2] = {cx,cy};
+            if ((round(c[0] - 5.5) < 0 && round(c[0] + 5.5) > img.cols) &&
+                (round(c[1] - 22.5) < 0 && round(c[1] + 22.5) > img.rows)) {
+
+                cv::Rect roi = cv::Rect((int) round(c[0] - 5.5),(int) round(c[0] + 5.5),
+                                        (int) round(c[1] - 22.5),(int) round(c[1] + 22.5));
+
+                cv::Mat temp = cv::Mat(img,roi);
+                // edgedetect (Canny) here
+
+            }
+        }
+        if ("MajorAxisLength") {
+            cv::RotatedRect fit = cv::fitEllipse(contour);
+            double majoraxislen = max(fit.size.width,fit.size.height);
+            // return majoraxislen
+        }
+        if ("Solidity") {
+            auto area = cv::contourArea(contour);
+            cv::Mat hull;
+            cv::convexHull(img,hull);
+            auto hull_area = cv::contourArea(hull);
+            double solidity = area / hull_area;
+            // return solidity;
+        }
+        if ("Perimeter") {
+            double perimeter = cv::arcLength(contour, true);
+            // return perimeter
+        }
+
+
+
+    }
+
 }
