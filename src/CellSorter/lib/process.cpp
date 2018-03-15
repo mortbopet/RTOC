@@ -1,4 +1,5 @@
 #include "process.h"
+#include "matlab_ext.h"
 #include <math.h>
 #include <opencv/cv.hpp>
 
@@ -38,12 +39,26 @@ Normalize::Normalize() {
 }
 
 void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    cv::normalize(img, img, m_normalizeStrength.getValue(),
-                  0);  // 3rd arguemnt controls range of normalization output.
+    cv::normalize(img, img, m_normalizeStrength.getValue(), 0);
 }
 
-void AbsoluteDiff::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
-    cv::absdiff(img, bg, img);  // Outputs absolute difference into 'diff'
+SubtractBG::SubtractBG() {
+    m_edgeThreshold.setRange(0,1);
+}
+
+void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
+    cv::Mat bg_edge, diff;
+    cv::absdiff(img, bg, diff);
+    cv::threshold(bg, bg_edge, 69, 255, cv::THRESH_BINARY_INV);
+    cv::Mat se_edge = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(1, 30));
+    cv::morphologyEx(bg_edge,bg_edge,cv::MORPH_CLOSE,se_edge);
+    cv::rectangle(bg_edge,cv::Rect(props.inlet-10,0,20,bg.cols),cv::Scalar(0),cv::FILLED);
+    //matlab::bwareaopen(bg_edge,100);
+    cv::bitwise_not(bg_edge,bg_edge);
+    // cv::bitwise_and(diff,bg_edge,img);
+
+    img = bg_edge;
+
 }
 
 void Canny::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
@@ -119,6 +134,8 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
                                         (int) round(c[1] - 22.5),(int) round(c[1] + 22.5));
 
                 cv::Mat temp = cv::Mat(img,roi);
+
+
                 // edgedetect (Canny) here
 
             }

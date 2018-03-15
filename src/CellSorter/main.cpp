@@ -8,21 +8,20 @@ using namespace std;
 
 int main(int argc, char** argv) {
     //// Set path to image data and to _Accepted.txt and _Discarded.txt
-    string localImagePath = "../../../data/ImgD1/";
+    string localImagePath = "../../../data/ImgD1_cut";
     string localTextPath = "../../../data/";
 
     // Initializing
     analyzer testAnalyze;
 
     // Sets Experiment to default. More functions to come to change parameters
-    testAnalyze.loadExperimentPreset(localImagePath, localTextPath);
+    testAnalyze.loadExperimentPreset(localImagePath);
 
     // Loads lists of images and gets background
     testAnalyze.loadImageNames();
     testAnalyze.selectBG();
 
     //// CHOSE OPTION FOR OPERATION
-    int option = 2;  // temporary solution
     int n = 0;
 
     // OPTION 2: Loop through all pictures

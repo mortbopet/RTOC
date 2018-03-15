@@ -63,9 +63,12 @@ public:
     CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize strength");
 };
 
-class AbsoluteDiff : public Process {
+class SubtractBG : public Process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const override;
+    SubtractBG();
+
+    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge threshold");
 };
 
 class Canny : public Process {

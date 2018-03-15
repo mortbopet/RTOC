@@ -25,9 +25,10 @@ struct Experiment {
     int outlet;   // Bottom corner of constriction outlet
     int cellNum;  // Used for cell registration
     std::vector<Frame> acc, dis;
+    double intensity_threshold;
     std::string imagePath;
 
-    void defaultSettings(std::string imgPath, std::string checkPath) {
+    void defaultSettings(const std::string& imgPath) {
         convex_MIN = 200;
         convex_MAX = 1450;
         majorAxisLength_MIN = 0;
@@ -35,9 +36,10 @@ struct Experiment {
         solidity_MIN = 0.87;
         solidity_MAX = 1;
 
-        inlet = 60;
+        inlet = 80;
         outlet = 200;
         cellNum = 0;
+        intensity_threshold = 0.0354;
         imagePath = imgPath;
     }
 
