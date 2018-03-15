@@ -13,8 +13,12 @@ endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
-file(GLOB LIB_SOURCES src/*.cpp)
-file(GLOB LIB_HEADERS src/*.h)
+file(GLOB LIB_SOURCES
+    src/*.cpp
+    SiliconSoftwareSrc/*.cpp)
+file(GLOB LIB_HEADERS
+    src/*.h
+    SiliconSoftwareSrc/*.h)
 
 add_library(AcquisitionApp_lib ${LIB_SOURCES} ${LIB_HEADERS})
 
