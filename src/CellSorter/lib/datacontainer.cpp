@@ -8,6 +8,8 @@ DataObject::DataObject(long dataFlags) {
     m_size = 0;
     // Iterate through the typeMap and match against dataFlags. If match is found, increment m_size
     // with the corresponding data type size
+    /** @todo move this to DataContainer and pass as a constructor argument
+     */
     for (const auto& item : data::typeMap) {
         if (item.first & dataFlags) {
             m_size += item.second.second;
