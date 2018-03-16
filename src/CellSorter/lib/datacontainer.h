@@ -41,7 +41,7 @@ public:
 private:
     size_t getBytesToData(data::DataFlags flag);
 
-    void* m_memory = nullptr;
+    char* m_memory = nullptr;
     int m_dataFlags;
     size_t m_size;  // Total allocated memory space
 };

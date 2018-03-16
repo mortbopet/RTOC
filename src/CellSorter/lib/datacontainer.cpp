@@ -6,7 +6,7 @@
 // --------------------- DataObject ---------------------------
 DataObject::DataObject(long dataFlags, size_t size) : m_dataFlags(dataFlags), m_size(size) {
     // Allocate the requested amount of memory
-    m_memory = malloc(m_size);
+    m_memory = (char*) malloc(m_size);
 }
 
 DataObject::~DataObject() {
