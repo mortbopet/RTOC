@@ -122,6 +122,7 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             auto circ = 4 * M_PI * area / perimeter;
             // return circ
         }
+        // if ("Eccentricity") {}
         if ("GradientScore") {
             cv::Moments m = cv::moments(contour, true);
             auto cx = int(m.m10/m.m00);
