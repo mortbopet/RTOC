@@ -10,10 +10,21 @@ namespace data {
 // Enumeration of the various parameters that can be extracted from an image, using open CV
 enum DataFlags {
     Area = 1 << 0,
-    Circularity = 1 << 1,
-    Eccentricity = 1 << 2,
-    Major_axis = 1 << 3,
-    Minor_axis = 1 << 4
+    BoundingBox = 1 << 1,
+    Centroid = 1 << 2,
+    Circularity = 1 << 3,
+    Eccentricity = 1 << 4,
+    Frame = 1 << 5,
+    GradientScore = 1 << 6,
+    Inlet = 1 << 7,
+    Outlet = 1 << 8,
+    Label = 1 << 9,
+    Major_axis = 1 << 10,
+    Minor_axis = 1 << 11,
+    Solidity = 1 << 12,
+    Symmetry = 1 << 13,
+    Perimeter = 1 << 14,
+    PixelIdxList = 1 << 15
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
