@@ -1,4 +1,4 @@
-#include "../lib/datacontainer.h"
+#include "datacontainer.h"
 
 #include <iostream>
 
