@@ -41,7 +41,7 @@ public:
 private:
     size_t getBytesToData(data::DataFlags flag);
 
-    void* m_memory = nullptr;
+    char* m_memory = nullptr;
     int m_dataFlags;
     size_t m_size;  // Total allocated memory space
 };
@@ -51,13 +51,13 @@ const T& DataObject::getValue(data::DataFlags dataFlag) {
     size_t bytesToData = getBytesToData(dataFlag);
 
     // Dereference the memory as the requested type, and return
-    return *static_cast<T*>(m_memory + bytesToData);
+    return *static_cast<T*>(static_cast<void*>(m_memory + bytesToData));
 }
 
 template <typename T>
 void DataObject::setValue(data::DataFlags dataFlag, T value) {
     size_t bytesToData = getBytesToData(dataFlag);
-    *(static_cast<T*>(m_memory + bytesToData)) = value;
+    *(static_cast<T*>(static_cast<void*>(m_memory + bytesToData))) = value;
 }
 
 /**
