@@ -6,6 +6,8 @@
 #include <typeinfo>
 #include <vector>
 
+#include "opencv/cv.hpp"
+
 namespace data {
 // Enumeration of the various parameters that can be extracted from an image, using open CV
 enum DataFlags {
@@ -29,9 +31,23 @@ enum DataFlags {
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
 // This mapping is used by DataObject for memory allocation
-static std::map<DataFlags, size_t> typeMap{{Area, sizeof(int)},
-                                           {Circularity, sizeof(double)},
-                                           {Major_axis, sizeof(float)}};
+static std::map<DataFlags, size_t> typeMap{{Area,           sizeof(double)},
+                                           {BoundingBox,    sizeof(cv::Rect)},
+                                           {Centroid,       sizeof(int)*2},
+                                           {Circularity,    sizeof(double)},
+                                           {Eccentricity,   sizeof(double)},
+                                           {Frame,          sizeof(int)},
+                                           {GradientScore,  sizeof(double)},
+                                           {Inlet,          sizeof(int)},
+                                           {Outlet,         sizeof(int)},
+                                           {Label,          sizeof(int)},
+                                           {Major_axis,     sizeof(double)},
+                                           {Minor_axis,     sizeof(double)},
+                                           {Solidity,       sizeof(double)},
+                                           {Symmetry,       sizeof(double)},
+                                           {Perimeter,      sizeof(double)},
+                                           {PixelIdxList,   sizeof(std::vector<cv::Point>)}};
+
 }  // namespace data
 
 /**
