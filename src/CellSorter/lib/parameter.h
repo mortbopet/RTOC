@@ -1,6 +1,5 @@
 #pragma once
 
-#include <assert.h>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -76,7 +75,8 @@ public:
 
     void setValue(T v) { m_val = v; }
     const T& getValue() const {
-        assert(m_isInitialized);
+        if (!m_isInitialized)
+            throw std::runtime_error("value parameter is not initialized");
         return m_val;
     }
 
@@ -144,7 +144,8 @@ public:
 
     void setValue(T v) { m_val = v; }
     const T& getValue() const {
-        assert(m_isInitialized);
+        if (!m_isInitialized)
+            throw std::runtime_error("value parameter is not initialized");
         return m_val;
     }
 
@@ -189,7 +190,8 @@ void EnumParameter<T>::updateOptions() {
 
 template <typename T>
 const string EnumParameter<T>::getValueStr() const {
-    assert(m_isInitialized);
+    if (!m_isInitialized)
+        throw std::runtime_error("value parameter is not initialized");
     for (const auto& v : m_enumOptions) {
         if (v.first == m_val) {
             return v.second;
