@@ -39,20 +39,25 @@ int files_from_folder(std::vector<std::string>& files, const std::string& folder
  */
 std::string extractBetween(const std::string& src, const std::string& first,
                            const std::string& last) {
-    unsigned long a = src.find(first);
-    unsigned long b = src.find(last);
-    return src.substr(a + 1, b - a - 1);
+    int a = src.rfind(first);
+    if (a < 0) return "NOT_FOUND";
+    a += first.length();
+    int b = src.find(last, a);
+    if (b < 0) return "NOT_FOUND";
+    return src.substr((unsigned long) a,(unsigned long)  b - a);
 }
 /**
- * Overload function with less inputs
- *  should be faster
+ * Overload function with less inputs (simplerrr)
  * @param src   :   string to search in
  * @return      :   string between delimiters
  */
 std::string extractBetween(const std::string& src) {
-    unsigned long a = src.find('_');
-    unsigned long b = src.find('.');
-    return src.substr(a + 1, b - a - 1);
+    int a = src.rfind('_');
+    if (a < 0) return "NOT_FOUND";
+    a++;
+    int b = src.find('.', a);
+    if (b < 0) return "NOT_FOUND";
+    return src.substr((unsigned long) a,(unsigned long)  b - a);
 }
 
 /**
