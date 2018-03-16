@@ -7,7 +7,7 @@ project(CellSorter)
 
 #Environment variable $OpenCV_DIR must be set to the "build" folder of OpenCV
 find_package(OpenCV REQUIRED)
-find_package( Boost COMPONENTS system filesystem REQUIRED)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
 
 # Define all source and header files in src/
 
@@ -29,9 +29,11 @@ add_executable(${TEST_EXECUTABLE} ${TST_SRC})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
 target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 
+target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+
 # Link Boost libraries
-target_link_libraries( ${PROJECT_NAME} Boost::system Boost::filesystem)
-target_link_libraries( ${TEST_EXECUTABLE} Boost::system Boost::filesystem)
+target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
 
 
 ######################################################################
@@ -50,7 +52,7 @@ add_executable(${CATCH_TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
 # Link catch
 target_link_libraries(${CATCH_TEST_EXECUTABLE} Catch)
 # Link boost
-target_link_libraries( ${CATCH_TEST_EXECUTABLE} Boost::system Boost::filesystem)
+target_link_libraries( ${CATCH_TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
 # Link OpenCV and Cellsorter lib
 target_link_libraries(${CATCH_TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 ######################################################################
