@@ -6,11 +6,7 @@
 // --------------------- DataObject ---------------------------
 DataObject::DataObject(long dataFlags, size_t size) : m_dataFlags(dataFlags), m_size(size) {
     // Allocate the requested amount of memory
-<<<<<<< HEAD:src/CellSorter/lib/datacontainer.cpp
-    m_memory = (char*) malloc(m_size);
-=======
     m_memory = static_cast<char*>(malloc(m_size));
->>>>>>> origin/master:src/CellSorter/lib/datacontainer.cpp
 }
 
 DataObject::~DataObject() {
