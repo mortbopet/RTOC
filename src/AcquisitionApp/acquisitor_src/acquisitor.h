@@ -42,6 +42,7 @@ public slots:
 signals:
     void initialized(bool);
     void acquisitionStateChanged(bool);  // true = running, false = stopped
+    void logInfo(QString text);
 
 protected:
     void acquisitionSgc();

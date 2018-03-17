@@ -1,6 +1,6 @@
 #include "acquisitor.h"
 
-#include "../SiliconSoftwareSrc/acquisitionhelpers.cpp"
+#include "../acquisitor_src/acquisitionhelpers.cpp"
 
 #include <QtGlobal>
 
@@ -11,16 +11,16 @@ int Acquisitor::initialize() {
         try {
             // initializes internal structures of the library.
             int32_t status = Fg_InitLibraries(nullptr);
-            if (status != FG_OK)
-                throw std::runtime_error("Cannot initialize Fg libraries.");
-
+            if (status != FG_OK) {
+                emit logInfo("Cannot initialize Fg libraries.");
+                return -1;
+            }
             /*Initialize framegrabber struct with default applet. Assume board is at index 0 (single
              * board in computer*/
             m_FgHandle = FgWrapper::create("Acq_SingleCXP6x4AreaGray8.dll", 0);
             if (m_FgHandle->getFgHandle() == NULL) {
-                fprintf(stderr, "Error in Fg_Init(): %s\n", Fg_getLastErrorDescription(NULL));
-                fprintf(stderr, "Press any key to continue...\n");
-                _getch();
+                emit logInfo(
+                    QString("Error in Fg_Init(): %s\n").arg(Fg_getLastErrorDescription(NULL)));
                 return -1;
             }
 
