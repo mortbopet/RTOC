@@ -102,7 +102,7 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
     // for every contour -> new regionprops object with m_parameters
     for (const std::vector<cv::Point>& contour : contours) {
         if ("Area") {
-            auto area = cv::contourArea(contour);
+            double area = cv::contourArea(contour);
             // return area
         }
         if ("BoundingBox") {
@@ -110,10 +110,10 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             // return bbox
         }
         if ("Centroid") {
+            std::pair<int,int> centroid;
             cv::Moments m = cv::moments(contour, true);
-            auto cx = int(m.m10/m.m00);
-            auto cy = int(m.m01/m.m00);
-            int centroid[2] = {cx,cy};
+            centroid.first = int(m.m10/m.m00);
+            centroid.second = int(m.m01/m.m00);
             // return centroid
         }
         if ("Circularity") {
@@ -154,6 +154,7 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             double solidity = area / hull_area;
             // return solidity;
         }
+        // if("Symmetry") {}
         if ("Perimeter") {
             double perimeter = cv::arcLength(contour, true);
             // return perimeter

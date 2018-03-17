@@ -46,8 +46,7 @@ for i = 1:150 % size(acc,1) % loop through accepted frames
     bg_edge = bwareaopen(bg_edge,100);
     
     bg_edge = imcomplement(bg_edge);
-figure(1);
-    imshow(bg_edge);
+
     
     diff = diff .* bg_edge;
     
@@ -93,7 +92,11 @@ figure(1);
     cc = bwconncomp(bw, 8);
      celldata = regionprops(cc,'Centroid','BoundingBox','PixelIdxList',...
                            'Eccentricity','MajorAxisLength','Perimeter','Area');
-    % Go to next frame if no cells are present
+    celldata.Eccentricity
+    figure(1);
+    imshow(bw);
+                       
+                       % Go to next frame if no cells are present
     if cc.NumObjects < 1
         continue
     end
@@ -124,7 +127,7 @@ figure(1);
             [ime, thres] = edge(im2,'Canny');
             ime = ime(6:7 ,:);
             s2 = sum(ime(:));
-            sprintf("%d %d",s1,s2);
+            % sprintf("%d %d",s1,s2);
         end
     end
 
