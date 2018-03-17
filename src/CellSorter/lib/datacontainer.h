@@ -33,7 +33,7 @@ enum DataFlags {
 // This mapping is used by DataObject for memory allocation
 static std::map<DataFlags, size_t> typeMap{{Area,           sizeof(double)},
                                            {BoundingBox,    sizeof(cv::Rect)},
-                                           {Centroid,       sizeof(int)*2},
+                                           {Centroid,       sizeof(std::pair<int,int>)},
                                            {Circularity,    sizeof(double)},
                                            {Eccentricity,   sizeof(double)},
                                            {Frame,          sizeof(int)},

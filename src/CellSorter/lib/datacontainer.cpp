@@ -29,7 +29,7 @@ size_t DataObject::getBytesToData(data::DataFlags flag) {
 
 // --------------------- DataContainer ------------------------
 DataContainer::DataContainer() {}
-DataContainer::DataContainer(long flags) : m_dataFlags(flags) {}
+DataContainer::DataContainer(long flags) : m_dataFlags(flags) {calculateObjectSize();}
 
 void DataContainer::calculateObjectSize() {
     // Called each time DataContainer's m_dataFlags are edited. m_objectSize is parsed to the
