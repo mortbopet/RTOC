@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.8)
 project(AcquisitionApp)
 
-# Check that required environment variables are set
-if( DEFINED ENV{SISODIR5} )
-  message( MESSAGE "SISODIR5 environment variable detected at: " $ENV{SISODIR5}
-      "\nThis variable is required for linking against SiliconSoftware provided
-      headers and libraries.")
-else( )
-  message( FATAL_ERROR "SISODIR5 not set, aborting...")
-endif()
+SET(BUILD_ACQ ON CACHE BOOL "Build acquisition related tools")
 
+# Check that required environment variables are set
+if(${BUILD_ACQ})
+    if( DEFINED ENV{SISODIR5} )
+      message( MESSAGE "SISODIR5 environment variable detected at: " $ENV{SISODIR5}
+          "\nThis variable is required for linking against SiliconSoftware provided
+          headers and libraries.")
+    else( )
+      message( MESSAGE "WARNING: SISODIR5 not set!")
+    endif()
+endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -29,10 +32,15 @@ include_directories(${Qt5Core_INCLUDE_DIRS})
 
 file(GLOB LIB_SOURCES
     src/*.cpp
-    SiliconSoftwareSrc/*.cpp)
+    )
 file(GLOB LIB_HEADERS
     src/*.h
-    SiliconSoftwareSrc/*.h)
+    )
+
+file(GLOB ACQUISITOR_SOURCES
+    acquisitor_src/*.cpp)
+file(GLOB ACQUISITOR_HEADERS
+    acquisitor_src/*.h)
 
 # set Qt specific files
 file ( GLOB UIS
@@ -44,22 +52,25 @@ file ( GLOB RESOURCES
 )
 
 
+if(${BUILD_ACQ})
+    add_library(acquisitor_lib ${ACQUISITOR_SOURCES} ${ACQUISITOR_HEADERS})
+endif()
 
-add_library(AcquisitionApp_lib ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
+add_executable(${PROJECT_NAME} main.cpp ${LIB_SOURCES} ${LIB_HEADERS})
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets)
 
-add_executable(${PROJECT_NAME} main.cpp)
 
+# Handle link and includes for acquisitor lib / silicon software related
+if(${BUILD_ACQ})
+    # SiliconSoftware runtime directories
+    include_directories($ENV{SISODIR5}/include)
+    include_directories($ENV{SISODIR5_64}/include)
 
-# SiliconSoftware runtime directories
-include_directories($ENV{SISODIR5}/include)
-include_directories($ENV{SISODIR5_64}/include)
-
-# Link SiliconSoftware libraries
-target_link_libraries( ${PROJECT_NAME}
-    $ENV{SISODIR5}/lib/visualc/fglib5.lib
-    $ENV{SISODIR5}/lib/visualc/siso_genicam.lib
-    $ENV{SISODIR5}/lib/visualc/display_lib.lib
-)
-
-# Link AcquisitionApp lib
-target_link_libraries(${PROJECT_NAME} AcquisitionApp_lib  Qt5::Core Qt5::Widgets)
+    # Link SiliconSoftware libraries
+    target_link_libraries( ${PROJECT_NAME}
+        $ENV{SISODIR5}/lib/visualc/fglib5.lib
+        $ENV{SISODIR5}/lib/visualc/siso_genicam.lib
+        $ENV{SISODIR5}/lib/visualc/display_lib.lib
+    )
+    target_link_libraries(${PROJECT_NAME} acquisitor_lib )
+endif()

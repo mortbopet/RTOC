@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
+#ifdef BUILD_ACQ
 #include "acquisitor.h"
+#endif
 
 namespace Ui {
 class MainWindow;

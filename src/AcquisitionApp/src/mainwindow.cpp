@@ -3,7 +3,9 @@
 
 #include "imagedisplayer.h"
 
+#ifdef BUILD_ACQ
 #include "acquisitor.h"
+#endif
 
 #include <QPushButton>
 
@@ -12,6 +14,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
 
     m_ui->graphicsView->setScene(new ImageDisplayer());
 
+#ifdef BUILD_ACQ
     // connect Acquisitor initializer
     connect(m_ui->initialize, &QPushButton::clicked, Acquisitor::get(), &Acquisitor::initialize);
     connect(Acquisitor::get(), &Acquisitor::initialized, m_ui->start, &QPushButton::setEnabled);
@@ -32,6 +35,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
             m_ui->start->setText("Start acquisition");
         };
     });
+#endif
 }
 
 MainWindow::~MainWindow() {

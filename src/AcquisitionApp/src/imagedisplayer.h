@@ -3,8 +3,6 @@
 
 #include <QGraphicsScene>
 
-class Acquisitor;
-
 class ImageDisplayer : public QGraphicsScene {
 public:
     ImageDisplayer();
