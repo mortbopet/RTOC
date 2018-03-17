@@ -163,21 +163,21 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
     }
 }
 
-TEST_CASE("dataFlag and values (all flags set)", "[datacontainer") {
+TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer") {
     DataContainer container;
 
     SECTION("set all data-types") {
         container.setDataFlags(0xffff);
         container.appendNew();
-        container.setValue(0,data::Area,0.254);
-        container.setValue(0,data::BoundingBox, cv::Rect(0,5,10,15));
-        container.setValue(0, data::Centroid, std::pair<int,int>(11,22));
+        container[0]->setValue(data::Area,0.254);
+        container[0]->setValue(data::BoundingBox, cv::Rect(0,5,10,15));
+        container[0]->setValue(data::Centroid, std::pair<int,int>(11,22));
 
     }
     SECTION("set some data-types") {
 
     }
-    SECTION"set some other data-types") {
-        
+    SECTION("set some other data-types") {
+s
     }
 }
