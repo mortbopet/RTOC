@@ -115,6 +115,8 @@ public:
     template <typename T>
     void setValue(int i, data::DataFlags dataFlag, T value);
 
+    DataObject* operator[](size_t idx){return m_data[idx];}
+
 private:
     void calculateObjectSize();
 
