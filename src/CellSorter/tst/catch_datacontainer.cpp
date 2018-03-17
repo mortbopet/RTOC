@@ -164,5 +164,20 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
 }
 
 TEST_CASE("dataFlag and values (all flags set)", "[datacontainer") {
-    // Write test sections here
+    DataContainer container;
+
+    SECTION("set all data-types") {
+        container.setDataFlags(0xffff);
+        container.appendNew();
+        container.setValue(0,data::Area,0.254);
+        container.setValue(0,data::BoundingBox, cv::Rect(0,5,10,15));
+        container.setValue(0, data::Centroid, std::pair<int,int>(11,22));
+
+    }
+    SECTION("set some data-types") {
+
+    }
+    SECTION"set some other data-types") {
+        
+    }
 }
