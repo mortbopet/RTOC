@@ -31,22 +31,22 @@ enum DataFlags {
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
 // This mapping is used by DataObject for memory allocation
-static std::map<DataFlags, size_t> typeMap{{Area,           sizeof(double)},
-                                           {BoundingBox,    sizeof(cv::Rect)},
-                                           {Centroid,       sizeof(std::pair<int,int>)},
-                                           {Circularity,    sizeof(double)},
-                                           {Eccentricity,   sizeof(double)},
-                                           {Frame,          sizeof(int)},
-                                           {GradientScore,  sizeof(double)},
-                                           {Inlet,          sizeof(int)},
-                                           {Outlet,         sizeof(int)},
-                                           {Label,          sizeof(int)},
-                                           {Major_axis,     sizeof(double)},
-                                           {Minor_axis,     sizeof(double)},
-                                           {Solidity,       sizeof(double)},
-                                           {Symmetry,       sizeof(double)},
-                                           {Perimeter,      sizeof(double)},
-                                           {PixelIdxList,   sizeof(std::vector<cv::Point>)}};
+static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
+                                           {BoundingBox, sizeof(cv::Rect)},
+                                           {Centroid, sizeof(std::pair<int, int>)},
+                                           {Circularity, sizeof(double)},
+                                           {Eccentricity, sizeof(double)},
+                                           {Frame, sizeof(int)},
+                                           {GradientScore, sizeof(double)},
+                                           {Inlet, sizeof(int)},
+                                           {Outlet, sizeof(int)},
+                                           {Label, sizeof(int)},
+                                           {Major_axis, sizeof(double)},
+                                           {Minor_axis, sizeof(double)},
+                                           {Solidity, sizeof(double)},
+                                           {Symmetry, sizeof(double)},
+                                           {Perimeter, sizeof(double)},
+                                           {PixelIdxList, sizeof(std::vector<cv::Point>)}};
 
 }  // namespace data
 
@@ -75,6 +75,13 @@ private:
 
 template <typename T>
 const T& DataObject::getValue(data::DataFlags dataFlag) {
+    if (!(m_dataFlags & dataFlag)) {
+        throw std::runtime_error("requested dataFlag is not set for the object");
+    };
+    if (sizeof(T) != data::typeMap[dataFlag]) {
+        // This should be done with typeId's
+        throw std::runtime_error("Type for set-value is different from type of dataFlag");
+    }
     size_t bytesToData = getBytesToData(dataFlag);
 
     // Dereference the memory as the requested type, and return
@@ -83,6 +90,14 @@ const T& DataObject::getValue(data::DataFlags dataFlag) {
 
 template <typename T>
 void DataObject::setValue(data::DataFlags dataFlag, T value) {
+    if (!(m_dataFlags & dataFlag)) {
+        throw std::runtime_error("requested dataFlag is not set for the object");
+    };
+    if (sizeof(T) != data::typeMap[dataFlag]) {
+        // This should be done with typeId's
+        throw std::runtime_error("Type for set-value is different from type of dataFlag");
+    }
+
     size_t bytesToData = getBytesToData(dataFlag);
     *(static_cast<T*>(static_cast<void*>(m_memory + bytesToData))) = value;
 }
@@ -108,14 +123,7 @@ public:
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
 
     DataObject& appendNew();
-
-    template <typename T>
-    const T& getValue(int i, data::DataFlags dataFlag);
-
-    template <typename T>
-    void setValue(int i, data::DataFlags dataFlag, T value);
-
-    DataObject* operator[](size_t idx){return m_data[idx];}
+    DataObject* operator[](size_t idx) { return m_data[idx]; }
 
 private:
     void calculateObjectSize();
@@ -126,19 +134,5 @@ private:
     bool m_locked = false;
     size_t m_objectSize;
 };
-
-template <typename T>
-const T& DataContainer::getValue(int i, data::DataFlags dataFlag) {
-    assert(m_dataFlags & dataFlag);
-    // Queries the i'th object of m_data to return the requested value
-    return m_data[i]->getValue<T>(dataFlag);
-}
-
-template <typename T>
-void DataContainer::setValue(int i, data::DataFlags dataFlag, T value) {
-    assert(m_dataFlags & dataFlag);
-    // Queries the i'th object of m_data to return the requested value
-    return m_data[i]->setValue<T>(dataFlag, value);
-}
 
 #endif  // DATACONTAINER_H
