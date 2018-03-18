@@ -51,10 +51,10 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
         DataContainer container(data::Centroid);
 
         container.appendNew();
-        container[0]->setValue(data::Centroid, std::pair<int, int>(11, 22));
-        std::pair<int, int> centroid = container[0]->getValue<std::pair<int, int>>(data::Centroid);
-        REQUIRE(centroid.first == 11);
-        REQUIRE(centroid.second == 22);
+        container[0]->setValue(data::Centroid, cv::Point(11, 22));
+        cv::Point centroid = container[0]->getValue<cv::Point>(data::Centroid);
+        REQUIRE(centroid.x == 11);
+        REQUIRE(centroid.y == 22);
     }
     SECTION("Circularity") {
         DataContainer container(data::Circularity);
@@ -171,7 +171,7 @@ TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer") {
         container.appendNew();
         container[0]->setValue(data::Area,0.254);
         container[0]->setValue(data::BoundingBox, cv::Rect(0,5,10,15));
-        container[0]->setValue(data::Centroid, std::pair<int,int>(11,22));
+        container[0]->setValue(data::Centroid, cv::Point(11,22));
         container[0]->setValue(data::Circularity, 0.543);
         container[0]->setValue(data::Eccentricity, 2.43);
         container[0]->setValue(data::Frame, 5);
@@ -187,7 +187,7 @@ TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer") {
         // set PixelIdxList here
         REQUIRE(container[0]->getValue<double>(data::Area) == 0.254);
         REQUIRE(container[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0,5,10,15));
-        REQUIRE(container[0]->getValue<std::pair<int, int>>(data::Centroid) == std::pair<int,int>(11,22));
+        REQUIRE(container[0]->getValue<cv::Point>(data::Centroid) == cv::Point(11,22));
         REQUIRE(container[0]->getValue<double>(data::Circularity) == 0.543);
         REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
         REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
