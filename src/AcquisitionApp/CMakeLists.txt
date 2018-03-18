@@ -59,7 +59,7 @@ if(${BUILD_ACQ})
     add_library(acquisitor_lib ${ACQUISITOR_SOURCES} ${ACQUISITOR_HEADERS})
 endif()
 
-add_executable(${PROJECT_NAME} main.cpp ${LIB_SOURCES} ${LIB_HEADERS})
+add_executable(${PROJECT_NAME} main.cpp ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets)
 
 
