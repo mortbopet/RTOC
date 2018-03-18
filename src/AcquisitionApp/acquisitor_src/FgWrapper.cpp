@@ -53,8 +53,8 @@ Fg_Struct* FgWrapper::FgInit(std::string applet, uint32_t boardIndex) {
     mFgHandle = Fg_Init(applet.c_str(), boardIndex);
     if (!mFgHandle)
         throw std::runtime_error(
-            "Cannot initialize frame grabber. Error in external dependencies. Are the framegrabber "
-            "drivers installed?");
+            "Cannot initialize frame grabber.\nError in external dependencies.\nAre the "
+            "framegrabber drivers installed?");
     return mFgHandle;
 }
 

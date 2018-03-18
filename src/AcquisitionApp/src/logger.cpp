@@ -1,13 +1,13 @@
 #include "logger.h"
 
-Logger::Logger() {}
+Logger::Logger(QObject* parent) : QObject(parent) {}
 
 void Logger::writeLineToLog(QString msg) {
-    if (msg.at(msg.length() - 1) != '\n') {
-        msg.append('\n');
+    if (msg.at(0) != '\n') {
+        msg.prepend('\n');
     }
     m_log->appendPlainText(msg);
 }
 void Logger::writeToLog(QString msg) {
-    m_log->appendPlainText(msg);
+    m_log->insertPlainText(msg);
 }
