@@ -10,18 +10,19 @@ Acquisitor::Acquisitor(QObject* parent) : QObject(parent) {}
 
 int Acquisitor::initialize() {
     if (!m_isInitialized) {
+        m_logger->writeLineToLog("Initializing framegrabber...");
         try {
             // initializes internal structures of the library.
             int32_t status = Fg_InitLibraries(nullptr);
             if (status != FG_OK) {
-                emit logInfo("Cannot initialize Fg libraries.");
+                m_logger->writeLineToLog("Cannot initialize Fg libraries.");
                 return -1;
             }
             /*Initialize framegrabber struct with default applet. Assume board is at index 0 (single
              * board in computer*/
             m_FgHandle = FgWrapper::create("Acq_SingleCXP6x4AreaGray8.dll", 0);
             if (m_FgHandle->getFgHandle() == NULL) {
-                emit logInfo(
+                m_logger->writeLineToLog(
                     QString("Error in Fg_Init(): %s\n").arg(Fg_getLastErrorDescription(NULL)));
                 return -1;
             }
@@ -39,7 +40,8 @@ int Acquisitor::initialize() {
         } catch (std::exception& e) {
             // releases internal structures of the library
             Fg_FreeLibraries();
-            std::cout << "Example failed: " << e.what() << std::endl;
+            m_logger->writeLineToLog("Initialization failed: " + QString(e.what()));
+            emit initialized(false);
             return -1;
         }
 
@@ -51,7 +53,6 @@ int Acquisitor::initialize() {
 
 int Acquisitor::deInitialize() {
     Q_ASSERT(m_isInitialized);
-
     try {
         Sgc_freeBoard(m_board);
 
@@ -61,6 +62,7 @@ int Acquisitor::deInitialize() {
         // releases internal structures of the library
         Fg_FreeLibraries();
         std::cout << "Example failed: " << e.what() << std::endl;
+        emit initialized(false);
         return -1;
     }
     m_isInitialized = false;

@@ -23,6 +23,8 @@
 #include "../acquisitor_src/DisplayWrapper.h"
 #include "../acquisitor_src/DmaMemWrapper.h"
 
+#include "../src/logger.h"
+
 class Acquisitor : public QObject {
     Q_OBJECT
 public:
@@ -31,6 +33,8 @@ public:
         static Acquisitor acq;
         return &acq;
     }
+
+    void setLog(Logger* log) { m_logger = log; }
 
 public slots:
     int initialize();
@@ -42,7 +46,6 @@ public slots:
 signals:
     void initialized(bool);
     void acquisitionStateChanged(bool);  // true = running, false = stopped
-    void logInfo(QString text);
 
 protected:
     void acquisitionSgc();
@@ -67,4 +70,6 @@ private:
     bool m_acquire = false;
 
     std::thread m_acqThread;
+
+    Logger* m_logger;
 };

@@ -25,7 +25,7 @@
         <item>
          <widget class="QPushButton" name="initialize">
           <property name="text">
-           <string>Initialize grabber</string>
+           <string>Initialize framegrabber</string>
           </property>
          </widget>
         </item>
@@ -79,6 +79,9 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>
