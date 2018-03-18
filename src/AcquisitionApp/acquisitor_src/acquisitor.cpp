@@ -7,22 +7,42 @@
 #include <sstream>
 
 Acquisitor::Acquisitor(QObject* parent) : QObject(parent) {}
+Acquisitor::~Acquisitor() {
+    // Stop and delete acquisitor thread
+    m_thread->quit();
+    m_thread->wait();
+    delete m_thread;
+}
+
+Acquisitor* Acquisitor::get() {
+    // lazy initialized of singleton acquisiton. Upon initialization, the acquisitor is moved to a
+    // separate thread.
+    static Acquisitor* acq;
+    if (acq == nullptr) {
+        acq = new Acquisitor();
+        acq->m_thread = new QThread();
+        acq->moveToThread(acq->m_thread);
+        acq->m_thread->start();
+    }
+    return acq;
+}
 
 int Acquisitor::initialize() {
     if (!m_isInitialized) {
-        m_logger->writeLineToLog("Initializing framegrabber...");
+        emit writeToLog("Initializing framegrabber");
         try {
+            QThread::sleep(2);
             // initializes internal structures of the library.
             int32_t status = Fg_InitLibraries(nullptr);
             if (status != FG_OK) {
-                m_logger->writeLineToLog("Cannot initialize Fg libraries.");
+                emit writeToLog("Cannot initialize Fg libraries.");
                 return -1;
             }
             /*Initialize framegrabber struct with default applet. Assume board is at index 0 (single
              * board in computer*/
             m_FgHandle = FgWrapper::create("Acq_SingleCXP6x4AreaGray8.dll", 0);
             if (m_FgHandle->getFgHandle() == NULL) {
-                m_logger->writeLineToLog(
+                emit writeToLog(
                     QString("Error in Fg_Init(): %s\n").arg(Fg_getLastErrorDescription(NULL)));
                 return -1;
             }
@@ -40,7 +60,7 @@ int Acquisitor::initialize() {
         } catch (std::exception& e) {
             // releases internal structures of the library
             Fg_FreeLibraries();
-            m_logger->writeLineToLog("Initialization failed: " + QString(e.what()));
+            emit writeToLog("Initialization failed: " + QString(e.what()));
             emit initialized(false);
             return -1;
         }

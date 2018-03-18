@@ -12,24 +12,20 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
     m_ui->graphicsView->setScene(new ImageDisplayer());
     m_logger.setLog(m_ui->log);
 
+    // setup request timer to write '.' while awaiting answers from acquisitor
+    m_acqWaitTimer.setInterval(150);
+    connect(&m_acqWaitTimer, &QTimer::timeout, [=] { m_logger.writeToLog("."); });
+
 #ifdef BUILD_ACQ
     // set acquisitor logger
-    Acquisitor::get()->setLog(&m_logger);
+    connect(Acquisitor::get(), &Acquisitor::writeToLog, &m_logger, &Logger::writeLineToLog,
+            Qt::QueuedConnection);
 
     // connect Acquisitor initializer
     connect(m_ui->initialize, &QPushButton::clicked, this, &MainWindow::initializeFramegrabber);
 
-    connect(Acquisitor::get(), &Acquisitor::initialized, [=](bool state) {
-        if (state) {
-            // Acquisitor is initialized, disable button and set text
-            m_ui->initialize->setEnabled(false);
-            m_ui->initialize->setText("Initialized");
-        } else {
-            // Acquisitor is no longer initialized/initialization failed
-            m_ui->initialize->setEnabled(true);
-            m_ui->initialize->setText("Initialize framegrabber");
-        }
-    });
+    connect(Acquisitor::get(), &Acquisitor::initialized, this,
+            &MainWindow::setInitializerButtonState, Qt::QueuedConnection);
     // Disable start-acq button by default
     m_ui->start->setEnabled(false);
 
@@ -51,18 +47,32 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
 #endif
 }
 
+void MainWindow::setInitializerButtonState(bool state) {
+    m_acqWaitTimer.stop();
+    if (state) {
+        // Acquisitor is initialized, disable button and set text
+        m_ui->initialize->setEnabled(false);
+        m_ui->initialize->setText("Initialized");
+    } else {
+        // Acquisitor is no longer initialized/initialization failed
+        m_ui->initialize->setEnabled(true);
+        m_ui->initialize->setText("Initialize framegrabber");
+    }
+}
+
 MainWindow::~MainWindow() {
     delete m_ui;
 }
 
 void MainWindow::initializeFramegrabber() {
+    m_acqWaitTimer.start();
     // Start acquisitor initialization and disable button
     if (m_ui->initWithConfig->isEnabled()) {
         // Load configuration file
     }
     m_ui->initialize->setEnabled(false);
     m_ui->initialize->setText("Initializing...");
-    Acquisitor::get()->initialize();
+    QMetaObject::invokeMethod(Acquisitor::get(), "initialize", Qt::QueuedConnection);
 }
 
 void MainWindow::on_actionExit_triggered() {

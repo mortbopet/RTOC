@@ -20,21 +20,28 @@
 
 #include <thread>
 
+#include <QThread>
+
 #include "../acquisitor_src/DisplayWrapper.h"
 #include "../acquisitor_src/DmaMemWrapper.h"
 
 #include "../src/logger.h"
 
+/**
+ * @brief The Acquisitor class
+ * @abstract The Acquisitor class is used for facilitating all contact with the framegrabber. This
+ * includes initialization, parametrization and acquisition.
+ * The Acquisitor is intended to live in a separate thread, and communicates to the GUI thread via.
+ * queued signals and slots ( http://doc.qt.io/archives/qt-4.8/thread-basics.html ). As per Qt, it
+ * is stated that
+ *  "" QMetaObject::invokeMethod() calls a slot via the event loop. The worker object's methods
+ * should not be called directly after the object has been moved to another thread. ""
+ */
 class Acquisitor : public QObject {
     Q_OBJECT
 public:
-    static Acquisitor* get() {
-        // lazy initialized of singleton
-        static Acquisitor acq;
-        return &acq;
-    }
-
-    void setLog(Logger* log) { m_logger = log; }
+    static Acquisitor* get();
+    ~Acquisitor();
 
 public slots:
     int initialize();
@@ -46,6 +53,7 @@ public slots:
 signals:
     void initialized(bool);
     void acquisitionStateChanged(bool);  // true = running, false = stopped
+    void writeToLog(QString msg);
 
 protected:
     void acquisitionSgc();
@@ -71,5 +79,5 @@ private:
 
     std::thread m_acqThread;
 
-    Logger* m_logger;
+    QThread* m_thread;
 };
