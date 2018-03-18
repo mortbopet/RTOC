@@ -156,10 +156,10 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
         DataContainer container(data::PixelIdxList);
 
         container.appendNew();
-        /// Write proper setValue here
-        // container[0]->setValue( data::PixelIdxList, 1.394);
+        // Write proper setValue here
+        // container[0]->setValue( data::PixelIdxList, /* PixelIdxList value here */);
         // container[0]->getValue<std::vector<cv::Point>>(0,data::PixelIdxList);
-        /// Insert requirement here
+        // Insert assertion here
     }
 }
 
@@ -172,12 +172,40 @@ TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer") {
         container[0]->setValue(data::Area,0.254);
         container[0]->setValue(data::BoundingBox, cv::Rect(0,5,10,15));
         container[0]->setValue(data::Centroid, std::pair<int,int>(11,22));
-
+        container[0]->setValue(data::Circularity, 0.543);
+        container[0]->setValue(data::Eccentricity, 2.43);
+        container[0]->setValue(data::Frame, 5);
+        container[0]->setValue(data::GradientScore, 5.005);
+        container[0]->setValue(data::Inlet, 80);
+        container[0]->setValue(data::Outlet, 180);
+        container[0]->setValue(data::Label, 21950);
+        container[0]->setValue(data::Major_axis, 5.342);
+        container[0]->setValue(data::Minor_axis, 3.43);
+        container[0]->setValue(data::Solidity, 0.9948);
+        container[0]->setValue(data::Symmetry, 34.943);
+        container[0]->setValue(data::Perimeter, 3.433);
+        // set PixelIdxList here
+        REQUIRE(container[0]->getValue<double>(data::Area) == 0.254);
+        REQUIRE(container[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0,5,10,15));
+        REQUIRE(container[0]->getValue<std::pair<int, int>>(data::Centroid) == std::pair<int,int>(11,22));
+        REQUIRE(container[0]->getValue<double>(data::Circularity) == 0.543);
+        REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
+        REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
+        REQUIRE(container[0]->getValue<double>(data::GradientScore) == 5.005);
+        REQUIRE(container[0]->getValue<int>(data::Inlet) == 80);
+        REQUIRE(container[0]->getValue<int>(data::Outlet) == 180);
+        REQUIRE(container[0]->getValue<int>(data::Label) == 21950);
+        REQUIRE(container[0]->getValue<double>(data::Major_axis) == 5.342);
+        REQUIRE(container[0]->getValue<double>(data::Minor_axis) == 3.43);
+        REQUIRE(container[0]->getValue<double>(data::Solidity) == 0.9948);
+        REQUIRE(container[0]->getValue<double>(data::Symmetry) == 34.943);
+        REQUIRE(container[0]->getValue<double>(data::Perimeter) == 3.433);
+        // assert get.PixelIdxList here
     }
     SECTION("set some data-types") {
 
     }
     SECTION("set some other data-types") {
-s
+
     }
 }
