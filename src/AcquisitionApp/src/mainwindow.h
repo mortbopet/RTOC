@@ -21,7 +21,11 @@ public:
     ~MainWindow();
 
 private slots:
+    void initializeFramegrabber();
+
     void on_actionExit_triggered();
+
+    void on_filePathButton_clicked();
 
 private:
     Ui::MainWindow* m_ui;

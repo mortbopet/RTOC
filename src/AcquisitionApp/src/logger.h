@@ -11,7 +11,7 @@
 class Logger : public QObject {
     Q_OBJECT
 public:
-    Logger();
+    Logger(QObject* parent = nullptr);
 
     void setLog(QPlainTextEdit* log) { m_log = log; }
     void writeLineToLog(QString msg);

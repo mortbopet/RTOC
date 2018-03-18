@@ -1,6 +1,6 @@
 #include "logger.h"
 
-Logger::Logger() {}
+Logger::Logger(QObject* parent) : QObject(parent) {}
 
 void Logger::writeLineToLog(QString msg) {
     if (msg.at(msg.length() - 1) != '\n') {
