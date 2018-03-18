@@ -12,11 +12,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
     m_ui->graphicsView->setScene(new ImageDisplayer());
     m_logger.setLog(m_ui->log);
 
+#ifdef BUILD_ACQ
     // setup request timer to write '.' while awaiting answers from acquisitor
     m_acqWaitTimer.setInterval(150);
     connect(&m_acqWaitTimer, &QTimer::timeout, [=] { m_logger.writeToLog("."); });
 
-#ifdef BUILD_ACQ
     // set acquisitor logger
     connect(Acquisitor::get(), &Acquisitor::writeToLog, &m_logger, &Logger::writeLineToLog,
             Qt::QueuedConnection);

@@ -79,6 +79,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Log</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPlainTextEdit" name="log">
           <property name="readOnly">
            <bool>true</bool>
