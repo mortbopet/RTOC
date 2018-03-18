@@ -3,10 +3,6 @@
 
 #include "imagedisplayer.h"
 
-#ifdef BUILD_ACQ
-#include "acquisitor.h"
-#endif
-
 #include <QPushButton>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::MainWindow) {

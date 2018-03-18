@@ -20,8 +20,8 @@
 
 #include <thread>
 
-#include "../SiliconSoftwareSrc/DisplayWrapper.h"
-#include "../SiliconSoftwareSrc/DmaMemWrapper.h"
+#include "../acquisitor_src/DisplayWrapper.h"
+#include "../acquisitor_src/DmaMemWrapper.h"
 
 class Acquisitor : public QObject {
     Q_OBJECT

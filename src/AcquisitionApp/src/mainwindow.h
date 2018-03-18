@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 #ifdef BUILD_ACQ
-#include "acquisitor.h"
+#include "../acquisitor_src/acquisitor.h"
 #endif
 
 namespace Ui {

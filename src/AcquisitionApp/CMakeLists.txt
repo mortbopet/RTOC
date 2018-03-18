@@ -6,11 +6,14 @@ SET(BUILD_ACQ ON CACHE BOOL "Build acquisition related tools")
 # Check that required environment variables are set
 if(${BUILD_ACQ})
     if( DEFINED ENV{SISODIR5} )
-      message( MESSAGE "SISODIR5 environment variable detected at: " $ENV{SISODIR5}
+        # Set preprocessor flag to trigger inclusion of acquisitor parts in program
+        add_definitions(-DBUILD_ACQ)
+      message( STATUS "\nSISODIR5 environment variable detected at: " $ENV{SISODIR5}
           "\nThis variable is required for linking against SiliconSoftware provided
           headers and libraries.")
+      message( STATUS "\nRemember to set the working directory to the silicon software .bin directory, or other directories containing the required .dll's")
     else( )
-      message( MESSAGE "WARNING: SISODIR5 not set!")
+      message( WARNING "\nSISODIR5 not set!")
     endif()
 endif()
 

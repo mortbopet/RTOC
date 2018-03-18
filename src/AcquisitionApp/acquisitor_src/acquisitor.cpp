@@ -4,6 +4,8 @@
 
 #include <QtGlobal>
 
+#include <sstream>
+
 Acquisitor::Acquisitor(QObject* parent) : QObject(parent) {}
 
 int Acquisitor::initialize() {
