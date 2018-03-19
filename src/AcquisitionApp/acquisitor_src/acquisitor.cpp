@@ -49,15 +49,22 @@ int Acquisitor::initialize() {
 
             /*FgDmaChannelExample shows dma initialization.*/
             m_dmaHandle = DmaMemWrapper::create(m_FgHandle, m_dmaPort);
-            //            m_display =
-            //            DisplayWrapper::create(std::weak_ptr<DmaMemWrapper>(m_dmaHandle),
-            //            m_dmaPort,
-            //                                               std::weak_ptr<FgWrapper>(m_FgHandle));
+
+            m_display = DisplayWrapper::create(std::weak_ptr<DmaMemWrapper>(m_dmaHandle), m_dmaPort,
+                                               std::weak_ptr<FgWrapper>(m_FgHandle));
+
+            // Resize m_image according to the framegrabber image size
+            m_image.resize(m_FgHandle->getPayloadSize(m_dmaPort));
+
             m_board = initialiseBoard(m_FgHandle->getFgHandle());
             // std::vector<std::pair<std::string, SgcCameraHandle*>> cameras =
             // discoverCameras(board);
 
             m_camera = selectCamera(m_board);
+
+            // set display values
+            m_display->setWidth(m_fgValues.width / 2);
+            m_display->setHeight(m_fgValues.height / 2);
 
         } catch (std::exception& e) {
             // releases internal structures of the library
@@ -68,6 +75,8 @@ int Acquisitor::initialize() {
         }
 
         m_isInitialized = true;
+        emit writeToLog("Initialization successfull. Detected camera:");
+        emit writeToLog(getCameraInfo(m_camera));
         emit initialized(m_isInitialized);
     }
     return 0;
@@ -126,6 +135,12 @@ void Acquisitor::acquisitionSgc() {
         // Access a pointer to an image in the buffer denoted by bufNr
         void* pos = Fg_getImagePtrEx(fgHandle, bufNr, m_dmaPort, dmaHandle);
 
+        if (m_requestImage) {
+            // Copy image buffer to m_image
+            std::memcpy(m_image.data(), pos, m_image.size());
+            m_requestImage = false;
+            emit sendImageData(m_image);
+        }
         // Unblock the buffer
         Fg_setStatusEx(fgHandle, FG_UNBLOCK, bufNr, m_dmaPort, dmaHandle);
     }
@@ -151,12 +166,14 @@ void Acquisitor::throwLastFgError(Fg_Struct* fgHandle) {
 
 void Acquisitor::startAcq() {
     // start thread
+    emit writeToLog("Starting acquisition...");
     m_acquire = true;
     m_acqThread = std::thread{&Acquisitor::acquisitionSgc, this};
     emit acquisitionStateChanged(m_acquire);
 }
 
 void Acquisitor::stopAcq() {
+    emit writeToLog("Stopping acquisition");
     m_acquire = false;
     m_acqThread.join();
     emit acquisitionStateChanged(m_acquire);

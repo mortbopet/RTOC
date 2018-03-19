@@ -14,12 +14,26 @@
 
 #include <stdexcept>
 
+#include <QString>
 /**
  * @brief AcquisitionHelpers.cpp contains functions which are declared in the various example files
  * provided by siliconSoftware. See  SiliconSoftware\Runtime5.5.1\${example folder} for the various
  * declarations. We choose not to include the example code, but instead copy the functions, to make
  * sure that the code will be compatible with different runtime versions.
  */
+
+QString getCameraInfo(SgcCameraHandle* camera) {
+    QString textInfo;
+    SgcCameraInfo* info = Sgc_getCameraInfo(camera);
+    textInfo.append(QString("Device vendor: %1\n").arg(info->deviceVendorName));
+    textInfo.append(QString("Device model: %1\n").arg(info->deviceModelName));
+    textInfo.append(QString("Device family: %1\n").arg(info->deviceFamilyName));
+    textInfo.append(QString("Device version: %1\n").arg(info->deviceVersion));
+    textInfo.append(QString("Firmware version: %1\n").arg(info->deviceFirmwareVersion));
+    textInfo.append(QString("Manufacturer: %1\n").arg(info->deviceManufacturerInfo));
+    textInfo.append(QString("Serial number: %1\n").arg(info->deviceSerialNumber));
+    return textInfo;
+}
 
 /*creates a camera handle with the given index */
 static std::pair<std::string, SgcCameraHandle*> getCameraByIndex(SgcBoardHandle* board,

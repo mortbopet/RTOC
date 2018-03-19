@@ -8,6 +8,7 @@
 #include "../acquisitor_src/acquisitor.h"
 #endif
 
+#include "imagedisplayer.h"
 #include "logger.h"
 
 namespace Ui {
@@ -30,7 +31,11 @@ private slots:
 
     void setInitializerButtonState(bool state);
 
+    void acquisitionStateChanged(bool state);
+
 private:
+    ImageDisplayer m_imageDisplayer;
+
     Ui::MainWindow* m_ui;
     Logger m_logger;
 

@@ -20,6 +20,7 @@
 
 #include <thread>
 
+#include <QMutex>
 #include <QThread>
 
 #include "../acquisitor_src/DisplayWrapper.h"
@@ -37,6 +38,13 @@
  *  "" QMetaObject::invokeMethod() calls a slot via the event loop. The worker object's methods
  * should not be called directly after the object has been moved to another thread. ""
  */
+
+typedef struct {
+    uint32_t width;
+    uint32_t height;
+    int32_t format;
+} FgValues;
+
 class Acquisitor : public QObject {
     Q_OBJECT
 public:
@@ -50,10 +58,16 @@ public slots:
     void startAcq();
     void stopAcq();
 
+    // Called when GUI wants an image, initializes copying of an image in the acquisition loop
+    void requestImageData() { m_requestImage = true; }
+
 signals:
     void initialized(bool);
     void acquisitionStateChanged(bool);  // true = running, false = stopped
     void writeToLog(QString msg);
+
+    // Emitted when an image has been stored from acquisition and can be accessed from gui
+    void sendImageData(const std::vector<char>&);
 
 protected:
     void acquisitionSgc();
@@ -72,6 +86,16 @@ private:
     SgcCameraHandle* m_camera;
     SgcBoardHandle* m_board;
 
+    /* We have no mutexes on m_image, since we assume that the protocol:
+     *  1: GUI requests image;
+     *  2: Acquisitor stores copies image data into m_image std::vector<char> (contiguous memory)
+     *  3: Acquisitor emits reference to m_image
+     *  4: GUI accesses m_image memory
+     * is kept, thus no simultanious accesses to the shared data.s
+     */
+    std::vector<char> m_image;
+    bool m_requestImage = false;
+
     int m_dmaPort = 0;
 
     bool m_isInitialized = false;
@@ -80,4 +104,6 @@ private:
     std::thread m_acqThread;
 
     QThread* m_thread;
+
+    FgValues m_fgValues;
 };

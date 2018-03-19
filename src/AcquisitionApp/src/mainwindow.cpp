@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 
-#include "imagedisplayer.h"
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
@@ -9,10 +8,20 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::MainWindow) {
     m_ui->setupUi(this);
 
-    m_ui->graphicsView->setScene(new ImageDisplayer());
+    // connect image request from ImageDisplayer
+
+    m_ui->graphicsView->setScene(&m_imageDisplayer);
+
     m_logger.setLog(m_ui->log);
 
 #ifdef BUILD_ACQ
+
+    // Setup ImageDisplayer requests to the acquisitor
+    connect(&m_imageDisplayer, &ImageDisplayer::requestImage, Acquisitor::get(),
+            &Acquisitor::requestImageData, Qt::QueuedConnection);
+    connect(Acquisitor::get(), &Acquisitor::sendImageData, &m_imageDisplayer,
+            &ImageDisplayer::setImage, Qt::QueuedConnection);
+
     // setup request timer to write '.' while awaiting answers from acquisitor
     m_acqWaitTimer.setInterval(150);
     connect(&m_acqWaitTimer, &QTimer::timeout, [=] { m_logger.writeToLog("."); });
@@ -32,18 +41,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
     // Connect start functionality for frame grabber
     connect(m_ui->start, &QPushButton::toggled, [=](bool state) {
         if (state) {
-            Acquisitor::get()->startAcq();
+            QMetaObject::invokeMethod(Acquisitor::get(), "startAcq", Qt::QueuedConnection);
         } else {
-            Acquisitor::get()->stopAcq();
+            QMetaObject::invokeMethod(Acquisitor::get(), "stopAcq", Qt::QueuedConnection);
         }
     });
-    connect(Acquisitor::get(), &Acquisitor::acquisitionStateChanged, [=](bool state) {
-        if (state) {
-            m_ui->start->setText("Stop acquisition");
-        } else {
-            m_ui->start->setText("Start acquisition");
-        };
-    });
+    connect(Acquisitor::get(), &Acquisitor::acquisitionStateChanged, this,
+            &MainWindow::acquisitionStateChanged, Qt::QueuedConnection);
 #endif
 }
 
@@ -53,10 +57,22 @@ void MainWindow::setInitializerButtonState(bool state) {
         // Acquisitor is initialized, disable button and set text
         m_ui->initialize->setEnabled(false);
         m_ui->initialize->setText("Initialized");
+        m_ui->start->setEnabled(true);
     } else {
         // Acquisitor is no longer initialized/initialization failed
         m_ui->initialize->setEnabled(true);
         m_ui->initialize->setText("Initialize framegrabber");
+    }
+}
+
+void MainWindow::acquisitionStateChanged(bool state) {
+    if (state) {
+        m_ui->start->setText("Stop acquisition");
+        // Acquisition from camera is started, start image requests from ImageDisplayer
+        m_imageDisplayer.startRequestingImages();
+    } else {
+        m_ui->start->setText("Start acquisition");
+        m_imageDisplayer.stopRequestingImages();
     }
 }
 

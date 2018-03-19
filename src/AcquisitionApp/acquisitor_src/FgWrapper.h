@@ -1,12 +1,11 @@
 #pragma once
-#include <memory>
 #include <stdint.h>
+#include <memory>
 #include <vector>
 
 #include <fgrab_prototyp.h>
 
-
-class FgWrapper{
+class FgWrapper {
 public:
     FgWrapper();
     ~FgWrapper();
@@ -19,7 +18,6 @@ public:
 
     /* Fg Parametrization Functions */
     size_t getBitsPerPixel(int32_t dmaPort);
-
 
     uint32_t getWidth(uint32_t dmaPort);
     void setWidth(uint32_t val, uint32_t dmaPort);
@@ -36,10 +34,11 @@ public:
     static uint32_t getBitalignment(Fg_Struct* fgHandle, uint32_t dmaPort);
     static void setBitalignment(Fg_Struct* fgHandle, uint32_t val, uint32_t dmaPort);
 
-    //FG_FORMAT
+    // FG_FORMAT
     int32_t getFormat(int32_t dmaPort);
     static int32_t getFormat(Fg_Struct* fgHandle, int32_t dmaPort);
     uint32_t getBitsPerSample(int32_t dmaPort);
+    uint32_t getBytesPerSample(int32_t dmaPort);
     uint32_t getSamplePerPixel(int32_t dmaPort);
 
     size_t getPayloadSize(int32_t dmaPort);
@@ -53,8 +52,5 @@ public:
     Fg_Struct* FgInit(std::string applet, uint32_t boardIndex);
 
 private:
-
-
     Fg_Struct* mFgHandle;
-
 };

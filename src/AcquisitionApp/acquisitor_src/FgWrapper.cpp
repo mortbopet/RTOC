@@ -54,7 +54,7 @@ Fg_Struct* FgWrapper::FgInit(std::string applet, uint32_t boardIndex) {
     if (!mFgHandle)
         throw std::runtime_error(
             "Cannot initialize frame grabber.\nError in external dependencies.\nAre the "
-            "framegrabber drivers installed?");
+            "framegrabber drivers installed or currently busy?");
     return mFgHandle;
 }
 
@@ -169,6 +169,22 @@ uint32_t FgWrapper::getBitsPerSample(int32_t dmaPort) {
             return 8;
         case FG_COL48:
             return 16;
+        default:
+            throw std::invalid_argument("Pixel type is not known");
+    };
+}
+
+uint32_t FgWrapper::getBytesPerSample(int32_t dmaPort) {
+    int32_t format = getFormat(dmaPort);
+    switch (format) {
+        case FG_GRAY:
+            return 1;
+        case FG_GRAY16:
+            return 2;
+        case FG_COL24:
+            return 1;
+        case FG_COL48:
+            return 2;
         default:
             throw std::invalid_argument("Pixel type is not known");
     };
