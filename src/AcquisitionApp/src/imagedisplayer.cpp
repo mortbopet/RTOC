@@ -4,7 +4,7 @@
 
 ImageDisplayer::ImageDisplayer() {
     // Set image request interval
-    m_imageRequester.setInterval(20);
+    m_imageRequester.setInterval(10);
     connect(&m_imageRequester, &QTimer::timeout, [=] { emit requestImage(); });
     addItem(&m_image);
 }

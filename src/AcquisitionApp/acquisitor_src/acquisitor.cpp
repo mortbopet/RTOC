@@ -50,9 +50,6 @@ int Acquisitor::initialize() {
             /*FgDmaChannelExample shows dma initialization.*/
             m_dmaHandle = DmaMemWrapper::create(m_FgHandle, m_dmaPort);
 
-            m_display = DisplayWrapper::create(std::weak_ptr<DmaMemWrapper>(m_dmaHandle), m_dmaPort,
-                                               std::weak_ptr<FgWrapper>(m_FgHandle));
-
             // Resize m_image according to the framegrabber image size
             m_image.resize(m_FgHandle->getPayloadSize(m_dmaPort));
 
@@ -61,10 +58,6 @@ int Acquisitor::initialize() {
             // discoverCameras(board);
 
             m_camera = selectCamera(m_board);
-
-            // set display values
-            m_display->setWidth(m_fgValues.width / 2);
-            m_display->setHeight(m_fgValues.height / 2);
 
         } catch (std::exception& e) {
             // releases internal structures of the library
@@ -129,8 +122,6 @@ void Acquisitor::acquisitionSgc() {
                 throwLastFgError();
             }
         }
-
-        drawBuffer((int)bufNr);
 
         // Access a pointer to an image in the buffer denoted by bufNr
         void* pos = Fg_getImagePtrEx(fgHandle, bufNr, m_dmaPort, dmaHandle);

@@ -11,7 +11,6 @@
 
 #include <QObject>
 
-#include <SisoDisplay.h>
 #include <fgrab_define.h>
 #include <fgrab_prototyp.h>
 #include <fgrab_struct.h>
@@ -23,7 +22,6 @@
 #include <QMutex>
 #include <QThread>
 
-#include "../acquisitor_src/DisplayWrapper.h"
 #include "../acquisitor_src/DmaMemWrapper.h"
 
 #include "../src/logger.h"
@@ -75,14 +73,11 @@ protected:
 private:
     Acquisitor(QObject* parent = nullptr);
 
-    void drawBuffer(int32_t bufferIndex) { m_display->drawBuffer(bufferIndex); }
-
     void throwLastFgError(Fg_Struct* fgHandle);
     void throwLastFgError();
 
     std::shared_ptr<FgWrapper> m_FgHandle;
     std::shared_ptr<DmaMemWrapper> m_dmaHandle;
-    std::shared_ptr<DisplayWrapper> m_display;
     SgcCameraHandle* m_camera;
     SgcBoardHandle* m_board;
 
