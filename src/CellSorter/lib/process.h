@@ -83,6 +83,8 @@ class RegionProps : public Process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     RegionProps();
+
+    CREATE_VALUE_PARM(int, m_dataFlags, "Data flags");
 };
 
 class ClearBorder : public Process {

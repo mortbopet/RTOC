@@ -2,6 +2,7 @@
 #include "matlab_ext.h"
 #include <math.h>
 #include <opencv/cv.hpp>
+#include "datacontainer.h"
 
 Process::Process(void) {}
 
@@ -88,53 +89,58 @@ void Fill::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
 }
 
 RegionProps::RegionProps() {
-
+    m_dataFlags.setRange(0, 0xffff);
 }
 
-/** PROTO / DEMO / NOT IMPLEMENTED / WARNING / HEJ / !!!
-    Naive written:
-    Very redudant, how to make this very super smart(?)
- */
 void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+    int dataFlags = m_dataFlags.getValue();
+
+
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
     // for every contour -> new regionprops object with m_parameters
     for (const std::vector<cv::Point>& contour : contours) {
-        if ("Area") {
+        /// Area
+        // If area, circularity and/or solidity is set - calculate area
+        if (dataFlags & (data::Area | data::Circularity | data::Solidity)) {
             double area = cv::contourArea(contour);
-            // return area
         }
-        if ("BoundingBox") {
-            cv::Rect bbox = cv::boundingRect(contour);
-            // return bbox
-        }
-        if ("Centroid") {
-            cv::Point centroid; // cv::POint
+        /// Centroid
+        if (dataFlags & (data::Centroid | data::GradientScore | data::Symmetry)) {
             cv::Moments m = cv::moments(contour, true);
-            centroid.x = int(m.m10/m.m00);
-            centroid.y = int(m.m01/m.m00);
-            // return centroid
+            cv::Point centroid = cv::Point(int(m.m10/m.m00),int(m.m01/m.m00));
         }
-        if ("Circularity") {
-            auto area = cv::contourArea(contour);
-            auto perimeter = cv::arcLength(contour, true);
-            auto circ = 4 * M_PI * area / perimeter;
-            // return circ
-        }
-        if ("Eccentricity") {
+        /// Major Axis
+        if (dataFlags & (data::Major_axis | data::Eccentricity | data::Symmetry)) {
             cv::RotatedRect fit = cv::fitEllipse(contour);
-            double majoraxis = max(fit.size.width,fit.size.height);
-            double minoraxis = min(fit.size.width,fit.size.height);
-            double eccentricity = (majoraxis * majoraxis) - (minoraxis * minoraxis);
+            double majorAxis = max(fit.size.width,fit.size.height);
+        }
+        /// Minor Axis
+        if (dataFlags & (data::Minor_axis | data::Eccentricity)) {
+            cv::RotatedRect fit = cv::fitEllipse(contour);
+            double minorAxis = min(fit.size.width,fit.size.height);
+        }
+        /// Perimeter
+        if (dataFlags & (data::Perimeter | data::Circularity)) {
+            double perimeter = cv::arcLength(contour, true);
+        }
+        /// Bounding Box
+        if (dataFlags & data::BoundingBox) {
+            cv::Rect boundingBox = cv::boundingRect(contour);
+        }
+        /// Circularity
+        if (dataFlags & data::Circularity) {
+            double circularity = 4 * M_PI * area / perimeter;
+        }
+        /// Eccentricity
+        if (dataFlags & data::Eccentricity) {
+            double eccentricity = (majorAxis * majorAxis) - (minorAxis * minorAxis);
             // return eccentricity
         }
-        if ("GradientScore") {
-            cv::Point centroid; // cv::POint
-            cv::Moments m = cv::moments(contour, true);
-            centroid.x = int(m.m10/m.m00);
-            centroid.y = int(m.m01/m.m00);
-            double gradient_score;
+        /// Gradient Score
+        if (dataFlags & data::GradientScore) {
+            double gradientScore;
             if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
                 (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
 
@@ -143,37 +149,20 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
 
                 cv::Mat temp = cv::Mat(img,roi);
                 cv::Canny(temp, temp, 0.20, 0.6);
-                gradient_score = cv::sum(cv::Mat(temp,cv::Rect(0,6,temp.cols,2)))[0];
+                gradientScore = cv::sum(cv::Mat(temp,cv::Rect(0,6,temp.cols,2)))[0];
             } else {
-                gradient_score = 0;
+                gradientScore = 0;
             }
-            // return gradient_score
         }
-        if ("MajorAxisLength") {
-            cv::RotatedRect fit = cv::fitEllipse(contour);
-            double majoraxis = max(fit.size.width,fit.size.height);
-            // return majoraxis
-        }
-        if ("MinorAxisLength") {
-            cv::RotatedRect fit = cv::fitEllipse(contour);
-            double minoraxis = min(fit.size.width,fit.size.height);
-            // return majoraxis
-        }
-        if ("Solidity") {
-            auto area = cv::contourArea(contour);
+        /// Solidity
+        if (dataFlags & data::Solidity) {
             cv::Mat hull;
             cv::convexHull(img,hull);
-            auto hull_area = cv::contourArea(hull);
+            double hull_area = cv::contourArea(hull);
             double solidity = area / hull_area;
-            // return solidity;
         }
-        if("Symmetry") {
-            cv::RotatedRect fit = cv::fitEllipse(contour);
-            double majoraxis = max(fit.size.width,fit.size.height);
-            cv::Point centroid; // cv::POint
-            cv::Moments m = cv::moments(contour, true);
-            centroid.x = int(m.m10/m.m00);
-            centroid.y = int(m.m01/m.m00);
+        /// Symmetry
+        if(dataFlags & data::Symmetry) {
             double symmetry;
             if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
                 (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
@@ -195,11 +184,6 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             } else {
                 symmetry = 0;
             }
-            // return symmetry
-        }
-        if ("Perimeter") {
-            double perimeter = cv::arcLength(contour, true);
-            // return perimeter
         }
     }
 }
