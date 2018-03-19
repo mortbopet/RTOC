@@ -110,10 +110,10 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             // return bbox
         }
         if ("Centroid") {
-            std::pair<int,int> centroid;
+            cv::Point centroid; // cv::POint
             cv::Moments m = cv::moments(contour, true);
-            centroid.first = int(m.m10/m.m00);
-            centroid.second = int(m.m01/m.m00);
+            centroid.x = int(m.m10/m.m00);
+            centroid.y = int(m.m01/m.m00);
             // return centroid
         }
         if ("Circularity") {
@@ -144,6 +144,11 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
         if ("MajorAxisLength") {
             cv::RotatedRect fit = cv::fitEllipse(contour);
             double majoraxislen = max(fit.size.width,fit.size.height);
+            // return majoraxislen
+        }
+        if ("MinorAxisLength") {
+            cv::RotatedRect fit = cv::fitEllipse(contour);
+            double minoraxislen = min(fit.size.width,fit.size.height);
             // return majoraxislen
         }
         if ("Solidity") {

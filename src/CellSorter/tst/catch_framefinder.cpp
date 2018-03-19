@@ -16,6 +16,9 @@ TEST_CASE("files_from_folder()", "[framefinder]") {
     SECTION("check if able to find files in build dir") {
         REQUIRE(files_from_folder(files, "./") != 0);
     }
+    SECTION("check error output when folder doesn't exist") {
+        REQUIRE(files_from_folder(files, "./x_x_x/") == -1);
+    }
 }
 
 TEST_CASE("extractBetween", "[framefinder]") {
@@ -51,3 +54,8 @@ TEST_CASE("extractBetween", "[framefinder]") {
         REQUIRE(extractBetween(f) == "NOT_FOUND");
     }
 }
+
+// TEST_CASE("get_files", "[framefinder]") {
+//     std::vector<Frame> frames;
+//     std::string folder = "./";
+// }

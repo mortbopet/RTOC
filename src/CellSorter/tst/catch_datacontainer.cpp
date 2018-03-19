@@ -15,10 +15,10 @@ TEST_CASE("DataContainer Class Test", "[datacontainer]") {
         REQUIRE(container[0]->getValue<double>(data::Area) == 12.3);
     }
 
-    SECTION("illegal calls / test for exceptions") {
+    SECTION("illegal calls / test for non-set dataFlags") {
         container.setDataFlags(data::Area | data::Circularity | data::Inlet);
         container.appendNew();
-        REQUIRE_THROWS(container[0]->setValue(data::Centroid, std::pair<int, int>(1, 3)));
+        REQUIRE_THROWS(container[0]->setValue(data::Centroid, cv::Point(1, 3)));
         REQUIRE_THROWS(container[0]->setValue(data::Eccentricity, -143.395834));
         REQUIRE_THROWS(container[0]->setValue(data::Centroid, 13413));
         REQUIRE_THROWS(container[0]->setValue(data::Eccentricity, true));
@@ -163,15 +163,15 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
     }
 }
 
-TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer") {
+TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer]") {
     DataContainer container;
 
     SECTION("set all data-types") {
         container.setDataFlags(0xffff);
         container.appendNew();
         container[0]->setValue(data::Area,0.254);
-        container[0]->setValue(data::BoundingBox, cv::Rect(0,5,10,15));
-        container[0]->setValue(data::Centroid, cv::Point(11,22));
+        container[0]->setValue(data::BoundingBox, cv::Rect(0, 5, 10, 15));
+        container[0]->setValue(data::Centroid, cv::Point(11, 22));
         container[0]->setValue(data::Circularity, 0.543);
         container[0]->setValue(data::Eccentricity, 2.43);
         container[0]->setValue(data::Frame, 5);
@@ -186,8 +186,8 @@ TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer") {
         container[0]->setValue(data::Perimeter, 3.433);
         // set PixelIdxList here
         REQUIRE(container[0]->getValue<double>(data::Area) == 0.254);
-        REQUIRE(container[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0,5,10,15));
-        REQUIRE(container[0]->getValue<cv::Point>(data::Centroid) == cv::Point(11,22));
+        REQUIRE(container[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0, 5, 10, 15));
+        REQUIRE(container[0]->getValue<cv::Point>(data::Centroid) == cv::Point(11, 22));
         REQUIRE(container[0]->getValue<double>(data::Circularity) == 0.543);
         REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
         REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
