@@ -49,8 +49,10 @@ int Acquisitor::initialize() {
 
             /*FgDmaChannelExample shows dma initialization.*/
             m_dmaHandle = DmaMemWrapper::create(m_FgHandle, m_dmaPort);
-            m_display = DisplayWrapper::create(std::weak_ptr<DmaMemWrapper>(m_dmaHandle), m_dmaPort,
-                                               std::weak_ptr<FgWrapper>(m_FgHandle));
+            //            m_display =
+            //            DisplayWrapper::create(std::weak_ptr<DmaMemWrapper>(m_dmaHandle),
+            //            m_dmaPort,
+            //                                               std::weak_ptr<FgWrapper>(m_FgHandle));
             m_board = initialiseBoard(m_FgHandle->getFgHandle());
             // std::vector<std::pair<std::string, SgcCameraHandle*>> cameras =
             // discoverCameras(board);

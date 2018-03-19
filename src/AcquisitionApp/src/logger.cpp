@@ -4,7 +4,7 @@ Logger::Logger(QObject* parent) : QObject(parent) {}
 
 void Logger::writeLineToLog(QString msg) {
     if (msg.at(0) != '\n') {
-        msg.prepend('\n');
+        msg.prepend("\n\n");
     }
     writeToLog(msg);
 }
