@@ -12,7 +12,7 @@ if(${BUILD_ACQ})
           "\nThis variable is required for linking against SiliconSoftware provided
           headers and libraries.")
       message( STATUS "\nRemember to set the working directory to the silicon software .bin directory, or other directories containing the required .dll's")
-    else( )
+    else()
       message( WARNING "\nSISODIR5 not set!")
     endif()
 endif()

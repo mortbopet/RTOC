@@ -6,8 +6,10 @@ void Logger::writeLineToLog(QString msg) {
     if (msg.at(0) != '\n') {
         msg.prepend('\n');
     }
-    m_log->appendPlainText(msg);
+    writeToLog(msg);
 }
 void Logger::writeToLog(QString msg) {
+    m_log->moveCursor(QTextCursor::End);
     m_log->insertPlainText(msg);
+    m_log->moveCursor(QTextCursor::End);
 }
