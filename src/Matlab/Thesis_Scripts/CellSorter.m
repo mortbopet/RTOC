@@ -209,16 +209,11 @@ for i = 1:size(acc,1) % loop through accepted frames
             case 0
                 same_cell = tracker(idx ,2);
                 RBCs(same_cell).frame = [RBCs(same_cell).frame i];
-                RBCs(same_cell).centroid = [RBCs(same_cell).centroid ...
-                    celldata(k).Centroid];
-                RBCs(same_cell).box = [RBCs(same_cell).box ...
-                    celldata(k).BoundingBox];
-                RBCs(same_cell).pixellist = [RBCs(same_cell).pixellist ...
-                    celldata(k).PixelIdxList];
-                RBCs(same_cell).majoraxis = [RBCs(same_cell).majoraxis ...
-                    celldata(k).MajorAxisLength];
-                RBCs(same_cell).eccentricity = [RBCs(same_cell).eccentricity ...
-                    celldata(k).Eccentricity];
+                RBCs(same_cell).centroid = [RBCs(same_cell).centroid celldata(k).Centroid];
+                RBCs(same_cell).box = [RBCs(same_cell).box celldata(k).BoundingBox];
+                RBCs(same_cell).pixellist = [RBCs(same_cell).pixellist celldata(k).PixelIdxList];
+                RBCs(same_cell).majoraxis = [RBCs(same_cell).majoraxis celldata(k).MajorAxisLength];
+                RBCs(same_cell).eccentricity = [RBCs(same_cell).eccentricity celldata(k).Eccentricity];
                 RBCs(same_cell).circularity = [RBCs(same_cell).circularity circ(k)];
                 RBCs(same_cell).symmetry = [RBCs(same_cell).symmetry s1];
                 RBCs(same_cell).gradient = [RBCs(same_cell).gradient s2];

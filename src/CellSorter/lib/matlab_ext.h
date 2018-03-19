@@ -23,6 +23,32 @@ namespace matlab {
             }
         }
     }
+
+    std::pair<double,double> findCannyThreshold(const cv::Mat& img) {
+        double percentOfPixelsNotEdges = 0.7;
+        double thresholdRatio = 0.4;
+        double low = percentOfPixelsNotEdges * img.rows * img.cols;
+        // Initialize variables used by calcHist
+        cv::Mat hist;
+        int bins = 64;
+        float range[] = {0, 256};
+        const float* ranges = range;
+        cv::calcHist(&img, 1, nullptr, cv::Mat(), hist, 1, &bins, &ranges);
+
+        // Loop through histogram until threshold is met
+        double highThreshold = 0;
+        int c = 0;
+        while(highThreshold < low) {
+            highThreshold += hist.at<float>(0, c);
+            c++;
+        }
+        std::pair<double,double> threshold;
+        threshold.first = highThreshold / 64; //  * 16320;
+        threshold.second = threshold.first * thresholdRatio;
+
+        return threshold;
+    };
+
 }
 
 #endif //CELLSORTER_MATLAB_EXT_H

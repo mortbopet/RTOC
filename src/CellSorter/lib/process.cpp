@@ -122,34 +122,42 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             auto circ = 4 * M_PI * area / perimeter;
             // return circ
         }
-        // if ("Eccentricity") {}
+        if ("Eccentricity") {
+            cv::RotatedRect fit = cv::fitEllipse(contour);
+            double majoraxis = max(fit.size.width,fit.size.height);
+            double minoraxis = min(fit.size.width,fit.size.height);
+            double eccentricity = (majoraxis * majoraxis) - (minoraxis * minoraxis);
+            // return eccentricity
+        }
         if ("GradientScore") {
+            cv::Point centroid; // cv::POint
             cv::Moments m = cv::moments(contour, true);
-            auto cx = int(m.m10/m.m00);
-            auto cy = int(m.m01/m.m00);
-            int c[2] = {cx,cy};
-            if ((round(c[0] - 5.5) < 0 && round(c[0] + 5.5) > img.cols) &&
-                (round(c[1] - 22.5) < 0 && round(c[1] + 22.5) > img.rows)) {
+            centroid.x = int(m.m10/m.m00);
+            centroid.y = int(m.m01/m.m00);
+            double gradient_score;
+            if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
+                (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
 
-                cv::Rect roi = cv::Rect((int) round(c[0] - 5.5),(int) round(c[0] + 5.5),
-                                        (int) round(c[1] - 22.5),(int) round(c[1] + 22.5));
+                cv::Rect roi = cv::Rect((int) round(centroid.x - 5.5),(int) round(centroid.x + 5.5),
+                                        (int) round(centroid.y - 22.5),(int) round(centroid.y + 22.5));
 
                 cv::Mat temp = cv::Mat(img,roi);
-
-
-                // edgedetect (Canny) here
-
+                cv::Canny(temp, temp, 0.20, 0.6);
+                gradient_score = cv::sum(cv::Mat(temp,cv::Rect(0,6,temp.cols,2)))[0];
+            } else {
+                gradient_score = 0;
             }
+            // return gradient_score
         }
         if ("MajorAxisLength") {
             cv::RotatedRect fit = cv::fitEllipse(contour);
-            double majoraxislen = max(fit.size.width,fit.size.height);
-            // return majoraxislen
+            double majoraxis = max(fit.size.width,fit.size.height);
+            // return majoraxis
         }
         if ("MinorAxisLength") {
             cv::RotatedRect fit = cv::fitEllipse(contour);
-            double minoraxislen = min(fit.size.width,fit.size.height);
-            // return majoraxislen
+            double minoraxis = min(fit.size.width,fit.size.height);
+            // return majoraxis
         }
         if ("Solidity") {
             auto area = cv::contourArea(contour);
@@ -159,14 +167,39 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
             double solidity = area / hull_area;
             // return solidity;
         }
-        // if("Symmetry") {}
+        if("Symmetry") {
+            cv::RotatedRect fit = cv::fitEllipse(contour);
+            double majoraxis = max(fit.size.width,fit.size.height);
+            cv::Point centroid; // cv::POint
+            cv::Moments m = cv::moments(contour, true);
+            centroid.x = int(m.m10/m.m00);
+            centroid.y = int(m.m01/m.m00);
+            double symmetry;
+            if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
+                (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
+
+                cv::Rect roi = cv::Rect((int) round(centroid.x - 4.5),(int) round(centroid.x + 4.5),
+                                        (int) round(centroid.y - 22.5),(int) round(centroid.y + 22.5));
+
+                cv::Mat temp = cv::Mat(img,roi);
+                double im_min;
+                double im_max;
+                cv::minMaxIdx(temp, &im_min, &im_max);
+                temp -= im_min / (im_max - im_min);
+                cv::Mat flipped;
+                cv::flip(temp,flipped,1);
+                cv::Mat d1;
+                cv::absdiff(temp, flipped, d1);
+                symmetry = cv::sum(d1)[0] / majoraxis;
+
+            } else {
+                symmetry = 0;
+            }
+            // return symmetry
+        }
         if ("Perimeter") {
             double perimeter = cv::arcLength(contour, true);
             // return perimeter
         }
-
-
-
     }
-
 }
