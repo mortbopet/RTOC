@@ -95,35 +95,42 @@ RegionProps::RegionProps() {
 void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
     int dataFlags = m_dataFlags.getValue();
 
-
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
     // for every contour -> new regionprops object with m_parameters
     for (const std::vector<cv::Point>& contour : contours) {
+        int area;
+        cv::Point centroid;
+        int convexArea;
+        double majorAxis;
+        double minorAxis;
+        double perimeter;
+
         /// Area
-        // If area, circularity and/or solidity is set - calculate area
         if (dataFlags & (data::Area | data::Circularity | data::Solidity)) {
-            double area = cv::contourArea(contour);
+            area = (int) contour.size();
         }
         /// Centroid
         if (dataFlags & (data::Centroid | data::GradientScore | data::Symmetry)) {
             cv::Moments m = cv::moments(contour, true);
-            cv::Point centroid = cv::Point(int(m.m10/m.m00),int(m.m01/m.m00));
+            centroid = cv::Point(int(m.m10/m.m00),int(m.m01/m.m00));
+        }
+        /// Convex Area
+        if (dataFlags & (data::ConvexArea | data::Solidity)) {
+            std::vector<int> hull;
+            cv::convexHull(contour, hull, false, true);
+            convexArea = (int) hull.size();
         }
         /// Major Axis
-        if (dataFlags & (data::Major_axis | data::Eccentricity | data::Symmetry)) {
+        if (dataFlags & (data::Major_axis | data::Minor_axis | data::Eccentricity | data::Symmetry)) {
             cv::RotatedRect fit = cv::fitEllipse(contour);
-            double majorAxis = max(fit.size.width,fit.size.height);
-        }
-        /// Minor Axis
-        if (dataFlags & (data::Minor_axis | data::Eccentricity)) {
-            cv::RotatedRect fit = cv::fitEllipse(contour);
-            double minorAxis = min(fit.size.width,fit.size.height);
+            majorAxis = max(fit.size.width,fit.size.height);
+            minorAxis = min(fit.size.width,fit.size.height);
         }
         /// Perimeter
         if (dataFlags & (data::Perimeter | data::Circularity)) {
-            double perimeter = cv::arcLength(contour, true);
+            perimeter = cv::arcLength(contour, true);
         }
         /// Bounding Box
         if (dataFlags & data::BoundingBox) {
@@ -156,10 +163,7 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
         }
         /// Solidity
         if (dataFlags & data::Solidity) {
-            cv::Mat hull;
-            cv::convexHull(img,hull);
-            double hull_area = cv::contourArea(hull);
-            double solidity = area / hull_area;
+            double solidity = (double) area / (double) convexArea;
         }
         /// Symmetry
         if(dataFlags & data::Symmetry) {
@@ -179,8 +183,7 @@ void RegionProps::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
                 cv::flip(temp,flipped,1);
                 cv::Mat d1;
                 cv::absdiff(temp, flipped, d1);
-                symmetry = cv::sum(d1)[0] / majoraxis;
-
+                symmetry = cv::sum(d1)[0] / majorAxis;
             } else {
                 symmetry = 0;
             }

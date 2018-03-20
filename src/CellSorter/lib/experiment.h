@@ -3,8 +3,10 @@
 
 #include <opencv/cv.hpp>
 #include <string>
+#include <vector>
 
 #include "framefinder.h"
+#include "datacontainer.h"
 
 //// Experiment
 /* Struct for each Experiment. Used as a container for parameters.
@@ -27,6 +29,7 @@ struct Experiment {
     std::vector<Frame> acc, dis;
     double intensity_threshold;
     std::string imagePath;
+    std::vector<DataContainer> data;
 
     void defaultSettings(const std::string& imgPath) {
         convex_MIN = 200;
