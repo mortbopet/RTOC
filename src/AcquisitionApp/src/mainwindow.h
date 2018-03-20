@@ -32,8 +32,11 @@ private slots:
     void setInitializerButtonState(bool state);
 
     void acquisitionStateChanged(bool state);
+    void setButtonStates();
 
 private:
+    enum class AcqState { idle, initializing, initialized, Acquiring };
+    AcqState m_acqState = AcqState::idle;
     ImageDisplayer m_imageDisplayer;
 
     Ui::MainWindow* m_ui;
