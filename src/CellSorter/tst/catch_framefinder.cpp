@@ -2,7 +2,7 @@
 
 #include "../lib/framefinder.h"
 
-TEST_CASE("exists()", "[framefinder]") {
+TEST_CASE("exists()", "[full], [framefinder]") {
     SECTION("basic operation") {
         REQUIRE(exists("./Makefile"));
         REQUIRE(!exists("./Makefsidfj"));
@@ -11,7 +11,7 @@ TEST_CASE("exists()", "[framefinder]") {
     }
 }
 
-TEST_CASE("files_from_folder()", "[framefinder]") {
+TEST_CASE("files_from_folder()", "[full], [framefinder]") {
     std::vector<std::string> files;
     SECTION("check if able to find files in build dir") {
         REQUIRE(files_from_folder(files, "./") != 0);
@@ -21,7 +21,7 @@ TEST_CASE("files_from_folder()", "[framefinder]") {
     }
 }
 
-TEST_CASE("extractBetween", "[framefinder]") {
+TEST_CASE("extractBetween", "[full], [framefinder]") {
     std::string a = "some_test.here";
     std::string b = "some_other_test.here";
     std::string c = "some_test.here.right";
@@ -55,7 +55,7 @@ TEST_CASE("extractBetween", "[framefinder]") {
     }
 }
 
-// TEST_CASE("get_files", "[framefinder]") {
+// TEST_CASE("get_files", "[full], [framefinder]") {
 //     std::vector<Frame> frames;
 //     std::string folder = "./";
 // }

@@ -2,7 +2,7 @@
 
 #include "../lib/datacontainer.h"
 
-TEST_CASE("DataContainer Class Test", "[datacontainer]") {
+TEST_CASE("DataContainer Class Test", "[full], [datacontainer]") {
     DataContainer container;
     SECTION("append ") {
         container.addDataFlag(data::Area);
@@ -11,8 +11,8 @@ TEST_CASE("DataContainer Class Test", "[datacontainer]") {
     SECTION("append and setValue") {
         container.setDataFlags(data::Area);
         REQUIRE_NOTHROW(container.appendNew());
-        REQUIRE_NOTHROW(container[0]->setValue(data::Area, 540));
-        REQUIRE(container[0]->getValue<int>(data::Area) == 540);
+        REQUIRE_NOTHROW(container[0]->setValue(data::Area, 540.43));
+        REQUIRE(container[0]->getValue<double>(data::Area) == 540.43);
     }
 
     SECTION("illegal calls / test for non-set dataFlags") {
@@ -28,13 +28,13 @@ TEST_CASE("DataContainer Class Test", "[datacontainer]") {
     SECTION("clear dataFlags") {}
 }
 
-TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
+TEST_CASE("dataFlags and values (basic)", "[full], [datacontainer]") {
     SECTION("Area") {
         DataContainer container(data::Area);
 
         container.appendNew();
-        container[0]->setValue(data::Area, 12);
-        REQUIRE(container[0]->getValue<int>(data::Area) == 12);
+        container[0]->setValue(data::Area, 12.43);
+        REQUIRE(container[0]->getValue<double>(data::Area) == 12.43);
     }
     SECTION("BoundingBox") {
         DataContainer container(data::BoundingBox);
@@ -68,9 +68,9 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
         DataContainer container(data::ConvexArea);
 
         container.appendNew();
-        container[0]->setValue(data::ConvexArea, 15);
-        int res = container[0]->getValue<int>(data::ConvexArea);
-        REQUIRE(res == 15);
+        container[0]->setValue(data::ConvexArea, 15.3);
+        double res = container[0]->getValue<double>(data::ConvexArea);
+        REQUIRE(res == 15.3);
     }
     SECTION("Eccentricity") {
         DataContainer container(data::Eccentricity);
@@ -171,17 +171,17 @@ TEST_CASE("dataFlags and values (basic)", "[datacontainer]") {
     }
 }
 
-TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer]") {
+TEST_CASE("dataFlag and values (multiple at once)", "[full], [datacontainer]") {
     DataContainer container;
 
     SECTION("set all data-types") {
         container.setDataFlags(0xffff);
         container.appendNew();
-        container[0]->setValue(data::Area, 254);
+        container[0]->setValue(data::Area, 254.89);
         container[0]->setValue(data::BoundingBox, cv::Rect(0, 5, 10, 15));
         container[0]->setValue(data::Centroid, cv::Point(11, 22));
         container[0]->setValue(data::Circularity, 0.543);
-        container[0]->setValue(data::ConvexArea, 25);
+        container[0]->setValue(data::ConvexArea, 25.5);
         container[0]->setValue(data::Eccentricity, 2.43);
         container[0]->setValue(data::Frame, 5);
         container[0]->setValue(data::GradientScore, 5.005);
@@ -194,11 +194,11 @@ TEST_CASE("dataFlag and values (multiple at once)", "[datacontainer]") {
         container[0]->setValue(data::Symmetry, 34.943);
         container[0]->setValue(data::Perimeter, 3.433);
         // set PixelIdxList here
-        REQUIRE(container[0]->getValue<int>(data::Area) == 254);
+        REQUIRE(container[0]->getValue<double>(data::Area) == 254.89);
         REQUIRE(container[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0, 5, 10, 15));
         REQUIRE(container[0]->getValue<cv::Point>(data::Centroid) == cv::Point(11, 22));
         REQUIRE(container[0]->getValue<double>(data::Circularity) == 0.543);
-        REQUIRE(container[0]->getValue<int>(data::ConvexArea) == 25);
+        REQUIRE(container[0]->getValue<double>(data::ConvexArea) == 25.5);
         REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
         REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
         REQUIRE(container[0]->getValue<double>(data::GradientScore) == 5.005);

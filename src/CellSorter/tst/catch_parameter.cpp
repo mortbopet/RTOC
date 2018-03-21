@@ -7,26 +7,26 @@
 
 // Unit testing for Parameter class
 
-TEST_CASE("Parameter test", "[parameter]") {
+TEST_CASE("Parameter test", "[full], [parameter]") {
     std::vector<ParameterBase*> parameters;
     ValueParameter<int> intParm = ValueParameter<int>(parameters, "Integer parameter");
     ValueParameter<double> doubleParm = ValueParameter<double>(parameters, "Double parameter");
     enum TestEnum { A, B, C, D };
     EnumParameter<TestEnum> enumParm = EnumParameter<TestEnum>(parameters, "Enumerated parameter");
 
-    SECTION("Test Integer value parameters", "[parameter]") { REQUIRE_THROWS(intParm.getValue()); }
+    SECTION("Test Integer value parameters", "[full], [parameter]") { REQUIRE_THROWS(intParm.getValue()); }
 
     intParm.setRange(0, 100);
     intParm.setValue(30);
 
-    SECTION("Test Double value parameters", "[parameter]") {
+    SECTION("Test Double value parameters", "[full], [parameter]") {
         REQUIRE_THROWS(doubleParm.getValue());
     }
 
     doubleParm.setRange(-143.40, 1341.40);
     doubleParm.setValue(134.1345);
 
-    SECTION("Test Enum parameters", "[parameter]") { REQUIRE_THROWS(enumParm.getValue()); }
+    SECTION("Test Enum parameters", "[full], [parameter]") { REQUIRE_THROWS(enumParm.getValue()); }
 
     enumParm.setOptions(map<TestEnum, string>{{TestEnum::A, "Value_A"},
                                               {TestEnum::B, "Value_B"},
@@ -37,7 +37,7 @@ TEST_CASE("Parameter test", "[parameter]") {
 
     // Loop through $parameters, deduce the parameter type and print the valid options/ranges
 
-    SECTION("Test parameter retrieval and type deduction", "[parameter]") {
+    SECTION("Test parameter retrieval and type deduction", "[full], [parameter]") {
         for (auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();
             std::string type;
