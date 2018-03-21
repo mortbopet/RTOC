@@ -27,15 +27,22 @@ Acquisitor* Acquisitor::get() {
     return acq;
 }
 
+void Acquisitor::setState(AcqState state) {
+    // sets acquisitor state and notifies the change to GUI
+    m_acqState = state;
+    emit stateChanged(m_acqState);
+}
+
 int Acquisitor::initialize() {
-    if (!m_isInitialized) {
+    if (m_acqState == AcqState::Idle) {
         emit writeToLog("Initializing framegrabber");
+        setState(AcqState::Initializing);
         try {
-            QThread::sleep(2);
             // initializes internal structures of the library.
             int32_t status = Fg_InitLibraries(nullptr);
             if (status != FG_OK) {
                 emit writeToLog("Cannot initialize Fg libraries.");
+                setState(AcqState::Idle);
                 return -1;
             }
             /*Initialize framegrabber struct with default applet. Assume board is at index 0 (single
@@ -44,6 +51,7 @@ int Acquisitor::initialize() {
             if (m_FgHandle->getFgHandle() == NULL) {
                 emit writeToLog(
                     QString("Error in Fg_Init(): %s\n").arg(Fg_getLastErrorDescription(NULL)));
+                setState(AcqState::Idle);
                 return -1;
             }
 
@@ -63,20 +71,18 @@ int Acquisitor::initialize() {
             // releases internal structures of the library
             Fg_FreeLibraries();
             emit writeToLog("Initialization failed: " + QString(e.what()));
-            emit initialized(false);
+            setState(AcqState::Idle);
             return -1;
         }
-
-        m_isInitialized = true;
         emit writeToLog("Initialization successfull. Detected camera:");
         emit writeToLog(getCameraInfo(m_camera));
-        emit initialized(m_isInitialized);
+        setState(AcqState::Initialized);
     }
     return 0;
 }
 
 int Acquisitor::deInitialize() {
-    Q_ASSERT(m_isInitialized);
+    setState(AcqState::Idle);
     try {
         Sgc_freeBoard(m_board);
 
@@ -86,11 +92,8 @@ int Acquisitor::deInitialize() {
         // releases internal structures of the library
         Fg_FreeLibraries();
         std::cout << "Example failed: " << e.what() << std::endl;
-        emit initialized(false);
         return -1;
     }
-    m_isInitialized = false;
-    emit initialized(m_isInitialized);
     return 0;
 }
 
@@ -111,7 +114,7 @@ void Acquisitor::acquisitionSgc() {
     /*Start the camera acquisition*/
     Sgc_startAcquisition(m_camera, 0);
 
-    while (!isError && m_acquire) {
+    while (!isError && m_acqState == AcqState::Acquiring) {
         bufNr = Fg_getImageEx(fgHandle, SEL_ACT_IMAGE, 0, m_dmaPort, waitDurationInMs, dmaHandle);
 
         if (bufNr < 0) {
@@ -158,14 +161,12 @@ void Acquisitor::throwLastFgError(Fg_Struct* fgHandle) {
 void Acquisitor::startAcq() {
     // start thread
     emit writeToLog("Starting acquisition...");
-    m_acquire = true;
+    setState(AcqState::Acquiring);
     m_acqThread = std::thread{&Acquisitor::acquisitionSgc, this};
-    emit acquisitionStateChanged(m_acquire);
 }
 
 void Acquisitor::stopAcq() {
     emit writeToLog("Stopping acquisition");
-    m_acquire = false;
+    setState(AcqState::Initialized);
     m_acqThread.join();
-    emit acquisitionStateChanged(m_acquire);
 }

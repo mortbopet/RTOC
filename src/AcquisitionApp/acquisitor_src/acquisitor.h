@@ -43,6 +43,10 @@ typedef struct {
     int32_t format;
 } FgValues;
 
+enum class AcqState { Idle, Initializing, Initialized, Acquiring };
+
+Q_DECLARE_METATYPE(AcqState)
+
 class Acquisitor : public QObject {
     Q_OBJECT
 public:
@@ -60,9 +64,9 @@ public slots:
     void requestImageData() { m_requestImage = true; }
 
 signals:
-    void initialized(bool);
-    void acquisitionStateChanged(bool);  // true = running, false = stopped
     void writeToLog(QString msg);
+
+    void stateChanged(AcqState);
 
     // Emitted when an image has been stored from acquisition and can be accessed from gui
     void sendImageData(const std::vector<char>&);
@@ -75,11 +79,14 @@ private:
 
     void throwLastFgError(Fg_Struct* fgHandle);
     void throwLastFgError();
+    void setState(AcqState state);
 
     std::shared_ptr<FgWrapper> m_FgHandle;
     std::shared_ptr<DmaMemWrapper> m_dmaHandle;
     SgcCameraHandle* m_camera;
     SgcBoardHandle* m_board;
+
+    AcqState m_acqState = AcqState::Idle;
 
     /* We have no mutexes on m_image, since we assume that the protocol:
      *  1: GUI requests image;
@@ -92,9 +99,6 @@ private:
     bool m_requestImage = false;
 
     int m_dmaPort = 0;
-
-    bool m_isInitialized = false;
-    bool m_acquire = false;
 
     std::thread m_acqThread;
 

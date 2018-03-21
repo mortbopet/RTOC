@@ -29,14 +29,10 @@ private slots:
 
     void on_filePathButton_clicked();
 
-    void setInitializerButtonState(bool state);
-
-    void acquisitionStateChanged(bool state);
-    void setButtonStates();
+    void acqStateChanged(AcqState state);
+    void setButtonStates(AcqState state);
 
 private:
-    enum class AcqState { idle, initializing, initialized, Acquiring };
-    AcqState m_acqState = AcqState::idle;
     ImageDisplayer m_imageDisplayer;
 
     Ui::MainWindow* m_ui;
