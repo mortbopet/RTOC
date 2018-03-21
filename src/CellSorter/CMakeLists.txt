@@ -12,7 +12,7 @@ find_package(Boost COMPONENTS system filesystem REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} lib/machinelearning.h lib/machinelearning.h lib/machinelearning.cpp)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
