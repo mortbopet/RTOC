@@ -14,7 +14,7 @@ find_package( Boost COMPONENTS system filesystem REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} lib/machinelearning.h lib/machinelearning.h lib/machinelearning.cpp)
 
 # Define all source and header files from src/tst
 file(GLOB TST_SRC tst/*.cpp)
