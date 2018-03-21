@@ -32,7 +32,7 @@ enum DataFlags {
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
 // This mapping is used by DataObject for memory allocation
-static std::map<DataFlags, size_t> typeMap{{Area, sizeof(int)},
+static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {BoundingBox, sizeof(cv::Rect)},
                                            {Centroid, sizeof(cv::Point)},
                                            {Circularity, sizeof(double)},
