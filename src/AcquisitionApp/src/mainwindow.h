@@ -23,14 +23,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void initializeFramegrabber();
-
     void on_actionExit_triggered();
-
     void on_filePathButton_clicked();
-
-    void acqStateChanged(AcqState state);
-    void setButtonStates(AcqState state);
+    void on_clearLog_clicked();
 
 private:
     ImageDisplayer m_imageDisplayer;
@@ -39,6 +34,12 @@ private:
     Logger m_logger;
 
 #ifdef BUILD_ACQ
+private slots:
+    void initializeFramegrabber();
+    void acqStateChanged(AcqState state);
+    void setButtonStates(AcqState state);
+
+private:
     // The acquisitor object is initialized to reside as a permanent object in a separate thread.
     // All communication is facilitated through signals/slots through QMetaObject::InvokeMethod
     Acquisitor* m_acquisitor;

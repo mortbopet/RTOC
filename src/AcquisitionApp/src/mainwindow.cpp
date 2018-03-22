@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
 #endif
 }
 
+#ifdef BUILD_ACQ
 void MainWindow::acqStateChanged(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
@@ -105,13 +106,15 @@ void MainWindow::setButtonStates(AcqState state) {
     }
 }
 
-MainWindow::~MainWindow() {
-    delete m_ui;
-}
-
 void MainWindow::initializeFramegrabber() {
     // Start acquisitor initialization and disable button
     QMetaObject::invokeMethod(Acquisitor::get(), "initialize", Qt::QueuedConnection);
+}
+
+#endif
+
+MainWindow::~MainWindow() {
+    delete m_ui;
 }
 
 void MainWindow::on_actionExit_triggered() {
@@ -124,4 +127,8 @@ void MainWindow::on_filePathButton_clicked() {
     if (!filename.isNull()) {
         m_ui->configPath->setText(filename);
     }
+}
+
+void MainWindow::on_clearLog_clicked() {
+    m_ui->log->clear();
 }
