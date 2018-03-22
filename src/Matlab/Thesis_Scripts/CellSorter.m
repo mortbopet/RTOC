@@ -91,7 +91,10 @@ for i = 1:size(acc,1) % loop through accepted frames
     bw = bwpropfilt(bw, 'ConvexArea' ,[200 1450]);
     bw = bwpropfilt(bw, 'MajorAxisLength ' ,[0 65]);
     bw1 = bw;
-    cc = bwconncomp(bw1);
+
+    % --------------- begin filter0 ---------------
+    cc = bwconncomp(bw1);   % find contourz
+
     stats = regionprops(cc,'Centroid','Solidity');
     centroids = cat(1, stats.Centroid );
     sols = cat(1, stats.Solidity );
@@ -102,6 +105,9 @@ for i = 1:size(acc,1) % loop through accepted frames
             end
         end
     end
+    % ---------------- end filter0 ----------------
+
+    %% Clear the border
     bw = imclearborder(bw1);
     % ---------------------------------------------------------------------
     % Cell identification and sorting through connected component analysis
