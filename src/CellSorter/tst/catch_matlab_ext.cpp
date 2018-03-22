@@ -87,10 +87,10 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
         cv::circle(img, cv::Point(130,60), 50, cv::Scalar(255), -1);
         // img(cv::Rect(50,50,5,5)) = 255;
         REQUIRE(matlab::regionProps(img, data::Circularity, output) == 4);
-        CHECK(output[0]->getValue<double>(data::Circularity) == Approx(0.9).epsilon(0.1));
-        CHECK(output[1]->getValue<double>(data::Circularity) == Approx(0.8).epsilon(0.1));
-        CHECK(output[2]->getValue<double>(data::Circularity) == Approx(0.9).epsilon(0.1));
-        CHECK(output[3]->getValue<double>(data::Circularity) == Approx(0.6).epsilon(0.1));
+        CHECK(output[0]->getValue<double>(data::Circularity) == Approx(0.9).margin(0.1));
+        CHECK(output[1]->getValue<double>(data::Circularity) == Approx(0.8).margin(0.1));
+        CHECK(output[2]->getValue<double>(data::Circularity) == Approx(0.9).margin(0.1));
+        CHECK(output[3]->getValue<double>(data::Circularity) == Approx(0.6).margin(0.1));
     }
     SECTION("convexArea") {
         cv::circle(img, cv::Point(120,60), 10, cv::Scalar(255), -1);
@@ -103,17 +103,17 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
         img(cv::Rect(10,10,7,15)) = 255;
         REQUIRE(matlab::regionProps(img, data::Eccentricity, output) == 2);
         CHECK(output[0]->getValue<double>(data::Eccentricity) == 1);
-        CHECK(output[1]->getValue<double>(data::Eccentricity) == Approx(0.38).epsilon(0.1));
+        CHECK(output[1]->getValue<double>(data::Eccentricity) == Approx(0.38).margin(0.1));
         // zero zero is def not the right input..
     }
     SECTION("gradientScore") {
 
     }
-    SECTION("majorAxis") {
-
-    }
-    SECTION("minorAxis") {
-
+    SECTION("majorAxis and minorAxis") {
+        cv::circle(img, cv::Point(120,60), 25, cv::Scalar(255), -1);
+        REQUIRE(matlab::regionProps(img, data::Major_axis | data::Minor_axis, output) == 1);
+        CHECK(output[0]->getValue<double>(data::Major_axis) == Approx(49).margin(0.1));
+        CHECK(output[0]->getValue<double>(data::Minor_axis) == Approx(49).margin(0.1));
     }
     SECTION("solidity") {
 
