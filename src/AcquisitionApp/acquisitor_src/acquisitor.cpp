@@ -160,13 +160,17 @@ void Acquisitor::throwLastFgError(Fg_Struct* fgHandle) {
 
 void Acquisitor::startAcq() {
     // start thread
-    emit writeToLog("Starting acquisition...");
-    setState(AcqState::Acquiring);
-    m_acqThread = std::thread{&Acquisitor::acquisitionSgc, this};
+    if (m_acqState == AcqState::Initialized) {
+        emit writeToLog("Starting acquisition...");
+        setState(AcqState::Acquiring);
+        m_acqThread = std::thread{&Acquisitor::acquisitionSgc, this};
+    }
 }
 
 void Acquisitor::stopAcq() {
-    emit writeToLog("Stopping acquisition");
-    setState(AcqState::Initialized);
-    m_acqThread.join();
+    if (m_acqState == AcqState::Acquiring) {
+        emit writeToLog("Stopping acquisition");
+        setState(AcqState::Initialized);
+        m_acqThread.join();
+    }
 }

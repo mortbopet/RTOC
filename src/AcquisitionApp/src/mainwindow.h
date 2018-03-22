@@ -27,6 +27,8 @@ private slots:
     void on_filePathButton_clicked();
     void on_clearLog_clicked();
 
+    void on_scale_currentIndexChanged(const QString& arg1);
+
 private:
     ImageDisplayer m_imageDisplayer;
 

@@ -118,6 +118,9 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_actionExit_triggered() {
+    // Safely deinitialize the framegrabber
+    Acquisitor::get()->stopAcq();
+    Acquisitor::get()->deInitialize();
     QApplication::exit();
 }
 
@@ -131,4 +134,16 @@ void MainWindow::on_filePathButton_clicked() {
 
 void MainWindow::on_clearLog_clicked() {
     m_ui->log->clear();
+}
+
+void MainWindow::on_scale_currentIndexChanged(const QString& arg1) {
+    if (arg1 == QString("Fit to view")) {
+        m_ui->graphicsView->fitInView(m_ui->graphicsView->sceneRect(), Qt::KeepAspectRatio);
+    } else {
+        // remove % and convert to a percentage
+        QString s = arg1;
+        qreal scale = s.replace('%', "").toDouble() / 100.0;
+        m_ui->graphicsView->resetMatrix();
+        m_ui->graphicsView->scale(scale, scale);
+    }
 }
