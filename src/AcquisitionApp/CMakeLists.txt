@@ -3,6 +3,10 @@ project(AcquisitionApp)
 
 SET(BUILD_ACQ ON CACHE BOOL "Build acquisition related tools")
 
+if(COMMAND cmake_policy)
+        cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
 # Check that required environment variables are set
 if(${BUILD_ACQ})
     if( DEFINED ENV{SISODIR5} )
@@ -65,14 +69,20 @@ target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets)
 
 # Handle link and includes for acquisitor lib / silicon software related
 if(${BUILD_ACQ})
+    # the SiliconSoftware provided libraries use some old c-style includes - the below macro must be defined to avoid compile errors
+    add_definitions(-D__STDC_LIMIT_MACROS)
+    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_INSTALL_PREFIX}/cmake/modules" "$ENV{SISODIR5}/cmake/modules")
+    INCLUDE(SisoPlatform)
+    FIND_PACKAGE(FgLib5 REQUIRED)
+    FIND_PACKAGE(SisoGenicamLib REQUIRED)
+
     # SiliconSoftware runtime directories
-    include_directories($ENV{SISODIR5}/include)
-    include_directories($ENV{SISODIR5_64}/include)
+    include_directories(${FgLib5_INCLUDE_DIR} ${SisoGenicam_INCLUDE_DIR})
 
     # Link SiliconSoftware libraries
     target_link_libraries( ${PROJECT_NAME}
-        $ENV{SISODIR5}/lib/visualc/fglib5.lib
-        $ENV{SISODIR5}/lib/visualc/siso_genicam.lib
+        ${FgLib5_LIBRARIES}
+        ${SisoGenicam_LIBRARIES}
     )
     target_link_libraries(${PROJECT_NAME} acquisitor_lib )
 endif()
