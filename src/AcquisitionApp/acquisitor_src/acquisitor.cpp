@@ -2,6 +2,7 @@
 
 #include "../acquisitor_src/acquisitionhelpers.cpp"
 
+#include <QtConcurrent/qtconcurrentrun.h>
 #include <QtGlobal>
 
 #include <sstream>
@@ -163,7 +164,7 @@ void Acquisitor::startAcq() {
     if (m_acqState == AcqState::Initialized) {
         emit writeToLog("Starting acquisition...");
         setState(AcqState::Acquiring);
-        m_acqThread = std::thread{&Acquisitor::acquisitionSgc, this};
+        m_acqFuture = QtConcurrent::run(this, &Acquisitor::acquisitionSgc);
     }
 }
 
@@ -171,6 +172,6 @@ void Acquisitor::stopAcq() {
     if (m_acqState == AcqState::Acquiring) {
         emit writeToLog("Stopping acquisition");
         setState(AcqState::Initialized);
-        m_acqThread.join();
+        m_acqFuture.waitForFinished();
     }
 }

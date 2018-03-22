@@ -17,8 +17,7 @@
 #include <siso_genicam.h>
 #include <stdexcept>
 
-#include <thread>
-
+#include <QFuture>
 #include <QMutex>
 #include <QThread>
 
@@ -65,7 +64,6 @@ public slots:
 
 signals:
     void writeToLog(QString msg);
-
     void stateChanged(AcqState);
 
     // Emitted when an image has been stored from acquisition and can be accessed from gui
@@ -100,7 +98,7 @@ private:
 
     int m_dmaPort = 0;
 
-    std::thread m_acqThread;
+    QFuture<void> m_acqFuture;
 
     QThread* m_thread;
 
