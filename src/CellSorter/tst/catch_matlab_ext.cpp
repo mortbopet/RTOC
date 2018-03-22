@@ -116,7 +116,9 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
         CHECK(output[0]->getValue<double>(data::Minor_axis) == Approx(49).margin(0.1));
     }
     SECTION("solidity") {
-
+        cv::circle(img, cv::Point(120,60), 50, cv::Scalar(255), -1);
+        REQUIRE(matlab::regionProps(img, data::Solidity, output) == 1);
+        CHECK(output[0]->getValue<double>(data::Solidity) == 1);
     }
     SECTION("symmetry") {
 
