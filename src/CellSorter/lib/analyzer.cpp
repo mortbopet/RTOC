@@ -1,7 +1,7 @@
 #include "analyzer.h"
 #include "framefinder.h"
 
-void analyzer::loadRBCPreset() {
+void Analyzer::loadRBCPreset() {
 
     // Subtract background
     auto subtractbgDEFAULT = new SubtractBG();
@@ -41,11 +41,11 @@ void analyzer::loadRBCPreset() {
 
 }
 
-void analyzer::loadExperimentPreset(const std::string& img) {
+void Analyzer::loadExperimentPreset(const std::string& img) {
     m_Experiment.defaultSettings(img);
 }
 
-void analyzer::loadImageNames() {
+void Analyzer::loadImageNames() {
     std::vector<Frame> frames;
     std::string img_folder = m_Experiment.imagePath;
     get_files(frames, img_folder);
@@ -53,21 +53,21 @@ void analyzer::loadImageNames() {
     get_accepted(frames, m_Experiment.acc);
     get_rejected(frames, m_Experiment.dis);
 }
-void analyzer::selectBG() {
+void Analyzer::selectBG() {
     m_bg = m_Experiment.dis[10].image;  // Sets as background
 }
 
-void analyzer::runProcesses() {
+void Analyzer::runProcesses() {
     for (const auto& process : m_processes) {
         process->doProcessing(m_img, m_bg, m_Experiment);
     }
 }
 
-void analyzer::resetProcesses() {
+void Analyzer::resetProcesses() {
     m_processes.clear();
 }
 
-void analyzer::showImg() {
+void Analyzer::showImg() {
     cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display window", m_img);
     cv::waitKey(0);

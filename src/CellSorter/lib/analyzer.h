@@ -7,7 +7,7 @@
 
 #include <opencv/cv.hpp>
 
-class analyzer {
+class Analyzer {
 public:
     void loadRBCPreset();
 
