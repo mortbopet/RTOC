@@ -4,6 +4,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QOpenGLWidget>
 #include <QPushButton>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::MainWindow) {
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
     // connect image request from ImageDisplayer
 
     m_ui->graphicsView->setScene(&m_imageDisplayer);
+    m_ui->graphicsView->setViewport(new QOpenGLWidget());
 
     m_logger.setLog(m_ui->log);
 
@@ -90,13 +92,13 @@ void MainWindow::setButtonStates(AcqState state) {
         case AcqState::Initializing: {
             m_ui->initialize->setEnabled(false);
             m_ui->initialize->setText("Initializing...");
+            m_ui->initWithConfig->setEnabled(false);
             break;
         }
         case AcqState::Initialized: {
             // Acquisitor is initialized, disable button and set text
             m_ui->initialize->setEnabled(false);
             m_ui->initialize->setText("Initialized");
-
             m_ui->start->setEnabled(true);
             m_ui->start->setText("Start acquisition");
 
@@ -110,13 +112,17 @@ void MainWindow::setButtonStates(AcqState state) {
 }
 
 void MainWindow::initializeFramegrabber() {
-    if (m_ui->initWithConfig->isChecked() && m_ui->configPath->text().isEmpty()) {
-        QMessageBox::warning(this, "Invalid file path",
-                             "Missing path to GenICam .xml configuration file");
+    if (m_ui->initWithConfig->isChecked() &&
+        (m_ui->xmlPath->text().isEmpty() || m_ui->configPath->text().isEmpty())) {
+        QString errMsg = m_ui->configPath->text().isEmpty()
+                             ? "Missing path to GenICam .txt parameters file"
+                             : "Missing path to GenICam .xml configuration file";
+        QMessageBox::warning(this, "Invalid file path", errMsg);
         return;
     }
     // Start acquisitor initialization and disable button
     QMetaObject::invokeMethod(Acquisitor::get(), "initialize", Qt::QueuedConnection,
+                              Q_ARG(const QString&, m_ui->xmlPath->text()),
                               Q_ARG(const QString&, m_ui->configPath->text()),
                               Q_ARG(bool, m_ui->initWithConfig->isChecked()));
 }
@@ -134,11 +140,19 @@ void MainWindow::on_actionExit_triggered() {
     QApplication::exit();
 }
 
-void MainWindow::on_filePathButton_clicked() {
+void MainWindow::on_txtPathButton_clicked() {
+    auto filename =
+        QFileDialog::getOpenFileName(this, "Open parameters file", "", "txt file (*.txt)");
+    if (!filename.isNull()) {
+        m_ui->configPath->setText(filename);
+    }
+}
+
+void MainWindow::on_xmlPathButton_clicked() {
     auto filename =
         QFileDialog::getOpenFileName(this, "Open configuration file", "", "XML file (*.xml)");
     if (!filename.isNull()) {
-        m_ui->configPath->setText(filename);
+        m_ui->xmlPath->setText(filename);
     }
 }
 

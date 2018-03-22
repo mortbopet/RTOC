@@ -24,12 +24,14 @@ public:
 
 private slots:
     void on_actionExit_triggered();
-    void on_filePathButton_clicked();
     void on_clearLog_clicked();
 
     void on_scale_currentIndexChanged(const QString& arg1);
 
     void on_spinBox_valueChanged(int arg1);
+
+    void on_txtPathButton_clicked();
+    void on_xmlPathButton_clicked();
 
 private:
     ImageDisplayer m_imageDisplayer;

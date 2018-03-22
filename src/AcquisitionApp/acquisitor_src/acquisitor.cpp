@@ -57,7 +57,7 @@ void Acquisitor::configureFgDimensions(SgcCameraHandle* camera, Fg_Struct* handl
     emit imageDimensionsChanged(QPair<int, int>{width, height});
 }
 
-int Acquisitor::initialize(const QString& cameraConfigPath, bool useConfigFile) {
+int Acquisitor::initialize(const QString& xmlPath, const QString& configPath, bool useConfigFile) {
     if (m_acqState == AcqState::Idle) {
         emit writeToLog("Initializing framegrabber");
         setState(AcqState::Initializing);
@@ -69,6 +69,8 @@ int Acquisitor::initialize(const QString& cameraConfigPath, bool useConfigFile) 
                 setState(AcqState::Idle);
                 return -1;
             }
+            emit writeToLog("Framegrabber libraries loaded successfully");
+
             /*Initialize framegrabber struct with default applet. Assume board is at index 0 (single
              * board in computer*/
             m_FgHandle = FgWrapper::create("Acq_SingleCXP6x4AreaGray8.dll", 0);
@@ -78,25 +80,35 @@ int Acquisitor::initialize(const QString& cameraConfigPath, bool useConfigFile) 
                 setState(AcqState::Idle);
                 return -1;
             }
+            emit writeToLog("Framegrabber handle created successfully");
+
+            m_board = initialiseBoard(m_FgHandle->getFgHandle());
+            emit writeToLog("Board initialized successfully");
+            m_camera = selectCamera(m_board);
+            emit writeToLog("Camera detected successfully");
 
             // Use input configuration file to configure camera
-            if (useConfigFile && !cameraConfigPath.isEmpty()) {
+            if (useConfigFile) {
                 int err;
-                err = Sgc_connectCameraWithExternalXml(m_camera,
-                                                       cameraConfigPath.toStdString().c_str());
+
+                err = Sgc_connectCameraWithExternalXml(m_camera, xmlPath.toStdString().c_str());
                 if (err != 0) {
                     throw std::runtime_error(Sgc_getErrorDescription(err));
                 }
+                err = Sgc_LoadCameraParameters(m_camera, configPath.toStdString().c_str(), 0);
+                if (err != 0) {
+                    throw std::runtime_error(Sgc_getErrorDescription(err));
+                }
+                emit writeToLog("User specified configuration files sucessfully written to camera");
             }
 
-            m_board = initialiseBoard(m_FgHandle->getFgHandle());
-
-            m_camera = selectCamera(m_board);
             // Configure frame grabber to the same dimensions as the camera
             configureFgDimensions(m_camera, m_FgHandle->getFgHandle());
+            emit writeToLog("Framegrabber successfully configured to camera dimensions");
 
             /*FgDmaChannelExample shows dma initialization.*/
             m_dmaHandle = DmaMemWrapper::create(m_FgHandle, m_dmaPort);
+            emit writeToLog("DMA memory created successfully");
 
             // Resize m_image according to the framegrabber image size
             m_image.resize(m_FgHandle->getPayloadSize(m_dmaPort));
@@ -150,7 +162,6 @@ void Acquisitor::acquisitionSgc() {
 
     /*Start the camera acquisition*/
     Sgc_startAcquisition(m_camera, 0);
-
     while (!isError && m_acqState == AcqState::Acquiring) {
         bufNr = Fg_getImageEx(fgHandle, SEL_ACT_IMAGE, 0, m_dmaPort, waitDurationInMs, dmaHandle);
 
@@ -163,10 +174,10 @@ void Acquisitor::acquisitionSgc() {
             }
         }
 
-        // Access a pointer to an image in the buffer denoted by bufNr
-        void* pos = Fg_getImagePtrEx(fgHandle, bufNr, m_dmaPort, dmaHandle);
-
         if (m_requestImage) {
+            // Access a pointer to an image in the buffer denoted by bufNr
+            void* pos = Fg_getImagePtrEx(fgHandle, bufNr, m_dmaPort, dmaHandle);
+
             // Copy image buffer to m_image
             std::memcpy(m_image.data(), pos, m_image.size());
             m_requestImage = false;

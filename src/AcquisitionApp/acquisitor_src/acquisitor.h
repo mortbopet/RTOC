@@ -53,7 +53,7 @@ public:
     ~Acquisitor();
 
 public slots:
-    int initialize(const QString& cameraConfigPath, bool useConfigFile);
+    int initialize(const QString& xmlPath, const QString& configPath, bool useConfigFile);
     int deInitialize();
 
     void startAcq();
@@ -76,6 +76,7 @@ protected:
 private:
     Acquisitor(QObject* parent = nullptr);
 
+    void setImageVectorSize(size_t size);
     void getCameraDimensions(SgcCameraHandle* camera, int64_t& width, int64_t& height);
     void configureFgDimensions(SgcCameraHandle* camera, Fg_Struct* handle);
     void throwLastFgError(Fg_Struct* fgHandle);
