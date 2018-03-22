@@ -5,9 +5,15 @@
 #include <iostream>
 #include <opencv/cv.hpp>
 #include <string>
+#include <cmath>
+#include <cstdint>
+
+#include "datacontainer.h"
 
 #include "experiment.h"
 #include "parameter.h"
+#include "matlab_ext.h"
+
 
 namespace {
 #define PARAMETER_CONTAINER m_parameters
@@ -79,22 +85,25 @@ public:
     CREATE_VALUE_PARM(double, m_highThreshold, "High threshold");    // second threshold
 };
 
-class RegionProps : public Process {
-public:
-    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
-    RegionProps();
-
-    CREATE_VALUE_PARM(int, m_dataFlags, "Data flags");
-};
-
 class ClearBorder : public Process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
 };
 
-class Fill : public Process {
+class FloodFill : public Process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+};
+
+class PropFilter : public Process {
+public:
+    void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+    PropFilter();
+
+    CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, "Regionprop types");
+
+    CREATE_VALUE_PARM(double, m_lowerLimit, "Lower Limit");
+    CREATE_VALUE_PARM(double, m_upperLimit, "Upper Limit");
 };
 
 

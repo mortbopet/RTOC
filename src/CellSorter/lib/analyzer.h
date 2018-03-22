@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "experiment.h"
+#include "framefinder.h"
 #include "process.h"
 
 #include <opencv/cv.hpp>
@@ -11,7 +12,7 @@ class Analyzer {
 public:
     void loadRBCPreset();
 
-    void loadExperimentPreset(const std::string& img);
+    void loadExperimentPreset(const std::string& img_path);
 
     void loadImageNames();
 
@@ -21,7 +22,9 @@ public:
 
     void resetProcesses();
 
-    void showImg();
+    void showImg(const int& delay);
+
+    static void showImg(const cv::Mat& img, const int& delay);
 
     Experiment m_Experiment;  // CHECK IF THOSE CAN BE PRIVATE
     cv::Mat m_img;
