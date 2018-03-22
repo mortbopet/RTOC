@@ -73,7 +73,6 @@ if(${BUILD_ACQ})
     target_link_libraries( ${PROJECT_NAME}
         $ENV{SISODIR5}/lib/visualc/fglib5.lib
         $ENV{SISODIR5}/lib/visualc/siso_genicam.lib
-        $ENV{SISODIR5}/lib/visualc/display_lib.lib
     )
     target_link_libraries(${PROJECT_NAME} acquisitor_lib )
 endif()

@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QPushButton>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::MainWindow) {
@@ -27,6 +28,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
             Qt::QueuedConnection);
     connect(Acquisitor::get(), &Acquisitor::stateChanged, this, &MainWindow::acqStateChanged,
             Qt::QueuedConnection);
+    connect(Acquisitor::get(), &Acquisitor::imageDimensionsChanged, &m_imageDisplayer,
+            &ImageDisplayer::setImageDimensions, Qt::QueuedConnection);
 
     // setup request timer to write '.' while awaiting answers from acquisitor
     m_acqWaitTimer.setInterval(150);
@@ -107,8 +110,15 @@ void MainWindow::setButtonStates(AcqState state) {
 }
 
 void MainWindow::initializeFramegrabber() {
+    if (m_ui->initWithConfig->isChecked() && m_ui->configPath->text().isEmpty()) {
+        QMessageBox::warning(this, "Invalid file path",
+                             "Missing path to GenICam .xml configuration file");
+        return;
+    }
     // Start acquisitor initialization and disable button
-    QMetaObject::invokeMethod(Acquisitor::get(), "initialize", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(Acquisitor::get(), "initialize", Qt::QueuedConnection,
+                              Q_ARG(const QString&, m_ui->configPath->text()),
+                              Q_ARG(bool, m_ui->initWithConfig->isChecked()));
 }
 
 #endif
@@ -146,4 +156,8 @@ void MainWindow::on_scale_currentIndexChanged(const QString& arg1) {
         m_ui->graphicsView->resetMatrix();
         m_ui->graphicsView->scale(scale, scale);
     }
+}
+
+void MainWindow::on_spinBox_valueChanged(int arg1) {
+    m_imageDisplayer.setImageInterval(arg1);
 }

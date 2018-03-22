@@ -53,7 +53,7 @@ public:
     ~Acquisitor();
 
 public slots:
-    int initialize();
+    int initialize(const QString& cameraConfigPath, bool useConfigFile);
     int deInitialize();
 
     void startAcq();
@@ -65,6 +65,7 @@ public slots:
 signals:
     void writeToLog(QString msg);
     void stateChanged(AcqState);
+    void imageDimensionsChanged(QPair<int, int>);
 
     // Emitted when an image has been stored from acquisition and can be accessed from gui
     void sendImageData(const std::vector<char>&);
@@ -75,6 +76,8 @@ protected:
 private:
     Acquisitor(QObject* parent = nullptr);
 
+    void getCameraDimensions(SgcCameraHandle* camera, int64_t& width, int64_t& height);
+    void configureFgDimensions(SgcCameraHandle* camera, Fg_Struct* handle);
     void throwLastFgError(Fg_Struct* fgHandle);
     void throwLastFgError();
     void setState(AcqState state);

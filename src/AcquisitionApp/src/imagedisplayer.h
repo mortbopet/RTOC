@@ -15,11 +15,14 @@ public:
 
 public slots:
     void setImage(const std::vector<char>&);
+    void setImageDimensions(QPair<int, int>);
+    void setImageInterval(int freq);
 
 signals:
     void requestImage();
 
 private:
+    QPair<int, int> m_dim{0, 0};
     QTimer m_imageRequester;
     QGraphicsPixmapItem m_image;
 };

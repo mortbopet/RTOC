@@ -29,6 +29,8 @@ private slots:
 
     void on_scale_currentIndexChanged(const QString& arg1);
 
+    void on_spinBox_valueChanged(int arg1);
+
 private:
     ImageDisplayer m_imageDisplayer;
 
