@@ -63,9 +63,13 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
     calculateObjectSize();
 }
 
-DataObject& DataContainer::appendNew() {
+DataObject* DataContainer::appendNew() {
     m_data.push_back(new DataObject(m_dataFlags, m_objectSize));
-    return **m_data.end();
+    return *m_data.end();
+}
+
+int DataContainer::getSize () {
+    return m_data.size();
 }
 
 DataContainer::~DataContainer() {

@@ -10,7 +10,7 @@
 #include "experiment.h"
 #include "parameter.h"
 #include "process.h"
-#include "rbc.h"
+#include "datacontainer.h"
 
 namespace {
 #define PARAMETER_CONTAINER m_parameters
@@ -43,38 +43,37 @@ class MachineLearning {
 public:
     MachineLearning();  // Constructor
 
-    virtual void add_to_set(RBC bloodcell) const = 0;  // Used for adding a RBC to a set
+    //virtual void add_to_set(DataObject bloodcell) const = 0;  // Used for adding a RBC to a set
 
     virtual void create_model() const = 0;
 
-    virtual void train_model() const = 0;
+    virtual void train_model(DataContainer* m_datacontainer) const = 0;
 
-    virtual void predict_model(RBC bloodcell) const = 0;
+    virtual void predict_model(DataObject* bloodcell) const = 0;
 
 protected:
-    virtual void crossvalidate() const = 0;
+    virtual cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const = 0;
 
     std::vector<ParameterBase*> PARAMETER_CONTAINER;
-    std::vector<RBC*> m_RBC;  // Create some kind of container for a group of RBC-data
-    const cv::Ptr<cv::ml::TrainData> m_RBC_data;
-    // Temp solution for storing models:
-    cv::Ptr<cv::ml::LogisticRegression> model;
+    DataContainer m_datacontainer;
+    const cv::Ptr<cv::ml::TrainData> m_datacontainer_CVTYPE;
+    cv::Ptr<cv::ml::LogisticRegression> model; // Temp solution for storing models
 };
 
 //// Child classes: Supervised learning
 
 // Linear regression
-class LogisticRegression : public MachineLearning {  // TODO: Create child classes
+class LogisticRegression : public MachineLearning {
 public:
     LogisticRegression();  // Constructor
 
-    void add_to_set(RBC bloodcell) const override {}
+    //void add_to_set(DataObject bloodcell) const override {}
 
     void create_model() const override {}
 
-    void train_model() const override {}
+    void train_model(DataContainer* m_datacontainer) const override {}
 
-    void predict_model(RBC bloodcell) const override {}
+    void predict_model(DataObject* bloodcell) const override {}
 
     CREATE_VALUE_PARM(float, m_learningrate, "Learning rate of regression");
     CREATE_VALUE_PARM(int, m_iters, "Number of iterations for model");
@@ -82,7 +81,7 @@ public:
     CREATE_VALUE_PARM(int, m_kfold, "Number of seperations in crossvalidation");
 
 private:
-    void crossvalidate() const override {}
+    cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const override {}
 };
 
 //// Child classes: Unsupervised learning
@@ -91,16 +90,16 @@ private:
 class Clustering : public MachineLearning {
     Clustering();  // Constructor
 
-    void add_to_set(RBC bloodcell) const override {}
+    //void add_to_set(DataObject bloodcell) const override {}
 
     void create_model() const override {}
 
-    void train_model() const override {}
+    void train_model(DataContainer* m_datacontainer) const override {}
 
-    void predict_model(RBC bloodcell) const override {}
+    void predict_model(DataObject* bloodcell) const override {}
 
 private:
-    void crossvalidate() const override {}
+    cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const override {}
 };
 
 #endif  // CELLSORTER_MACHINELEARNING_H

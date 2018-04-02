@@ -124,8 +124,10 @@ public:
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
 
-    DataObject& appendNew();
+    DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
+
+    int getSize ();
 
 private:
     void calculateObjectSize();
