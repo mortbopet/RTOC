@@ -88,6 +88,9 @@ public:
 class ClearBorder : public Process {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+    ClearBorder();
+
+    CREATE_VALUE_PARM(int, m_borderWidth, "Border width");
 };
 
 class FloodFill : public Process {

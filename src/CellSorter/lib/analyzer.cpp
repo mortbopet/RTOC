@@ -36,6 +36,8 @@ void Analyzer::loadRBCPreset() {
     m_processes.push_back(new FloodFill);
 
     // Clearborder
+    auto borderDEFAULT = new ClearBorder();
+    borderDEFAULT->m_borderWidth.setValue(2);
     m_processes.push_back(new ClearBorder);
 
     // bwpropfilt ConvexArea [200 1450]

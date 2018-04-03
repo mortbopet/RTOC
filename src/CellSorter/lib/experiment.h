@@ -26,7 +26,7 @@ struct Experiment {
     int inlet;    // Bottom corner of constriction inlet
     int outlet;   // Bottom corner of constriction outlet
     int cellNum;  // Used for cell registration
-    std::vector<Frame> acc, dis;
+    std::vector<Frame> acc, dis, processed;
     double intensity_threshold;
     std::string imagePath;
     std::vector<DataContainer> data;

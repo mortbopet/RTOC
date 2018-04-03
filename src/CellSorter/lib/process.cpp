@@ -73,20 +73,19 @@ void ClearBorder::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props)
     for (size_t i = 0; i < contours.size(); i++)
     {
         cv::Rect bounding_rect = cv::boundingRect(contours[i]);
-        cv::Rect test_rect = bounding_rect & cv::Rect(1, 1, img.cols - 2, img.rows - 2);
+        cv::Rect test_rect = bounding_rect & cv::Rect(1, 1, img.cols - m_borderWidth.getValue(), img.rows - m_borderWidth.getValue());
         if (bounding_rect != test_rect)
         {
             cv::drawContours(img, contours, (int)i, cv::Scalar(0),-1);
         }
     }
 }
+ClearBorder::ClearBorder() {
+    m_borderWidth.setRange(0,255);
+}
 
 void FloodFill::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    // Assert that the image has been binarized
-    cv::Mat img_inv;
-    cv::bitwise_not(img,img_inv);
-    cv::floodFill(img_inv, cv::Point(0,0), cv::Scalar(0));
-    cv::bitwise_or(img, img_inv, img);
+    matlab::floodFill(img);
 }
 
 PropFilter::PropFilter() {
@@ -109,7 +108,7 @@ void PropFilter::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) 
     DataContainer blobs(0xffffff);
 
     // Get the number of found connected components and their data
-    int count = matlab::regionProps(img, flags | data::PixelIdxList, blobs);
+    int count = matlab::regionProps(img, 0xffffff, blobs);
     // Loop through all blobs
     for (int i = 0; i < count; i++) {
         double res = blobs[i]->getValue<double>(static_cast<data::DataFlags>(flags));
