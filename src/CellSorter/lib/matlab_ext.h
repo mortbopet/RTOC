@@ -28,7 +28,10 @@ namespace matlab {
 
     int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
 
-    int removePixels(cv::Mat img, std::vector<cv::Point>* points);
+    void removePixels(cv::Mat img, std::vector<cv::Point>* points);
+
+    void floodFill(cv::Mat& img);
+    void floodFill(cv::Mat& img, const cv::Point& p);
 
 } // namespace matlab
 

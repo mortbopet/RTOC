@@ -171,12 +171,23 @@ namespace matlab {
         return i;
     } // regionProps
 
-    int removePixels(cv::Mat img, std::vector<cv::Point>* points) {
-        int count = 0;
+    void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
         for (const cv::Point& p : *points) {
             img.at<uchar>(p) = 0;
-            count++;
         }
-        return count;
+    }
+    void floodFill(cv::Mat& img) {
+        // Assert that the image has been binarized
+        cv::Mat img_inv;
+        cv::bitwise_not(img,img_inv);
+        cv::floodFill(img_inv, cv::Point(0,0), cv::Scalar(0));
+        cv::bitwise_or(img, img_inv, img);
+    }
+    void floodFill(cv::Mat& img, const cv::Point& p) {
+        // Assert that the image has been binarized
+        cv::Mat img_inv;
+        cv::bitwise_not(img,img_inv);
+        cv::floodFill(img_inv, p, cv::Scalar(0));
+        cv::bitwise_or(img, img_inv, img);
     }
 }
