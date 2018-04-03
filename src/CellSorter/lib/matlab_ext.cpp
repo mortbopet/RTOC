@@ -154,8 +154,29 @@ namespace matlab {
 
                 dc[i]->setValue(data::Symmetry, symmetry);
             }
+            /// PixelIdxList
+            if (dataFlags & data::PixelIdxList) {
+                cv::Mat filledImage(img.rows, img.cols, CV_8U);
+                cv::fillConvexPoly(filledImage, contour, cv::Scalar(255));
+                std::vector<cv::Point> c_0;
+                cv::findNonZero(filledImage, c_0);
+                // Create new PixelIdxList and pass to datacontainer
+                // We assume that datacontainer will delete the object
+                auto contour_out = new std::vector<cv::Point>;
+                *contour_out = c_0;
+                dc[i]->setValue(data::PixelIdxList, contour_out);
+            }
             i++;
         }
         return i;
     } // regionProps
+
+    int removePixels(cv::Mat img, std::vector<cv::Point>* points) {
+        int count = 0;
+        for (const cv::Point& p : *points) {
+            img.at<uchar>(p) = 0;
+            count++;
+        }
+        return count;
+    }
 }

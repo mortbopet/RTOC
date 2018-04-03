@@ -28,6 +28,8 @@ namespace matlab {
 
     int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
 
+    int removePixels(cv::Mat img, std::vector<cv::Point>* points);
+
 } // namespace matlab
 
 #endif //CELLSORTER_MATLAB_EXT_H
