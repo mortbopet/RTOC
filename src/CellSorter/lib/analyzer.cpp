@@ -51,9 +51,6 @@ void Analyzer::loadRBCPreset() {
     propFilt1->m_lowerLimit.setValue(0);
     propFilt1->m_upperLimit.setValue(65);
     m_processes.push_back(propFilt1);
-
-
-
 }
 
 void Analyzer::loadExperimentPreset(const std::string& img_path) {

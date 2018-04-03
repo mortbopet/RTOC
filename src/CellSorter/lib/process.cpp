@@ -106,17 +106,18 @@ PropFilter::PropFilter() {
 void PropFilter::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
     int flags = m_regionPropsTypes.getValue();
     double l[2] = {m_lowerLimit.getValue(), m_upperLimit.getValue()};
-    DataContainer blobs(flags);
-
+    DataContainer blobs(0xffffff);
 
     // Get the number of found connected components and their data
-    int count = matlab::regionProps(img, flags, blobs);
+    int count = matlab::regionProps(img, flags | data::PixelIdxList, blobs);
     // Loop through all blobs
     for (int i = 0; i < count; i++) {
-        auto res = blobs[0]->getValue<double>(data::DataFlags(flags));
+        double res = blobs[i]->getValue<double>(static_cast<data::DataFlags>(flags));
+        // If criteria met - erase blob
         if (res < l[0] || res > l[1]) {
-            // remove blob here
-            std::cout << "KILL" << std::endl;
+            std::vector<cv::Point>* vector2;
+            vector2 = blobs[i]->getValue<std::vector<cv::Point>*>(data::PixelIdxList);
+            matlab::removePixels(img, vector2);
         }
     }
 }
