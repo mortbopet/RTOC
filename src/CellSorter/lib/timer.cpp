@@ -1,17 +1,14 @@
-#include <chrono>
-#include <iostream>
-
 #include "timer.h"
 
-inline void Timer::tic(Timer& t0) {
+void Timer::tic() {
     // Set tic
-    t0.time_point = std::chrono::steady_clock::now();
+    time_point = std::chrono::steady_clock::now();
 };
 
-inline long Timer::toc(const Timer& timer) {
+long Timer::toc() {
     // Get toc
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point t0 = timer.time_point;
+    std::chrono::steady_clock::time_point t0 = time_point;
     std::string string_to_print = "Elapsed time: ";
     long duration = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
     if (duration > 60000000) {
@@ -27,10 +24,10 @@ inline long Timer::toc(const Timer& timer) {
     return duration;
 }
 
-inline double Timer::toc(const Timer& timer, int time_mode) {
+double Timer::toc(int time_mode) {
     // Get toc
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point t0 = timer.time_point;
+    std::chrono::steady_clock::time_point t0 = time_point;
     long duration = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
     switch (time_mode) {
         case MICROSECONDS:
