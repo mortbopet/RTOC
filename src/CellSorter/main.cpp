@@ -2,33 +2,49 @@
 #include <fstream>
 #include <opencv/cv.hpp>
 #include "lib/analyzer.h"
+#include "lib/timer.h"
 
 
 int main(int argc, char** argv) {
+    Timer t;
     Analyzer analyzer;
 
     // Get path to pictures
     analyzer.loadExperimentPreset("../../../data/ImgD1/");
 
+    t.tic();
     // Loop through all pictures to reject or accept
+    std::cout << "Load images" << std::endl;
     analyzer.loadImageNames();
+    t.toc();
 
+    t.tic();
     // Select Background
+    std::cout << "Select background" << std::endl;
     analyzer.selectBG();
+    t.toc();
 
+    t.tic();
     // Load processes preset
+    std::cout << "Load RBC Preset" << std::endl;
     analyzer.loadRBCPreset();
+    t.toc();
 
-    cv::Mat temp0, temp1;
+    t.tic();
+    std::cout << "Run processes on accepted frames" << std::endl;
+    Frame f;
     for (const Frame& frame : analyzer.m_Experiment.acc) {
-        temp0 = frame.image.clone();
         analyzer.m_img = frame.image;
         analyzer.runProcesses();
-        cv::hconcat(temp0, analyzer.m_img, temp0);
-        Analyzer::showImg(temp0, 1);
+
+        f.filename = frame.filename;
+        f.id = frame.id;
+        f.image = analyzer.m_img;
+        f.accepted = true;
+
+        analyzer.m_Experiment.processed.push_back(f);
     }
-
-
+    t.toc();
 
     return 0;
 }
