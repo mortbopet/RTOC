@@ -1,8 +1,5 @@
 #include "datacontainer.h"
 
-#include <assert.h>
-#include <cstring>
-
 // --------------------- DataObject ---------------------------
 DataObject::DataObject(long dataFlags, size_t size) : m_dataFlags(dataFlags), m_size(size) {
     // Allocate the requested amount of memory
@@ -10,6 +7,10 @@ DataObject::DataObject(long dataFlags, size_t size) : m_dataFlags(dataFlags), m_
 }
 
 DataObject::~DataObject() {
+    if (m_dataFlags & data::PixelIdxList) {
+        std::vector<cv::Point>* vector;
+        vector = static_cast<std::vector<cv::Point>*>(static_cast<void*>(m_memory + getBytesToData(data::PixelIdxList)));
+    }
     free(m_memory);
 }
 

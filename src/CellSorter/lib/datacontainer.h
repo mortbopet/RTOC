@@ -1,7 +1,7 @@
 #ifndef DATACONTAINER_H
 #define DATACONTAINER_H
 
-#include <assert.h>
+#include <cassert>
 #include <map>
 #include <typeinfo>
 #include <vector>
@@ -48,7 +48,7 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {Solidity, sizeof(double)},
                                            {Symmetry, sizeof(double)},
                                            {Perimeter, sizeof(double)},
-                                           {PixelIdxList, sizeof(std::vector<cv::Point>)}};
+                                           {PixelIdxList, sizeof(std::vector<cv::Point>*)}};
 
 }  // namespace data
 
@@ -87,7 +87,7 @@ const T& DataObject::getValue(data::DataFlags dataFlag) {
     size_t bytesToData = getBytesToData(dataFlag);
 
     // Dereference the memory as the requested type, and return
-    return *static_cast<T*>(static_cast<void*>(m_memory + bytesToData));
+    return *(static_cast<T*>(static_cast<void*>(m_memory + bytesToData)));
 }
 
 template <typename T>
