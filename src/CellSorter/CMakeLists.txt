@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 14)
 project(CellSorter)
 
 #Environment variable $OpenCV_DIR must be set to the "build" folder of OpenCV
