@@ -5,10 +5,9 @@ project(CellSorter)
 
 #Environment variable $OpenCV_DIR must be set to the "build" folder of OpenCV
 find_package(OpenCV REQUIRED)
-find_package(Boost COMPONENTS system filesystem REQUIRED)
+
 
 # Define all source and header files in src/
-
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
@@ -21,11 +20,6 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 # Link OpenCV libraries
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
-
-target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-
-# Link Boost libraries
-target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
 
 
 ######################################################################
@@ -43,14 +37,50 @@ file(GLOB CATCH_TEST_SOURCES tst/*.cpp)
 add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
 # Link catch
 target_link_libraries(${TEST_EXECUTABLE} Catch)
-# Link boost
-target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
 # Link OpenCV and Cellsorter lib
 target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 ######################################################################
 ## endof Catch2 CMake setup
 ######################################################################
 
+
+# Find and Link Boost libraries
+if(WIN32)
+    # Find Boost
+    set(Boost_NO_SYSTEM_PATHS ON)
+    set(BOOST_INCLUDEDIR "$ENV{BOOST_ROOT}")
+    find_package(Boost REQUIRED)
+    message(STATUS ${BOOST_INCLUDEDIR})
+
+    # include boost
+    target_include_directories(CellSorter_lib PUBLIC ${BOOST_INCLUDEDIR})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
+
+    # On windows, the app has been compiled with boost 1_66 and MSVC-14 (MSVC2015)
+    target_link_libraries(CellSorter_lib
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        )
+    target_link_libraries(${PROJECT_NAME}
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        )
+    target_link_libraries( ${TEST_EXECUTABLE}
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        )
+else()
+    find_package(Boost COMPONENTS system filesystem REQUIRED)
+    target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+    target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+    target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+endif()
 
 
 ######################################################################

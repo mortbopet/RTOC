@@ -2,37 +2,38 @@
 #define CELLSORTER_MATLAB_EXT_H
 
 #include <opencv/cv.hpp>
-#include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <iostream>
 
 #include "datacontainer.h"
 
 namespace matlab {
-    enum regionPropTypes {
-        Area = data::Area,
-        BoundingBox = data::BoundingBox,
-        Centroid = data::Centroid,
-        Circularity = data::Circularity,
-        ConvexArea = data::ConvexArea,
-        Eccentricity = data::Eccentricity,
-        GradientScore = data::GradientScore,
-        Major_axis = data::Major_axis,
-        Minor_axis = data::Minor_axis,
-        Solidity = data::Solidity,
-        Symmetry = data::Symmetry,
-        Perimeter = data::Perimeter,
-        PixelIdxList = data::PixelIdxList
-    };
+enum regionPropTypes {
+    Area = data::Area,
+    BoundingBox = data::BoundingBox,
+    Centroid = data::Centroid,
+    Circularity = data::Circularity,
+    ConvexArea = data::ConvexArea,
+    Eccentricity = data::Eccentricity,
+    GradientScore = data::GradientScore,
+    Major_axis = data::Major_axis,
+    Minor_axis = data::Minor_axis,
+    Solidity = data::Solidity,
+    Symmetry = data::Symmetry,
+    Perimeter = data::Perimeter,
+    PixelIdxList = data::PixelIdxList
+};
 
-    void bwareaopen(cv::Mat &im, double size);
+void bwareaopen(cv::Mat& im, double size);
 
-    int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
+int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
 
-    void removePixels(cv::Mat img, std::vector<cv::Point>* points);
+void removePixels(cv::Mat img, std::vector<cv::Point>* points);
 
-    void floodFill(cv::Mat& img);
-    void floodFill(cv::Mat& img, const cv::Point& p);
+void floodFill(cv::Mat& img);
+void floodFill(cv::Mat& img, const cv::Point& p);
 
-} // namespace matlab
+}  // namespace matlab
 
-#endif //CELLSORTER_MATLAB_EXT_H
+#endif  // CELLSORTER_MATLAB_EXT_H

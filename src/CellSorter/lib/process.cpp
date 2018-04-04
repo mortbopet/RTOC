@@ -1,10 +1,8 @@
 #include "process.h"
 
-namespace {
-void add_process(const std::string& name) {
+void ProcessNameGenerator::add_process(const std::string& name) {
     ProcessBase::get_processes().push_back(name);
 }
-}  // namespace
 
 std::vector<std::string>& ProcessBase::get_processes() {
     static std::vector<std::string> processes;

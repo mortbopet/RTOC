@@ -49,15 +49,15 @@ protected:
  * https://stackoverflow.com/questions/34858341/c-compile-time-list-of-subclasses-of-a-class
  *
  */
-namespace {
-void add_process(const std::string& name);
-}
 class ProcessNameGenerator {
 public:
     ProcessNameGenerator(const std::string& name) {
         // Notify when the static member is created
         add_process(name);
     }
+
+private:
+    void add_process(const std::string& name);
 };
 
 template <typename T>

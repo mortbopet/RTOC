@@ -1,9 +1,10 @@
 #include "timer.h"
+#include <string>
 
 void Timer::tic() {
     // Set tic
     time_point = std::chrono::steady_clock::now();
-};
+}
 
 long Timer::toc() {
     // Get toc
