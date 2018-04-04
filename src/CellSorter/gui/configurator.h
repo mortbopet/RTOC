@@ -17,6 +17,10 @@ public:
 
     void setOptions(const std::vector<std::string>& options);
 
+private slots:
+    void on_add_clicked();
+    void on_remove_clicked();
+
 private:
     Ui::Configurator* ui;
 };

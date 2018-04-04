@@ -16,7 +16,6 @@ void Configurator::setOptions(const std::vector<std::string>& options) {
 
 void Configurator::on_add_clicked() {
     // Get currently selected option
-    const QString option = ui->
 }
 
 void Configurator::on_remove_clicked() {}
