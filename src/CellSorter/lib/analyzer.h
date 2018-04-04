@@ -31,7 +31,7 @@ public:
     cv::Mat m_bg;
 
 private:
-    std::vector<Process*> m_processes;
+    std::vector<ProcessBase*> m_processes;
 };
 
 #endif  // CELLSORTER_CSHELPER_H

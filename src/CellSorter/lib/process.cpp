@@ -1,9 +1,19 @@
 #include "process.h"
 
+namespace {
+void add_process(const std::string& name) {
+    ProcessBase::get_processes().push_back(name);
+}
+}  // namespace
 
-Process::Process(void) {}
+std::vector<std::string>& ProcessBase::get_processes() {
+    static std::vector<std::string> processes;
+    return processes;
+}
 
-void Process::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {}
+ProcessBase::ProcessBase(void) {}
+
+void ProcessBase::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {}
 
 Morph::Morph() {
     m_morphType.setOptions(map<cv::MorphTypes, string>{{cv::MorphTypes::MORPH_CLOSE, "Closing"},
@@ -41,7 +51,7 @@ void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) co
 }
 
 SubtractBG::SubtractBG() {
-    m_edgeThreshold.setRange(0,255);
+    m_edgeThreshold.setRange(0, 255);
 }
 
 void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
@@ -55,33 +65,32 @@ void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props
     // Morphologic close background
     cv::morphologyEx(bg_edge, bg_edge, cv::MORPH_CLOSE, se_edge);
     // Insert black vertical rectangle at (inlet - 10 : inlet + 10)
-    cv::rectangle(bg_edge, cv::Rect(props.inlet-10,0,20,bg.cols),cv::Scalar(0),cv::FILLED);
+    cv::rectangle(bg_edge, cv::Rect(props.inlet - 10, 0, 20, bg.cols), cv::Scalar(0), cv::FILLED);
     // Open up (bwareaopen equivalent)
     matlab::bwareaopen(bg_edge, 100);
     // Invert background cut and bitwise 'and' with image
-    cv::bitwise_not(bg_edge,bg_edge);
+    cv::bitwise_not(bg_edge, bg_edge);
     cv::bitwise_and(diff, bg_edge, img);
 }
 
-void Canny::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+void Canny::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     cv::Canny(img, img, m_lowThreshold.getValue(), m_highThreshold.getValue());
 }
 
-void ClearBorder::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+void ClearBorder::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
-    for (size_t i = 0; i < contours.size(); i++)
-    {
+    for (size_t i = 0; i < contours.size(); i++) {
         cv::Rect bounding_rect = cv::boundingRect(contours[i]);
-        cv::Rect test_rect = bounding_rect & cv::Rect(1, 1, img.cols - m_borderWidth.getValue(), img.rows - m_borderWidth.getValue());
-        if (bounding_rect != test_rect)
-        {
-            cv::drawContours(img, contours, (int)i, cv::Scalar(0),-1);
+        cv::Rect test_rect = bounding_rect & cv::Rect(1, 1, img.cols - m_borderWidth.getValue(),
+                                                      img.rows - m_borderWidth.getValue());
+        if (bounding_rect != test_rect) {
+            cv::drawContours(img, contours, (int)i, cv::Scalar(0), -1);
         }
     }
 }
 ClearBorder::ClearBorder() {
-    m_borderWidth.setRange(0,255);
+    m_borderWidth.setRange(0, 255);
 }
 
 void FloodFill::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -89,20 +98,18 @@ void FloodFill::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) co
 }
 
 PropFilter::PropFilter() {
-    m_regionPropsTypes.setOptions(
-        map<matlab::regionPropTypes, string>{
-            {matlab::regionPropTypes::Area, "Area"},
-            {matlab::regionPropTypes::ConvexArea, "ConvexArea"},
-            {matlab::regionPropTypes::Major_axis, "MajorAxisLength"},
-            {matlab::regionPropTypes::Minor_axis, "MinorAxisLength"},
-            {matlab::regionPropTypes::Solidity, "Solidity"}});
+    m_regionPropsTypes.setOptions(map<matlab::regionPropTypes, string>{
+        {matlab::regionPropTypes::Area, "Area"},
+        {matlab::regionPropTypes::ConvexArea, "ConvexArea"},
+        {matlab::regionPropTypes::Major_axis, "MajorAxisLength"},
+        {matlab::regionPropTypes::Minor_axis, "MinorAxisLength"},
+        {matlab::regionPropTypes::Solidity, "Solidity"}});
 
     m_lowerLimit.setRange(0, DBL_MAX);  // Range is subject to change..
     m_upperLimit.setRange(0, DBL_MAX);
-
 }
 
-void PropFilter::doProcessing(cv::Mat &img, cv::Mat &, const Experiment &props) const {
+void PropFilter::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     int flags = m_regionPropsTypes.getValue();
     double l[2] = {m_lowerLimit.getValue(), m_upperLimit.getValue()};
     DataContainer blobs(0xffffff);
