@@ -10,19 +10,19 @@
 #endif
 
 int main(int argc, char** argv) {
+    Timer t;
+    Analyzer analyzer;
+
 #ifdef BUILD_GUI
     QApplication a(argc, argv);
 
     // Configure "Process" configurator
-    Configurator window;
-    window.setOptions(ProcessBase::get_processes());
+    ProcessInterface interface(analyzer.getProcessContainerPtr());
+    Configurator window(&interface);
     window.show();
 
     return a.exec();
 #endif
-
-    Timer t;
-    Analyzer analyzer;
 
     // Get path to pictures
     analyzer.loadExperimentPreset("../../../data/ImgD1/");

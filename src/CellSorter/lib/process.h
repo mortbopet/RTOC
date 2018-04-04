@@ -30,16 +30,18 @@ namespace {
 }  // namespace
 
 class ProcessBase {
+    friend class ProcessNameGenerator;
+    friend class ProcessInterface;
+
 public:
     ProcessBase();
-    static std::vector<std::string>& get_processes();
     virtual void
     doProcessing(cv::Mat& img, cv::Mat& bg,
                  const Experiment& props) const = 0;  // General function for doing processing.
 
 protected:
+    static std::vector<std::string>& get_processes();
     std::vector<ParameterBase*> PARAMETER_CONTAINER;
-    std::string m_name;
 };
 
 // ---------------------------------------------------
@@ -76,6 +78,7 @@ class Morph : public Process<Morph> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     Morph();
+    static std::string getName() { return "Morph"; }
 
     CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology type");
     CREATE_VALUE_PARM(int, m_morphValueX, "Structural element X-axis");
@@ -86,6 +89,7 @@ class Binarize : public Process<Binarize> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     Binarize();
+    static std::string getName() { return "Binarize"; }
 
     CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge threshold");
     CREATE_VALUE_PARM(double, m_maxVal, "Maximum binary value");
@@ -95,6 +99,7 @@ class Normalize : public Process<Normalize> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     Normalize();
+    static std::string getName() { return "Normalize"; }
 
     CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize strength");
 };
@@ -103,6 +108,7 @@ class SubtractBG : public Process<SubtractBG> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const override;
     SubtractBG();
+    static std::string getName() { return "Subtract background"; }
 
     CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge threshold");
 };
@@ -110,6 +116,7 @@ public:
 class Canny : public Process<Canny> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
+    static std::string getName() { return "Canny"; }
 
     CREATE_VALUE_PARM(double, m_lowThreshold, "Low threshold");    // first threshold
     CREATE_VALUE_PARM(double, m_highThreshold, "High threshold");  // second threshold
@@ -119,12 +126,14 @@ class ClearBorder : public Process<ClearBorder> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     ClearBorder();
+    static std::string getName() { return "Clear border"; }
 
     CREATE_VALUE_PARM(int, m_borderWidth, "Border width");
 };
 
 class FloodFill : public Process<FloodFill> {
 public:
+    static std::string getName() { return "Flood fill"; }
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
 };
 
@@ -132,6 +141,7 @@ class PropFilter : public Process<PropFilter> {
 public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     PropFilter();
+    static std::string getName() { return "Property filter"; }
 
     CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, "Regionprop types");
 

@@ -1,7 +1,6 @@
 #include "analyzer.h"
 
 void Analyzer::loadRBCPreset() {
-
     // Subtract background
     auto subtractbgDEFAULT = new SubtractBG();
     subtractbgDEFAULT->m_edgeThreshold.setValue(0.272);

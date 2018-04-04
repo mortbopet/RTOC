@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <string>
+#include "processinterface.h"
 
 namespace Ui {
 class Configurator;
@@ -12,10 +13,8 @@ class Configurator : public QWidget {
     Q_OBJECT
 
 public:
-    explicit Configurator(QWidget* parent = 0);
+    explicit Configurator(ProcessInterface* interface, QWidget* parent = 0);
     ~Configurator();
-
-    void setOptions(const std::vector<std::string>& options);
 
 private slots:
     void on_add_clicked();
@@ -23,6 +22,7 @@ private slots:
 
 private:
     Ui::Configurator* ui;
+    ProcessInterface* m_interface;
 };
 
 #endif  // CONFIGURATOR_H

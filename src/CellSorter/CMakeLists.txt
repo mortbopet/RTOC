@@ -44,45 +44,6 @@ target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 ######################################################################
 
 
-# Find and Link Boost libraries
-if(WIN32)
-    # Find Boost
-    set(Boost_NO_SYSTEM_PATHS ON)
-    set(BOOST_INCLUDEDIR "$ENV{BOOST_ROOT}")
-    find_package(Boost REQUIRED)
-    message(STATUS ${BOOST_INCLUDEDIR})
-
-    # include boost
-    target_include_directories(CellSorter_lib PUBLIC ${BOOST_INCLUDEDIR})
-    target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
-
-    # On windows, the app has been compiled with boost 1_66 and MSVC-14 (MSVC2015)
-    target_link_libraries(CellSorter_lib
-        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
-        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
-        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
-        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
-        )
-    target_link_libraries(${PROJECT_NAME}
-        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
-        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
-        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
-        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
-        )
-    target_link_libraries( ${TEST_EXECUTABLE}
-        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
-        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
-        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
-        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
-        )
-else()
-    find_package(Boost COMPONENTS system filesystem REQUIRED)
-    target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-    target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-    target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-endif()
-
-
 ######################################################################
 ## GUI setup
 ######################################################################
@@ -128,3 +89,50 @@ endif()
 ######################################################################
 ## endof GUI setup
 ######################################################################
+
+# Find and Link Boost libraries
+if(WIN32)
+    # Find Boost
+    set(Boost_NO_SYSTEM_PATHS ON)
+    set(BOOST_INCLUDEDIR "$ENV{BOOST_ROOT}")
+    find_package(Boost REQUIRED)
+    message(STATUS ${BOOST_INCLUDEDIR})
+
+    # include boost
+    target_include_directories(CellSorter_lib PUBLIC ${BOOST_INCLUDEDIR})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
+
+    # On windows, the app has been compiled with boost 1_66 and MSVC-14 (MSVC2015)
+    target_link_libraries(CellSorter_lib
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        )
+    target_link_libraries(${PROJECT_NAME}
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        )
+    target_link_libraries( ${TEST_EXECUTABLE}
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        )
+    if(${BUILD_GUI})
+        target_include_directories(gui PUBLIC ${BOOST_INCLUDEDIR})
+    endif()
+else()
+    find_package(Boost COMPONENTS system filesystem REQUIRED)
+    target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+    target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+    target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+    if(${BUILD_GUI})
+        target_link_libraries(gui ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
+    endif()
+endif()
+
+
+
