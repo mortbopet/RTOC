@@ -4,8 +4,23 @@
 #include "lib/analyzer.h"
 #include "lib/timer.h"
 
+#ifdef BUILD_GUI
+#include <QApplication>
+#include "gui/configurator.h"
+#endif
 
 int main(int argc, char** argv) {
+#ifdef BUILD_GUI
+    QApplication a(argc, argv);
+
+    // Configure "Process" configurator
+    Configurator window;
+    window.setOptions(ProcessBase::get_processes());
+    window.show();
+
+    return a.exec();
+#endif
+
     Timer t;
     Analyzer analyzer;
 
@@ -45,6 +60,5 @@ int main(int argc, char** argv) {
         analyzer.m_Experiment.processed.push_back(f);
     }
     t.toc();
-
     return 0;
 }
