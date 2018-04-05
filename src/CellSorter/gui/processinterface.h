@@ -13,6 +13,7 @@ public:
 
     processContainerPtr getContainerPtr() { return m_container; }
     std::string doAction(const std::string& typeName, Action action, int index = -1);
+    void setParameter(int processIndex, int parameterIndex, std::string valueString);
     const std::vector<std::string>& getProcessTypes() { return ProcessBase::get_processes(); }
     void emitDataChanged() { emit dataChanged(); }
 
