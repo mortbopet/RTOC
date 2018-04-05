@@ -11,38 +11,6 @@ find_package(OpenCV REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
-
-INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-
-# Create executables for cellsorter and cellsort_test
-add_executable(${PROJECT_NAME} main.cpp)
-
-# Link OpenCV libraries
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
-
-
-######################################################################
-## Catch2 CMake setup - TEST PROJECT
-######################################################################
-set (TEST_EXECUTABLE "CellSorter_test")
-
-# Prepare catch2 library
-set(CATCH_INCLUDE_DIR tst_catch/catch.hpp)
-add_library(Catch INTERFACE)
-target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
-
-# Create executable for catch2 test project
-file(GLOB CATCH_TEST_SOURCES tst/*.cpp)
-add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
-# Link catch
-target_link_libraries(${TEST_EXECUTABLE} Catch)
-# Link OpenCV and Cellsorter lib
-target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
-######################################################################
-## endof Catch2 CMake setup
-######################################################################
-
 
 ######################################################################
 ## GUI setup
@@ -83,11 +51,44 @@ if(${BUILD_GUI})
     )
 
     add_definitions(-fPIC)
-    add_library(gui ${GUI_SRC} ${GUI_H} ${UIS})
-    target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets gui)
+    add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
+    target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
+else()
+    add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
 endif()
 ######################################################################
 ## endof GUI setup
+######################################################################
+
+
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+
+# Create executables for cellsorter and cellsort_test
+add_executable(${PROJECT_NAME} main.cpp)
+
+# Link OpenCV libraries
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
+
+
+######################################################################
+## Catch2 CMake setup - TEST PROJECT
+######################################################################
+set (TEST_EXECUTABLE "CellSorter_test")
+
+# Prepare catch2 library
+set(CATCH_INCLUDE_DIR tst_catch/catch.hpp)
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
+
+# Create executable for catch2 test project
+file(GLOB CATCH_TEST_SOURCES tst/*.cpp)
+add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
+# Link catch
+target_link_libraries(${TEST_EXECUTABLE} Catch)
+# Link OpenCV and Cellsorter lib
+target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
+######################################################################
+## endof Catch2 CMake setup
 ######################################################################
 
 # Find and Link Boost libraries
@@ -121,17 +122,11 @@ if(WIN32)
         optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
         optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
         )
-    if(${BUILD_GUI})
-        target_include_directories(gui PUBLIC ${BOOST_INCLUDEDIR})
-    endif()
 else()
     find_package(Boost COMPONENTS system filesystem REQUIRED)
     target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
     target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
     target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-    if(${BUILD_GUI})
-        target_link_libraries(gui ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY})
-    endif()
 endif()
 
 
