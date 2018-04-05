@@ -1,6 +1,9 @@
 #include "processinterface.h"
 
-ProcessInterface::ProcessInterface(std::vector<ProcessBase*>* processContainer)
+#include <algorithm>
+#include <memory>
+
+ProcessInterface::ProcessInterface(std::vector<std::unique_ptr<ProcessBase>>* processContainer)
     : m_container(processContainer) {}
 
 namespace {
@@ -15,10 +18,30 @@ std::string ProcessInterface::executeActionForType(ProcessInterface::Action acti
             break;
         }
         case ProcessInterface::Action::Create: {
-            m_container->push_back(new T());
+            m_container->push_back(std::make_unique<T>());
+            break;
+        }
+        case ProcessInterface::Action::Remove: {
+            // Thank you, smart pointers. The underlying data is destructed upon erasing
+            m_container->erase(m_container->begin() + index);
+            break;
+        }
+        case ProcessInterface::Action::Up: {
+            auto item = m_container->begin() + index;
+            if (item != m_container->begin()) {
+                std::iter_swap(item, item - 1);
+            }
+            break;
+        }
+        case ProcessInterface::Action::Down: {
+            auto item = m_container->begin() + index;
+            if (item != (m_container->end() - 1)) {
+                std::iter_swap(item, item + 1);
+            }
             break;
         }
     }
+
     return std::string();
 }
 
@@ -38,5 +61,7 @@ std::string ProcessInterface::doAction(const std::string& typeName, Action actio
     } else if (TYPECHECK(typeName, PropFilter)) {
         return executeActionForType<PropFilter>(action, index);
     }
+    // Signal that changes has been made to the process and update the model
+    emit updateModel();
     return std::string();
 }

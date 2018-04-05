@@ -2,56 +2,56 @@
 
 void Analyzer::loadRBCPreset() {
     // Subtract background
-    auto subtractbgDEFAULT = new SubtractBG();
+    auto subtractbgDEFAULT = std::make_unique<SubtractBG>();
     subtractbgDEFAULT->m_edgeThreshold.setValue(0.272);
-    m_processes.push_back(subtractbgDEFAULT);
+    m_processes.push_back(std::move(subtractbgDEFAULT));
 
     // Normalize
-    auto normalizeDEFAULT = new Normalize();
+    auto normalizeDEFAULT = std::make_unique<Normalize>();
     normalizeDEFAULT->m_normalizeStrength.setValue(0xfff);
-    m_processes.push_back(normalizeDEFAULT);
+    m_processes.push_back(std::move(normalizeDEFAULT));
 
     // Binarize
-    auto binarizeDEFAULT = new Binarize();
+    auto binarizeDEFAULT = std::make_unique<Binarize>();
     binarizeDEFAULT->m_maxVal.setValue(255);
     binarizeDEFAULT->m_edgeThreshold.setValue(50);
-    m_processes.push_back(binarizeDEFAULT);
+    m_processes.push_back(std::move(binarizeDEFAULT));
 
     // Morph open (imopen)
-    auto morphDEFAULT = new Morph();
+    auto morphDEFAULT = std::make_unique<Morph>();
     morphDEFAULT->m_morphType.setValue(cv::MORPH_OPEN);
     morphDEFAULT->m_morphValueX.setValue(3);
     morphDEFAULT->m_morphValueY.setValue(3);
-    m_processes.push_back(morphDEFAULT);
+    m_processes.push_back(std::move(morphDEFAULT));
 
     // Morph close (imclose)
-    morphDEFAULT = new Morph();
+    morphDEFAULT = std::make_unique<Morph>();
     morphDEFAULT->m_morphType.setValue(cv::MORPH_CLOSE);
     morphDEFAULT->m_morphValueX.setValue(15);
     morphDEFAULT->m_morphValueY.setValue(10);
-    m_processes.push_back(morphDEFAULT);
+    m_processes.push_back(std::move(morphDEFAULT));
 
     // Floodfill
-    m_processes.push_back(new FloodFill);
+    m_processes.push_back(std::make_unique<FloodFill>());
 
     // Clearborder
-    auto borderDEFAULT = new ClearBorder();
+    auto borderDEFAULT = std::make_unique<ClearBorder>();
     borderDEFAULT->m_borderWidth.setValue(2);
-    m_processes.push_back(new ClearBorder);
+    m_processes.push_back(std::make_unique<ClearBorder>());
 
     // bwpropfilt ConvexArea [200 1450]
-    auto propFilt0 = new PropFilter();
+    auto propFilt0 = std::make_unique<PropFilter>();
     propFilt0->m_regionPropsTypes.setValue(matlab::regionPropTypes::ConvexArea);
     propFilt0->m_lowerLimit.setValue(200);
     propFilt0->m_upperLimit.setValue(1450);
-    m_processes.push_back(propFilt0);
+    m_processes.push_back(std::move(propFilt0));
 
     // bwpropfilt MajorAxisLength [0 65]
-    auto propFilt1 = new PropFilter();
+    auto propFilt1 = std::make_unique<PropFilter>();
     propFilt1->m_regionPropsTypes.setValue(matlab::regionPropTypes::Major_axis);
     propFilt1->m_lowerLimit.setValue(0);
     propFilt1->m_upperLimit.setValue(65);
-    m_processes.push_back(propFilt1);
+    m_processes.push_back(std::move(propFilt1));
 }
 
 void Analyzer::loadExperimentPreset(const std::string& img_path) {

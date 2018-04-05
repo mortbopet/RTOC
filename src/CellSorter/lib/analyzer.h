@@ -11,7 +11,7 @@
 class Analyzer {
 public:
     void loadRBCPreset();
-    std::vector<ProcessBase*>* getProcessContainerPtr() { return &m_processes; }
+    std::vector<std::unique_ptr<ProcessBase>>* getProcessContainerPtr() { return &m_processes; }
 
     void loadExperimentPreset(const std::string& img_path);
 
@@ -32,7 +32,7 @@ public:
     cv::Mat m_bg;
 
 private:
-    std::vector<ProcessBase*> m_processes;
+    std::vector<std::unique_ptr<ProcessBase>> m_processes;
 };
 
 #endif  // CELLSORTER_CSHELPER_H
