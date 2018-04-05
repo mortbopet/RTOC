@@ -9,8 +9,12 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     auto processTypes = m_interface->getProcessTypes();
     for (const auto& type : processTypes) {
         QString processName =
-            QString::fromStdString(m_interface->info(type, ProcessInterface::Action::GetName));
-        ui->options->addItem(processName);
+            QString::fromStdString(m_interface->doAction(type, ProcessInterface::Action::GetName));
+        auto item = new QListWidgetItem();
+        // Items are identified by their UserRole, which corresponds to they typeid(T).name()
+        item->setData(Qt::DisplayRole, processName);
+        item->setData(Qt::UserRole, QString::fromStdString(type));
+        ui->options->addItem(item);
     }
 }
 
@@ -20,6 +24,12 @@ Configurator::~Configurator() {
 
 void Configurator::on_add_clicked() {
     // Get currently selected option
+    auto selectedItem = ui->options->selectedItems().first();
+    if (selectedItem != nullptr) {
+        // Get class typeid name and create a new process
+        QString typeName = selectedItem->data(Qt::UserRole).toString();
+        m_interface->doAction(typeName.toStdString(), ProcessInterface::Action::Create);
+    }
 }
 
 void Configurator::on_remove_clicked() {}

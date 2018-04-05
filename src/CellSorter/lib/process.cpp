@@ -8,7 +8,6 @@ std::vector<std::string>& ProcessBase::get_processes() {
     static std::vector<std::string> processes;
     return processes;
 }
-
 ProcessBase::ProcessBase(void) {}
 
 void ProcessBase::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {}
