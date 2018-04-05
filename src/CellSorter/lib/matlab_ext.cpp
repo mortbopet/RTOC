@@ -190,4 +190,10 @@ namespace matlab {
         cv::floodFill(img_inv, p, cv::Scalar(0));
         cv::bitwise_or(img, img_inv, img);
     }
+
+    double dist(const cv::Point& p0, const cv::Point& p1) {
+        cv::Point d = p0 - p1;
+        return cv::sqrt(d.x*d.x + d.y*d.y);
+    }
+
 }

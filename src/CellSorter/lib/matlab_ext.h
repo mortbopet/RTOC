@@ -2,9 +2,10 @@
 #define CELLSORTER_MATLAB_EXT_H
 
 #include <opencv/cv.hpp>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <iterator>
+#include <cmath>
 #include <iostream>
+#include <algorithm>
 
 #include "datacontainer.h"
 
@@ -33,6 +34,27 @@ void removePixels(cv::Mat img, std::vector<cv::Point>* points);
 
 void floodFill(cv::Mat& img);
 void floodFill(cv::Mat& img, const cv::Point& p);
+
+double dist(const cv::Point& p0, const cv::Point& p1);
+
+template <typename T>
+std::pair<T,long> min(std::vector<T>& v) {
+    std::pair<T,long> output;
+    auto m = std::min_element(std::begin(v), std::end(v));
+    output.first = *m;
+    output.second = std::distance(std::begin(v), m);
+    return output;
+}
+
+template <typename T>
+std::pair<T,long> max(std::vector<T>& v) {
+    std::pair<T,long> output;
+    auto m = std::max_element(std::begin(v), std::end(v));
+    output.first = *m;
+    output.second = std::distance(std::begin(v), m);
+    return output;
+}
+
 
 }  // namespace matlab
 
