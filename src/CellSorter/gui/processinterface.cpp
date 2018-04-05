@@ -4,9 +4,7 @@ ProcessInterface::ProcessInterface(std::vector<ProcessBase*>* processContainer)
     : m_container(processContainer) {}
 
 namespace {
-#define TYPECHECK(typeInfo, T)                            \
-    QString::fromStdString(std::string(typeInfo.c_str())) \
-        .contains(QString::fromStdString(std::string(typeid(T).name())))
+#define TYPECHECK(typeInfo, T) std::string(typeInfo.c_str()) == std::string(typeid(T).name())
 }
 
 std::string ProcessInterface::info(const std::string& typeName, Action action) {

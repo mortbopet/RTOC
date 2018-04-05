@@ -71,7 +71,7 @@ protected:
 };
 
 template <typename T>
-ProcessNameGenerator Process<T>::m = ProcessNameGenerator(typeid(Process<T>).name());
+ProcessNameGenerator Process<T>::m = ProcessNameGenerator(typeid(T).name());
 // ---------------------------------------------------
 
 class Morph : public Process<Morph> {
