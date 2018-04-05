@@ -14,6 +14,7 @@ public:
     processContainerPtr getContainerPtr() { return m_container; }
     std::string doAction(const std::string& typeName, Action action, int index = -1);
     const std::vector<std::string>& getProcessTypes() { return ProcessBase::get_processes(); }
+    void emitDataChanged() { emit dataChanged(); }
 
 signals:
     void dataChanged(void);

@@ -54,8 +54,8 @@
 #include "treemodel.h"
 
 //! [0]
-TreeModel::TreeModel(processContainerPtr container, QObject* parent)
-    : m_container(container), QAbstractItemModel(parent) {
+TreeModel::TreeModel(processContainerPtr container, ProcessInterface* iface, QObject* parent)
+    : m_container(container), m_interface(iface), QAbstractItemModel(parent) {
     QStringList headers{"Process name", "Parameters"};
     QVector<QVariant> rootData;
     foreach (QString header, headers)
@@ -93,8 +93,12 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const {
 Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const {
     if (!index.isValid())
         return 0;
-
-    return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    if (index.column() != 0) {
+        // Items in column 0 is never editable
+        flags |= Qt::ItemIsEditable;
+    }
+    return flags;
 }
 //! [3]
 
@@ -206,12 +210,21 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
         return false;
 
     TreeItem* item = getItem(index);
+    // We assume that there is consistensy between the ordering of elements in the tree view and the
+    // ordering of parameters in the processes
+    auto parameters = (*m_interface->getContainerPtr())[index.parent().row()]->getParameters();
+
+    parameters[index.row()]->setValueStr(value.toString().toStdString());
+    m_interface->emitDataChanged();
+    return true;
+    /*
     bool result = item->setData(index.column(), value);
 
     if (result)
         emit dataChanged(index, index);
 
     return result;
+    */
 }
 
 bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value,

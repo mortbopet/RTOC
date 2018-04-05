@@ -23,7 +23,7 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     QStringList headers;
     headers << "Process"
             << "Value";
-    m_model = new TreeModel(m_interface->getContainerPtr());
+    m_model = new TreeModel(m_interface->getContainerPtr(), interface);
     ui->tree->setModel(m_model);
     connect(m_interface, &ProcessInterface::dataChanged, this, &Configurator::updateModel);
     ui->tree->header()->setSectionResizeMode(QHeaderView::Stretch);

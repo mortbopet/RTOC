@@ -56,6 +56,7 @@
 #include <QVariant>
 
 #include "../lib/process.h"
+#include "processinterface.h"
 
 class TreeItem;
 
@@ -64,7 +65,7 @@ class TreeModel : public QAbstractItemModel {
     Q_OBJECT
 
 public:
-    TreeModel(processContainerPtr container, QObject* parent = 0);
+    TreeModel(processContainerPtr container, ProcessInterface* iface, QObject* parent = 0);
     ~TreeModel();
     //! [0] //! [1]
 
@@ -99,6 +100,7 @@ private:
 
     TreeItem* rootItem;
 
+    ProcessInterface* m_interface;
     processContainerPtr m_container;
 };
 //! [2]
