@@ -123,9 +123,9 @@ public:
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
-    long size() {return m_data.size();};
+    long size() { return m_data.size(); };
 
-    DataObject& appendNew();
+    DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
 
 private:

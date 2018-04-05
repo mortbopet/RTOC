@@ -9,7 +9,8 @@ DataObject::DataObject(long dataFlags, size_t size) : m_dataFlags(dataFlags), m_
 DataObject::~DataObject() {
     if (m_dataFlags & data::PixelIdxList) {
         std::vector<cv::Point>* vector;
-        vector = static_cast<std::vector<cv::Point>*>(static_cast<void*>(m_memory + getBytesToData(data::PixelIdxList)));
+        vector = static_cast<std::vector<cv::Point>*>(
+            static_cast<void*>(m_memory + getBytesToData(data::PixelIdxList)));
     }
     free(m_memory);
 }
@@ -30,7 +31,9 @@ size_t DataObject::getBytesToData(data::DataFlags flag) {
 
 // --------------------- DataContainer ------------------------
 DataContainer::DataContainer() {}
-DataContainer::DataContainer(long flags) : m_dataFlags(flags) {calculateObjectSize();}
+DataContainer::DataContainer(long flags) : m_dataFlags(flags) {
+    calculateObjectSize();
+}
 
 void DataContainer::calculateObjectSize() {
     // Called each time DataContainer's m_dataFlags are edited. m_objectSize is parsed to the
@@ -64,9 +67,9 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
     calculateObjectSize();
 }
 
-DataObject& DataContainer::appendNew() {
+DataObject* DataContainer::appendNew() {
     m_data.push_back(new DataObject(m_dataFlags, m_objectSize));
-    return **m_data.end();
+    return *m_data.rbegin();
 }
 
 DataContainer::~DataContainer() {
