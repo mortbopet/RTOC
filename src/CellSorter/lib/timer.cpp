@@ -1,6 +1,10 @@
 #include "timer.h"
 #include <string>
 
+Timer::Timer(void) {
+    time_point = std::chrono::steady_clock::now();
+}
+
 void Timer::tic() {
     // Set tic
     time_point = std::chrono::steady_clock::now();
