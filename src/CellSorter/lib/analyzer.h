@@ -2,11 +2,18 @@
 #define CELLSORTER_CSHELPER_H
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include "experiment.h"
 #include "framefinder.h"
 #include "process.h"
 
 #include <opencv/cv.hpp>
+
+struct Tracker {
+    cv::Point centroid;
+    int cell_no;
+    int frame_no;
+};
 
 class Analyzer {
 public:
@@ -24,6 +31,8 @@ public:
     void runProcesses();
 
     void resetProcesses();
+
+    void findCells();
 
     void showImg(const int& delay);
 

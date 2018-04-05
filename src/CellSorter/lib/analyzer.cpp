@@ -91,6 +91,46 @@ void Analyzer::resetProcesses() {
     m_processes.clear();
 }
 
+void Analyzer::findCells() {
+    cv::Point centroid;
+    double dist;
+    std::vector<double> d;
+    bool newcell = false;
+    int cellNum = 0;
+    Tracker t;
+    std::vector<Tracker> tracker(m_Experiment.processed.size());
+    DataContainer dc;
+
+    for (const Frame& f : m_Experiment.processed) {
+        // Get data from blobs in frame
+        matlab::regionProps(f.image, 0xffff, dc);
+        for (int i = 0; i < dc.size(); i++) {
+            if (cellNum == 0) {
+                newcell = true;
+            } else {
+                if (tracker.size() == 0) {
+                    newcell = true;
+                } else {
+                    // Calculate distances
+                    for (const Tracker& trk : tracker) {
+                        centroid = dc[i]->getValue<cv::Point>(data::Centroid);
+                        dist = matlab::dist(centroid, trk.centroid);
+                        if (dist < -10) dist = 100;
+                        d.push_back(dist);
+                    }
+                    if (d.size() > 0) {
+                        auto p = matlab::min(d);
+                        dist = p.first;
+                        t = tracker[p.second];
+                    }
+                    // FROM LINE 177 in CELLSORTER **HERE**
+                }
+            }
+        }
+    }
+
+}
+
 void Analyzer::showImg(const int& delay) {
     cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display window", m_img);
@@ -102,5 +142,3 @@ void Analyzer::showImg(const cv::Mat& img, const int& delay) {
     cv::imshow("Display window", img);
     cv::waitKey(delay);
 }
-
-
