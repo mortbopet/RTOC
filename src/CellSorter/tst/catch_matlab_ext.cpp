@@ -2,11 +2,11 @@
 
 #include "../lib/matlab_ext.h"
 
-TEST_CASE("Matlab namespace basic test", "[full], [matlab_ext]") {
+TEST_CASE("Matlab namespace basic test", "[full], [matlab]") {
     INFO("This test has not been written yet...");
 }
 
-TEST_CASE("Regionprops throws and hoes check", "[full], [matlab_ext]") {
+TEST_CASE("Regionprops throws and hoes check", "[full], [matlab]") {
     // Initialize output container
     DataContainer output(0xffff);
     // Initialize test "image"
@@ -16,7 +16,7 @@ TEST_CASE("Regionprops throws and hoes check", "[full], [matlab_ext]") {
     }
 }
 
-TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full], [matlab_ext]") {
+TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full], [matlab]") {
     // Initialize output container
     DataContainer output(0xffff);
     // Initialize test "image"
@@ -125,5 +125,23 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
     }
     SECTION("perimeter") {
 
+    }
+}
+
+TEST_CASE("Min/Max combo value- and index-functions","[full],[matlab],[matlab_extras]") {
+    std::vector<int> v0 = {5, 4, 9, 1, 3, 17, 8, 5};
+    std::vector<double> v1 = {5.2, 4.9, 9, 1.4, 1.3, 17.2, 8.0, 5.91};
+
+    SECTION("Min value") {
+        REQUIRE(matlab::min<int>(v0).first == (int) 1);
+        REQUIRE(matlab::min<int>(v0).second == (long) 3);
+        REQUIRE(matlab::min<double>(v1).first == (double) 1.3);
+        REQUIRE(matlab::min<double>(v1).second == (double) 4);
+    }
+    SECTION("Max value") {
+        REQUIRE(matlab::max<int>(v0).first == (int) 17);
+        REQUIRE(matlab::max<int>(v0).second == (long) 5);
+        REQUIRE(matlab::max<double>(v1).first == (double) 17.2);
+        REQUIRE(matlab::max<double>(v1).second == (double) 5);
     }
 }
