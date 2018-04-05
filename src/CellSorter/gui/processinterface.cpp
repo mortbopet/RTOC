@@ -3,11 +3,11 @@
 #include <algorithm>
 #include <memory>
 
-ProcessInterface::ProcessInterface(std::vector<std::unique_ptr<ProcessBase>>* processContainer)
+ProcessInterface::ProcessInterface(processContainerPtr processContainer)
     : m_container(processContainer) {}
 
 namespace {
-#define TYPECHECK(typeInfo, T) std::string(typeInfo.c_str()) == std::string(typeid(T).name())
+#define TYPECHECK(typeInfo, T) typeInfo == std::string(typeid(T).name())
 }
 
 template <typename T>
@@ -41,7 +41,8 @@ std::string ProcessInterface::executeActionForType(ProcessInterface::Action acti
             break;
         }
     }
-
+    // Signal that changes has been made to the process and update the model
+    emit dataChanged();
     return std::string();
 }
 
@@ -56,12 +57,12 @@ std::string ProcessInterface::doAction(const std::string& typeName, Action actio
         return executeActionForType<SubtractBG>(action, index);
     } else if (TYPECHECK(typeName, ClearBorder)) {
         return executeActionForType<ClearBorder>(action, index);
-    } else if (TYPECHECK(typeName, FloodFill)) {
-        return executeActionForType<FloodFill>(action, index);
+    } else if (TYPECHECK(typeName, FloodFillProcess)) {
+        return executeActionForType<FloodFillProcess>(action, index);
     } else if (TYPECHECK(typeName, PropFilter)) {
         return executeActionForType<PropFilter>(action, index);
+    } else if (TYPECHECK(typeName, Canny)) {
+        return executeActionForType<Canny>(action, index);
     }
-    // Signal that changes has been made to the process and update the model
-    emit updateModel();
-    return std::string();
+    Q_ASSERT(false);
 }

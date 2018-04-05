@@ -11,7 +11,7 @@
 class Analyzer {
 public:
     void loadRBCPreset();
-    std::vector<std::unique_ptr<ProcessBase>>* getProcessContainerPtr() { return &m_processes; }
+    processContainerPtr getProcessContainerPtr() { return &m_processes; }
 
     void loadExperimentPreset(const std::string& img_path);
 

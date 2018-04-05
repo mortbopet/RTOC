@@ -34,10 +34,13 @@ class ProcessBase {
     friend class ProcessInterface;
 
 public:
+    virtual const std::string& getTypeName() = 0;
     ProcessBase();
     virtual void
+
     doProcessing(cv::Mat& img, cv::Mat& bg,
                  const Experiment& props) const = 0;  // General function for doing processing.
+    const std::vector<ParameterBase*>& getParameters() { return PARAMETER_CONTAINER; }
 
 protected:
     static std::vector<std::string>& get_processes();
@@ -56,7 +59,10 @@ public:
     ProcessNameGenerator(const std::string& name) {
         // Notify when the static member is created
         add_process(name);
+        m_typeName = name;
     }
+
+    std::string m_typeName;
 
 private:
     void add_process(const std::string& name);
@@ -64,6 +70,9 @@ private:
 
 template <typename T>
 class Process : public ProcessBase {
+public:
+    const std::string& getTypeName() override { return m.m_typeName; }
+
 protected:
     // Static member in a template class
     Process() { (void)m; }
@@ -80,9 +89,9 @@ public:
     Morph();
     static std::string getName() { return "Morph"; }
 
-    CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology type");
-    CREATE_VALUE_PARM(int, m_morphValueX, "Structural element X-axis");
-    CREATE_VALUE_PARM(int, m_morphValueY, "Structural element Y-axis");
+    CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology_type");
+    CREATE_VALUE_PARM(int, m_morphValueX, "Structural_element_X-axis");
+    CREATE_VALUE_PARM(int, m_morphValueY, "Structural_element_Y-axis");
 };
 
 class Binarize : public Process<Binarize> {
@@ -91,8 +100,8 @@ public:
     Binarize();
     static std::string getName() { return "Binarize"; }
 
-    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge threshold");
-    CREATE_VALUE_PARM(double, m_maxVal, "Maximum binary value");
+    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
+    CREATE_VALUE_PARM(double, m_maxVal, "Maximum_binary_value");
 };
 
 class Normalize : public Process<Normalize> {
@@ -101,7 +110,7 @@ public:
     Normalize();
     static std::string getName() { return "Normalize"; }
 
-    CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize strength");
+    CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize_strength");
 };
 
 class SubtractBG : public Process<SubtractBG> {
@@ -110,7 +119,7 @@ public:
     SubtractBG();
     static std::string getName() { return "Subtract background"; }
 
-    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge threshold");
+    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
 };
 
 class Canny : public Process<Canny> {
@@ -118,8 +127,8 @@ public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     static std::string getName() { return "Canny"; }
 
-    CREATE_VALUE_PARM(double, m_lowThreshold, "Low threshold");    // first threshold
-    CREATE_VALUE_PARM(double, m_highThreshold, "High threshold");  // second threshold
+    CREATE_VALUE_PARM(double, m_lowThreshold, "Low_threshold");    // first threshold
+    CREATE_VALUE_PARM(double, m_highThreshold, "High_threshold");  // second threshold
 };
 
 class ClearBorder : public Process<ClearBorder> {
@@ -128,10 +137,10 @@ public:
     ClearBorder();
     static std::string getName() { return "Clear border"; }
 
-    CREATE_VALUE_PARM(int, m_borderWidth, "Border width");
+    CREATE_VALUE_PARM(int, m_borderWidth, "Border_width");
 };
 
-class FloodFill : public Process<FloodFill> {
+class FloodFillProcess : public Process<FloodFillProcess> {
 public:
     static std::string getName() { return "Flood fill"; }
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
@@ -143,10 +152,12 @@ public:
     PropFilter();
     static std::string getName() { return "Property filter"; }
 
-    CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, "Regionprop types");
+    CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, "Regionprop_types");
 
-    CREATE_VALUE_PARM(double, m_lowerLimit, "Lower Limit");
-    CREATE_VALUE_PARM(double, m_upperLimit, "Upper Limit");
+    CREATE_VALUE_PARM(double, m_lowerLimit, "Lower_Limit");
+    CREATE_VALUE_PARM(double, m_upperLimit, "Upper_Limit");
 };
+
+typedef std::vector<std::unique_ptr<ProcessBase>>* processContainerPtr;
 
 #endif  // CELLSORTER_PROCESS_H

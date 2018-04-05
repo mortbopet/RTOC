@@ -17,6 +17,7 @@ Morph::Morph() {
                                                        {cv::MorphTypes::MORPH_OPEN, "Opening"}});
     m_morphValueX.setRange(0, 100);
     m_morphValueY.setRange(0, 100);
+    m_morphType.setValue(cv::MORPH_CLOSE);
 }
 
 void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -90,7 +91,7 @@ ClearBorder::ClearBorder() {
     m_borderWidth.setRange(0, 255);
 }
 
-void FloodFill::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
+void FloodFillProcess::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     matlab::floodFill(img);
 }
 

@@ -9,16 +9,17 @@ class ProcessInterface : public QObject {
     Q_OBJECT
 public:
     enum class Action { Up, Down, Remove, Create, GetName };
-    ProcessInterface(std::vector<std::unique_ptr<ProcessBase>>* processContainer);
+    ProcessInterface(processContainerPtr processContainer);
 
+    processContainerPtr getContainerPtr() { return m_container; }
     std::string doAction(const std::string& typeName, Action action, int index = -1);
     const std::vector<std::string>& getProcessTypes() { return ProcessBase::get_processes(); }
 
 signals:
-    void updateModel(void);
+    void dataChanged(void);
 
 private:
-    std::vector<std::unique_ptr<ProcessBase>>* m_container;
+    processContainerPtr m_container;
     void push_back(std::unique_ptr<ProcessBase> p) { m_container->push_back(std::move(p)); }
     void clear() { m_container->clear(); }
 

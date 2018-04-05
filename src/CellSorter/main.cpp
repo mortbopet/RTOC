@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
     ProcessInterface interface(analyzer.getProcessContainerPtr());
     Configurator window(&interface);
     window.show();
+    // connect(&interface, &ProcessInterface::dataChanged, ) window.show();
 
     return a.exec();
 #endif

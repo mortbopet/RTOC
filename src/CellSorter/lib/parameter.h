@@ -19,6 +19,7 @@
  *
  * stringstream a:
  *  a[0] = type (ie. int, float, ENUM type
+ *  a[1] = name
  *  the values following the type is dependant on the type.
  *  for float/int:
  *      a[1..2] = min, max values
@@ -125,10 +126,11 @@ void ValueParameter<T>::setRange(T start, T stop) {
 
 template <typename T>
 void ValueParameter<T>::updateOptions() {
-    m_options.resize(3);
+    m_options.resize(4);
     m_options[0] = typeid(T).name();
-    m_options[1] = to_string(m_range.first);
-    m_options[2] = to_string(m_range.second);
+    m_options[1] = m_name;
+    m_options[2] = to_string(m_range.first);
+    m_options[3] = to_string(m_range.second);
 }
 
 /** \anchor EnumParameter
@@ -179,9 +181,10 @@ void EnumParameter<T>::setOptions(map<T, string> options) {
 
 template <typename T>
 void EnumParameter<T>::updateOptions() {
-    m_options.resize(1 + m_enumOptions.size());
+    m_options.resize(2 + m_enumOptions.size());
     m_options[0] = typeid(T).name();
-    int i = 1;
+    m_options[1] = m_name;
+    int i = 2;
     for (const auto& item : m_enumOptions) {
         m_options[i] = item.second;
         i++;

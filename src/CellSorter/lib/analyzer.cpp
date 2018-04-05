@@ -32,7 +32,7 @@ void Analyzer::loadRBCPreset() {
     m_processes.push_back(std::move(morphDEFAULT));
 
     // Floodfill
-    m_processes.push_back(std::make_unique<FloodFill>());
+    m_processes.push_back(std::make_unique<FloodFillProcess>());
 
     // Clearborder
     auto borderDEFAULT = std::make_unique<ClearBorder>();
