@@ -15,7 +15,9 @@ public:
 
     void loadExperimentPreset(const std::string& img_path);
 
-    void loadImageNames();
+    void loadImagesFromFolder();
+
+    void loadImagesFromText();
 
     void selectBG();
 

@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     t.tic();
     // Loop through all pictures to reject or accept
     std::cout << "Load images" << std::endl;
-    analyzer.loadImageNames();
+    analyzer.loadImagesFromFolder();
     t.toc();
 
     t.tic();

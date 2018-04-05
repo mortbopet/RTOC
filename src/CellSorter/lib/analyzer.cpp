@@ -58,7 +58,7 @@ void Analyzer::loadExperimentPreset(const std::string& img_path) {
     m_Experiment.defaultSettings(img_path);
 }
 
-void Analyzer::loadImageNames() {
+void Analyzer::loadImagesFromFolder() {
     std::vector<Frame> frames;
     std::string img_folder = m_Experiment.imagePath;
     get_files(frames, img_folder);
@@ -66,6 +66,17 @@ void Analyzer::loadImageNames() {
     get_accepted(frames, m_Experiment.acc);
     get_rejected(frames, m_Experiment.dis);
 }
+
+/**
+ * @todo: implement with real names
+ */
+void Analyzer::loadImagesFromText() {
+    std::string accepted;   // Path to accepted text-file
+    std::string rejected;   // Path to rejected text-file
+    // Compile img_folder path with filenames from text-files
+    // and push frames to m_Experiment
+}
+
 void Analyzer::selectBG() {
     m_bg = m_Experiment.dis[10].image;  // Sets as background
 }
@@ -91,3 +102,5 @@ void Analyzer::showImg(const cv::Mat& img, const int& delay) {
     cv::imshow("Display window", img);
     cv::waitKey(delay);
 }
+
+
