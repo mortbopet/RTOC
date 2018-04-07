@@ -101,12 +101,12 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
+    if (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::ToolTipRole) {
         return QVariant();
+    }
 
     TreeItem* item = getItem(index);
-
-    return item->data(index.column());
+    return item->data(index.column(), role);
 }
 
 //! [3]
@@ -228,29 +228,35 @@ int TreeModel::rowCount(const QModelIndex& parent) const {
 //! [8]
 
 bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int role) {
-    if (role != Qt::EditRole)
-        return false;
-    if (m_modelIsLoading) {
-        // We are loading data from the processInterface into the model
+    if (role == Qt::EditRole) {
+        if (m_modelIsLoading) {
+            // We are loading data from the processInterface into the model
+            TreeItem* item = getItem(index);
+            bool result = item->setData(index.column(), value, role);
+
+            if (result)
+                emit dataChanged(index, index);
+
+            return result;
+        } else {
+            // User has modified a value through GUI, transmit change to processInterface (which
+            // will
+            // reload the model). Bad design to reload the entire model for each change, but it
+            // works
+            // and is fast to implement
+            // Get parent process index and parameter index
+            int processIndex = getRootIndex(index);
+            int parameterIndex = index.row();
+
+            m_interface->doAction(ProcessInterface::Action::SetValue, processIndex, parameterIndex,
+                                  value.toString().toStdString());
+            return true;
+        }
+    } else if (role == Qt::ToolTipRole) {
         TreeItem* item = getItem(index);
-        bool result = item->setData(index.column(), value);
-
-        if (result)
-            emit dataChanged(index, index);
-
-        return result;
-    } else {
-        // User has modified a value through GUI, transmit change to processInterface (which will
-        // reload the model). Bad design to reload the entire model for each change, but it works
-        // and is fast to implement
-        // Get parent process index and parameter index
-        int processIndex = getRootIndex(index);
-        int parameterIndex = index.row();
-
-        m_interface->doAction(ProcessInterface::Action::SetValue, processIndex, parameterIndex,
-                              value.toString().toStdString());
-        return true;
+        bool result = item->setData(index.column(), value, role);
     }
+    return false;
 }
 
 bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value,

@@ -99,7 +99,10 @@ int TreeItem::columnCount() const {
 //! [5]
 
 //! [6]
-QVariant TreeItem::data(int column) const {
+QVariant TreeItem::data(int column, int role) const {
+    if (role == Qt::ToolTipRole) {
+        return tooltip;
+    }
     return itemData.value(column);
 }
 //! [6]
@@ -166,11 +169,15 @@ bool TreeItem::removeColumns(int position, int columns) {
 }
 
 //! [11]
-bool TreeItem::setData(int column, const QVariant& value) {
+bool TreeItem::setData(int column, const QVariant& value, int role) {
     if (column < 0 || column >= itemData.size())
         return false;
 
-    itemData[column] = value;
+    if (role == Qt::EditRole) {
+        itemData[column] = value;
+    } else if (role == Qt::ToolTipRole) {
+        tooltip = value.toString();
+    }
     return true;
 }
 //! [11]

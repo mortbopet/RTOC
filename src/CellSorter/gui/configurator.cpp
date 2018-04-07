@@ -61,8 +61,10 @@ void Configurator::updateModel() {
 
                 QList<QVariant> values;
                 values << QString::fromStdString(name).replace('_', ' ') << stoi(value);
-                insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
-
+                QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
+                // Set tooltip for parameter
+                m_model->getItem(child)->setData(
+                    0, QString("Valid range: [%1;%2]").arg(low).arg(high), Qt::ToolTipRole);
             } else if (type == typeid(double).name()) {
                 // GUI can spawn an editor that accepts floating point values
                 double high, low;
@@ -71,7 +73,11 @@ void Configurator::updateModel() {
 
                 QList<QVariant> values;
                 values << QString::fromStdString(name).replace('_', ' ') << stod(value);
-                insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
+                QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
+
+                // Set tooltip for parameter
+                m_model->getItem(child)->setData(
+                    0, QString("Valid range: [%1;%2]").arg(low).arg(high), Qt::ToolTipRole);
             } else {
                 // GUI can spawn an editor that accepts ENUMs - gui will generate a combobox with
                 // values that options provides
@@ -83,25 +89,27 @@ void Configurator::updateModel() {
                 values << QString::fromStdString(options[0]).replace('_', ' ')
                        << QString::fromStdString(value);
                 insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
+
+                // No tooltip for enumeration values - combo box delegate should be sufficient
             }
         }
     }
     m_model->setModelLoading(false);
 }
 
-void Configurator::insertChild(const QModelIndex& index, QList<QVariant> values) {
+QModelIndex Configurator::insertChild(const QModelIndex& index, QList<QVariant> values) {
     QAbstractItemModel* model = ui->tree->model();
 
     if (model->columnCount(index) == 0) {
         if (!model->insertColumn(0, index))
-            return;
+            return QModelIndex();
     }
     int childRow = m_model->getItem(index)->childCount();
     if (!model->insertRow(childRow, index))
-        return;
-
+        return QModelIndex();
+    QModelIndex child;
     for (int column = 0; column < model->columnCount(index); ++column) {
-        QModelIndex child = model->index(childRow, column, index);
+        child = model->index(childRow, column, index);
         model->setData(child, values[column], Qt::EditRole);
         if (!model->headerData(column, Qt::Horizontal).isValid())
             model->setHeaderData(column, Qt::Horizontal, values[column], Qt::EditRole);
@@ -109,6 +117,7 @@ void Configurator::insertChild(const QModelIndex& index, QList<QVariant> values)
 
     ui->tree->selectionModel()->setCurrentIndex(model->index(0, 0, index),
                                                 QItemSelectionModel::ClearAndSelect);
+    return child;
 }
 
 void Configurator::insertRow(const QModelIndex& index, QList<QVariant> values) {

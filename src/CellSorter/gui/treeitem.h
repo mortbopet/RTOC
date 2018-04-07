@@ -64,18 +64,19 @@ public:
     TreeItem* child(int number);
     int childCount() const;
     int columnCount() const;
-    QVariant data(int column) const;
+    QVariant data(int column, int role = Qt::EditRole) const;
     bool insertChildren(int position, int count, int columns);
     bool insertColumns(int position, int columns);
     TreeItem* parent();
     bool removeChildren(int position, int count);
     bool removeColumns(int position, int columns);
     int childNumber() const;
-    bool setData(int column, const QVariant& value);
+    bool setData(int column, const QVariant& value, int role = Qt::EditRole);
 
 private:
     QList<TreeItem*> childItems;
     QVector<QVariant> itemData;
+    QString tooltip;
     TreeItem* parentItem;
 };
 //! [0]

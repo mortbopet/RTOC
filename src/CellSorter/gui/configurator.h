@@ -32,7 +32,7 @@ private:
     Ui::Configurator* ui;
     ProcessInterface* m_interface;
 
-    void insertChild(const QModelIndex& index, QList<QVariant> values);
+    QModelIndex insertChild(const QModelIndex& index, QList<QVariant> values);
     void insertRow(const QModelIndex& index, QList<QVariant> values);
     void removeRow(const QModelIndex& index);
     void reorder(ProcessInterface::Action dir);
