@@ -14,17 +14,17 @@ public:
 
     processContainerPtr getContainerPtr() { return m_container; }
     std::string doActionForType(const std::string& typeName, TypeAction action, int index = -1);
-    void doAction(Action action, int index = -1, int index2 = -1,
+    void doAction(Action action, int processIndex = -1, int parameterIndex = -1,
                   std::string valueStr = std::string());
     void setParameter(int processIndex, int parameterIndex, std::string valueString);
     const std::vector<std::string>& getProcessTypes() { return ProcessBase::get_processes(); }
     void emitDataChanged() { emit dataChanged(); }
 
-    processContainerPtr m_container;
 signals:
     void dataChanged(void);
 
 private:
+    processContainerPtr m_container;
     void push_back(std::unique_ptr<ProcessBase> p) { m_container->push_back(std::move(p)); }
     void clear() { m_container->clear(); }
 

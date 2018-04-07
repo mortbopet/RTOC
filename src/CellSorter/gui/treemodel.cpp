@@ -53,6 +53,26 @@
 #include "treeitem.h"
 #include "treemodel.h"
 
+int getRootIndex(QModelIndex index) {
+    if (index.isValid()) {
+        while (index.parent().isValid()) {
+            index = index.parent();
+        }
+        return index.row();
+    } else {
+        return -1;
+    }
+}
+
+int getRootSelectedIndex(QItemSelectionModel* model) {
+    auto indexes = model->selectedIndexes();
+    if (!indexes.isEmpty()) {
+        return getRootIndex(indexes.first());
+    } else {
+        return -1;
+    }
+}
+
 //! [0]
 TreeModel::TreeModel(processContainerPtr container, ProcessInterface* iface, QObject* parent)
     : m_container(container), m_interface(iface), QAbstractItemModel(parent) {
@@ -223,17 +243,12 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
         // User has modified a value through GUI, transmit change to processInterface (which will
         // reload the model). Bad design to reload the entire model for each change, but it works
         // and is fast to implement
-        TreeItem* item = getItem(index);
+        // Get parent process index and parameter index
+        int processIndex = getRootIndex(index);
+        int parameterIndex = index.row();
 
-        if (role != Qt::DisplayRole) {
-            // We assume that there is consistensy between the ordering of elements in the tree view
-            // and the ordering of parameters in the processes
-            auto parameters =
-                (*m_interface->getContainerPtr())[index.parent().row()]->getParameters();
-
-            parameters[index.row()]->setValueStr(value.toString().toStdString());
-        }
-        m_interface->emitDataChanged();
+        m_interface->doAction(ProcessInterface::Action::SetValue, processIndex, parameterIndex,
+                              value.toString().toStdString());
         return true;
     }
 }

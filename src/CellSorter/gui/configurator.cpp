@@ -140,23 +140,6 @@ void Configurator::on_add_clicked() {
     }
 }
 
-namespace {
-int getRootSelectedIndex(QItemSelectionModel* model) {
-    auto indexes = model->selectedIndexes();
-    if (!indexes.isEmpty()) {
-        QModelIndex index = indexes.first();
-        if (index.isValid()) {
-            while (index.parent().isValid()) {
-                index = index.parent();
-            }
-        }
-        return index.row();
-    } else {
-        return -1;
-    }
-}
-}  // namespace
-
 void Configurator::on_remove_clicked() {
     // Get selected indexes. Only óne row can be selected at a time
     int row = getRootSelectedIndex(ui->tree->selectionModel());

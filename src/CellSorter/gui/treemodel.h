@@ -58,6 +58,11 @@
 #include "../lib/process.h"
 #include "processinterface.h"
 
+QT_FORWARD_DECLARE_CLASS(QItemSelectionModel)
+
+int getRootSelectedIndex(QItemSelectionModel* model);
+int getRootIndex(QModelIndex index);
+
 class TreeItem;
 
 //! [0]

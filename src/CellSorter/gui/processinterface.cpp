@@ -12,6 +12,7 @@ namespace {
 
 template <typename T>
 std::string ProcessInterface::executeActionForType(ProcessInterface::TypeAction action, int index) {
+    Q_UNUSED(index)
     switch (action) {
         case ProcessInterface::TypeAction::GetName: {
             return T::getName();
@@ -28,28 +29,32 @@ std::string ProcessInterface::executeActionForType(ProcessInterface::TypeAction 
 }
 
 // Type agnostic actions
-void ProcessInterface::doAction(Action action, int index1, int index2, std::string value) {
+void ProcessInterface::doAction(Action action, int processIndex, int parameterIndex,
+                                std::string value) {
     switch (action) {
         case ProcessInterface::Action::Remove: {
             // Thank you, smart pointers. The underlying data is destructed upon erasing
-            m_container->erase(m_container->begin() + index1);
+            m_container->erase(m_container->begin() + processIndex);
             break;
         }
         case ProcessInterface::Action::Up: {
-            auto item = m_container->begin() + index1;
+            auto item = m_container->begin() + processIndex;
             if (item != m_container->begin()) {
                 std::iter_swap(item, item - 1);
             }
             break;
         }
         case ProcessInterface::Action::Down: {
-            auto item = m_container->begin() + index1;
+            auto item = m_container->begin() + processIndex;
             if (item != (m_container->end() - 1)) {
                 std::iter_swap(item, item + 1);
             }
             break;
         }
         case ProcessInterface::Action::SetValue: {
+            auto parameters = (*m_container)[processIndex]->getParameters();
+
+            parameters[processIndex]->setValueStr(value);
             break;
         }
     }
