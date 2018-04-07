@@ -94,9 +94,11 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const {
     if (!index.isValid())
         return 0;
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-    if (index.column() != 0) {
-        // Items in column 0 is never editable
-        flags |= Qt::ItemIsEditable;
+    if (index.parent().isValid()) {  // root items are not editable
+        if (index.column() != 0) {
+            // Items in column 0 is never editable
+            flags |= Qt::ItemIsEditable;
+        }
     }
     return flags;
 }
