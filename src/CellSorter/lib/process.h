@@ -15,18 +15,52 @@
 #include "parameter.h"
 
 namespace {
+// Compile time string length generation
+// https://stackoverflow.com/a/36390498/6714645
+constexpr size_t ct_strlen(const char* s) noexcept {
+    return *s ? 1 + ct_strlen(s + 1) : 0;
+}
+constexpr bool checkDisplayName(char const* name) {
+    // Compile time verify that display name does not contain space characters (will break the
+    // string stream parsing when loading parameters in gui)
+    for (int i = 0; i < ct_strlen(name); i++) {
+        if (name[i] == ' ') {
+            return false;
+        }
+    }
+    return true;
+}
+
 #define PARAMETER_CONTAINER m_parameters
+
+// clang-format off
+#define GEN_DISPLAYNAME(displayName) const_ ##displayName ## _
+#define ASSERT_DISPLAYNAME(displayName)                        \
+    static constexpr char GEN_DISPLAYNAME(displayName)[] = #displayName; \
+    static_assert(checkDisplayName(GEN_DISPLAYNAME(displayName)),       \
+                  "Display name may not contain ' ' characters");
+// clang-format on
 
 // Shorthand macros for creating process parameter member values
 #define CREATE_ENUM_PARM(type, name, displayName) \
-    EnumParameter<type> name = EnumParameter<type>(PARAMETER_CONTAINER, displayName)
+    ASSERT_DISPLAYNAME(displayName);              \
+    EnumParameter<type> name =                    \
+        EnumParameter<type>(PARAMETER_CONTAINER, GEN_DISPLAYNAME(displayName))
+
 #define CREATE_ENUM_PARM_DEFAULT(type, name, displayName, default) \
-    EnumParameter<type> name = EnumParameter<type>(PARAMETER_CONTAINER, displayName, default)
+    ASSERT_DISPLAYNAME(displayName);                               \
+    EnumParameter<type> name =                                     \
+        EnumParameter<type>(PARAMETER_CONTAINER, GEN_DISPLAYNAME(displayName), default)
 
 #define CREATE_VALUE_PARM(type, name, displayName) \
-    ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName)
+    ASSERT_DISPLAYNAME(displayName);               \
+    ValueParameter<type> name =                    \
+        ValueParameter<type>(PARAMETER_CONTAINER, GEN_DISPLAYNAME(displayName))
+
 #define CREATE_VALUE_PARM_DEFAULT(type, name, displayName, default) \
-    ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName, default)
+    ASSERT_DISPLAYNAME(displayName);                                \
+    ValueParameter<type> name =                                     \
+        ValueParameter<type>(PARAMETER_CONTAINER, GEN_DISPLAYNAME(displayName) s, default)
 }  // namespace
 
 class ProcessBase {
@@ -89,9 +123,9 @@ public:
     Morph();
     static std::string getName() { return "Morph"; }
 
-    CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology_type");
-    CREATE_VALUE_PARM(int, m_morphValueX, "Structural_element_X-axis");
-    CREATE_VALUE_PARM(int, m_morphValueY, "Structural_element_Y-axis");
+    CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, Morphology_type);
+    CREATE_VALUE_PARM(int, m_morphValueX, Structural_element_X_axis);
+    CREATE_VALUE_PARM(int, m_morphValueY, Structural_element_Y_axis);
 };
 
 class Binarize : public Process<Binarize> {
@@ -100,8 +134,8 @@ public:
     Binarize();
     static std::string getName() { return "Binarize"; }
 
-    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
-    CREATE_VALUE_PARM(double, m_maxVal, "Maximum_binary_value");
+    CREATE_VALUE_PARM(double, m_edgeThreshold, Edge_threshold);
+    CREATE_VALUE_PARM(double, m_maxVal, Maximum_binary_value);
 };
 
 class Normalize : public Process<Normalize> {
@@ -110,7 +144,7 @@ public:
     Normalize();
     static std::string getName() { return "Normalize"; }
 
-    CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize_strength");
+    CREATE_VALUE_PARM(int, m_normalizeStrength, Normalize_strength);
 };
 
 class SubtractBG : public Process<SubtractBG> {
@@ -119,7 +153,7 @@ public:
     SubtractBG();
     static std::string getName() { return "Subtract background"; }
 
-    CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
+    CREATE_VALUE_PARM(double, m_edgeThreshold, Edge_threshold);
 };
 
 class Canny : public Process<Canny> {
@@ -127,8 +161,8 @@ public:
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override;
     static std::string getName() { return "Canny"; }
 
-    CREATE_VALUE_PARM(double, m_lowThreshold, "Low_threshold");    // first threshold
-    CREATE_VALUE_PARM(double, m_highThreshold, "High_threshold");  // second threshold
+    CREATE_VALUE_PARM(double, m_lowThreshold, Low_threshold);    // first threshold
+    CREATE_VALUE_PARM(double, m_highThreshold, High_threshold);  // second threshold
 };
 
 class ClearBorder : public Process<ClearBorder> {
@@ -137,7 +171,7 @@ public:
     ClearBorder();
     static std::string getName() { return "Clear border"; }
 
-    CREATE_VALUE_PARM(int, m_borderWidth, "Border_width");
+    CREATE_VALUE_PARM(int, m_borderWidth, Border_width);
 };
 
 class FloodFillProcess : public Process<FloodFillProcess> {
@@ -152,10 +186,10 @@ public:
     PropFilter();
     static std::string getName() { return "Property filter"; }
 
-    CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, "Regionprop_types");
+    CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, Regionprop_types);
 
-    CREATE_VALUE_PARM(double, m_lowerLimit, "Lower_Limit");
-    CREATE_VALUE_PARM(double, m_upperLimit, "Upper_Limit");
+    CREATE_VALUE_PARM(double, m_lowerLimit, Lower_Limit);
+    CREATE_VALUE_PARM(double, m_upperLimit, Upper_Limit);
 };
 
 typedef std::vector<std::unique_ptr<ProcessBase>>* processContainerPtr;
