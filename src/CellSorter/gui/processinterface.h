@@ -17,11 +17,11 @@ public:
     const std::vector<std::string>& getProcessTypes() { return ProcessBase::get_processes(); }
     void emitDataChanged() { emit dataChanged(); }
 
+    processContainerPtr m_container;
 signals:
     void dataChanged(void);
 
 private:
-    processContainerPtr m_container;
     void push_back(std::unique_ptr<ProcessBase> p) { m_container->push_back(std::move(p)); }
     void clear() { m_container->clear(); }
 

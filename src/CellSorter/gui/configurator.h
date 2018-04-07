@@ -35,6 +35,7 @@ private:
     void insertChild(const QModelIndex& index, QList<QVariant> values);
     void insertRow(const QModelIndex& index, QList<QVariant> values);
     void removeRow(const QModelIndex& index);
+    void reorder(ProcessInterface::Action dir);
 };
 
 #endif  // CONFIGURATOR_H

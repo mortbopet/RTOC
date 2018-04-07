@@ -137,8 +137,42 @@ void Configurator::on_add_clicked() {
     }
 }
 
+namespace {
+int getRootIndexRow(QModelIndex index) {
+    if (index.isValid()) {
+        while (index.parent().isValid()) {
+            index = index.parent();
+        }
+        return index.row();
+    } else {
+        return -1;
+    }
+}
+}  // namespace
+
 void Configurator::on_remove_clicked() {}
 
-void Configurator::on_up_clicked() {}
+void Configurator::reorder(ProcessInterface::Action dir) {
+    Q_ASSERT(dir == ProcessInterface::Action::Up || dir == ProcessInterface::Action::Down);
 
-void Configurator::on_down_clicked() {}
+    // Get selected indexes. Only óne row can be selected at a time
+    auto indexes = ui->tree->selectionModel()->selectedIndexes();
+    if (!indexes.isEmpty()) {
+        int row = getRootIndexRow(indexes.first());
+        if (row >= 0) {
+            // Root node is now found, call interface to reorder the process at the given row (row =
+            // index in the process container)
+            // We have to provide a type for ProcessInterface::doAction (bad design?) but the type
+            // is not needed for the reordering of processes
+            m_interface->doAction(std::string(typeid(Morph).name()), dir, row);
+        }
+    }
+}
+
+void Configurator::on_up_clicked() {
+    reorder(ProcessInterface::Action::Up);
+}
+
+void Configurator::on_down_clicked() {
+    reorder(ProcessInterface::Action::Down);
+}
