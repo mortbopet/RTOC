@@ -1,6 +1,8 @@
 #include "configurator.h"
 #include "ui_configurator.h"
 
+#include "treeitem.h"
+
 #include <QHeaderView>
 
 Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
@@ -94,12 +96,12 @@ void Configurator::insertChild(const QModelIndex& index, QList<QVariant> values)
         if (!model->insertColumn(0, index))
             return;
     }
-
-    if (!model->insertRow(0, index))
+    int childRow = m_model->getItem(index)->childCount();
+    if (!model->insertRow(childRow, index))
         return;
 
     for (int column = 0; column < model->columnCount(index); ++column) {
-        QModelIndex child = model->index(0, column, index);
+        QModelIndex child = model->index(childRow, column, index);
         model->setData(child, values[column], Qt::EditRole);
         if (!model->headerData(column, Qt::Horizontal).isValid())
             model->setHeaderData(column, Qt::Horizontal, values[column], Qt::EditRole);

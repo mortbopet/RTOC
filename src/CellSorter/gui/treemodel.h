@@ -100,10 +100,10 @@ public:
                        const QModelIndex& parent = QModelIndex()) override;
     bool insertRows(int position, int rows, const QModelIndex& parent = QModelIndex()) override;
     bool removeRows(int position, int rows, const QModelIndex& parent = QModelIndex()) override;
+    TreeItem* getItem(const QModelIndex& index) const;
 
 private:
     void setupModelData(const QStringList& lines, TreeItem* parent);
-    TreeItem* getItem(const QModelIndex& index) const;
 
     TreeItem* rootItem;
 
