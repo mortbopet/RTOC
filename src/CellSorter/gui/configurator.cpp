@@ -138,3 +138,7 @@ void Configurator::on_add_clicked() {
 }
 
 void Configurator::on_remove_clicked() {}
+
+void Configurator::on_up_clicked() {}
+
+void Configurator::on_down_clicked() {}

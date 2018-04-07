@@ -23,6 +23,10 @@ private slots:
 
     void updateModel();
 
+    void on_up_clicked();
+
+    void on_down_clicked();
+
 private:
     TreeModel* m_model;
     Ui::Configurator* ui;

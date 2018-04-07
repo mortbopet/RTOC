@@ -210,20 +210,28 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
         return false;
 
     TreeItem* item = getItem(index);
-    // We assume that there is consistensy between the ordering of elements in the tree view and the
-    // ordering of parameters in the processes
-    auto parameters = (*m_interface->getContainerPtr())[index.parent().row()]->getParameters();
-
-    parameters[index.row()]->setValueStr(value.toString().toStdString());
-    m_interface->emitDataChanged();
-    return true;
-    /*
     bool result = item->setData(index.column(), value);
 
     if (result)
         emit dataChanged(index, index);
 
     return result;
+    /*
+    if (role != Qt::EditRole)
+        return false;
+
+    TreeItem* item = getItem(index);
+
+    if (role != Qt::DisplayRole) {
+        // We assume that there is consistensy between the ordering of elements in the tree view and
+        // the
+        // ordering of parameters in the processes
+        auto parameters = (*m_interface->getContainerPtr())[index.parent().row()]->getParameters();
+
+        parameters[index.row()]->setValueStr(value.toString().toStdString());
+    }
+    m_interface->emitDataChanged();
+    return true;
     */
 }
 
