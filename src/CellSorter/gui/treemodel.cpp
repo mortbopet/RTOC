@@ -101,7 +101,8 @@ QVariant TreeModel::data(const QModelIndex& index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::ToolTipRole) {
+    if (role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::ToolTipRole &&
+        role != Qt::UserRole) {
         return QVariant();
     }
 
@@ -252,9 +253,9 @@ bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int rol
                                   value.toString().toStdString());
             return true;
         }
-    } else if (role == Qt::ToolTipRole) {
+    } else if (role == Qt::ToolTipRole || role == Qt::UserRole) {
         TreeItem* item = getItem(index);
-        bool result = item->setData(index.column(), value, role);
+        return item->setData(index.column(), value, role);
     }
     return false;
 }

@@ -17,7 +17,9 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
         auto item = new QListWidgetItem();
         // Items are identified by their UserRole, which corresponds to they typeid(T).name()
         item->setData(Qt::DisplayRole, processName);
-        item->setData(Qt::UserRole, QString::fromStdString(type));
+        ItemUserData itemData;
+        itemData.processtype = QString::fromStdString(type);
+        item->setData(Qt::UserRole, QVariant::fromValue(itemData));
         ui->options->addItem(item);
     }
 
@@ -29,6 +31,10 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     ui->tree->setModel(m_model);
     connect(m_interface, &ProcessInterface::dataChanged, this, &Configurator::updateModel);
     ui->tree->header()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // Setup delegate for parameter tree
+    m_delegate = new ParameterDelegate(m_model, ui->tree);
+    ui->tree->setItemDelegate(m_delegate);
 
     // Reload model
     updateModel();
@@ -65,6 +71,12 @@ void Configurator::updateModel() {
                 // Set tooltip for parameter
                 m_model->getItem(child)->setData(
                     0, QString("Valid range: [%1;%2]").arg(low).arg(high), Qt::ToolTipRole);
+                // Set data to be used by delegate
+                ItemUserData itemData;
+                itemData.low = low;
+                itemData.high = high;
+                itemData.type = ParameterType::Int;
+                m_model->setData(child, QVariant::fromValue(itemData), Qt::UserRole);
             } else if (type == typeid(double).name()) {
                 // GUI can spawn an editor that accepts floating point values
                 double high, low;
@@ -78,6 +90,12 @@ void Configurator::updateModel() {
                 // Set tooltip for parameter
                 m_model->getItem(child)->setData(
                     0, QString("Valid range: [%1;%2]").arg(low).arg(high), Qt::ToolTipRole);
+                // Set data to be used by delegate
+                ItemUserData itemData;
+                itemData.low = low;
+                itemData.high = high;
+                itemData.type = ParameterType::Double;
+                m_model->setData(child, QVariant::fromValue(itemData), Qt::UserRole);
             } else {
                 // GUI can spawn an editor that accepts ENUMs - gui will generate a combobox with
                 // values that options provides
@@ -88,9 +106,15 @@ void Configurator::updateModel() {
                 QList<QVariant> values;
                 values << QString::fromStdString(options[0]).replace('_', ' ')
                        << QString::fromStdString(value);
-                insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
+                QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
 
-                // No tooltip for enumeration values - combo box delegate should be sufficient
+                // No tooltip for enumeration values - combo box delegate parameters should be
+                // sufficient
+                // Set data to be used by delegate
+                ItemUserData itemData;
+                itemData.type = ParameterType::Enum;
+                itemData.options = options;
+                m_model->setData(child, QVariant::fromValue(itemData), Qt::UserRole);
             }
         }
     }
@@ -110,9 +134,10 @@ QModelIndex Configurator::insertChild(const QModelIndex& index, QList<QVariant> 
     QModelIndex child;
     for (int column = 0; column < model->columnCount(index); ++column) {
         child = model->index(childRow, column, index);
-        model->setData(child, values[column], Qt::EditRole);
+        model->setData(child, values[column], Qt::EditRole | Qt::DisplayRole);
         if (!model->headerData(column, Qt::Horizontal).isValid())
-            model->setHeaderData(column, Qt::Horizontal, values[column], Qt::EditRole);
+            model->setHeaderData(column, Qt::Horizontal, values[column],
+                                 Qt::EditRole | Qt::DisplayRole);
     }
 
     ui->tree->selectionModel()->setCurrentIndex(model->index(0, 0, index),
@@ -146,8 +171,9 @@ void Configurator::on_add_clicked() {
     auto selectedItem = ui->options->selectedItems().first();
     if (selectedItem != nullptr) {
         // Get class typeid name and create a new process
-        QString typeName = selectedItem->data(Qt::UserRole).toString();
-        m_interface->doActionForType(typeName.toStdString(), ProcessInterface::TypeAction::Create);
+        ItemUserData itemData = selectedItem->data(Qt::UserRole).value<ItemUserData>();
+        m_interface->doActionForType(itemData.processtype.toStdString(),
+                                     ProcessInterface::TypeAction::Create);
     }
 }
 

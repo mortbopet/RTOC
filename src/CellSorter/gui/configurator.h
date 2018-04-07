@@ -3,8 +3,11 @@
 
 #include <QWidget>
 #include <string>
+#include "parameterdelegate.h"
 #include "processinterface.h"
 #include "treemodel.h"
+
+#include <QMetaType>
 
 namespace Ui {
 class Configurator;
@@ -31,6 +34,7 @@ private:
     TreeModel* m_model;
     Ui::Configurator* ui;
     ProcessInterface* m_interface;
+    ParameterDelegate* m_delegate;
 
     QModelIndex insertChild(const QModelIndex& index, QList<QVariant> values);
     void insertRow(const QModelIndex& index, QList<QVariant> values);

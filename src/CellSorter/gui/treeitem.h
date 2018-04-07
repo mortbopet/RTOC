@@ -55,6 +55,20 @@
 #include <QVariant>
 #include <QVector>
 
+enum class ParameterType { Int, Double, Enum };
+
+// Used when delegate needs to query an item for its valid range, names, options, etc.
+typedef struct {
+    QString processtype;
+    ParameterType type;
+    double low;
+    double high;
+    std::vector<std::string> options;
+} ItemUserData;
+
+// Declare as qMetatype to be able to use as a qVariant
+Q_DECLARE_METATYPE(ItemUserData)
+
 //! [0]
 class TreeItem {
 public:
@@ -78,6 +92,7 @@ private:
     QVector<QVariant> itemData;
     QString tooltip;
     TreeItem* parentItem;
+    ItemUserData userData;
 };
 //! [0]
 

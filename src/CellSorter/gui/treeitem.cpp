@@ -102,6 +102,8 @@ int TreeItem::columnCount() const {
 QVariant TreeItem::data(int column, int role) const {
     if (role == Qt::ToolTipRole) {
         return tooltip;
+    } else if (role == Qt::UserRole) {
+        return QVariant::fromValue(userData);
     }
     return itemData.value(column);
 }
@@ -177,6 +179,8 @@ bool TreeItem::setData(int column, const QVariant& value, int role) {
         itemData[column] = value;
     } else if (role == Qt::ToolTipRole) {
         tooltip = value.toString();
+    } else if (role == Qt::UserRole) {
+        userData = value.value<ItemUserData>();
     }
     return true;
 }
