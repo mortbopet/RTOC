@@ -54,7 +54,7 @@ void ProcessInterface::doAction(Action action, int processIndex, int parameterIn
         case ProcessInterface::Action::SetValue: {
             auto parameters = (*m_container)[processIndex]->getParameters();
 
-            parameters[processIndex]->setValueStr(value);
+            parameters[parameterIndex]->setValueStr(value);
             break;
         }
     }
