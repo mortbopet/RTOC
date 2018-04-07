@@ -11,33 +11,14 @@ namespace {
 }
 
 template <typename T>
-std::string ProcessInterface::executeActionForType(ProcessInterface::Action action, int index) {
+std::string ProcessInterface::executeActionForType(ProcessInterface::TypeAction action, int index) {
     switch (action) {
-        case ProcessInterface::Action::GetName: {
+        case ProcessInterface::TypeAction::GetName: {
             return T::getName();
             break;
         }
-        case ProcessInterface::Action::Create: {
+        case ProcessInterface::TypeAction::Create: {
             m_container->push_back(std::make_unique<T>());
-            break;
-        }
-        case ProcessInterface::Action::Remove: {
-            // Thank you, smart pointers. The underlying data is destructed upon erasing
-            m_container->erase(m_container->begin() + index);
-            break;
-        }
-        case ProcessInterface::Action::Up: {
-            auto item = m_container->begin() + index;
-            if (item != m_container->begin()) {
-                std::iter_swap(item, item - 1);
-            }
-            break;
-        }
-        case ProcessInterface::Action::Down: {
-            auto item = m_container->begin() + index;
-            if (item != (m_container->end() - 1)) {
-                std::iter_swap(item, item + 1);
-            }
             break;
         }
     }
@@ -46,7 +27,39 @@ std::string ProcessInterface::executeActionForType(ProcessInterface::Action acti
     return std::string();
 }
 
-std::string ProcessInterface::doAction(const std::string& typeName, Action action, int index) {
+// Type agnostic actions
+void ProcessInterface::doAction(Action action, int index1, int index2, std::string value) {
+    switch (action) {
+        case ProcessInterface::Action::Remove: {
+            // Thank you, smart pointers. The underlying data is destructed upon erasing
+            m_container->erase(m_container->begin() + index1);
+            break;
+        }
+        case ProcessInterface::Action::Up: {
+            auto item = m_container->begin() + index1;
+            if (item != m_container->begin()) {
+                std::iter_swap(item, item - 1);
+            }
+            break;
+        }
+        case ProcessInterface::Action::Down: {
+            auto item = m_container->begin() + index1;
+            if (item != (m_container->end() - 1)) {
+                std::iter_swap(item, item + 1);
+            }
+            break;
+        }
+        case ProcessInterface::Action::SetValue: {
+            break;
+        }
+    }
+    // Signal that changes has been made to the process and update the model
+    emit dataChanged();
+}
+
+// Type specific actions
+std::string ProcessInterface::doActionForType(const std::string& typeName, TypeAction action,
+                                              int index) {
     if (TYPECHECK(typeName, Morph)) {
         return executeActionForType<Morph>(action, index);
     } else if (TYPECHECK(typeName, Binarize)) {

@@ -10,8 +10,8 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     // Gather options from interface
     auto processTypes = m_interface->getProcessTypes();
     for (const auto& type : processTypes) {
-        QString processName =
-            QString::fromStdString(m_interface->doAction(type, ProcessInterface::Action::GetName));
+        QString processName = QString::fromStdString(
+            m_interface->doActionForType(type, ProcessInterface::TypeAction::GetName));
         auto item = new QListWidgetItem();
         // Items are identified by their UserRole, which corresponds to they typeid(T).name()
         item->setData(Qt::DisplayRole, processName);
@@ -33,6 +33,8 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
 }
 
 void Configurator::updateModel() {
+    // prevent setData() calls in model to send data changes to the processInterface
+    m_model->setModelLoading(true);
     while (m_model->rowCount() > 0) {
         int row = m_model->rowCount() - 1;
         removeRow(m_model->index(row, 0));
@@ -40,8 +42,8 @@ void Configurator::updateModel() {
 
     // populate with current process
     for (auto& process : *m_interface->getContainerPtr()) {
-        QString type = QString::fromStdString(
-            m_interface->doAction(process->getTypeName(), ProcessInterface::Action::GetName));
+        QString type = QString::fromStdString(m_interface->doActionForType(
+            process->getTypeName(), ProcessInterface::TypeAction::GetName));
 
         insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>() << type << "");
         auto parameters = process->getParameters();
@@ -82,6 +84,7 @@ void Configurator::updateModel() {
             }
         }
     }
+    m_model->setModelLoading(false);
 }
 
 void Configurator::insertChild(const QModelIndex& index, QList<QVariant> values) {
@@ -133,7 +136,7 @@ void Configurator::on_add_clicked() {
     if (selectedItem != nullptr) {
         // Get class typeid name and create a new process
         QString typeName = selectedItem->data(Qt::UserRole).toString();
-        m_interface->doAction(typeName.toStdString(), ProcessInterface::Action::Create);
+        m_interface->doActionForType(typeName.toStdString(), ProcessInterface::TypeAction::Create);
     }
 }
 
@@ -158,8 +161,7 @@ void Configurator::on_remove_clicked() {
     // Get selected indexes. Only óne row can be selected at a time
     int row = getRootSelectedIndex(ui->tree->selectionModel());
     if (row >= 0) {
-        m_interface->doAction(std::string(typeid(Morph).name()), ProcessInterface::Action::Remove,
-                              row);
+        m_interface->doAction(ProcessInterface::Action::Remove, row);
     }
 }
 
@@ -169,7 +171,7 @@ void Configurator::reorder(ProcessInterface::Action dir) {
     // Get selected indexes. Only óne row can be selected at a time
     int row = getRootSelectedIndex(ui->tree->selectionModel());
     if (row >= 0) {
-        m_interface->doAction(std::string(typeid(Morph).name()), dir, row);
+        m_interface->doAction(dir, row);
     }
 }
 

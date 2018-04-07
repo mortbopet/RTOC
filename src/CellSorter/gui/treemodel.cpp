@@ -210,31 +210,32 @@ int TreeModel::rowCount(const QModelIndex& parent) const {
 bool TreeModel::setData(const QModelIndex& index, const QVariant& value, int role) {
     if (role != Qt::EditRole)
         return false;
+    if (m_modelIsLoading) {
+        // We are loading data from the processInterface into the model
+        TreeItem* item = getItem(index);
+        bool result = item->setData(index.column(), value);
 
-    TreeItem* item = getItem(index);
-    bool result = item->setData(index.column(), value);
+        if (result)
+            emit dataChanged(index, index);
 
-    if (result)
-        emit dataChanged(index, index);
+        return result;
+    } else {
+        // User has modified a value through GUI, transmit change to processInterface (which will
+        // reload the model). Bad design to reload the entire model for each change, but it works
+        // and is fast to implement
+        TreeItem* item = getItem(index);
 
-    return result;
-    /*
-    if (role != Qt::EditRole)
-        return false;
+        if (role != Qt::DisplayRole) {
+            // We assume that there is consistensy between the ordering of elements in the tree view
+            // and the ordering of parameters in the processes
+            auto parameters =
+                (*m_interface->getContainerPtr())[index.parent().row()]->getParameters();
 
-    TreeItem* item = getItem(index);
-
-    if (role != Qt::DisplayRole) {
-        // We assume that there is consistensy between the ordering of elements in the tree view and
-        // the
-        // ordering of parameters in the processes
-        auto parameters = (*m_interface->getContainerPtr())[index.parent().row()]->getParameters();
-
-        parameters[index.row()]->setValueStr(value.toString().toStdString());
+            parameters[index.row()]->setValueStr(value.toString().toStdString());
+        }
+        m_interface->emitDataChanged();
+        return true;
     }
-    m_interface->emitDataChanged();
-    return true;
-    */
 }
 
 bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant& value,

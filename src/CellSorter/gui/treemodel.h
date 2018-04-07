@@ -69,6 +69,8 @@ public:
     ~TreeModel();
     //! [0] //! [1]
 
+    void setModelLoading(bool state) { m_modelIsLoading = state; }
+
     QVariant data(const QModelIndex& index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const override;
@@ -102,6 +104,12 @@ private:
 
     ProcessInterface* m_interface;
     processContainerPtr m_container;
+
+    // Since we transmit changes to the processInterface in the setData method, we need to
+    // distinguish between when setData is called when model is loading, and when setData is called
+    // when a user has edited through the treeView. This flag disables calls to the processInterface
+    // during setupModelData()
+    bool m_modelIsLoading = false;
 };
 //! [2]
 
