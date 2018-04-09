@@ -50,7 +50,6 @@ AcquisitionWidget::AcquisitionWidget(QWidget* parent)
             QMetaObject::invokeMethod(Acquisitor::get(), "stopAcq", Qt::QueuedConnection);
         }
     });
-
 #endif
 }
 
@@ -133,9 +132,11 @@ AcquisitionWidget::~AcquisitionWidget() {
 }
 
 void AcquisitionWidget::on_actionExit_triggered() {
+#ifdef BUILD_ACQ
     // Safely deinitialize the framegrabber
     Acquisitor::get()->stopAcq();
     Acquisitor::get()->deInitialize();
+#endif
     QApplication::exit();
 }
 

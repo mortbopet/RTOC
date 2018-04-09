@@ -19,6 +19,9 @@ public:
     explicit MainWindow(Analyzer* analyzer, QWidget* parent = 0);
     ~MainWindow();
 
+private slots:
+    void cameraSelectedWithoutAcqBuilt();
+
 private:
     Ui::MainWindow* ui;
 
