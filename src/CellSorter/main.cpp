@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
     Analyzer analyzer;
 
 #ifdef BUILD_GUI
+    Q_INIT_RESOURCE(icons);
     QApplication a(argc, argv);
 
     // Configure "Process" configurator

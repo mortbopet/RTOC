@@ -24,6 +24,7 @@ if(${BUILD_GUI})
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTORCC ON)
 
     # Find Qt5Core and Qt5Widgets
     find_package(Qt5Core REQUIRED)
@@ -47,7 +48,7 @@ if(${BUILD_GUI})
     )
 
     file ( GLOB RESOURCES
-     gui/*.qrc
+     ../*.qrc
     )
 
     add_definitions(-fPIC)

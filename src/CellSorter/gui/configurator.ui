@@ -82,14 +82,14 @@
           <item>
            <widget class="QPushButton" name="add">
             <property name="text">
-             <string>-&gt;</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="remove">
             <property name="text">
-             <string>&lt;-</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -163,14 +163,14 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>^</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="down">
             <property name="text">
-             <string>v</string>
+             <string/>
             </property>
            </widget>
           </item>

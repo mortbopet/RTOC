@@ -9,6 +9,12 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     : m_interface(interface), QWidget(parent), ui(new Ui::Configurator) {
     ui->setupUi(this);
 
+    // Set icons
+    ui->up->setIcon(QIcon(":/icons/resources/up-arrow.svg"));
+    ui->down->setIcon(QIcon(":/icons/resources/down-arrow.svg"));
+    ui->add->setIcon(QIcon(":/icons/resources/add.svg"));
+    ui->remove->setIcon(QIcon(":/icons/resources/delete.svg"));
+
     // Gather options from interface
     auto processTypes = m_interface->getProcessTypes();
     for (const auto& type : processTypes) {
