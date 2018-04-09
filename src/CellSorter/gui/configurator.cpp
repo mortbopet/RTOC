@@ -32,6 +32,9 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     connect(m_interface, &ProcessInterface::dataChanged, this, &Configurator::updateModel);
     ui->tree->header()->setSectionResizeMode(QHeaderView::Stretch);
 
+    // Connect double-click in options list to create new processes
+    connect(ui->options, &QListWidget::itemDoubleClicked, this, &Configurator::on_add_clicked);
+
     // Setup delegate for parameter tree
     m_delegate = new ParameterDelegate(m_model, ui->tree);
     ui->tree->setItemDelegate(m_delegate);
@@ -105,7 +108,7 @@ void Configurator::updateModel() {
                 string value = parameter->getValueStr();
 
                 QList<QVariant> values;
-                values << QString::fromStdString(options[0]).replace('_', ' ')
+                values << QString::fromStdString(name).replace('_', ' ')
                        << QString::fromStdString(value);
                 QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
 
