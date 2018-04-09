@@ -4,5 +4,7 @@
         <file>resources/delete.svg</file>
         <file>resources/down-arrow.svg</file>
         <file>resources/up-arrow.svg</file>
+        <file>resources/play-button.svg</file>
+        <file>resources/pause-button.svg</file>
     </qresource>
 </RCC>

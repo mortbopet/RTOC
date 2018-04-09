@@ -26,7 +26,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
@@ -55,14 +55,17 @@
                   </widget>
                  </item>
                  <item row="0" column="4">
-                  <widget class="QPushButton" name="pushButton">
+                  <widget class="QPushButton" name="setImageFolderPath">
                    <property name="text">
-                    <string>Set path</string>
+                    <string>...</string>
                    </property>
                   </widget>
                  </item>
                  <item row="0" column="3">
-                  <widget class="QLineEdit" name="lineEdit">
+                  <widget class="QLineEdit" name="folderPath">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
                    <property name="placeholderText">
                     <string>Path to image folder</string>
                    </property>
@@ -89,7 +92,22 @@
            </layout>
           </item>
           <item>
-           <layout class="QGridLayout" name="acqLayout"/>
+           <widget class="QStackedWidget" name="acqWidgets">
+            <widget class="QWidget" name="page">
+             <layout class="QGridLayout" name="gridLayout_7">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="acqLayout"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_2">
+             <layout class="QGridLayout" name="gridLayout_8">
+              <item row="0" column="0">
+               <layout class="QVBoxLayout" name="imageLayout"/>
+              </item>
+             </layout>
+            </widget>
+           </widget>
           </item>
          </layout>
         </item>

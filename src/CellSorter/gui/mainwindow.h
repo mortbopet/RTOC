@@ -5,6 +5,7 @@
 
 #include "../AcquisitionApp/src/acquisitionwidget.h"
 #include "configurator.h"
+#include "imagedisplayerwidget.h"
 #include "processinterface.h"
 
 namespace Ui {
@@ -21,6 +22,9 @@ public:
 
 private slots:
     void cameraSelectedWithoutAcqBuilt();
+    void acqSelectionChanged(bool isCamera);
+
+    void on_setImageFolderPath_clicked();
 
 private:
     Ui::MainWindow* ui;
@@ -29,6 +33,7 @@ private:
     Configurator* m_configurator;
     Analyzer* m_analyzer;
     AcquisitionWidget* m_acquisitionWdiget;
+    ImageDisplayerWidget* m_imageDisplayerWidget;
 };
 
 #endif  // MAINWINDOW_H
