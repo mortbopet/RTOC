@@ -38,21 +38,32 @@ void floodFill(cv::Mat& img, const cv::Point& p);
 double dist(const cv::Point& p0, const cv::Point& p1);
 
 template <typename T>
-std::pair<T,long> min(std::vector<T>& v) {
-    std::pair<T,long> output;
+std::pair<T,unsigned long> min(const std::vector<T>& v) {
+    std::pair<T,unsigned long> output;
     auto m = std::min_element(std::begin(v), std::end(v));
     output.first = *m;
-    output.second = std::distance(std::begin(v), m);
+    output.second = (unsigned) std::distance(std::begin(v), m);
     return output;
 }
 
 template <typename T>
-std::pair<T,long> max(std::vector<T>& v) {
-    std::pair<T,long> output;
+std::pair<T,unsigned long> max(const std::vector<T>& v) {
+    std::pair<T,unsigned long> output;
     auto m = std::max_element(std::begin(v), std::end(v));
     output.first = *m;
-    output.second = std::distance(std::begin(v), m);
+    output.second = (unsigned) std::distance(std::begin(v), m);
     return output;
+}
+
+template <typename T>
+std::vector<T> find(std::vector<T>& v, T& term) {
+    std::vector<T> out;
+    for (T& t : v) {
+        if (t == term) {
+            out.push_back(t);
+        }
+    }
+    return out;
 }
 
 
