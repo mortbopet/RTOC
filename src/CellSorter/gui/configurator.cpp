@@ -30,13 +30,17 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     }
 
     // Setup tree view
-    QStringList headers;
-    headers << "Process"
-            << "Value";
     m_model = new TreeModel(m_interface->getContainerPtr(), interface);
     ui->tree->setModel(m_model);
     connect(m_interface, &ProcessInterface::dataChanged, this, &Configurator::updateModel);
-    ui->tree->header()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // Setup tree header
+    ui->tree->header()->setSectionsMovable(false);
+
+    ui->tree->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tree->header()->setSectionResizeMode(1, QHeaderView::Interactive);
+    ui->tree->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+    ui->tree->header()->setSectionResizeMode(3, QHeaderView::Interactive);
 
     // Connect double-click in options list to create new processes
     connect(ui->options, &QListWidget::itemDoubleClicked, this, &Configurator::on_add_clicked);
@@ -58,11 +62,14 @@ void Configurator::updateModel() {
     }
 
     // populate with current process
+    int processIndex = 1;
     for (auto& process : *m_interface->getContainerPtr()) {
         QString type = QString::fromStdString(m_interface->doActionForType(
             process->getTypeName(), ProcessInterface::TypeAction::GetName));
 
-        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>() << type << "");
+        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>()
+                                                                  << processIndex << type << ""
+                                                                  << "");
         auto parameters = process->getParameters();
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();
@@ -76,7 +83,8 @@ void Configurator::updateModel() {
                 getRange<int>(optionStream, low, high);
 
                 QList<QVariant> values;
-                values << QString::fromStdString(name).replace('_', ' ') << stoi(value);
+                values << ""
+                       << "" << QString::fromStdString(name).replace('_', ' ') << stoi(value);
                 QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
                 // Set tooltip for parameter
                 m_model->getItem(child)->setData(
@@ -94,7 +102,9 @@ void Configurator::updateModel() {
                 getRange<double>(optionStream, low, high);
 
                 QList<QVariant> values;
-                values << QString::fromStdString(name).replace('_', ' ') << stod(value);
+                // "" is added to account for the process index column
+                values << ""
+                       << "" << QString::fromStdString(name).replace('_', ' ') << stod(value);
                 QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
 
                 // Set tooltip for parameter
@@ -114,7 +124,8 @@ void Configurator::updateModel() {
                 string value = parameter->getValueStr();
 
                 QList<QVariant> values;
-                values << QString::fromStdString(name).replace('_', ' ')
+                values << ""
+                       << "" << QString::fromStdString(name).replace('_', ' ')
                        << QString::fromStdString(value);
                 QModelIndex child = insertChild(m_model->index(m_model->rowCount() - 1, 0), values);
 
@@ -127,6 +138,7 @@ void Configurator::updateModel() {
                 m_model->setData(child, QVariant::fromValue(itemData), Qt::UserRole);
             }
         }
+        processIndex++;
     }
     m_model->setModelLoading(false);
 }

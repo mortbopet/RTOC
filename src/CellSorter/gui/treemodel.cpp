@@ -76,7 +76,7 @@ int getRootSelectedIndex(QItemSelectionModel* model) {
 //! [0]
 TreeModel::TreeModel(processContainerPtr container, ProcessInterface* iface, QObject* parent)
     : m_container(container), m_interface(iface), QAbstractItemModel(parent) {
-    QStringList headers{"Process name", "Parameters"};
+    QStringList headers{"Index", "Process type", "Parameters", "Value"};
     QVector<QVariant> rootData;
     foreach (QString header, headers)
         rootData << header;
@@ -115,9 +115,8 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const {
     if (!index.isValid())
         return 0;
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
-    if (index.parent().isValid()) {  // root items are not editable
-        if (index.column() != 0) {
-            // Items in column 0 is never editable
+    if (index.parent().isValid()) {  // root items & process indexes are not editable
+        if (index.column() == 3) {
             flags |= Qt::ItemIsEditable;
         }
     }
