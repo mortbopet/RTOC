@@ -51,6 +51,7 @@ class Acquisitor : public QObject {
 public:
     static Acquisitor* get();
     ~Acquisitor();
+    std::vector<char>* requestImageDataBlocking();
 
 public slots:
     int initialize(const QString& xmlPath, const QString& configPath, bool useConfigFile);
@@ -104,7 +105,7 @@ private:
 
     QFuture<void> m_acqFuture;
 
-    QThread* m_thread;
+    QThread* m_thread = nullptr;
 
     FgValues m_fgValues;
 };

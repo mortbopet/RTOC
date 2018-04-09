@@ -7,6 +7,9 @@ void Logger::writeLineToLog(QString msg) {
         msg.prepend("\n");
     }
     writeToLog(msg);
+
+    m_acqWaitTimer.setInterval(150);
+    connect(&m_acqWaitTimer, &QTimer::timeout, this, &Logger::writeDot);
 }
 void Logger::writeToLog(QString msg) {
     m_log->moveCursor(QTextCursor::End);

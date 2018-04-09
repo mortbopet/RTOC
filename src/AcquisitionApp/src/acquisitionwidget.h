@@ -1,8 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QMainWindow>
-#include <QTimer>
+#ifndef ACQUISITIONWIDGET_H
+#define ACQUISITIONWIDGET_H
 
 #ifdef BUILD_ACQ
 #include "../acquisitor_src/acquisitor.h"
@@ -11,16 +8,19 @@
 #include "imagedisplayer.h"
 #include "logger.h"
 
+#include <QTimer>
+#include <QWidget>
+
 namespace Ui {
-class MainWindow;
+class AcquisitionWidget;
 }
 
-class MainWindow : public QMainWindow {
+class AcquisitionWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = 0);
-    ~MainWindow();
+    explicit AcquisitionWidget(QWidget* parent = 0);
+    ~AcquisitionWidget();
 
 private slots:
     void on_actionExit_triggered();
@@ -36,8 +36,8 @@ private slots:
 private:
     ImageDisplayer m_imageDisplayer;
 
-    Ui::MainWindow* m_ui;
-    Logger m_logger;
+    Ui::AcquisitionWidget* m_ui;
+    Logger* m_logger;
 
 #ifdef BUILD_ACQ
 private slots:
@@ -48,10 +48,7 @@ private slots:
 private:
     // The acquisitor object is initialized to reside as a permanent object in a separate thread.
     // All communication is facilitated through signals/slots through QMetaObject::InvokeMethod
-    Acquisitor* m_acquisitor;
-
-    QTimer m_acqWaitTimer;  // timer for printing dots in the log, when awaiting Acquisitor answer
 #endif
 };
 
-#endif  // MAINWINDOW_H
+#endif  // ACQUISITIONWIDGET_H

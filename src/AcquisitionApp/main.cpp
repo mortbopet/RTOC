@@ -1,10 +1,9 @@
 #include <QApplication>
-#include "src/mainwindow.h"
+#include "src/AcquisitionWidget.h"
 
 int main(int argc, char** argv) {
     QApplication a(argc, argv);
-    MainWindow w;
+    AcquisitionWidget w;
     w.show();
     return a.exec();
 }
-

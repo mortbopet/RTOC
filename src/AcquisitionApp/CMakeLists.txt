@@ -63,8 +63,9 @@ if(${BUILD_ACQ})
     add_library(acquisitor_lib ${ACQUISITOR_SOURCES} ${ACQUISITOR_HEADERS})
 endif()
 
-add_executable(${PROJECT_NAME} main.cpp ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets)
+add_library(ACQ_LIB ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets ACQ_LIB)
 
 
 # Handle link and includes for acquisitor lib / silicon software related
@@ -85,4 +86,11 @@ if(${BUILD_ACQ})
         ${SisoGenicam_LIBRARIES}
     )
     target_link_libraries(${PROJECT_NAME} acquisitor_lib )
+    target_link_libraries( ACQ_LIB
+        ${FgLib5_LIBRARIES}
+        ${SisoGenicam_LIBRARIES}
+    )
+    target_link_libraries( ACQ_LIB
+        acquisitor_lib
+    )
 endif()

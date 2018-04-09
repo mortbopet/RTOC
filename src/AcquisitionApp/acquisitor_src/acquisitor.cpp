@@ -9,10 +9,12 @@
 
 Acquisitor::Acquisitor(QObject* parent) : QObject(parent) {}
 Acquisitor::~Acquisitor() {
-    // Stop and delete acquisitor thread
-    m_thread->quit();
-    m_thread->wait();
-    delete m_thread;
+    if (m_thread) {
+        // Stop and delete acquisitor thread
+        m_thread->quit();
+        m_thread->wait();
+        delete m_thread;
+    }
 }
 
 Acquisitor* Acquisitor::get() {
@@ -197,6 +199,15 @@ void Acquisitor::acquisitionSgc() {
 
 void Acquisitor::throwLastFgError() {
     throwLastFgError(m_FgHandle->getFgHandle());
+}
+
+std::vector<char>* Acquisitor::requestImageDataBlocking() {
+    // Request a pointer to the most recently acquisited image. This function does not use the Qt
+    // event loop, and is blocking until the data has been copied
+    m_requestImage = true;
+    while (m_requestImage)
+        ;
+    return &m_image;
 }
 
 void Acquisitor::throwLastFgError(Fg_Struct* fgHandle) {

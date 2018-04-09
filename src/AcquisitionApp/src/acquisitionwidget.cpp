@@ -1,13 +1,14 @@
-#include "mainwindow.h"
+#include "acquisitionwidget.h"
 
-#include "ui_mainwindow.h"
+#include "ui_acquisitionwidget.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QOpenGLWidget>
 #include <QPushButton>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::MainWindow) {
+AcquisitionWidget::AcquisitionWidget(QWidget* parent)
+    : QWidget(parent), m_ui(new Ui::AcquisitionWidget) {
     m_ui->setupUi(this);
 
     // connect image request from ImageDisplayer
@@ -15,7 +16,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
     m_ui->graphicsView->setScene(&m_imageDisplayer);
     m_ui->graphicsView->setViewport(new QOpenGLWidget());
 
-    m_logger.setLog(m_ui->log);
+    m_logger = new Logger(this);
+    m_logger->setLog(m_ui->log);
 
 #ifdef BUILD_ACQ
 
@@ -26,19 +28,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
     // connect Acquisitor to UI
     connect(Acquisitor::get(), &Acquisitor::sendImageData, &m_imageDisplayer,
             &ImageDisplayer::setImage, Qt::QueuedConnection);
-    connect(Acquisitor::get(), &Acquisitor::writeToLog, &m_logger, &Logger::writeLineToLog,
+    connect(Acquisitor::get(), &Acquisitor::writeToLog, m_logger, &Logger::writeLineToLog,
             Qt::QueuedConnection);
-    connect(Acquisitor::get(), &Acquisitor::stateChanged, this, &MainWindow::acqStateChanged,
+    connect(Acquisitor::get(), &Acquisitor::stateChanged, this, &AcquisitionWidget::acqStateChanged,
             Qt::QueuedConnection);
     connect(Acquisitor::get(), &Acquisitor::imageDimensionsChanged, &m_imageDisplayer,
             &ImageDisplayer::setImageDimensions, Qt::QueuedConnection);
 
-    // setup request timer to write '.' while awaiting answers from acquisitor
-    m_acqWaitTimer.setInterval(150);
-    connect(&m_acqWaitTimer, &QTimer::timeout, [=] { m_logger.writeToLog("."); });
-
     // connect Acquisitor initializer
-    connect(m_ui->initialize, &QPushButton::clicked, this, &MainWindow::initializeFramegrabber);
+    connect(m_ui->initialize, &QPushButton::clicked, this,
+            &AcquisitionWidget::initializeFramegrabber);
 
     // Disable start-acq button by default
     m_ui->start->setEnabled(false);
@@ -56,19 +55,19 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), m_ui(new Ui::Main
 }
 
 #ifdef BUILD_ACQ
-void MainWindow::acqStateChanged(AcqState state) {
+void AcquisitionWidget::acqStateChanged(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
-            m_acqWaitTimer.stop();
+            m_logger->setDotPrinterState(false);
             m_imageDisplayer.stopRequestingImages();
             break;
         }
         case AcqState::Initializing: {
-            m_acqWaitTimer.start();
+            m_logger->setDotPrinterState(true);
             break;
         }
         case AcqState::Initialized: {
-            m_acqWaitTimer.stop();
+            m_logger->setDotPrinterState(false);
             break;
         }
         case AcqState::Acquiring: {
@@ -81,7 +80,7 @@ void MainWindow::acqStateChanged(AcqState state) {
     setButtonStates(state);
 }
 
-void MainWindow::setButtonStates(AcqState state) {
+void AcquisitionWidget::setButtonStates(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
             // Acquisitor is no longer initialized/initialization failed
@@ -111,7 +110,7 @@ void MainWindow::setButtonStates(AcqState state) {
     }
 }
 
-void MainWindow::initializeFramegrabber() {
+void AcquisitionWidget::initializeFramegrabber() {
     if (m_ui->initWithConfig->isChecked() &&
         (m_ui->xmlPath->text().isEmpty() || m_ui->configPath->text().isEmpty())) {
         QString errMsg = m_ui->configPath->text().isEmpty()
@@ -129,18 +128,18 @@ void MainWindow::initializeFramegrabber() {
 
 #endif
 
-MainWindow::~MainWindow() {
+AcquisitionWidget::~AcquisitionWidget() {
     delete m_ui;
 }
 
-void MainWindow::on_actionExit_triggered() {
+void AcquisitionWidget::on_actionExit_triggered() {
     // Safely deinitialize the framegrabber
     Acquisitor::get()->stopAcq();
     Acquisitor::get()->deInitialize();
     QApplication::exit();
 }
 
-void MainWindow::on_txtPathButton_clicked() {
+void AcquisitionWidget::on_txtPathButton_clicked() {
     auto filename =
         QFileDialog::getOpenFileName(this, "Open parameters file", "", "txt file (*.txt)");
     if (!filename.isNull()) {
@@ -148,7 +147,7 @@ void MainWindow::on_txtPathButton_clicked() {
     }
 }
 
-void MainWindow::on_xmlPathButton_clicked() {
+void AcquisitionWidget::on_xmlPathButton_clicked() {
     auto filename =
         QFileDialog::getOpenFileName(this, "Open configuration file", "", "XML file (*.xml)");
     if (!filename.isNull()) {
@@ -156,11 +155,11 @@ void MainWindow::on_xmlPathButton_clicked() {
     }
 }
 
-void MainWindow::on_clearLog_clicked() {
+void AcquisitionWidget::on_clearLog_clicked() {
     m_ui->log->clear();
 }
 
-void MainWindow::on_scale_currentIndexChanged(const QString& arg1) {
+void AcquisitionWidget::on_scale_currentIndexChanged(const QString& arg1) {
     if (arg1 == QString("Fit to view")) {
         m_ui->graphicsView->fitInView(m_ui->graphicsView->sceneRect(), Qt::KeepAspectRatio);
     } else {
@@ -172,6 +171,6 @@ void MainWindow::on_scale_currentIndexChanged(const QString& arg1) {
     }
 }
 
-void MainWindow::on_spinBox_valueChanged(int arg1) {
+void AcquisitionWidget::on_spinBox_valueChanged(int arg1) {
     m_imageDisplayer.setImageInterval(arg1);
 }

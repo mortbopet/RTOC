@@ -17,6 +17,9 @@ file(GLOB LIB_HEADERS lib/*.h)
 ######################################################################
 SET(BUILD_GUI OFF CACHE BOOL "Build GUI")
 if(${BUILD_GUI})
+    # Add acquisitor subdirectory
+    add_subdirectory(../AcquisitionApp "${CMAKE_CURRENT_BINARY_DIR}/AcquisitionApp")
+
     # Set preprocessor flag to trigger gui in main.cpp
     add_definitions(-DBUILD_GUI)
 
@@ -53,7 +56,7 @@ if(${BUILD_GUI})
 
     add_definitions(-fPIC)
     add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
-    target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
+    target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
 else()
     add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
 endif()

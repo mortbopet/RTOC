@@ -6,7 +6,8 @@
 
 #ifdef BUILD_GUI
 #include <QApplication>
-#include "gui/configurator.h"
+#include "../AcquisitionApp/src/acquisitionwidget.h"
+#include "gui/mainwindow.h"
 #endif
 
 int main(int argc, char** argv) {
@@ -17,15 +18,14 @@ int main(int argc, char** argv) {
     Q_INIT_RESOURCE(icons);
     QApplication a(argc, argv);
 
-    // Configure "Process" configurator
-    ProcessInterface interface(analyzer.getProcessContainerPtr());
-    Configurator window(&interface);
+    MainWindow window(&analyzer);
     window.show();
-    // connect(&interface, &ProcessInterface::dataChanged, ) window.show();
 
     return a.exec();
+
 #endif
 
+#ifndef BUILD_GUI
     // Get path to pictures
     analyzer.loadExperimentPreset("../../../data/ImgD1/");
 
@@ -63,4 +63,5 @@ int main(int argc, char** argv) {
     }
     t.toc();
     return 0;
+#endif
 }
