@@ -50,6 +50,20 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {Perimeter, sizeof(double)},
                                            {PixelIdxList, sizeof(std::vector<cv::Point>)}};
 
+
+std::vector<data::DataFlags> extractFlags (int flags) {
+    // Returns vector of data::DataFlags
+    std::vector<data::DataFlags> returnFlags;
+    int flagToGet = 1;
+    for (int i = 0; i < 32; i++) { // assumes 32-bit
+        if (flagToGet & flags) {
+            returnFlags.push_back(data::DataFlags(flagToGet));
+        }
+        flagToGet = flagToGet << 1;
+    }
+    return returnFlags;
+}
+
 }  // namespace data
 
 /**
@@ -129,7 +143,7 @@ public:
     DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
 
-    std::vector<double> getDataVector(data::DataFlags flag);
+    std::vector<double> getDataVector();
     int getSize ();
 
 private:

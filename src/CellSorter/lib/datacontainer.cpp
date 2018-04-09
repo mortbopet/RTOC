@@ -59,7 +59,9 @@ void DataContainer::setDataFlags(long flag) {
     calculateObjectSize();
 }
 
-std::vector<double> DataContainer::getDataVector(data::DataFlags flag) {
+std::vector<double> DataContainer::getDataVector() {
+    // Returns a 1D-array of datacontainer, i.e. all parameters of all dataobjects.
+
     // Initialze vector with length of parameters * entries(frames)
     int numberOfEntries = getSize();
     int numberOfParameters = getNumberOfSetFlags();
@@ -67,15 +69,11 @@ std::vector<double> DataContainer::getDataVector(data::DataFlags flag) {
     std::vector<double> returnVector(numberOfEntries * numberOfParameters);
     // Goes through all frames / entries
     for (int i = 0; i < numberOfEntries; i++) {
-        // A binary value going through all possible flags, extracting data
-        int flagToGet = 1;
         // Goes through all parameters in the given entry. Goes through an integer, being the size
         // of the flag
-        for (int j = 0; j < 32; j++) {
-            // Pushes the data from desired flag into vector
-            returnVector.push_back(m_data[i]->getValue(flag & flagToGet));
-            // Pushes the bit one left, getting next data from flag
-            flagToGet = flagToGet << 1;
+        std::vector<data::DataFlags> dataFlags = data::extractFlags(m_dataFlags);
+        for (int j = 0; j < dataFlags.size(); j++) {
+            returnVector.push_back(m_data[i]->getValue(dataFlags[j]));
         }
     }
     return returnVector;

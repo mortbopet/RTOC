@@ -13,7 +13,7 @@ void MachineLearning::create_model() const {}
 
 void MachineLearning::train_model(DataContainer* m_datacontainer) const {}
 
-void MachineLearning::predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const {}
+void MachineLearning::predict_model(DataContainer* m_datacontainer) const {}
 
 cv::Ptr<cv::ml::LogisticRegression>
 MachineLearning::crossvalidate(DataContainer* m_datacontainer) const {}
@@ -54,13 +54,13 @@ void LogisticRegression::train_model(DataContainer* m_datacontainer) const {
     model = crossvalidate(m_datacontainer);
 }
 
-void LogisticRegression::predict_model(DataObject* m_bloodcell, DataContainer* m_datacontainer) const {
+void LogisticRegression::predict_model(DataContainer* m_datacontainer) const {
     // Input should be a floating point matrix (vector).
     // Each attribute needs to be converted.
     // std::vector<int> tempFlag[100] = {1};
 
-
-    // model->predict();
+    // Predicts model by get vector of parameters in all entries
+    model->predict(m_datacontainer->getDataVector());
 }
 
 cv::Ptr<cv::ml::LogisticRegression>
@@ -127,7 +127,7 @@ void Clustering::create_model() const {}
 
 void Clustering::train_model(DataContainer* m_datacontainer) const {}
 
-void Clustering::predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const {}
+void Clustering::predict_model(DataContainer* m_datacontainer) const {}
 
 cv::Ptr<cv::ml::LogisticRegression>
 Clustering::crossvalidate(DataContainer* m_datacontainer) const {}

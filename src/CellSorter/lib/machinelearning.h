@@ -49,7 +49,7 @@ public:
 
     virtual void train_model(DataContainer* m_datacontainer) const = 0;
 
-    virtual void predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const = 0;
+    virtual void predict_model(DataContainer* m_datacontainer) const = 0;
 
 protected:
     virtual cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const = 0;
@@ -73,7 +73,7 @@ public:
 
     void train_model(DataContainer* m_datacontainer) const override {}
 
-    void predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const override {}
+    void predict_model(DataContainer* m_datacontainer) const override {}
 
     CREATE_VALUE_PARM(float, m_learningrate, "Learning rate of regression");
     CREATE_VALUE_PARM(int, m_iters, "Number of iterations for model");
@@ -96,7 +96,7 @@ class Clustering : public MachineLearning {
 
     void train_model(DataContainer* m_datacontainer) const override {}
 
-    void predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const override {}
+    void predict_model(DataContainer* m_datacontainer) const override {}
 
 private:
     cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const override {}
