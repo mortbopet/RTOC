@@ -13,7 +13,7 @@ void MachineLearning::create_model() const {}
 
 void MachineLearning::train_model(DataContainer* m_datacontainer) const {}
 
-void MachineLearning::predict_model(DataObject* bloodcell) const {}
+void MachineLearning::predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const {}
 
 cv::Ptr<cv::ml::LogisticRegression>
 MachineLearning::crossvalidate(DataContainer* m_datacontainer) const {}
@@ -52,42 +52,48 @@ void LogisticRegression::create_model() const {
 
 void LogisticRegression::train_model(DataContainer* m_datacontainer) const {
     model = crossvalidate(m_datacontainer);
-
-    // model->train(m_RBC_data);
-    // perform crossvalidation
 }
 
-void LogisticRegression::predict_model(DataObject* bloodcell) const {
+void LogisticRegression::predict_model(DataObject* m_bloodcell, DataContainer* m_datacontainer) const {
     // Input should be a floating point matrix (vector).
     // Each attribute needs to be converted.
-    // model->predict(bloodcell);
+    // std::vector<int> tempFlag[100] = {1};
+
+
+    // model->predict();
 }
 
 cv::Ptr<cv::ml::LogisticRegression>
 
 LogisticRegression::crossvalidate(DataContainer* m_datacontainer) const {
-    std::vector<cv::Ptr<cv::ml::LogisticRegression>> testModels;  // Container for models to test
+    // Initialize vector of test models
+    std::vector<cv::Ptr<cv::ml::LogisticRegression>> testModels;
+
     int test_size = floor(m_datacontainer->getSize() *
                           (1 / m_kfold.getValue()));  // Gets size of each test block
     std::vector<int>
         flags;  // Contains flags for which one. Should be converted into boolean instead.
 
+    // Initialize pointers to temporary partitioning of data
     std::vector<DataObject*> tempTrain;
+    std::vector<DataObject*> tempTrain_first;
+    std::vector<DataObject*> tempTrain_last;
+    std::vector<DataObject*> tempTest;
     std::vector<int> predicted;
     std::vector<float> score;
 
     for (int i = 0; i < m_kfold.getValue(); i++) {  // Creates testModels for each kfold
         // Gets pointers to test and train data
-        std::vector<DataObject*> tempTest(&m_datacontainer->m_data[i * test_size],
+        std::vector<DataObject*> tempTest(&m_datacontainer[i * test_size],
                                           &m_datacontainer[(i * test_size) + test_size]);
         std::vector<DataObject*> tempTrain_first(&m_datacontainer[0],
                                                  &m_datacontainer[i * test_size]);
         std::vector<DataObject*> tempTrain_last(&m_datacontainer[(i * test_size) + test_size],
-                                                &m_datacontainer[&m_datacontainer.getSize()]);
+                                                &m_datacontainer[m_datacontainer->getSize()]);
         tempTrain = tempTrain_first + tempTrain_last;
 
         // 'Converts' train data into cv-format
-        m_datacontainer_CVTYPE->create(tempTrain, 0, tempTrain[/*GENDERINDEX*/]);
+        m_datacontainer_CVTYPE->create(tempTrain[/*rest*/], 0, tempTrain[/*GENDERINDEX*/]);
 
         // Trains it on train-data
         testModels[i]->train(m_datacontainer_CVTYPE);
@@ -121,7 +127,7 @@ void Clustering::create_model() const {}
 
 void Clustering::train_model(DataContainer* m_datacontainer) const {}
 
-void Clustering::predict_model(DataObject* bloodcell) const {}
+void Clustering::predict_model(DataObject* bloodcell, DataContainer* m_datacontainer) const {}
 
 cv::Ptr<cv::ml::LogisticRegression>
 Clustering::crossvalidate(DataContainer* m_datacontainer) const {}

@@ -120,6 +120,8 @@ public:
 
     void setDataFlags(data::DataFlags flag);  // sets ALL data flags
     void setDataFlags(long flag);
+    int getDataFlags();
+    int getNumberOfSetFlags();
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
@@ -127,6 +129,7 @@ public:
     DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
 
+    std::vector<double> getDataVector(data::DataFlags flag);
     int getSize ();
 
 private:

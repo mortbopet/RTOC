@@ -29,7 +29,9 @@ size_t DataObject::getBytesToData(data::DataFlags flag) {
 
 // --------------------- DataContainer ------------------------
 DataContainer::DataContainer() {}
-DataContainer::DataContainer(long flags) : m_dataFlags(flags) {calculateObjectSize();}
+DataContainer::DataContainer(long flags) : m_dataFlags(flags) {
+    calculateObjectSize();
+}
 
 void DataContainer::calculateObjectSize() {
     // Called each time DataContainer's m_dataFlags are edited. m_objectSize is parsed to the
@@ -57,6 +59,39 @@ void DataContainer::setDataFlags(long flag) {
     calculateObjectSize();
 }
 
+std::vector<double> DataContainer::getDataVector(data::DataFlags flag) {
+    // Initialze vector with length of parameters * entries(frames)
+    int numberOfEntries = getSize();
+    int numberOfParameters = getNumberOfSetFlags();
+
+    std::vector<double> returnVector(numberOfEntries * numberOfParameters);
+    // Goes through all frames / entries
+    for (int i = 0; i < numberOfEntries; i++) {
+        // A binary value going through all possible flags, extracting data
+        int flagToGet = 1;
+        // Goes through all parameters in the given entry. Goes through an integer, being the size
+        // of the flag
+        for (int j = 0; j < 32; j++) {
+            // Pushes the data from desired flag into vector
+            returnVector.push_back(m_data[i]->getValue(flag & flagToGet));
+            // Pushes the bit one left, getting next data from flag
+            flagToGet = flagToGet << 1;
+        }
+    }
+    return returnVector;
+}
+
+int DataContainer::getDataFlags() {
+    return m_dataFlags;
+}
+
+int DataContainer::getNumberOfSetFlags() {
+    // From https://stackoverflow.com/questions/109023/how-to-count-the-number-of-set-bits-in-a-32-bit-integer
+    m_dataFlags = m_dataFlags - ((m_dataFlags >> 1) & 0x55555555);
+    m_dataFlags = (m_dataFlags & 0x33333333) + ((m_dataFlags >> 2) & 0x33333333);
+    return (((m_dataFlags + (m_dataFlags >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+}
+
 void DataContainer::addDataFlag(data::DataFlags flag) {
     clear();
     m_dataFlags |= flag;
@@ -68,7 +103,7 @@ DataObject* DataContainer::appendNew() {
     return *m_data.end();
 }
 
-int DataContainer::getSize () {
+int DataContainer::getSize() {
     return m_data.size();
 }
 
