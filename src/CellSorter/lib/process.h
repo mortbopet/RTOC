@@ -186,7 +186,8 @@ public:
     PropFilter();
     static std::string getName() { return "Property filter"; }
 
-    CREATE_ENUM_PARM(matlab::regionPropTypes, m_regionPropsTypes, Regionprop_types);
+    CREATE_ENUM_PARM_DEFAULT(matlab::regionPropTypes, m_regionPropsTypes, Regionprop_types,
+                             matlab::regionPropTypes::Area);
 
     CREATE_VALUE_PARM(double, m_lowerLimit, Lower_Limit);
     CREATE_VALUE_PARM(double, m_upperLimit, Upper_Limit);

@@ -28,7 +28,13 @@
  *
  */
 
+#define SPLITCHAR '|'
+
 using namespace std;
+
+static void getParameterStreamToken(std::istream& s, std::string& str) {
+    std::getline(s, str, SPLITCHAR);
+}
 
 class ParameterBase {
 public:
@@ -37,7 +43,7 @@ public:
     stringstream getOptions() const {
         stringstream s;
         for (const auto& i : m_options) {
-            s << i << ' ';
+            s << i << SPLITCHAR;
         }
         return s;
     }
@@ -227,12 +233,23 @@ using SharedEnumPtr = std::shared_ptr<EnumParameter<T>>;
 // Function for receiving range/options from a parameter
 template <typename T>
 void getRange(stringstream& stream, T& low, T& high) {
-    stream >> low >> high;
+    stringstream tmp_stream;
+    std::string tmp;
+    getParameterStreamToken(stream, tmp);
+    // let stringstream do the type-specific stream parsing
+    tmp_stream << tmp;
+    tmp_stream >> low;
+    getParameterStreamToken(stream, tmp);
+    tmp_stream.clear();
+    tmp_stream << tmp;
+    tmp_stream >> high;
 }
 
 inline void getOptions(stringstream& stream, std::vector<string>& options) {
     string str;
-    while (stream >> str) {
+    getParameterStreamToken(stream, str);
+    while (!str.empty()) {
         options.push_back(str);
+        getParameterStreamToken(stream, str);
     }
 }

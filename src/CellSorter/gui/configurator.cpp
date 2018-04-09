@@ -58,7 +58,8 @@ void Configurator::updateModel() {
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();
             std::string type, name;
-            optionStream >> type >> name;
+            getParameterStreamToken(optionStream, type);
+            getParameterStreamToken(optionStream, name);
             if (type == typeid(int).name()) {
                 // GUI can spawn an editor that accepts integer values in
                 int high, low;
