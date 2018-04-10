@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "src/AcquisitionWidget.h"
+#include "src/acquisitionwidget.h"
 
 int main(int argc, char** argv) {
     QApplication a(argc, argv);

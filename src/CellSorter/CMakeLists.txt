@@ -17,6 +17,8 @@ file(GLOB LIB_HEADERS lib/*.h)
 ######################################################################
 SET(BUILD_GUI OFF CACHE BOOL "Build GUI")
 if(${BUILD_GUI})
+    add_definitions(-fPIC)
+
     # Add acquisitor subdirectory
     add_subdirectory(../AcquisitionApp "${CMAKE_CURRENT_BINARY_DIR}/AcquisitionApp")
 
@@ -53,8 +55,6 @@ if(${BUILD_GUI})
     file ( GLOB RESOURCES
      ../*.qrc
     )
-
-    add_definitions(-fPIC)
     add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
     target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
 else()

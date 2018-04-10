@@ -4,11 +4,11 @@ AcquisitionInterface::AcquisitionInterface() {}
 
 cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
     if (m_source == AcqSource::Camera) {
+        // Implement for camera!
+        return m_imageDisplayerWidget->getNextImage(successful);
     } else {
-        m_imageDisplayerWidget->getNextImage(successful);
+        return m_imageDisplayerWidget->getNextImage(successful);
     }
-
-    return cv::Mat();
 }
 
 void AcquisitionInterface::reset() {
