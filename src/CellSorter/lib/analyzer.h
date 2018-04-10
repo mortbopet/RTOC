@@ -8,24 +8,24 @@
 
 #include <opencv/cv.hpp>
 
+#include <functional>
+
 class Analyzer {
 public:
     void loadRBCPreset();
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
 
     void loadExperimentPreset(const std::string& img_path);
-
     void loadImagesFromFolder();
-
     void loadImagesFromText();
-
     void selectBG();
-
     void runProcesses();
-
     void resetProcesses();
-
     void showImg(const int& delay);
+
+    void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
+        m_imageGetterFunction = function;
+    }
 
     static void showImg(const cv::Mat& img, const int& delay);
 
@@ -35,6 +35,8 @@ public:
 
 private:
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
+
+    std::function<cv::Mat&(bool& sucessful)> m_imageGetterFunction;
 };
 
 #endif  // CELLSORTER_CSHELPER_H

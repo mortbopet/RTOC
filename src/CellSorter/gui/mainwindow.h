@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "../AcquisitionApp/src/acquisitionwidget.h"
+#include "acquisitioninterface.h"
 #include "configurator.h"
 #include "imagedisplayerwidget.h"
 #include "processinterface.h"
@@ -34,6 +35,7 @@ private:
     Analyzer* m_analyzer;
     AcquisitionWidget* m_acquisitionWdiget;
     ImageDisplayerWidget* m_imageDisplayerWidget;
+    AcquisitionInterface* m_acqInterface;
 };
 
 #endif  // MAINWINDOW_H

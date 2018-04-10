@@ -19,14 +19,27 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     m_imageDisplayerWidget = new ImageDisplayerWidget();
     ui->imageLayout->addWidget(m_imageDisplayerWidget);
 
-    // Connect acquisition widget radio boxes to select active acquisition widget
+    // Connect acquisition widget radio boxes to select active acquisition widget and acquisition
+    // source
     connect(ui->cameraRadiobutton, &QRadioButton::toggled, this, &MainWindow::acqSelectionChanged);
+
+    // Bind ("connect") analyzer and AcquisitionInterface through the imageGetterFunction
+    m_acqInterface = new AcquisitionInterface();
+    analyzer->setImageGetterFunction(
+        [=](bool& successful) -> cv::Mat& { return m_acqInterface->getNextImage(successful); });
+    connect(ui->cameraRadiobutton, &QRadioButton::toggled,
+            [=] { m_acqInterface->setAcqSourceState(AcquisitionInterface::AcqSource::Camera); });
+
+    // connect run analyzer button to analyzer
+    ui->runAnalyzer->setIcon(QIcon(":/icons/resources/play-button.svg"));
+    connect(ui->runAnalyzer, &QPushButton::clicked, [=] { m_analyzer->runProcesses(); });
 
 #ifdef BUILD_ACQ
     m_acquisitionWdiget = new AcquisitionWidget(this);
     ui->acqLayout->addWidget(m_acquisitionWdiget);
 #else
-    // Create a dummy widget which informs the user that the acquisiton widget is not built into the
+    // Create a dummy widget which informs the user that the acquisiton widget is not built into
+    // the
     // current version of the software
     QLabel* infoLabel = new QLabel();
     infoLabel->setText("This version does not include camera acquisiton functionality.");

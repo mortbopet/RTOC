@@ -70,9 +70,10 @@ void Analyzer::loadImagesFromFolder() {
 /**
  * @todo: implement with real names
  */
+
 void Analyzer::loadImagesFromText() {
-    std::string accepted;   // Path to accepted text-file
-    std::string rejected;   // Path to rejected text-file
+    std::string accepted;  // Path to accepted text-file
+    std::string rejected;  // Path to rejected text-file
     // Compile img_folder path with filenames from text-files
     // and push frames to m_Experiment
 }
@@ -102,5 +103,3 @@ void Analyzer::showImg(const cv::Mat& img, const int& delay) {
     cv::imshow("Display window", img);
     cv::waitKey(delay);
 }
-
-

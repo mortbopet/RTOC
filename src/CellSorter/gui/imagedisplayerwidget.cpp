@@ -1,6 +1,8 @@
 #include "imagedisplayerwidget.h"
 #include "ui_imagedisplayerwidget.h"
 
+#include "opencv/cxcore.h"
+
 ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     : QWidget(parent), ui(new Ui::ImageDisplayerWidget) {
     ui->setupUi(this);
@@ -40,6 +42,21 @@ void ImageDisplayerWidget::displayImage(int index) {
     if (!m_imageFileList.isEmpty() && m_imageFileList.size() > index) {
         ui->image->setPixmap(QPixmap(m_imageFileList[index].absoluteFilePath()));
     }
+}
+
+cv::Mat& ImageDisplayerWidget::getNextImage(bool& successful) {
+    successful = true;
+    m_image = cv::imread(m_imageFileList[m_acqIndex].absoluteFilePath().toStdString(),
+                         CV_LOAD_IMAGE_GRAYSCALE);
+    if (!m_image.data) {
+        successful = false;
+        m_acqIndex = 0;
+    }
+    return m_image;
+}
+
+void ImageDisplayerWidget::reset() {
+    m_acqIndex = 0;
 }
 
 void ImageDisplayerWidget::indexDirectory() {
@@ -82,6 +99,8 @@ void ImageDisplayerWidget::playTimerTimeout() {
     // stop timer if last indexed image is reached
     if (ui->imageSlider->value() == m_nImages) {
         ui->play->setChecked(false);
+        on_play_clicked();
+        m_playTimer.stop();
     } else {
         ui->imageSlider->setValue(ui->imageSlider->value() + 1);
         on_imageSlider_sliderMoved(ui->imageSlider->value());
