@@ -30,7 +30,7 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
 
     // connect run analyzer button to analyzer
     ui->runAnalyzer->setIcon(QIcon(":/icons/resources/play-button.svg"));
-    connect(ui->runAnalyzer, &QPushButton::clicked, [=] { m_analyzer->runProcesses(); });
+    connect(ui->runAnalyzer, &QPushButton::clicked, [=] { m_analyzer->runAnalyzer(); });
 
 #ifdef BUILD_ACQ
     m_acquisitionWdiget = new AcquisitionWidget(this);
