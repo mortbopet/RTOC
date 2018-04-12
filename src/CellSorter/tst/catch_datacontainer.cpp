@@ -219,3 +219,65 @@ TEST_CASE("dataFlag and values (multiple at once)", "[full], [datacontainer]") {
 
     }
 }
+
+TEST_CASE("numberOfFlags") {
+    DataContainer container1;
+    DataContainer container2;
+    DataContainer container3;
+
+    SECTION("numberOfFlags") {
+        container1.setDataFlags(0x0f0f);
+        container2.setDataFlags(0xff5c);
+        REQUIRE(container1.numberOfFlags() == 8);
+        REQUIRE(container2.numberOfFlags() == 12);
+        REQUIRE(container3.numberOfFlags() == 0);
+    }
+}
+
+TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
+    DataContainer container1;
+    DataContainer container2;
+    DataContainer container3;
+    container1.setDataFlags(0x9);
+    container2.setDataFlags(0x9);
+    container3.setDataFlags(0x9);
+    container1.appendNew();
+    container1.appendNew();
+    container1.appendNew();
+    container2.appendNew();
+    container2.appendNew();
+    container2.appendNew();
+    container3.appendNew();
+    container3.appendNew();
+    container3.appendNew();
+    container1[0]->setValue(data::Area, 20);
+    container1[0]->setValue(data::Area, 25);
+    container1[0]->setValue(data::Area, 30);
+    container1[1]->setValue(data::Area, 23);
+    container1[1]->setValue(data::Area, 28);
+    container1[1]->setValue(data::Area, 33);
+    container1[2]->setValue(data::Area, 26);
+    container1[2]->setValue(data::Area, 29);
+    container1[2]->setValue(data::Area, 32);
+    container1[0]->setValue(data::ConvexArea, 3);
+    container1[0]->setValue(data::ConvexArea, 6);
+    container1[0]->setValue(data::ConvexArea, 7);
+    container1[1]->setValue(data::ConvexArea, 4);
+    container1[1]->setValue(data::ConvexArea, 15.3);
+    container1[1]->setValue(data::ConvexArea, 22.3);
+    container1[2]->setValue(data::ConvexArea, 12);
+    container1[2]->setValue(data::ConvexArea, 0.4);
+    container1[2]->setValue(data::ConvexArea, 18);
+
+    SECTION("Extract all data from a single data object") {
+
+    }
+
+    SECTION("Extract all data from multiple data objects within same container") {
+
+    }
+
+    SECTION("Extract all data from multiple data object within multiple containers") {
+
+    }
+}

@@ -49,7 +49,6 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {Symmetry, sizeof(double)},
                                            {Perimeter, sizeof(double)},
                                            {PixelIdxList, sizeof(std::vector<cv::Point>*)}};
-
 }  // namespace data
 
 /**
@@ -121,6 +120,11 @@ public:
     void setDataFlags(data::DataFlags flag);  // sets ALL data flags
     void setDataFlags(long flag);
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
+
+    //template <typename T>
+    //std::vector<T> extractObject(int objIndex);
+
+    int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
     long size() { return m_data.size(); };
