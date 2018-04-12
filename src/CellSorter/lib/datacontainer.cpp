@@ -79,10 +79,13 @@ std::vector<double> DataContainer::getDataVector() {
     for (int i = 0; i < numberOfEntries; i++) {
         // Goes through all parameters in the given entry. Goes through an integer, being the size
         // of the flag
-        std::vector<data::DataFlags> dataFlags = data::extractFlags(m_dataFlags);
-        for (int j = 0; j < dataFlags.size(); j++) {
-            returnVector.push_back(m_data[i]->getValue(dataFlags[j]));
-        }
+        //returnVector.push_back(m_data[i]->getValue(data::Area));
+        returnVector.push_back(m_data[i]->getValue<double>(data::Area));
+
+        //std::vector<data::DataFlags> dataFlags = data::extractFlags(m_dataFlags);
+        //for (int j = 0; j < dataFlags.size(); j++) {
+        //    returnVector.push_back(m_data[i]->getValue(dataFlags[j]));
+        //}
     }
     return returnVector;
 }

@@ -38,12 +38,11 @@ LogisticRegression::LogisticRegression() {
     m_learningrate.setRange(0, 1);
     m_iters.setRange(0, 1000000);
     m_alpha.setRange(0, 10);
-    m_kfold.setRange(0, 10);  // So far, cap kfold at 10
+    m_kfold.setRange(0, 10);  // So far, cap Kfold at 10
 }
 
 void LogisticRegression::create_model() const {
-    // cv::Ptr<cv::ml::LogisticRegression> logistic_regression;
-    model = cv::ml::LogisticRegression::create();
+    model->create();
     model->setLearningRate(m_learningrate.getValue());
     model->setIterations(m_iters.getValue());
     model->setRegularization(cv::ml::LogisticRegression::REG_L2);

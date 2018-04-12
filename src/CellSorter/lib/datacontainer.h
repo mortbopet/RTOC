@@ -51,20 +51,21 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {PixelIdxList, sizeof(std::vector<cv::Point>)}};
 
 
-std::vector<data::DataFlags> extractFlags (int flags) {
-    // Returns vector of data::DataFlags
-    std::vector<data::DataFlags> returnFlags;
-    int flagToGet = 1;
-    for (int i = 0; i < 32; i++) { // assumes 32-bit
-        if (flagToGet & flags) {
-            returnFlags.push_back(data::DataFlags(flagToGet));
+    std::vector<data::DataFlags> extractFlags (int flags) {
+        // Returns vector of data::DataFlags
+        std::vector<data::DataFlags> returnFlags;
+        int flagToGet = 1;
+        for (int i = 0; i < 32; i++) { // assumes 32-bit
+            if (flagToGet & flags) {
+                returnFlags.push_back(data::DataFlags(flagToGet));
+            }
+            flagToGet = flagToGet << 1;
         }
-        flagToGet = flagToGet << 1;
+        return returnFlags;
     }
-    return returnFlags;
-}
 
 }  // namespace data
+
 
 /**
  * @brief The DataObject class
@@ -77,6 +78,9 @@ public:
 
     template <typename T>
     const T& getValue(data::DataFlags dataFlag);
+
+    //template <typename T>
+    //const T& getAllValues();
 
     template <typename T>
     void setValue(data::DataFlags dataFlag, T value);
@@ -103,6 +107,11 @@ const T& DataObject::getValue(data::DataFlags dataFlag) {
     // Dereference the memory as the requested type, and return
     return *static_cast<T*>(static_cast<void*>(m_memory + bytesToData));
 }
+
+//template <typename T>
+//const T& DataObject::getAllValues() {
+//    return getValue<double>(data::Area);
+//}
 
 template <typename T>
 void DataObject::setValue(data::DataFlags dataFlag, T value) {

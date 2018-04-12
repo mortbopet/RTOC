@@ -60,11 +60,11 @@ class LogisticRegression : public MachineLearning {
 public:
     LogisticRegression();  // Constructor
 
-    void create_model() const override {}
+    void create_model() const override;
 
-    void train_model() const override {}
+    void train_model() const override;
 
-    void predict_model(DataContainer* m_datacontainer) const override {}
+    void predict_model(DataContainer* m_datacontainer) const override;
 
     CREATE_VALUE_PARM(float, m_learningrate, "Learning rate of regression");
     CREATE_VALUE_PARM(int, m_iters, "Number of iterations for model");
@@ -72,7 +72,7 @@ public:
     CREATE_VALUE_PARM(int, m_kfold, "Number of seperations in crossvalidation");
 
 private:
-    cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const override {}
+    cv::Ptr<cv::ml::LogisticRegression> crossvalidate(DataContainer* m_datacontainer) const override;
 };
 
 ////// Child classes: Unsupervised learning
