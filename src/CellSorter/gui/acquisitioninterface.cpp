@@ -1,6 +1,7 @@
 #include "acquisitioninterface.h"
 
-AcquisitionInterface::AcquisitionInterface() {}
+AcquisitionInterface::AcquisitionInterface(ImageDisplayerWidget* displayer)
+    : m_imageDisplayerWidget(displayer) {}
 
 cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
     switch (m_source) {

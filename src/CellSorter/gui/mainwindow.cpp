@@ -24,7 +24,7 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     setupAcqCombobox();
 
     // Bind ("connect") analyzer and AcquisitionInterface through the imageGetterFunction
-    m_acqInterface = new AcquisitionInterface();
+    m_acqInterface = new AcquisitionInterface(m_imageDisplayerWidget);
     analyzer->setImageGetterFunction(
         [=](bool& successful) -> cv::Mat& { return m_acqInterface->getNextImage(successful); });
 

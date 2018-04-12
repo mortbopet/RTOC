@@ -16,7 +16,7 @@ Q_DECLARE_METATYPE(AcqSource)
 
 class AcquisitionInterface {
 public:
-    AcquisitionInterface();
+    AcquisitionInterface(ImageDisplayerWidget* imageDisplayer);
 
     void reset();
 
