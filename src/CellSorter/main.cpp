@@ -24,8 +24,8 @@ int main(int argc, char** argv) {
     return a.exec();
 
 #endif
-
 #ifndef BUILD_GUI
+
     // Get path to pictures
     analyzer.loadExperimentPreset("../../../data/ImgD1/");
 

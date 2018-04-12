@@ -67,10 +67,6 @@ void Analyzer::loadImagesFromFolder() {
     get_rejected(frames, m_Experiment.dis);
 }
 
-/**
- * @todo: implement with real names
- */
-
 void Analyzer::loadImagesFromText() {
     std::string accepted;  // Path to accepted text-file
     std::string rejected;  // Path to rejected text-file
@@ -92,6 +88,7 @@ void Analyzer::resetProcesses() {
     m_processes.clear();
 }
 
+/// Debug helpers
 void Analyzer::showImg(const int& delay) {
     cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display window", m_img);
