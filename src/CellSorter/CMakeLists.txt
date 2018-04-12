@@ -58,7 +58,7 @@ if(${BUILD_GUI})
     add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
     target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
 else()
-    add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
+    add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} lib/machinelearning.h)
 endif()
 ######################################################################
 ## endof GUI setup
@@ -68,7 +68,7 @@ endif()
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
 # Create executables for cellsorter and cellsort_test
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp lib/machinelearning.cpp)
 
 # Link OpenCV libraries
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
