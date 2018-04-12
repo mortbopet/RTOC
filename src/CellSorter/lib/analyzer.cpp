@@ -149,46 +149,42 @@ void Analyzer::findCells() {
                     newcell = dist > dist_thres;
                 }
             }
-
             if (newcell) {
                 cellNum++;
-                /** TODO:
-                 *      Her skal data ændres fra et [Array<datacontainer>] til [vector<unique_ptr>]
-                 */
-                m_Experiment.data[cellNum] = DataContainer(0xffff);
-                m_Experiment.data[cellNum].appendNew();
 
-                m_Experiment.data[cellNum][0]->setValue(data::Inlet, m_Experiment.inlet);
-                m_Experiment.data[cellNum][0]->setValue(data::Outlet, m_Experiment.outlet);
+                m_Experiment.data.emplace_back(new DataContainer(0xffff));
+                m_Experiment.data[cellNum]->appendNew();
+
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Inlet, m_Experiment.inlet);
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Outlet, m_Experiment.outlet);
                 // yref ???
-                m_Experiment.data[cellNum][0]->setValue(data::Label, cellNum);
-                m_Experiment.data[cellNum][0]->setValue(data::Frame, frameNo);
-                m_Experiment.data[cellNum][0]->setValue(data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
-                m_Experiment.data[cellNum][0]->setValue(data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
-                // PixelIdxList
-                m_Experiment.data[cellNum][0]->setValue(data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
-                m_Experiment.data[cellNum][0]->setValue(data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
-                m_Experiment.data[cellNum][0]->setValue(data::Circularity, dc[i]->getValue<double>(data::Circularity));
-                m_Experiment.data[cellNum][0]->setValue(data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
-                m_Experiment.data[cellNum][0]->setValue(data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Label, cellNum);
 
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Frame, frameNo);
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Circularity, dc[i]->getValue<double>(data::Circularity));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
 
                 t.cell_no = cellNum;
             } else {
                 sameCell = t.cell_no;
 
-                auto index = m_Experiment.data[sameCell].size();
-                m_Experiment.data[sameCell].appendNew();
 
-                m_Experiment.data[sameCell][index]->setValue(data::Frame, i);
-                m_Experiment.data[sameCell][index]->setValue(data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
-                m_Experiment.data[sameCell][index]->setValue(data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
-                // PixelIdxList
-                m_Experiment.data[sameCell][index]->setValue(data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
-                m_Experiment.data[sameCell][index]->setValue(data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
-                m_Experiment.data[sameCell][index]->setValue(data::Circularity, dc[i]->getValue<double>(data::Circularity));
-                m_Experiment.data[sameCell][index]->setValue(data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
-                m_Experiment.data[sameCell][index]->setValue(data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
+                m_Experiment.data[sameCell]->appendNew();
+                auto index = m_Experiment.data[sameCell]->size() - 1;
+
+                (*m_Experiment.data[sameCell])[index]->setValue(data::Frame, frameNo);
+                (*m_Experiment.data[sameCell])[index]->setValue(data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
+                (*m_Experiment.data[sameCell])[index]->setValue(data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
+                (*m_Experiment.data[sameCell])[index]->setValue(data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
+                (*m_Experiment.data[sameCell])[index]->setValue(data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
+                (*m_Experiment.data[sameCell])[index]->setValue(data::Circularity, dc[i]->getValue<double>(data::Circularity));
+                (*m_Experiment.data[sameCell])[index]->setValue(data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
+                (*m_Experiment.data[sameCell])[index]->setValue(data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
             }
             t.frame_no = frameNo;
             t.centroid = dc[i]->getValue<cv::Point>(data::Centroid);

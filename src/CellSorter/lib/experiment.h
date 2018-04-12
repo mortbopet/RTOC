@@ -29,7 +29,7 @@ struct Experiment {
     std::vector<Frame> acc{}, dis{}, processed{};
     double intensity_threshold{};
     std::string imagePath;
-    std::array<DataContainer, 1000> data{};
+    std::vector<std::unique_ptr<DataContainer>> data;
 
     void defaultSettings(const std::string& imgPath) {
         convex_MIN = 200;
