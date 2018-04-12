@@ -20,12 +20,14 @@ int main(int argc, char** argv) {
     ProcessInterface interface(analyzer.getProcessContainerPtr());
     Configurator window(&interface);
     window.show();
+    // connect(&interface, &ProcessInterface::dataChanged, ) window.show();
 
     return a.exec();
 #endif
 
     // Get path to pictures
     analyzer.loadExperimentPreset("../../../data/ImgD1/");
+    // analyzer.loadExperimentPreset("../../../data/RBC-data-20170926/NS62_hep_S1/");
 
     t.tic();
     // Loop through all pictures to reject or accept
@@ -47,18 +49,26 @@ int main(int argc, char** argv) {
 
     t.tic();
     std::cout << "Run processes on accepted frames" << std::endl;
-    Frame f;
-    for (const Frame& frame : analyzer.m_Experiment.acc) {
-        analyzer.m_img = frame.image;
-        analyzer.runProcesses();
+    {
+        Frame f;
+        for (const Frame &frame : analyzer.m_Experiment.acc) {
+            analyzer.m_img = frame.image;
+            analyzer.runProcesses();
 
-        f.filename = frame.filename;
-        f.id = frame.id;
-        f.image = analyzer.m_img;
-        f.accepted = true;
+            f.filename = frame.filename;
+            f.id = frame.id;
+            f.image = analyzer.m_img;
+            f.accepted = true;
 
-        analyzer.m_Experiment.processed.push_back(f);
+            analyzer.m_Experiment.processed.push_back(f);
+        }
     }
     t.toc();
+
+    t.tic();
+    std::cout << "Run findCells()" << std::endl;
+    analyzer.findCells();
+    t.toc();
+
     return 0;
 }
