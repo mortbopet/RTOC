@@ -83,6 +83,21 @@ void Analyzer::runProcesses() {
         process->doProcessing(m_img, m_bg, m_Experiment);
     }
 }
+void Analyzer::runAnalyzer() {
+    bool success;
+    m_img = m_imageGetterFunction(success);
+    if (!success) {
+        return;
+    }
+
+    if (m_bg.dims == 0) {
+        m_bg = m_img;
+    } else {
+        for (const auto& process : m_processes) {
+            process->doProcessing(m_img, m_bg, m_Experiment);
+        }
+    }
+}
 
 void Analyzer::resetProcesses() {
     m_processes.clear();

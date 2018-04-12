@@ -20,6 +20,7 @@ public:
     void loadImagesFromText();
     void selectBG();
     void runProcesses();
+    void runAnalyzer();
     void resetProcesses();
     void showImg(const int& delay);
 
