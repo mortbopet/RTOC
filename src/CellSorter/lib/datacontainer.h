@@ -134,6 +134,8 @@ public:
 
     void setDataFlags(data::DataFlags flag);  // sets ALL data flags
     void setDataFlags(long flag);
+    void setClass(int classnumber);
+    int getClass();
     int getDataFlags();
     int getNumberOfSetFlags();
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
@@ -151,7 +153,7 @@ private:
 
     std::vector<DataObject*> m_data;
     int m_dataFlags = 0;
-
+    int m_class = 0; // Class of container (0 being unknown)
     bool m_locked = false;
     size_t m_objectSize;
 };

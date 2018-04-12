@@ -59,6 +59,14 @@ void DataContainer::setDataFlags(long flag) {
     calculateObjectSize();
 }
 
+void DataContainer::setClass(int classnumber) {
+    m_class = classnumber;
+}
+
+int DataContainer::getClass() {
+    return m_class;
+}
+
 std::vector<double> DataContainer::getDataVector() {
     // Returns a 1D-array of datacontainer, i.e. all parameters of all dataobjects.
 
