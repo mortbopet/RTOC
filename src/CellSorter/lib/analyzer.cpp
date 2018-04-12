@@ -85,18 +85,23 @@ void Analyzer::runProcesses() {
 }
 void Analyzer::runAnalyzer() {
     bool success;
-    m_img = m_imageGetterFunction(success);
-    if (!success) {
-        return;
-    }
+    while (true) {
+        m_img = m_imageGetterFunction(success);
 
-    if (m_bg.dims == 0) {
-        m_bg = m_img;
-    } else {
-        for (const auto& process : m_processes) {
-            process->doProcessing(m_img, m_bg, m_Experiment);
+        if (!success) {
+            break;
+        }
+
+        if (m_bg.dims == 0) {
+            m_bg = m_img;
+        } else {
+            for (const auto& process : m_processes) {
+                process->doProcessing(m_img, m_bg, m_Experiment);
+            }
+            m_Experiment.processed.push_back({m_img,"",m_Experiment.cellNum++,true});
         }
     }
+
 }
 
 void Analyzer::resetProcesses() {
