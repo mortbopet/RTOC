@@ -14,6 +14,9 @@
 #include "matlab_ext.h"
 #include "parameter.h"
 
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/export.hpp>
 #include "boost/serialization/serialization.hpp"
 #include "boost/serialization/vector.hpp"
 
@@ -52,6 +55,7 @@ constexpr bool checkDisplayName(char const* name) {
 
 class ProcessBase {
     friend class ProcessInterface;
+    friend class boost::serialization::access;
 
 public:
     virtual std::string getTypeName() const = 0;
@@ -207,6 +211,73 @@ public:
     }
 };
 
+/** Process meta-functions ---------------------------------
+ *  Used for type-resolving the type data provided by a process stream
+ * */
 typedef std::vector<std::unique_ptr<ProcessBase>>* processContainerPtr;
+enum class ProcessTypeAction { Create, GetName };
+namespace P {
+#define TYPECHECK(typeInfo, T) typeInfo == std::string(typeid(T).name())
+
+template <typename T>
+std::string executeActionForType(processContainerPtr ptr, ProcessTypeAction action) {
+    switch (action) {
+        case ProcessTypeAction::GetName: {
+            return T::getName();
+            break;
+        }
+        case ProcessTypeAction::Create: {
+            ptr->push_back(std::make_unique<T>());
+            break;
+        }
+    }
+    // Signal that changes has been made to the process and update the model
+    return std::string();
+}
+
+/**
+ * @brief doActionForType
+ *        using an input typeName, it resolves the actual type of the requested action.
+ *        @note ALL processes must be listed here, to be able to be created and serialized
+ *        correctly!
+ * @param typeName
+ * @param action
+ * @return
+ */
+static std::string queryActionForType(processContainerPtr ptr, const std::string& typeName,
+                                      ProcessTypeAction action) {
+    if (TYPECHECK(typeName, Morph)) {
+        return executeActionForType<Morph>(ptr, action);
+    } else if (TYPECHECK(typeName, Binarize)) {
+        return executeActionForType<Binarize>(ptr, action);
+    } else if (TYPECHECK(typeName, Normalize)) {
+        return executeActionForType<Normalize>(ptr, action);
+    } else if (TYPECHECK(typeName, SubtractBG)) {
+        return executeActionForType<SubtractBG>(ptr, action);
+    } else if (TYPECHECK(typeName, ClearBorder)) {
+        return executeActionForType<ClearBorder>(ptr, action);
+    } else if (TYPECHECK(typeName, FloodFillProcess)) {
+        return executeActionForType<FloodFillProcess>(ptr, action);
+    } else if (TYPECHECK(typeName, PropFilter)) {
+        return executeActionForType<PropFilter>(ptr, action);
+    } else if (TYPECHECK(typeName, Canny)) {
+        return executeActionForType<Canny>(ptr, action);
+    }
+    assert("Action attempted on unregistered process type");
+}
+}
+// --------------------------------------------------------
+
+// Serializers
+namespace boost {
+namespace serialization {
+
+template <class Archive>
+void serialize(Archive& ar, processContainerPtr& g, const unsigned int version) {
+    ar& g;
+}
+
+}  // namespace serialization
+}  // namespace boost
 
 #endif  // CELLSORTER_PROCESS_H

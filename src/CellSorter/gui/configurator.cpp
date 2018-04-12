@@ -18,8 +18,8 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     // Gather options from interface
     auto processTypes = m_interface->getProcessTypes();
     for (const auto& type : processTypes) {
-        QString processName = QString::fromStdString(
-            m_interface->doActionForType(type, ProcessInterface::TypeAction::GetName));
+        QString processName =
+            QString::fromStdString(m_interface->doActionForType(type, ProcessTypeAction::GetName));
         auto item = new QListWidgetItem();
         // Items are identified by their UserRole, which corresponds to they typeid(T).name()
         item->setData(Qt::DisplayRole, processName);
@@ -64,12 +64,12 @@ void Configurator::updateModel() {
     // populate with current process
     int processIndex = 1;
     for (auto& process : *m_interface->getContainerPtr()) {
-        QString type = QString::fromStdString(m_interface->doActionForType(
-            process->getTypeName(), ProcessInterface::TypeAction::GetName));
+        QString type = QString::fromStdString(
+            m_interface->doActionForType(process->getTypeName(), ProcessTypeAction::GetName));
 
-        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>()
-                                                                  << processIndex << type << ""
-                                                                  << "");
+        insertRow(m_model->index(m_model->rowCount() - 1, 0),
+                  QList<QVariant>() << processIndex << type << ""
+                                    << "");
         auto parameters = process->getParameters();
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();
@@ -194,8 +194,7 @@ void Configurator::on_add_clicked() {
     if (selectedItem != nullptr) {
         // Get class typeid name and create a new process
         ItemUserData itemData = selectedItem->data(Qt::UserRole).value<ItemUserData>();
-        m_interface->doActionForType(itemData.processtype.toStdString(),
-                                     ProcessInterface::TypeAction::Create);
+        m_interface->doActionForType(itemData.processtype.toStdString(), ProcessTypeAction::Create);
     }
 }
 

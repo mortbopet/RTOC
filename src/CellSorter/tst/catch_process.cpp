@@ -20,8 +20,7 @@ TEST_CASE("Process serialization", "[process]") {
     {
         boost::archive::xml_oarchive oa(ofs);
         // write class instance to archive
-        oa << BOOST_SERIALIZATION_NVP(m);
-        oa << BOOST_SERIALIZATION_NVP(b);
+        oa << BOOST_SERIALIZATION_NVP(v);
         // archive and stream closed when destructors are called
     }
     ofs.close();

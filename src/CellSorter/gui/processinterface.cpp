@@ -8,28 +8,6 @@
 ProcessInterface::ProcessInterface(processContainerPtr processContainer)
     : m_container(processContainer) {}
 
-namespace {
-#define TYPECHECK(typeInfo, T) typeInfo == std::string(typeid(T).name())
-}
-
-template <typename T>
-std::string ProcessInterface::executeActionForType(ProcessInterface::TypeAction action, int index) {
-    Q_UNUSED(index)
-    switch (action) {
-        case ProcessInterface::TypeAction::GetName: {
-            return T::getName();
-            break;
-        }
-        case ProcessInterface::TypeAction::Create: {
-            m_container->push_back(std::make_unique<T>());
-            break;
-        }
-    }
-    // Signal that changes has been made to the process and update the model
-    emit dataChanged();
-    return std::string();
-}
-
 // Type agnostic actions
 void ProcessInterface::doAction(Action action, int processIndex, int parameterIndex,
                                 std::string value) {
@@ -64,25 +42,9 @@ void ProcessInterface::doAction(Action action, int processIndex, int parameterIn
     emit dataChanged();
 }
 
-// Type specific actions
-std::string ProcessInterface::doActionForType(const std::string& typeName, TypeAction action,
-                                              int index) {
-    if (TYPECHECK(typeName, Morph)) {
-        return executeActionForType<Morph>(action, index);
-    } else if (TYPECHECK(typeName, Binarize)) {
-        return executeActionForType<Binarize>(action, index);
-    } else if (TYPECHECK(typeName, Normalize)) {
-        return executeActionForType<Normalize>(action, index);
-    } else if (TYPECHECK(typeName, SubtractBG)) {
-        return executeActionForType<SubtractBG>(action, index);
-    } else if (TYPECHECK(typeName, ClearBorder)) {
-        return executeActionForType<ClearBorder>(action, index);
-    } else if (TYPECHECK(typeName, FloodFillProcess)) {
-        return executeActionForType<FloodFillProcess>(action, index);
-    } else if (TYPECHECK(typeName, PropFilter)) {
-        return executeActionForType<PropFilter>(action, index);
-    } else if (TYPECHECK(typeName, Canny)) {
-        return executeActionForType<Canny>(action, index);
-    }
-    Q_ASSERT(false);
+std::string ProcessInterface::doActionForType(const string& typeName, ProcessTypeAction action) {
+    auto retVal = P::queryActionForType(m_container, typeName, action);
+    if (action == ProcessTypeAction::Create)
+        emit dataChanged();
+    return retVal;
 }
