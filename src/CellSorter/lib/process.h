@@ -14,6 +14,9 @@
 #include "matlab_ext.h"
 #include "parameter.h"
 
+#include "boost/serialization/serialization.hpp"
+#include "boost/serialization/vector.hpp"
+
 namespace {
 // Compile time string length generation
 // https://stackoverflow.com/a/36390498/6714645
@@ -110,6 +113,13 @@ public:
     CREATE_ENUM_PARM(cv::MorphTypes, m_morphType, "Morphology_type");
     CREATE_VALUE_PARM(int, m_morphValueX, "Structural_element_X_axis");
     CREATE_VALUE_PARM(int, m_morphValueY, "Structural_element_Y_axis");
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_morphType);
+        ar& BOOST_SERIALIZATION_NVP(m_morphValueX);
+        ar& BOOST_SERIALIZATION_NVP(m_morphValueY);
+    }
 };
 
 class Binarize : public Process<Binarize> {
@@ -120,6 +130,12 @@ public:
 
     CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
     CREATE_VALUE_PARM(double, m_maxVal, "Maximum_binary_value");
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_edgeThreshold);
+        ar& BOOST_SERIALIZATION_NVP(m_maxVal);
+    }
 };
 
 class Normalize : public Process<Normalize> {
@@ -129,6 +145,11 @@ public:
     static std::string getName() { return "Normalize"; }
 
     CREATE_VALUE_PARM(int, m_normalizeStrength, "Normalize_strength");
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_normalizeStrength);
+    }
 };
 
 class SubtractBG : public Process<SubtractBG> {
@@ -138,6 +159,11 @@ public:
     static std::string getName() { return "Subtract background"; }
 
     CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_edgeThreshold);
+    }
 };
 
 class Canny : public Process<Canny> {
@@ -147,6 +173,12 @@ public:
 
     CREATE_VALUE_PARM(double, m_lowThreshold, "Low_threshold");    // first threshold
     CREATE_VALUE_PARM(double, m_highThreshold, "High_threshold");  // second threshold
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_lowThreshold);
+        ar& BOOST_SERIALIZATION_NVP(m_highThreshold);
+    }
 };
 
 class ClearBorder : public Process<ClearBorder> {
@@ -156,6 +188,11 @@ public:
     static std::string getName() { return "Clear border"; }
 
     CREATE_VALUE_PARM(int, m_borderWidth, "Border_width");
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_borderWidth);
+    }
 };
 
 class FloodFillProcess : public Process<FloodFillProcess> {
@@ -175,6 +212,12 @@ public:
 
     CREATE_VALUE_PARM(double, m_lowerLimit, "Lower_Limit");
     CREATE_VALUE_PARM(double, m_upperLimit, "Upper_Limit");
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_lowerLimit);
+        ar& BOOST_SERIALIZATION_NVP(m_upperLimit);
+    }
 };
 
 typedef std::vector<std::unique_ptr<ProcessBase>>* processContainerPtr;

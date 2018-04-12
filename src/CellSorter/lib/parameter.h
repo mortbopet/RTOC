@@ -7,6 +7,9 @@
 #include <typeinfo>
 #include <vector>
 
+#include "boost/serialization/nvp.hpp"
+#include "boost/serialization/serialization.hpp"
+
 /** \brief ParameterBase is used to encapsulate parameters used in a Process.
  *  Through getOptions, we can deduce the type of the parameter (see below) - which will enable the
  * GUI to spawn the correct editor for the value.
@@ -31,6 +34,8 @@
 #define SPLITCHAR '|'
 
 using namespace std;
+
+enum class ParameterType { Int, Double, Enum };
 
 static void getParameterStreamToken(std::istream& s, std::string& str) {
     std::getline(s, str, SPLITCHAR);
@@ -59,6 +64,7 @@ protected:
 
     std::vector<string> m_options;
     string m_name;
+    ParameterType m_type;
     bool m_isModifiable = true;
     bool m_isInitialized = false;  // Set when setting range or options. Assert is thrown if this is
                                    // not done, to force implementer to set range or options
@@ -85,6 +91,11 @@ public:
         if (!m_isInitialized)
             throw std::runtime_error("value parameter is not initialized");
         return m_val;
+    }
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_val);
     }
 
     const string getValueStr() const override;
@@ -161,6 +172,11 @@ public:
     void setValueStr(string) override;
 
     void updateOptions() override;
+
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& BOOST_SERIALIZATION_NVP(m_val);
+    }
 
 private:
     T m_val;

@@ -55,7 +55,7 @@
 #include <QVariant>
 #include <QVector>
 
-enum class ParameterType { Int, Double, Enum };
+#include "../lib/parameter.h"
 
 // Used when delegate needs to query an item for its valid range, names, options, etc.
 typedef struct {
