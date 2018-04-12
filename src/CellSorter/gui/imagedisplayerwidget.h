@@ -34,6 +34,8 @@ private slots:
     void playTimerTimeout();
     void on_ips_editingFinished();
 
+    void on_setPath_clicked();
+
 private:
     void indexDirectory();
 

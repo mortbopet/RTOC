@@ -23,9 +23,7 @@ public:
 
 private slots:
     void cameraSelectedWithoutAcqBuilt();
-    void acqSelectionChanged(bool isCamera);
-
-    void on_setImageFolderPath_clicked();
+    void acqSelectionChanged(int index);
 
 private:
     Ui::MainWindow* ui;
@@ -36,6 +34,8 @@ private:
     AcquisitionWidget* m_acquisitionWdiget;
     ImageDisplayerWidget* m_imageDisplayerWidget;
     AcquisitionInterface* m_acqInterface;
+
+    void setupAcqCombobox();
 };
 
 #endif  // MAINWINDOW_H

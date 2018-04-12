@@ -9,11 +9,13 @@
  */
 
 #include <opencv/cv.h>
+#include <QMetaType>
 #include "imagedisplayerwidget.h"
+enum class AcqSource { Camera, Folder, Webcam };
+Q_DECLARE_METATYPE(AcqSource)
 
 class AcquisitionInterface {
 public:
-    enum class AcqSource { Camera, Folder };
     AcquisitionInterface();
 
     void reset();

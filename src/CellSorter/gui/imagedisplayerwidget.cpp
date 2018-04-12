@@ -1,6 +1,8 @@
 #include "imagedisplayerwidget.h"
 #include "ui_imagedisplayerwidget.h"
 
+#include <QFileDialog>
+
 #include "opencv/cxcore.h"
 
 ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
@@ -16,7 +18,7 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     ui->imageCounter->setText("Image: #/#");
 
     int defaultInterval = 60;
-    ui->ips->setRange(0, 100);
+    ui->ips->setRange(1, 100);
     ui->ips->setValue(defaultInterval);
 
     // connect play timer
@@ -74,7 +76,7 @@ void ImageDisplayerWidget::indexDirectory() {
     // Set slider range
     ui->imageSlider->setRange(1, m_nImages);
 
-    ui->ips->setRange(0, m_nImages);
+    ui->ips->setRange(1, m_nImages);
 
     // Load first image
     ui->imageSlider->setValue(1);
@@ -118,4 +120,13 @@ void ImageDisplayerWidget::on_ips_editingFinished() {
     int interval = 1000.0 / ui->ips->value();
     m_playTimer.setInterval(interval);
     m_playTimer.start();
+}
+
+void ImageDisplayerWidget::on_setPath_clicked() {
+    auto dirName = QFileDialog::getExistingDirectory(this, "Select image directory", "/",
+                                                     QFileDialog::ShowDirsOnly);
+    if (!dirName.isNull()) {
+        ui->path->setText(dirName);
+        setPath(dirName);
+    }
 }
