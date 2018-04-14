@@ -3,6 +3,7 @@
 
 #include "treeitem.h"
 
+#include <QFileDialog>
 #include <QHeaderView>
 
 Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
@@ -222,4 +223,18 @@ void Configurator::on_up_clicked() {
 
 void Configurator::on_down_clicked() {
     reorder(ProcessInterface::Action::Down);
+}
+
+void Configurator::on_load_clicked() {
+    auto filename = QFileDialog::getOpenFileName(this, "Open process configuration file", "",
+                                                 "pcs file (*.pcs)");
+    if (!filename.isNull())
+        m_interface->loadSetup(filename);
+}
+
+void Configurator::on_store_clicked() {
+    auto filename = QFileDialog::getSaveFileName(this, "Save process configuration file", "",
+                                                 "pcs file (*.pcs)");
+    if (!filename.isNull())
+        m_interface->storeSetup(filename);
 }

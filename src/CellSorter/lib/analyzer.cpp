@@ -1,5 +1,9 @@
 #include "analyzer.h"
 
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/unique_ptr.hpp>
+
 void Analyzer::loadRBCPreset() {
     // Subtract background
     auto subtractbgDEFAULT = std::make_unique<SubtractBG>();
@@ -118,4 +122,34 @@ void Analyzer::showImg(const cv::Mat& img, const int& delay) {
     cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display window", img);
     cv::waitKey(delay);
+}
+
+bool Analyzer::storeSetup(const string& path) {
+    // Serialize current processes in m_processes in .xml file
+    try {
+        std::ofstream ofs(path);
+        {
+            boost::archive::xml_oarchive oa(ofs);
+            oa << BOOST_SERIALIZATION_NVP(m_processes);
+        }
+        ofs.close();
+    } catch (...) {
+        return false;
+    }
+    return true;
+}
+
+bool Analyzer::loadSetup(const string& path) {
+    try {
+        m_processes.clear();
+        std::ifstream ifs(path);
+        {
+            boost::archive::xml_iarchive ia(ifs);
+            ia >> BOOST_SERIALIZATION_NVP(m_processes);
+        }
+        ifs.close();
+    } catch (...) {
+        return false;
+    }
+    return true;
 }

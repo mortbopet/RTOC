@@ -23,6 +23,17 @@
 #include "boost/serialization/serialization.hpp"
 #include "boost/serialization/vector.hpp"
 
+/** @brief Creating a new Process type
+ *  1. Create a new class which inherits the same classes as the current processes (ie. Morph)
+ *  2. Create parameters through the parameter creation macros (Create ENUM type, Value type etc).
+ *  3. In the constructor, specify a valid range for value parameters, and valid options for ENUM
+ *  parameters
+ *  4. Set default values of parameters in constructor
+ *  5. create Serialize function in your class (this must include all parameters that have been set
+ * for the class, see ie. Morph::Serialize)
+ *  6. Register the class for serialization - This is done at the bottom of process.cpp
+*/
+
 namespace {
 // Compile time string length generation
 // https://stackoverflow.com/a/36390498/6714645

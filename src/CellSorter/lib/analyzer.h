@@ -28,6 +28,9 @@ public:
         m_imageGetterFunction = function;
     }
 
+    bool storeSetup(const std::string& path);
+    bool loadSetup(const std::string& path);
+
     static void showImg(const cv::Mat& img, const int& delay);
 
     Experiment m_Experiment;  // CHECK IF THOSE CAN BE PRIVATE

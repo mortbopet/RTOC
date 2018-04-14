@@ -30,6 +30,10 @@ private slots:
 
     void on_down_clicked();
 
+    void on_load_clicked();
+
+    void on_store_clicked();
+
 private:
     TreeModel* m_model;
     Ui::Configurator* ui;

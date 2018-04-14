@@ -11,7 +11,7 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     : m_analyzer(analyzer), QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    m_processInterface = new ProcessInterface(m_analyzer->getProcessContainerPtr());
+    m_processInterface = new ProcessInterface(m_analyzer);
     m_configurator = new Configurator(m_processInterface);
 
     ui->configLayout->addWidget(m_configurator);

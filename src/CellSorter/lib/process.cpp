@@ -91,7 +91,10 @@ ClearBorder::ClearBorder() {
     m_borderWidth.setRange(0, 255);
 }
 
-Canny::Canny() {}
+Canny::Canny() {
+    m_lowThreshold.setRange(0, 100);
+    m_highThreshold.setRange(0, 100);
+}
 FloodFillProcess::FloodFillProcess() {}
 
 void FloodFillProcess::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
