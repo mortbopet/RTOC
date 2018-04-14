@@ -122,7 +122,7 @@ public:
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
     std::vector<double> extractObject(int objIndex);
-    std::vector<std::vector<double>> extractContainer();
+    std::vector<double> extractContainer();
 
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }

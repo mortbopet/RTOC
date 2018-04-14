@@ -257,7 +257,7 @@ TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
     }
 
     SECTION("Extract all data from multiple data objects within same container") {
-        std::vector<std::vector<double>> compareMatrix = {{20.1, 3.1},{23.1, 4.1},{26.1, 12.1}};
+        std::vector<double> compareMatrix = {20.1, 3.1, 23.1, 4.1, 26.1, 12.1};
         REQUIRE (container.extractContainer() == compareMatrix);
     }
 }

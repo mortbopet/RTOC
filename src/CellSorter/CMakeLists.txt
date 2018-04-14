@@ -86,7 +86,7 @@ target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
 
 # Create executable for catch2 test project
 file(GLOB CATCH_TEST_SOURCES tst/*.cpp)
-add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
+add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES} tst/catch_machinelearning.cpp)
 # Link catch
 target_link_libraries(${TEST_EXECUTABLE} Catch)
 # Link OpenCV and Cellsorter lib
