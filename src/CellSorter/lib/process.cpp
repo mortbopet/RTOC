@@ -128,3 +128,13 @@ void PropFilter::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) c
         }
     }
 }
+
+// Export all process types for serialization
+BOOST_CLASS_EXPORT_GUID(Morph, "Morph")
+BOOST_CLASS_EXPORT_GUID(Binarize, "Binarize")
+BOOST_CLASS_EXPORT_GUID(SubtractBG, "SubtractBG")
+BOOST_CLASS_EXPORT_GUID(Normalize, "Normalize")
+BOOST_CLASS_EXPORT_GUID(ClearBorder, "ClearBorder")
+BOOST_CLASS_EXPORT_GUID(FloodFillProcess, "FloodFillProcess")
+BOOST_CLASS_EXPORT_GUID(PropFilter, "PropFilter")
+BOOST_CLASS_EXPORT_GUID(Canny, "Canny")

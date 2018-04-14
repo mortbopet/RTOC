@@ -14,9 +14,12 @@
 #include "matlab_ext.h"
 #include "parameter.h"
 
+#include <boost/serialization/base_object.hpp>
+
+#include <boost/serialization/export.hpp>
+
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-#include <boost/serialization/export.hpp>
 #include "boost/serialization/serialization.hpp"
 #include "boost/serialization/vector.hpp"
 
@@ -66,6 +69,9 @@ public:
     const std::vector<ParameterBase*>& getParameters() { return PARAMETER_CONTAINER; }
     static std::vector<std::string>& get_processes();
 
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {}
+
 protected:
     std::vector<ParameterBase*> PARAMETER_CONTAINER;
 };
@@ -104,6 +110,7 @@ ProcessNameGenerator NameGenerator<T>::m = ProcessNameGenerator(typeid(T).name()
 // ---------------------------------------------------
 
 #define SETUP_PROCESS(ProcessType, displayName)                                        \
+    friend class boost::serialization::access;                                         \
     ProcessType();                                                                     \
     void doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const override; \
     static std::string getName() { return displayName; }                               \
@@ -119,6 +126,8 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
         ar& BOOST_SERIALIZATION_NVP(m_morphType);
         ar& BOOST_SERIALIZATION_NVP(m_morphValueX);
         ar& BOOST_SERIALIZATION_NVP(m_morphValueY);
@@ -134,6 +143,8 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
         ar& BOOST_SERIALIZATION_NVP(m_edgeThreshold);
         ar& BOOST_SERIALIZATION_NVP(m_maxVal);
     }
@@ -147,6 +158,8 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
         ar& BOOST_SERIALIZATION_NVP(m_normalizeStrength);
     }
 };
@@ -159,6 +172,8 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
         ar& BOOST_SERIALIZATION_NVP(m_edgeThreshold);
     }
 };
@@ -172,6 +187,8 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
         ar& BOOST_SERIALIZATION_NVP(m_lowThreshold);
         ar& BOOST_SERIALIZATION_NVP(m_highThreshold);
     }
@@ -185,6 +202,8 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
         ar& BOOST_SERIALIZATION_NVP(m_borderWidth);
     }
 };
@@ -192,6 +211,11 @@ public:
 class FloodFillProcess : public ProcessBase, public NameGenerator<FloodFillProcess> {
 public:
     SETUP_PROCESS(FloodFillProcess, "Flood fill")
+    template <typename Archive>
+    void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
+    }
 };
 
 class PropFilter : public ProcessBase, public NameGenerator<PropFilter> {
@@ -206,6 +230,9 @@ public:
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
+        ar& boost::serialization::make_nvp("processbase",
+                                           boost::serialization::base_object<ProcessBase>(*this));
+        ar& BOOST_SERIALIZATION_NVP(m_regionPropsTypes);
         ar& BOOST_SERIALIZATION_NVP(m_lowerLimit);
         ar& BOOST_SERIALIZATION_NVP(m_upperLimit);
     }
