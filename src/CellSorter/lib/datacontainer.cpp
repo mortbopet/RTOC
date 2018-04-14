@@ -67,10 +67,54 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
     calculateObjectSize();
 }
 
+std::vector<double> DataContainer::extractObject(int objIndex) {
+    std::vector<double> returnVector;
+    if ((1 << 0) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Area));
+    }
+    if ((1 << 3) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Circularity));
+    }
+    if ((1 << 4) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::ConvexArea));
+    }
+    if ((1 << 5) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Eccentricity));
+    }
+    if ((1 << 7) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::GradientScore));
+    }
+    if ((1 << 11) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Major_axis));
+    }
+    if ((1 << 12) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Minor_axis));
+    }
+    if ((1 << 13) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Solidity));
+    }
+    if ((1 << 14) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Symmetry));
+    }
+    if ((1 << 15) & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Perimeter));
+    }
+    return returnVector;
+}
+
+std::vector<std::vector<double>> DataContainer::extractContainer() {
+    std::vector<std::vector<double>> returnMatrix;
+    long sizeOfContainer = size();
+    for (int i = 0; i < sizeOfContainer; i++) {
+        returnMatrix.push_back(extractObject(i));
+    }
+    return returnMatrix;
+}
+
 int DataContainer::numberOfFlags() {
     int number = 0;
     for (int i = 0; i < 32; i++) {
-        if (0b1 & (m_dataFlags >> i) ) {
+        if (0b1 & (m_dataFlags >> i)) {
             number++;
         }
     }

@@ -235,49 +235,29 @@ TEST_CASE("numberOfFlags") {
 }
 
 TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
-    DataContainer container1;
-    DataContainer container2;
-    DataContainer container3;
-    container1.setDataFlags(0x9);
-    container2.setDataFlags(0x9);
-    container3.setDataFlags(0x9);
-    container1.appendNew();
-    container1.appendNew();
-    container1.appendNew();
-    container2.appendNew();
-    container2.appendNew();
-    container2.appendNew();
-    container3.appendNew();
-    container3.appendNew();
-    container3.appendNew();
-    container1[0]->setValue(data::Area, 20);
-    container1[0]->setValue(data::Area, 25);
-    container1[0]->setValue(data::Area, 30);
-    container1[1]->setValue(data::Area, 23);
-    container1[1]->setValue(data::Area, 28);
-    container1[1]->setValue(data::Area, 33);
-    container1[2]->setValue(data::Area, 26);
-    container1[2]->setValue(data::Area, 29);
-    container1[2]->setValue(data::Area, 32);
-    container1[0]->setValue(data::ConvexArea, 3);
-    container1[0]->setValue(data::ConvexArea, 6);
-    container1[0]->setValue(data::ConvexArea, 7);
-    container1[1]->setValue(data::ConvexArea, 4);
-    container1[1]->setValue(data::ConvexArea, 15.3);
-    container1[1]->setValue(data::ConvexArea, 22.3);
-    container1[2]->setValue(data::ConvexArea, 12);
-    container1[2]->setValue(data::ConvexArea, 0.4);
-    container1[2]->setValue(data::ConvexArea, 18);
+    DataContainer container;
+    container.setDataFlags(0x0011);
+    container.appendNew();
+    container.appendNew();
+    container.appendNew();
+    container[0]->setValue(data::Area, 20.1);
+    container[1]->setValue(data::Area, 23.1);
+    container[2]->setValue(data::Area, 26.1);
+    container[0]->setValue(data::ConvexArea, 3.1);
+    container[1]->setValue(data::ConvexArea, 4.1);
+    container[2]->setValue(data::ConvexArea, 12.1);
 
     SECTION("Extract all data from a single data object") {
-
+        std::vector<double> compareVector1 = {20.1, 3.1};
+        std::vector<double> compareVector2 = {23.1, 4.1};
+        std::vector<double> compareVector3 = {26.1, 12.1};
+        REQUIRE (container.extractObject(0) == compareVector1);
+        REQUIRE (container.extractObject(1) == compareVector2);
+        REQUIRE (container.extractObject(2) == compareVector3);
     }
 
     SECTION("Extract all data from multiple data objects within same container") {
-
-    }
-
-    SECTION("Extract all data from multiple data object within multiple containers") {
-
+        std::vector<std::vector<double>> compareMatrix = {{20.1, 3.1},{23.1, 4.1},{26.1, 12.1}};
+        REQUIRE (container.extractContainer() == compareMatrix);
     }
 }

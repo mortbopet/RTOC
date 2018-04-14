@@ -121,8 +121,8 @@ public:
     void setDataFlags(long flag);
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
-    //template <typename T>
-    //std::vector<T> extractObject(int objIndex);
+    std::vector<double> extractObject(int objIndex);
+    std::vector<std::vector<double>> extractContainer();
 
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
