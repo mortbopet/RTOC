@@ -48,6 +48,7 @@ void ImageDisplayerWidget::displayImage(int index) {
 
 cv::Mat& ImageDisplayerWidget::getNextImage(bool& successful) {
     successful = true;
+
     if (m_acqIndex < m_imageFileList.size()) {
         m_image = cv::imread(m_imageFileList[m_acqIndex++].absoluteFilePath().toStdString(),
                              cv::IMREAD_GRAYSCALE);
