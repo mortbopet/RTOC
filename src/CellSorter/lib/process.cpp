@@ -91,6 +91,9 @@ ClearBorder::ClearBorder() {
     m_borderWidth.setRange(0, 255);
 }
 
+Canny::Canny() {}
+FloodFillProcess::FloodFillProcess() {}
+
 void FloodFillProcess::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     matlab::floodFill(img);
 }

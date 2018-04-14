@@ -98,10 +98,9 @@ void Analyzer::runAnalyzer() {
             for (const auto& process : m_processes) {
                 process->doProcessing(m_img, m_bg, m_Experiment);
             }
-            m_Experiment.processed.push_back({m_img,"",m_Experiment.cellNum++,true});
+            m_Experiment.processed.push_back({m_img, "", m_Experiment.cellNum++, true});
         }
     }
-
 }
 
 void Analyzer::resetProcesses() {

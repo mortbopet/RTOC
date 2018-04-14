@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <memory>
 
+#include <QDebug>
+
 ProcessInterface::ProcessInterface(processContainerPtr processContainer)
     : m_container(processContainer) {}
 
