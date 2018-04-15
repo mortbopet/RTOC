@@ -1,6 +1,6 @@
 #include "framefinder.h"
 
-
+#include <QRegularExpression>
 
 bool exists(const std::string& path) {
     struct stat buf;
@@ -40,26 +40,14 @@ int files_from_folder(std::vector<std::string>& files, const std::string& folder
 std::string extractBetween(const std::string& src, const std::string& first,
                            const std::string& last) {
     unsigned long a = src.rfind(first);
-    if (a < 0) return "NOT_FOUND";
+    if (a < 0)
+        return "NOT_FOUND";
     a += first.length();
     unsigned long b = src.find(last, a);
-    if (b < 0) return "NOT_FOUND";
-    return src.substr((unsigned long) a,(unsigned long)  b - a);
+    if (b < 0)
+        return "NOT_FOUND";
+    return src.substr((unsigned long)a, (unsigned long)b - a);
 }
-/**
- * Overload function with less inputs (simplerrr)
- * @param src   :   string to search in
- * @return      :   string between delimiters
- */
-std::string extractBetween(const std::string& src) {
-    unsigned long a = src.rfind('_');
-    if (a < 0) return "NOT_FOUND";
-    a++;
-    unsigned long b = src.find('.', a);
-    if (b < 0) return "NOT_FOUND";
-    return src.substr((unsigned long) a,(unsigned long)  b - a);
-}
-
 /**
  * Extension to get_files(), but sorts the output
  *
@@ -151,46 +139,25 @@ void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) 
  *
  * @param qfil: the list to be sorted
  */
-void sort_qfilelist(QFileInfoList& qfil) {
+void sort_qfilelist(QFileInfoList& qfil, const QString& del1, const QString& del2) {
     // Allocate vector
     auto n = qfil.size();
     std::vector<Frame_Q> fn(n);
 
-    // Get file-numbers
-    for (int i = 0; i < n; i++) {
-        auto str = qfil[i].fileName().toStdString();
-        auto id = (int)strtol(extractBetween(str).c_str(), nullptr, 10);
-        Frame_Q f = {qfil[i], id};
-        fn[i] = f;
-    }
-
-    // Sort
-    sort(fn.begin(), fn.end());
-
-    // Reinsert all QFileInfo obejcts in qfil
-    for (int i = 0; i < n; i++) {
-        qfil[i] = fn[i].fileinfo;
-    }
-}
-
-/**
- * @brief overload with delimiters as extra argument
- *
- * @param qfil: the list to be sorted
- * @param del1: the first delimiter
- * @param del2: the second delimiter
- */
-void sort_qfilelist(QFileInfoList& qfil, const std::string& del1, const std::string& del2) {
-    // Allocate vector
-    auto n = qfil.size();
-    std::vector<Frame_Q> fn(n);
+    // Generate regex pattern matcher for extracting number between delimiters. use QRegExp::escape
+    // for escaping possible RegEx special characters in delimiters
+    QRegularExpression pattern(
+        QString("%1(.*)%2").arg(QRegExp::escape(del1)).arg(QRegExp::escape(del2)));
 
     // Get file-numbers
+    QRegularExpressionMatch match;
     for (int i = 0; i < n; i++) {
-        auto str = qfil[i].fileName().toStdString();
-        auto id = (int)strtol(extractBetween(str,del1,del2).c_str(), nullptr, 10);
-        Frame_Q f = {qfil[i], id};
-        fn[i] = f;
+        match = pattern.match(qfil[i].fileName());
+        int id = 0;
+        if (match.hasMatch()) {
+            id = match.captured(1).toInt();
+        }
+        fn[i] = {qfil[i], id};
     }
 
     // Sort
