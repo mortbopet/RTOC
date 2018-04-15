@@ -11,6 +11,15 @@ find_package(OpenCV REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
+######################################################################
+## Multi-thread setup
+######################################################################
+SET(WITH_MT OFF CACHE BOOL "Build with Multi-threading")
+
+######################################################################
+## endof Multi-thread setup
+######################################################################
+
 
 ######################################################################
 ## GUI setup
@@ -75,7 +84,7 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
 
 
 ######################################################################
-## Catch2 CMake setup - TEST PROJECT
+## Catch2 setup - TEST PROJECT
 ######################################################################
 set (TEST_EXECUTABLE "CellSorter_test")
 
@@ -92,10 +101,13 @@ target_link_libraries(${TEST_EXECUTABLE} Catch)
 # Link OpenCV and Cellsorter lib
 target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 ######################################################################
-## endof Catch2 CMake setup
+## endof Catch2 setup
 ######################################################################
 
-# Find and Link Boost libraries
+
+######################################################################
+## Boost setup
+######################################################################
 if(WIN32)
     # Find Boost
     set(Boost_NO_SYSTEM_PATHS ON)
@@ -128,6 +140,7 @@ else()
     target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
     target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
 endif()
-
-
+######################################################################
+## endof Boost setup
+######################################################################
 
