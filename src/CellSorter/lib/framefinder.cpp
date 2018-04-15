@@ -98,7 +98,6 @@ int get_files(std::vector<Frame>& files, const std::string& folder) {
  * @param img_folder    :   string          :   path to image folder
  * @param path_acc      :   string          :   path to "accepted" txt-file
  * @param path_dis      :   string          :   path to "discarded" txt-file
- *
  */
 void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
                       const double& threshold) {
@@ -139,4 +138,39 @@ void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) 
             output.push_back(f);
         }
     }
+}
+
+/**
+ * @brief sorts a qfileinfolist from number found between the two specified delimiters
+ * Mening that from the file names found in qfileinfolist there should be an integer id
+ * number formatted as following:
+ * /filename[del1][id number][del2].[ext]
+ * Example:
+ * /photo_1342.png
+ * where del1 = "_" and del2 "."
+ *
+ * @arg qfil: the list to be sorted
+ * @arg del1: the first delimiter
+ * @arg del2: the second delimiter
+ *
+ */
+void sort_qfilelist(QFileInfoList& qfil, const std::string& del1, const std::string& del2) {
+    auto n = qfil.size();
+    // Allocate vector
+    std::vector<Frame_Q> fn(n);
+
+    // Get file-numbers
+    for (int i = 0; i < n; i++) {
+        auto str = qfil[i].fileName().toStdString();
+        auto id = (int)strtol(extractBetween(str).c_str(), nullptr, 10);
+        Frame_Q f = {cv::Mat(), qfil[i], id};
+        fn[i] = f;
+    }
+    // Sort
+    sort(fn.begin(), fn.end());
+    // Reinsert all QFileInfo obejcts in qfil
+    for (int i = 0; i < n; i++) {
+        qfil[i] = fn[i].fileinfo;
+    }
+
 }

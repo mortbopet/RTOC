@@ -8,6 +8,8 @@
 
 #include <opencv/cv.hpp>
 
+#include "../lib/framefinder.h"
+
 namespace Ui {
 class ImageDisplayerWidget;
 }

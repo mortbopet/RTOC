@@ -3,7 +3,6 @@
 
 #include <QFileDialog>
 
-#include "opencv/cxcore.h"
 
 ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     : QWidget(parent), ui(new Ui::ImageDisplayerWidget) {
@@ -78,6 +77,7 @@ void ImageDisplayerWidget::indexDirectory() {
             << "*.jpg"
             << "*.bmp";
     m_imageFileList = m_dir.entryInfoList(filters, QDir::Files);
+    sort_qfilelist(m_imageFileList,"_",".");
 
     m_nImages = m_imageFileList.size();
 

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <opencv/cv.hpp>
 #include <vector>
+#include <QFileInfoList>
 
 struct Frame {
     cv::Mat image;
@@ -15,6 +16,14 @@ struct Frame {
     bool accepted;
 
     bool operator<(const Frame& rhs) const { return id < rhs.id; }
+};
+
+struct Frame_Q {
+    cv::Mat image;
+    QFileInfo fileinfo;
+    int id;
+
+    bool operator<(const Frame_Q& rhs) const { return id < rhs.id; }
 };
 
 /**
@@ -37,5 +46,7 @@ void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
                       const double& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
+
+void sort_qfilelist(QFileInfoList& qfil, const std::string& del1, const std::string& del2);
 
 #endif  // FRAMEFINDER_FFHELPERS_H
