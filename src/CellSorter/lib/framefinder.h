@@ -19,7 +19,6 @@ struct Frame {
 };
 
 struct Frame_Q {
-    cv::Mat image;
     QFileInfo fileinfo;
     int id;
 
@@ -47,6 +46,7 @@ void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 
+void sort_qfilelist(QFileInfoList& qfil);
 void sort_qfilelist(QFileInfoList& qfil, const std::string& del1, const std::string& del2);
 
 #endif  // FRAMEFINDER_FFHELPERS_H

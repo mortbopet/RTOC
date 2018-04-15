@@ -77,7 +77,7 @@ void ImageDisplayerWidget::indexDirectory() {
             << "*.jpg"
             << "*.bmp";
     m_imageFileList = m_dir.entryInfoList(filters, QDir::Files);
-    sort_qfilelist(m_imageFileList,"_",".");
+    sort_qfilelist(m_imageFileList);
 
     m_nImages = m_imageFileList.size();
 
