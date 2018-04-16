@@ -33,20 +33,20 @@ int files_from_folder(std::vector<std::string>& files, const std::string& folder
 /**
  * Gets string between two delimiters (assuming only one instance of last delimiter)
  * @param src   :   string to search in
- * @param first :   first delimiter
- * @param last  :   last delimiter
+ * @param first :   first delimiter (default = "_")
+ * @param last  :   last delimiter (default = ".")
  * @return      :   extracted std::string
  */
 std::string extractBetween(const std::string& src, const std::string& first,
                            const std::string& last) {
-    unsigned long a = src.rfind(first);
+    long a = src.rfind(first);
     if (a < 0)
         return "NOT_FOUND";
     a += first.length();
-    unsigned long b = src.find(last, a);
+    long b = src.find(last, a);
     if (b < 0)
         return "NOT_FOUND";
-    return src.substr((unsigned long)a, (unsigned long)b - a);
+    return src.substr(a, b - a);
 }
 /**
  * Extension to get_files(), but sorts the output
