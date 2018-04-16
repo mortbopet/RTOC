@@ -98,7 +98,7 @@ void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
     for (auto& frame : frames) {
         std::string img_path = img_folder + "/" + frame.filename;
         frame.image = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
-        minMaxIdx(lastMoved - frame.image, nullptr, &crit);
+        cv::minMaxIdx(lastMoved - frame.image, nullptr, &crit);
         crit /= 255;
 
         if (crit <= threshold) {

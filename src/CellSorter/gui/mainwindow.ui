@@ -101,7 +101,14 @@
             <item>
              <widget class="QCheckBox" name="enableFF">
               <property name="text">
-               <string>Enable FrameFinder</string>
+               <string>Enable frame finder</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ffhelp">
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
@@ -161,7 +168,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

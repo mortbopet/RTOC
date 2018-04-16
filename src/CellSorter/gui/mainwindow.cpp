@@ -3,13 +3,27 @@
 #include "lib/analyzer.h"
 #include "ui_mainwindow.h"
 
+#include <QCursor>
 #include <QFileDialog>
 #include <QLabel>
 #include <QMessageBox>
+#include <QToolTip>
 
 MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     : m_analyzer(analyzer), QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    ui->ffhelp->setIcon(QIcon(":/icons/resources/question.svg"));
+    ui->ffhelp->setToolTip(
+        "<nobr>Enabling frame finder will reduce the number</nobr> of images which are processed. "
+        "Frame "
+        "finder will do continuous acquisiton from the acquistion source, and only report images "
+        "back to the processing setup, when a sufficient change in the image has been detected. "
+        "This is useful when recording setups where the image may be static for long periods of "
+        "time.");
+    // Make clicking the ffhelp button immediatly show tooltip
+    connect(ui->ffhelp, &QPushButton::clicked,
+            [=] { QToolTip::showText(QCursor::pos(), ui->ffhelp->toolTip()); });
 
     m_processInterface = new ProcessInterface(m_analyzer);
     m_configurator = new Configurator(m_processInterface);

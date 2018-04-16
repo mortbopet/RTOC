@@ -6,5 +6,6 @@
         <file>resources/up-arrow.svg</file>
         <file>resources/play-button.svg</file>
         <file>resources/pause-button.svg</file>
+        <file>resources/question.svg</file>
     </qresource>
 </RCC>
