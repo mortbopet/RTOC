@@ -107,8 +107,9 @@ std::vector<double> DataContainer::extractContainer() {
     long sizeOfContainer = size();
     for (int i = 0; i < sizeOfContainer; i++) {
         std::vector<double> returnVectorTemp = extractObject(i);
-        returnVector.insert(std::end(returnVector), std::begin(returnVector), std::end(returnVectorTemp));
+        returnVector.insert(returnVector.end(), returnVectorTemp.begin(), returnVectorTemp.end());
     }
+
     return returnVector;
 }
 
