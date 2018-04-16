@@ -1,0 +1,3 @@
+[bugtraq "github"]
+    url = "https://github.com/mortbopet/fagprojekt/issues/%BUGID%"
+    logregex = "#([0-9]{1,5})"
