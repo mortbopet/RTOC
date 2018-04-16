@@ -124,6 +124,8 @@ public:
     std::vector<double> extractObject(int objIndex);
     std::vector<double> extractContainer();
 
+    void setClass(int value);
+    int getClass();
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
@@ -136,6 +138,8 @@ private:
     void calculateObjectSize();
 
     std::vector<DataObject*> m_data;
+    int classValue;
+
     int m_dataFlags = 0;
 
     bool m_locked = false;

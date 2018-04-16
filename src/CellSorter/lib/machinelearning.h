@@ -35,9 +35,9 @@ public:
 
     void add_to_trainset(DataContainer* m_datacontainer);
 
-    void prepareModel();
+    std::vector<DataContainer*> get_trainset() {return m_trainset;};
 
-    std::vector<std::vector<double>> get_data ();
+    void prepareModel();
 
     virtual void create_model() const = 0;
 
@@ -47,8 +47,10 @@ public:
 
 protected:
     std::vector<ParameterBase*> PARAMETER_CONTAINER;
-    std::vector<std::vector<double>> m_datafromcontainers; // To store data extracted from datacontainer
-    cv::Ptr<cv::ml::TrainData> m_datafromcontainers_CVtype;
+    //std::vector<std::vector<double>> m_attributesfromcontainers; // To store data extracted from datacontainer
+    cv::Ptr<cv::InputArray> m_attributes_CVtype;
+    cv::Ptr<cv::InputArray> m_outputs_CVtype;
+    cv::Ptr<cv::ml::TrainData> m_CVtype_data;
     std::vector<DataContainer*> m_trainset;  // to store all data objects to perform moedel on
     cv::Ptr<cv::ml::LogisticRegression> model; // Temp solution for storing models
 };

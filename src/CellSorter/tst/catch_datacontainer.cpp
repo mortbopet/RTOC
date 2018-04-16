@@ -261,3 +261,12 @@ TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
         REQUIRE (container.extractContainer() == compareMatrix);
     }
 }
+
+TEST_CASE("set and get classValue") {
+    DataContainer container;
+
+    SECTION("Set and get classvalue") {
+        container.setClass(1);
+        REQUIRE (container.getClass() == 1);
+    }
+}

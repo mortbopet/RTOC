@@ -69,7 +69,11 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
 
 std::vector<double> DataContainer::extractObject(int objIndex) {
     std::vector<double> returnVector;
-    if ((1 << 0) & m_dataFlags) {
+    //for(const auto& flag : data::DataFlags) {
+    //    if(flag != data::Centroid && ...)
+    //        returnVector.push_back(m_data[objIndex]->getValue<double>(static_cast<data::DataFlags>(flag)));
+    //}
+    if (data::Area & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Area));
     }
     if ((1 << 3) & m_dataFlags) {
@@ -111,6 +115,14 @@ std::vector<double> DataContainer::extractContainer() {
 
     }
     return returnMatrix;
+}
+
+void DataContainer::setClass(int value) {
+    classValue = value;
+}
+
+int DataContainer::getClass() {
+    return classValue;
 }
 
 int DataContainer::numberOfFlags() {

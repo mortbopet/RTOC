@@ -14,17 +14,27 @@ void MachineLearning::add_to_trainset(DataContainer* m_datacontainer) {
 }
 
 void MachineLearning::prepareModel() {
-    // Sets length of datacontainers
+    cv::Mat tempAttributes;
+    cv::Mat tempOutputs;
+    //m_attributes_CVtype cv::InputArray(1, (m_trainset[0]->numberOfFlags() * m_trainset[0]->size()), CV_32F);
+    //m_outputs_CVtype cv::InputArray(m_trainset.size(),1,CV_32F);
     for (int i = 0; i < m_trainset.size(); i++) {
-        // Gets data from vector and inserts into dataformat for modelling
-        std::vector<double> tempvector = m_trainset[i]->extractContainer();
-        m_datafromcontainers[i].insert(m_datafromcontainers[i].end(), tempvector.begin(), tempvector.end());
+        //cv::Mat tempAttribute cv::Mat(1, (m_trainset[0]->numberOfFlags() * m_trainset[0]->size()), CV_32F);
+        //tempAttribute = m_trainset[i]->extractContainer;
+        //cv::Mat tempOutput cv::Mat(1,1,CV_32F, m_trainset[i]->getClass());
+        //m_attributes_CVtype.push_back(tempAttribute);
+        //m_outputs_CVtype.push_back(tempOutput);
+
+        //std::vector<double> tempvector = m_trainset[i]->extractContainer();
+        //m_attributesfromcontainers.push_back(tempvector);
+        tempAttributes.push_back(m_trainset[i]->getClass());
+        tempOutputs.push_back(m_trainset[i]->getClass());
     }
+    m_attributes_CVtype(tempAttributes);
+
+    tempAttributes
 }
 
-std::vector<std::vector<double>> MachineLearning::get_data () {
-    return m_datafromcontainers;
-}
 
 void MachineLearning::create_model() const {}
 
@@ -44,16 +54,16 @@ LogisticRegression::LogisticRegression() {
 
 void LogisticRegression::create_model() const {
     model->create();
-    model->setLearningRate(m_learningrate.getValue());
-    model->setIterations(m_iters.getValue());
-    model->setRegularization(cv::ml::LogisticRegression::REG_L2);
-    model->setTrainMethod(cv::ml::LogisticRegression::BATCH);
-    model->setMiniBatchSize(m_alpha.getValue());
+    //model->setLearningRate(m_learningrate.getValue());
+    //model->setIterations(m_iters.getValue());
+    //model->setRegularization(cv::ml::LogisticRegression::REG_L2);
+    //model->setTrainMethod(cv::ml::LogisticRegression::BATCH);
+    //model->setMiniBatchSize(m_alpha.getValue());
 }
 
 void LogisticRegression::train_model() const {
-    m_datafromcontainers_CVtype->create(m_datafromcontainers, 0, 'INSERT OUTPUT');
-    model->train(m_datafromcontainers_CVtype);
+    m_CVtype_data->create(m_attributes_CVtype, 0, m_outputs_CVtype);
+    //model->train(m_attributesfromcontainers_CVtype);
 }
 //// The model below is with crossvalidation
 //void LogisticRegression::train_model(DataContainer* m_datacontainer, int kFold) const {
