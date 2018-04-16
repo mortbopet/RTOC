@@ -30,7 +30,8 @@ public:
         m_imageGetterFunction = function;
     }
 
-    void findCells();
+    void findObjects();
+    void cleanObjects();
 
     bool storeData(const std::string& path);
 

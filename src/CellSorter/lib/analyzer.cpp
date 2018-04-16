@@ -76,7 +76,7 @@ void Analyzer::resetProcesses() {
 /**
  * @brief
  */
-void Analyzer::findCells() {
+void Analyzer::findObjects() {
     cv::Point centroid;
     double dist;
     double dist_thres;
@@ -186,8 +186,9 @@ void Analyzer::findCells() {
 /**
  * @brief Removes cells that doesn't go all the way trough
  */
-void Analyzer::cleanCells() {
-
+void Analyzer::cleanObjects() {
+    // Check if more than 50 frames
+    
 }
 
 /// Debug helpers
