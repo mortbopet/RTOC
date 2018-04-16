@@ -2,6 +2,7 @@
 #define DATACONTAINER_H
 
 #include <cassert>
+#include <iterator>
 #include <map>
 #include <typeinfo>
 #include <vector>
@@ -71,7 +72,7 @@ static std::map<DataFlags, std::string> guiMap{{Area, "Area"},
 
 /**
  * @brief The DataObject class
- * @details allocates and manages memory that has been requested by the input dataFlags parameter
+ * @details Allocates and manages memory that has been requested by the input dataFlags parameter
  */
 class DataObject {
 public:
@@ -128,7 +129,6 @@ void DataObject::setValue(data::DataFlags dataFlag, T value) {
  * @anchor Dataflags
  * @details Flags for defining which data values that will be extracted for a frame.
  */
-
 class DataContainer {
 public:
     DataContainer();
@@ -145,19 +145,31 @@ public:
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
-    long size() { return m_data.size(); };
+    size_t size() { return m_data.size(); };
 
     DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
 
-private:
-    void calculateObjectSize();
+    DataObject* front() { return m_data.front(); };
+    DataObject* back() { return m_data.back(); };;
 
+    std::vector<DataObject*>::iterator begin() { return m_data.begin(); }
+    std::vector<DataObject*>::iterator end() { return m_data.end(); }
+    std::vector<DataObject*>::const_iterator begin() const { return m_data.begin(); }
+    std::vector<DataObject*>::const_iterator end() const { return m_data.end(); }
+    std::vector<DataObject*>::const_iterator cbegin() const { return m_data.cbegin(); }
+    std::vector<DataObject*>::const_iterator cend() const { return m_data.cend(); }
+
+private:
     std::vector<DataObject*> m_data;
     int m_dataFlags = 0;
 
     bool m_locked = false;
     size_t m_objectSize;
+
+protected:
+    void calculateObjectSize();
+
 };
 
 #endif  // DATACONTAINER_H
