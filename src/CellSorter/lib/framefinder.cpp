@@ -79,11 +79,12 @@ int get_files(std::vector<Frame>& files, const std::string& folder) {
     return 0;
 }
 
-bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const double& threshold) {
+bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold) {
     double crit = 0.0;
     cv::minMaxIdx(img1 - img2, nullptr, &crit);
-    crit /= 255;
-    return crit > threshold;
+    int crit_ = crit;
+    crit_ >>= 256;  // crit /= 256
+    return crit_ > threshold;
 }
 
 /**
@@ -106,9 +107,11 @@ void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
         std::string img_path = img_folder + "/" + frame.filename;
         frame.image = cv::imread(img_path, cv::IMREAD_GRAYSCALE);
         cv::minMaxIdx(lastMoved - frame.image, nullptr, &crit);
-        crit /= 255;
 
-        if (crit <= threshold) {
+        int _crit = crit;
+        _crit >>= 8;  // crit /= 256
+
+        if (_crit <= threshold) {
             // Discard
             frame.accepted = false;
         } else {

@@ -13,6 +13,10 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     : m_analyzer(analyzer), QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    m_processInterface = new ProcessInterface(m_analyzer);
+    m_configurator = new Configurator(m_processInterface);
+    ui->configLayout->addWidget(m_configurator);
+
     ui->ffhelp->setIcon(QIcon(":/icons/resources/question.svg"));
     ui->ffhelp->setToolTip(
         "<nobr>Enabling frame finder will reduce the number</nobr> of images which are processed. "
@@ -21,14 +25,13 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
         "back to the processing setup, when a sufficient change in the image has been detected. "
         "This is useful when recording setups where the image may be static for long periods of "
         "time.");
-    // Make clicking the ffhelp button immediatly show tooltip
+
+    // Setup framefinder
     connect(ui->ffhelp, &QPushButton::clicked,
             [=] { QToolTip::showText(QCursor::pos(), ui->ffhelp->toolTip()); });
-
-    m_processInterface = new ProcessInterface(m_analyzer);
-    m_configurator = new Configurator(m_processInterface);
-
-    ui->configLayout->addWidget(m_configurator);
+    ui->fftresh->setRange(0, 255);
+    connect(ui->fftresh, &QSpinBox::editingFinished,
+            [=] { m_acqInterface->setFFThresh(ui->fftresh->value()); });
 
     // Add ImageDisplayerWidget
     m_imageDisplayerWidget = new ImageDisplayerWidget();
@@ -47,8 +50,7 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     connect(ui->runAnalyzer, &QPushButton::clicked, [=] { m_analyzer->runAnalyzer(); });
 
     // Connect frame finder checkbox to acquisitionInterface
-    connect(ui->enableFF, &QCheckBox::stateChanged,
-            [=](int state) { m_acqInterface->setFFState(state); });
+    connect(ui->enableFF, &QCheckBox::stateChanged, this, &MainWindow::ffStateChanged);
 
 #ifdef BUILD_ACQ
     m_acquisitionWdiget = new AcquisitionWidget(this);
@@ -78,6 +80,12 @@ void MainWindow::acqSelectionChanged(int index) {
             break;
         }
     }
+}
+
+void MainWindow::ffStateChanged(int state) {
+    m_acqInterface->setFFState(state);
+    ui->fftresh->setEnabled(state);
+    ui->fftreshlabel->setEnabled(state);
 }
 
 void MainWindow::setupAcqCombobox() {

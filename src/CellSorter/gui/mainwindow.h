@@ -24,6 +24,7 @@ public:
 private slots:
     void cameraSelectedWithoutAcqBuilt();
     void acqSelectionChanged(int index);
+    void ffStateChanged(int state);
 
 private:
     Ui::MainWindow* ui;

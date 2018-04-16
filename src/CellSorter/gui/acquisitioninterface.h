@@ -26,11 +26,12 @@ public:
 
 public:
     void setFFState(int state) { m_ffEnabled = state; }
+    void setFFThresh(int value) { m_threshold = value; }
 
 private:
     bool m_ffEnabled = false;
 
-    double m_threshold = 1.0;
+    int m_threshold = 0;
 
     AcqSource m_source;
     ImageDisplayerWidget* m_imageDisplayerWidget;
