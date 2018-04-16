@@ -33,7 +33,6 @@
  * for the class, see ie. Morph::Serialize)
  *  6. Register the class for serialization - This is done at the bottom of process.cpp
 */
-
 namespace {
 // Compile time string length generation
 // https://stackoverflow.com/a/36390498/6714645
@@ -88,6 +87,7 @@ protected:
 };
 
 // ---------------------------------------------------
+
 /* Process registration and getters
  * The following classes aid in "before runtime" generation of a list of subclasses of Process,
  * which can be accessed by GUI
@@ -118,6 +118,7 @@ protected:
 
 template <typename T>
 ProcessNameGenerator NameGenerator<T>::m = ProcessNameGenerator(typeid(T).name());
+
 // ---------------------------------------------------
 
 #define SETUP_PROCESS(ProcessType, displayName)                                        \

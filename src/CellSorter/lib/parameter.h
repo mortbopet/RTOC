@@ -10,14 +10,14 @@
 #include "boost/serialization/nvp.hpp"
 #include "boost/serialization/serialization.hpp"
 
-/** \brief ParameterBase is used to encapsulate parameters used in a Process.
+/** @brief ParameterBase is used to encapsulate parameters used in a Process.
  *  Through getOptions, we can deduce the type of the parameter (see below) - which will enable the
  * GUI to spawn the correct editor for the value.
  * To maintain a unified interface into Parameter subclasses, getters and setters all have a string
  * based variant..
  */
 
-/** \brief Interfacing into a ParameterBase
+/** @brief Interfacing into a ParameterBase
  * calling ParameterBase::getOptions() will return a string vector
  *
  * stringstream a:
@@ -75,8 +75,8 @@ private:
     void operator=(const ParameterBase&) {}
 };
 
-/** \anchor ValueParameter
- *  \brief Class for containing parameters which are numbers (floats, doubles, char, int).
+/** @anchor ValueParameter
+ *  @brief Class for containing parameters which are numbers (floats, doubles, char, int).
  *  Contains range-information for the valid range of m_val
  */
 template <typename T>
@@ -150,8 +150,8 @@ void ValueParameter<T>::updateOptions() {
     m_options[3] = to_string(m_range.second);
 }
 
-/** \anchor EnumParameter
- *  \brief Used for options which are enumerated. Template argument type must be enumerateable - ie.
+/** @anchor EnumParameter
+ *  @brief Used for options which are enumerated. Template argument type must be enumerateable - ie.
  *  an int must be constructible from T.
  */
 template <typename T>
@@ -235,6 +235,7 @@ void EnumParameter<T>::setValueStr(string value) {
 }
 
 // ----------------------
+
 // Declare some smart pointer types for value and enum parameters
 template <typename T>
 using UniqueValuePtr = std::unique_ptr<ValueParameter<T>>;
