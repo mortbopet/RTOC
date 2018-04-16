@@ -23,15 +23,10 @@ public:
 private slots:
     void on_add_clicked();
     void on_remove_clicked();
-
     void updateModel();
-
     void on_up_clicked();
-
     void on_down_clicked();
-
     void on_load_clicked();
-
     void on_store_clicked();
 
 private:

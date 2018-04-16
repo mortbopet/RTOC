@@ -21,6 +21,7 @@ public:
     const std::vector<std::string>& getProcessTypes() { return ProcessBase::get_processes(); }
     void emitDataChanged() { emit dataChanged(); }
 
+public slots:
     void storeSetup(const QString& path) const;
     void loadSetup(const QString& path);
 

@@ -15,6 +15,8 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     ui->down->setIcon(QIcon(":/icons/resources/down-arrow.svg"));
     ui->add->setIcon(QIcon(":/icons/resources/add.svg"));
     ui->remove->setIcon(QIcon(":/icons/resources/delete.svg"));
+    ui->load->setIcon(QIcon(":/icons/resources/load.svg"));
+    ui->store->setIcon(QIcon(":/icons/resources/save.svg"));
 
     // Gather options from interface
     auto processTypes = m_interface->getProcessTypes();
@@ -68,9 +70,9 @@ void Configurator::updateModel() {
         QString type = QString::fromStdString(
             m_interface->doActionForType(process->getTypeName(), ProcessTypeAction::GetName));
 
-        insertRow(m_model->index(m_model->rowCount() - 1, 0),
-                  QList<QVariant>() << processIndex << type << ""
-                                    << "");
+        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>()
+                                                                  << processIndex << type << ""
+                                                                  << "");
         auto parameters = process->getParameters();
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();

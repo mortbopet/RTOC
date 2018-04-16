@@ -7,5 +7,7 @@
         <file>resources/play-button.svg</file>
         <file>resources/pause-button.svg</file>
         <file>resources/question.svg</file>
+        <file>resources/load.svg</file>
+        <file>resources/save.svg</file>
     </qresource>
 </RCC>
