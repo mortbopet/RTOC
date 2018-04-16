@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="16">
+<m_processes class_id="0" tracking_level="0" version="0">
+	<count>9</count>
+	<item_version>0</item_version>
+	<item class_id="1" tracking_level="0" version="0">
+		<tx class_id="2" class_name="SubtractBG" tracking_level="1" version="0" object_id="_0">
+			<processbase class_id="3" tracking_level="0" version="0"></processbase>
+			<m_edgeThreshold class_id="4" tracking_level="0" version="0">
+				<m_val>2.70000000000000018e-01</m_val>
+			</m_edgeThreshold>
+		</tx>
+	</item>
+	<item>
+		<tx class_id="5" class_name="Normalize" tracking_level="1" version="0" object_id="_1">
+			<processbase></processbase>
+			<m_normalizeStrength class_id="6" tracking_level="0" version="0">
+				<m_val>4095</m_val>
+			</m_normalizeStrength>
+		</tx>
+	</item>
+	<item>
+		<tx class_id="7" class_name="Binarize" tracking_level="1" version="0" object_id="_2">
+			<processbase></processbase>
+			<m_edgeThreshold>
+				<m_val>5.00000000000000000e+01</m_val>
+			</m_edgeThreshold>
+			<m_maxVal>
+				<m_val>2.55000000000000000e+02</m_val>
+			</m_maxVal>
+		</tx>
+	</item>
+	<item>
+		<tx class_id="8" class_name="Morph" tracking_level="1" version="0" object_id="_3">
+			<processbase></processbase>
+			<m_morphType class_id="9" tracking_level="0" version="0">
+				<m_val>2</m_val>
+			</m_morphType>
+			<m_morphValueX>
+				<m_val>3</m_val>
+			</m_morphValueX>
+			<m_morphValueY>
+				<m_val>3</m_val>
+			</m_morphValueY>
+		</tx>
+	</item>
+	<item>
+		<tx class_id_reference="8" object_id="_4">
+			<processbase></processbase>
+			<m_morphType>
+				<m_val>3</m_val>
+			</m_morphType>
+			<m_morphValueX>
+				<m_val>15</m_val>
+			</m_morphValueX>
+			<m_morphValueY>
+				<m_val>10</m_val>
+			</m_morphValueY>
+		</tx>
+	</item>
+	<item>
+		<tx class_id="10" class_name="FloodFillProcess" tracking_level="1" version="0" object_id="_5">
+			<processbase></processbase>
+		</tx>
+	</item>
+	<item>
+		<tx class_id="11" class_name="ClearBorder" tracking_level="1" version="0" object_id="_6">
+			<processbase></processbase>
+			<m_borderWidth>
+				<m_val>2</m_val>
+			</m_borderWidth>
+		</tx>
+	</item>
+	<item>
+		<tx class_id="12" class_name="PropFilter" tracking_level="1" version="0" object_id="_7">
+			<processbase></processbase>
+			<m_regionPropsTypes class_id="13" tracking_level="0" version="0">
+				<m_val>16</m_val>
+			</m_regionPropsTypes>
+			<m_lowerLimit>
+				<m_val>2.00000000000000000e+02</m_val>
+			</m_lowerLimit>
+			<m_upperLimit>
+				<m_val>1.45000000000000000e+03</m_val>
+			</m_upperLimit>
+		</tx>
+	</item>
+	<item>
+		<tx class_id_reference="12" object_id="_8">
+			<processbase></processbase>
+			<m_regionPropsTypes>
+				<m_val>2048</m_val>
+			</m_regionPropsTypes>
+			<m_lowerLimit>
+				<m_val>0.00000000000000000e+00</m_val>
+			</m_lowerLimit>
+			<m_upperLimit>
+				<m_val>6.50000000000000000e+01</m_val>
+			</m_upperLimit>
+		</tx>
+	</item>
+</m_processes>
+</boost_serialization>
+
