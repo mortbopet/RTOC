@@ -26,7 +26,6 @@ struct Experiment {
     void defaultSettings(const std::string& imgPath) {
         inlet = 80;
         outlet = 200;
-        cellNum = 0;
         intensity_threshold = 0.0354;
         imagePath = imgPath;
     }

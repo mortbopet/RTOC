@@ -4,59 +4,6 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 
-void Analyzer::loadRBCPreset() {
-    // Subtract background
-    auto subtractbgDEFAULT = std::make_unique<SubtractBG>();
-    subtractbgDEFAULT->m_edgeThreshold.setValue(0.272);
-    m_processes.push_back(std::move(subtractbgDEFAULT));
-
-    // Normalize
-    auto normalizeDEFAULT = std::make_unique<Normalize>();
-    normalizeDEFAULT->m_normalizeStrength.setValue(0xfff);
-    m_processes.push_back(std::move(normalizeDEFAULT));
-
-    // Binarize
-    auto binarizeDEFAULT = std::make_unique<Binarize>();
-    binarizeDEFAULT->m_maxVal.setValue(255);
-    binarizeDEFAULT->m_edgeThreshold.setValue(50);
-    m_processes.push_back(std::move(binarizeDEFAULT));
-
-    // Morph open (imopen)
-    auto morphDEFAULT = std::make_unique<Morph>();
-    morphDEFAULT->m_morphType.setValue(cv::MORPH_OPEN);
-    morphDEFAULT->m_morphValueX.setValue(3);
-    morphDEFAULT->m_morphValueY.setValue(3);
-    m_processes.push_back(std::move(morphDEFAULT));
-
-    // Morph close (imclose)
-    morphDEFAULT = std::make_unique<Morph>();
-    morphDEFAULT->m_morphType.setValue(cv::MORPH_CLOSE);
-    morphDEFAULT->m_morphValueX.setValue(15);
-    morphDEFAULT->m_morphValueY.setValue(10);
-    m_processes.push_back(std::move(morphDEFAULT));
-
-    // Floodfill
-    m_processes.push_back(std::make_unique<FloodFillProcess>());
-
-    // Clearborder
-    auto borderDEFAULT = std::make_unique<ClearBorder>();
-    borderDEFAULT->m_borderWidth.setValue(2);
-    m_processes.push_back(std::make_unique<ClearBorder>());
-
-    // bwpropfilt ConvexArea [200 1450]
-    auto propFilt0 = std::make_unique<PropFilter>();
-    propFilt0->m_regionPropsTypes.setValue(matlab::regionPropTypes::ConvexArea);
-    propFilt0->m_lowerLimit.setValue(200);
-    propFilt0->m_upperLimit.setValue(1450);
-    m_processes.push_back(std::move(propFilt0));
-
-    // bwpropfilt MajorAxisLength [0 65]
-    auto propFilt1 = std::make_unique<PropFilter>();
-    propFilt1->m_regionPropsTypes.setValue(matlab::regionPropTypes::Major_axis);
-    propFilt1->m_lowerLimit.setValue(0);
-    propFilt1->m_upperLimit.setValue(65);
-    m_processes.push_back(std::move(propFilt1));
-}
 
 void Analyzer::loadExperimentPreset(const std::string& img_path) {
     m_Experiment.defaultSettings(img_path);
