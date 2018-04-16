@@ -8,6 +8,8 @@ bool exists(const std::string& path) {
 }
 
 /**
+ * @warning DEPRECATED - Qt functionality is used instead
+ *
  * Function name should explain enough
  * takes address of folder path and the address for the results
  *
@@ -79,11 +81,20 @@ int get_files(std::vector<Frame>& files, const std::string& folder) {
     return 0;
 }
 
+/**
+ * @brief hasChanged determines whether img2 is different from img1. Given a movement threshold the two images a
+ * subtracted from eachother and the largest pixel value are found. _Movement_ is then detected if the max-pixel value
+ * is larger than the given threshold.
+ * @param img1          :   cv::Mat()   :   old image
+ * @param img2          :   cv::Mat()   :   new image
+ * @param threshold     :   int         :   movement threshold
+ * @return              :   bool        :   true if movement, otherwise false
+ */
 bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold) {
     double crit = 0.0;
     cv::minMaxIdx(img1 - img2, nullptr, &crit);
     int crit_ = crit;
-    crit_ >>= 256;  // crit /= 256
+    crit_ >>= 8;  // crit /= 256
     return crit_ > threshold;
 }
 
@@ -143,11 +154,13 @@ void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) 
  * Mening that from the file names found in qfileinfolist there should be an integer id
  * number formatted as following:
  * /filename[del1][id number][del2].[ext]
- * Example:
- * /photo_1342.png
- * where del1 = "_" and del2 "."
+ * @example
+ * filename of qfile: /photo_1342.png
+ * where del1 = "_" and del2 ".", the file would get id 1342. The list is then sorted accordingly to those id's
  *
- * @param qfil: the list to be sorted
+ * @param qfil  :   QFileInfoList&  :   list to be sorted
+ * @param del1  :   QString&        :   first delimiter
+ * @param del2  :   QString&        :   last delimiter
  */
 void sort_qfilelist(QFileInfoList& qfil, const QString& del1, const QString& del2) {
     // Allocate vector
