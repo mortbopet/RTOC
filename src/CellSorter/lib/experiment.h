@@ -8,12 +8,11 @@
 #include "framefinder.h"
 #include "datacontainer.h"
 
-//// Experiment
-/* Struct for each Experiment. Used as a container for parameters.
+
+/** @brief Struct for each Experiment. Used as a container for parameters.
  * More functions can be created to change those parameters
  * or set different presets.
  */
-
 struct Experiment {
     int inlet;          // Bottom corner of constriction inlet
     int outlet;         // Bottom corner of constriction outlet

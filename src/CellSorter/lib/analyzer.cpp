@@ -25,15 +25,27 @@ void Analyzer::loadImagesFromText() {
     // and push frames to m_Experiment
 }
 
+/**
+ * @brief
+ *
+ * @warning DEPRECATED
+ */
 void Analyzer::selectBG() {
     m_bg = m_Experiment.dis[10].image;  // Sets as background
 }
 
+/**
+ * @brief
+ */
 void Analyzer::runProcesses() {
     for (const auto& process : m_processes) {
         process->doProcessing(m_img, m_bg, m_Experiment);
     }
 }
+
+/**
+ * @brief
+ */
 void Analyzer::runAnalyzer() {
     bool success;
     while (true) {
@@ -54,10 +66,16 @@ void Analyzer::runAnalyzer() {
     }
 }
 
+/**
+ * @brief
+ */
 void Analyzer::resetProcesses() {
     m_processes.clear();
 }
 
+/**
+ * @brief
+ */
 void Analyzer::findCells() {
     cv::Point centroid;
     double dist;
@@ -165,19 +183,31 @@ void Analyzer::findCells() {
     }
 }
 
+/**
+ * @brief Removes cells that doesn't go all the way trough
+ */
+void Analyzer::cleanCells() {
+
+}
+
 /// Debug helpers
 void Analyzer::showImg(const int& delay) {
     cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display window", m_img);
     cv::waitKey(delay);
 }
-
+/// Debug helpers
 void Analyzer::showImg(const cv::Mat& img, const int& delay) {
     cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
     cv::imshow("Display window", img);
     cv::waitKey(delay);
 }
 
+/**
+ * @brief
+ * @param path
+ * @return
+ */
 bool Analyzer::storeSetup(const string& path) {
     // Serialize current processes in m_processes in .xml file
     try {
@@ -193,6 +223,11 @@ bool Analyzer::storeSetup(const string& path) {
     return true;
 }
 
+/**
+ * @brief
+ * @param path
+ * @return
+ */
 bool Analyzer::loadSetup(const string& path) {
     try {
         m_processes.clear();
