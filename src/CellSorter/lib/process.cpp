@@ -49,7 +49,7 @@ void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) co
 }
 
 SubtractBG::SubtractBG() {
-    m_edgeThreshold.setRange(0, 255);
+    m_edgeThreshold.setRange(0, 1);
 }
 
 void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
