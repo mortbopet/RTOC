@@ -6,6 +6,7 @@
 #include "../AcquisitionApp/src/acquisitionwidget.h"
 #include "acquisitioninterface.h"
 #include "configurator.h"
+#include "experimentsetup.h"
 #include "imagedisplayerwidget.h"
 #include "processinterface.h"
 
@@ -35,6 +36,7 @@ private:
     AcquisitionWidget* m_acquisitionWdiget;
     ImageDisplayerWidget* m_imageDisplayerWidget;
     AcquisitionInterface* m_acqInterface;
+    ExperimentSetup* m_experimentSetup;
 
     void setupAcqCombobox();
 };

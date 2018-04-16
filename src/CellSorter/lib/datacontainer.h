@@ -49,6 +49,24 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {Symmetry, sizeof(double)},
                                            {Perimeter, sizeof(double)},
                                            {PixelIdxList, sizeof(std::vector<cv::Point>*)}};
+
+// Data types which can be extracted through GUI - gui uses this map to generate available data
+// points for data extraction
+static std::map<DataFlags, std::string> guiMap{{Area, "Area"},
+                                               {Circularity, "Circularity"},
+                                               {ConvexArea, "Convex area"},
+                                               {Eccentricity, "Eccentricity"},
+                                               {Frame, "Frame"},
+                                               {GradientScore, "Gradient score"},
+                                               {Inlet, "Inlet"},
+                                               {Outlet, "Outlet"},
+                                               {Label, "Label"},
+                                               {Major_axis, "Major axis"},
+                                               {Minor_axis, "Minor axis"},
+                                               {Solidity, "Solidity"},
+                                               {Symmetry, "Symmetry"},
+                                               {Perimeter, "Perimeter"}};
+
 }  // namespace data
 
 /**

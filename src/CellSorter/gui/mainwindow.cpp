@@ -15,7 +15,9 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
 
     m_processInterface = new ProcessInterface(m_analyzer);
     m_configurator = new Configurator(m_processInterface);
+    m_experimentSetup = new ExperimentSetup(m_analyzer);
     ui->configLayout->addWidget(m_configurator);
+    ui->experimentLayout->addWidget(m_experimentSetup);
 
     ui->ffhelp->setIcon(QIcon(":/icons/resources/question.svg"));
     ui->ffhelp->setToolTip(
