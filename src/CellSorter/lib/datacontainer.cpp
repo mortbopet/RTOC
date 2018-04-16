@@ -102,13 +102,14 @@ std::vector<double> DataContainer::extractObject(int objIndex) {
     return returnVector;
 }
 
-std::vector<std::vector<double>> DataContainer::extractContainer() {
-    std::vector<std::vector<double>> returnMatrix;
+std::vector<double> DataContainer::extractContainer() {
+    std::vector<double> returnVector;
     long sizeOfContainer = size();
     for (int i = 0; i < sizeOfContainer; i++) {
-        returnMatrix.push_back(extractObject(i));
+        std::vector<double> returnVectorTemp = extractObject(i);
+        returnVector.insert(std::end(returnVector), std::begin(returnVector), std::end(returnVectorTemp));
     }
-    return returnMatrix;
+    return returnVector;
 }
 
 int DataContainer::numberOfFlags() {
