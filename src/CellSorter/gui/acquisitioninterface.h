@@ -24,10 +24,18 @@ public:
 
     cv::Mat& getNextImage(bool& successful);
 
-private:
-    AcqSource m_source;
+public:
+    void setFFState(int state) { m_ffEnabled = state; }
 
+private:
+    bool m_ffEnabled = false;
+
+    double m_threshold = 1.0;
+
+    AcqSource m_source;
     ImageDisplayerWidget* m_imageDisplayerWidget;
+
+    cv::Mat m_lastImage;
 };
 
 #endif  // ACQUISITIONINTERFACE_H

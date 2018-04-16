@@ -3,7 +3,6 @@
 
 #include <QFileDialog>
 
-
 ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     : QWidget(parent), ui(new Ui::ImageDisplayerWidget) {
     ui->setupUi(this);
@@ -45,7 +44,7 @@ void ImageDisplayerWidget::displayImage(int index) {
     }
 }
 
-cv::Mat& ImageDisplayerWidget::getNextImage(bool& successful) {
+cv::Mat* ImageDisplayerWidget::getNextImage(bool& successful) {
     successful = true;
 
     if (m_acqIndex < m_imageFileList.size()) {
@@ -53,7 +52,7 @@ cv::Mat& ImageDisplayerWidget::getNextImage(bool& successful) {
                              cv::IMREAD_GRAYSCALE);
     } else {
         successful = false;
-        return m_image;
+        return &m_image;
     }
 
     if (!m_image.data) {
@@ -61,7 +60,7 @@ cv::Mat& ImageDisplayerWidget::getNextImage(bool& successful) {
         m_acqIndex = 0;
     }
 
-    return m_image;
+    return &m_image;
 }
 
 void ImageDisplayerWidget::reset() {

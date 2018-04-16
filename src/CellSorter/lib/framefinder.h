@@ -42,6 +42,8 @@ std::string extractBetween(const std::string& src, const std::string& first = "_
 int get_files(std::vector<Frame>& files, const std::string& folder);
 void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
                       const double& threshold);
+
+bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const double& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 

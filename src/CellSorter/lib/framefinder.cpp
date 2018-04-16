@@ -79,6 +79,13 @@ int get_files(std::vector<Frame>& files, const std::string& folder) {
     return 0;
 }
 
+bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const double& threshold) {
+    double crit = 0.0;
+    cv::minMaxIdx(img1 - img2, nullptr, &crit);
+    crit /= 255;
+    return crit > threshold;
+}
+
 /**
  * Accept_or_reject
  *

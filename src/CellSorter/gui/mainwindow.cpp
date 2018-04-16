@@ -46,6 +46,10 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     ui->runAnalyzer->setIcon(QIcon(":/icons/resources/play-button.svg"));
     connect(ui->runAnalyzer, &QPushButton::clicked, [=] { m_analyzer->runAnalyzer(); });
 
+    // Connect frame finder checkbox to acquisitionInterface
+    connect(ui->enableFF, &QCheckBox::stateChanged,
+            [=](int state) { m_acqInterface->setFFState(state); });
+
 #ifdef BUILD_ACQ
     m_acquisitionWdiget = new AcquisitionWidget(this);
     ui->acqLayout->addWidget(m_acquisitionWdiget);

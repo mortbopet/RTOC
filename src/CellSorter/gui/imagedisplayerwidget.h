@@ -21,7 +21,7 @@ public:
     explicit ImageDisplayerWidget(QWidget* parent = 0);
     ~ImageDisplayerWidget();
 
-    cv::Mat& getNextImage(bool& successfull);
+    cv::Mat* getNextImage(bool& successfull);
     void reset();
 
 public slots:
