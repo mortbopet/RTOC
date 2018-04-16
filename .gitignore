@@ -1,8 +1,9 @@
 # Exclude build directories
 build*/
 cmake-build*/
+docs*/
 # All test data is managed outside GIT
-data/* 
+data/*
 
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
