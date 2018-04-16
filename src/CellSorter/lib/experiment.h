@@ -21,7 +21,7 @@ struct Experiment {
     std::vector<Frame> acc, dis, processed;
     double intensity_threshold;
     std::string imagePath;
-    std::vector<DataContainer> data;
+    std::vector<std::unique_ptr<DataContainer>> data;
 
     void defaultSettings(const std::string& imgPath) {
         inlet = 80;

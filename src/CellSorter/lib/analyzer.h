@@ -5,10 +5,13 @@
 #include "experiment.h"
 #include "framefinder.h"
 #include "process.h"
+#include "tracker.h"
 
 #include <opencv/cv.hpp>
 
 #include <functional>
+
+
 
 class Analyzer {
 public:
@@ -28,6 +31,10 @@ public:
         m_imageGetterFunction = function;
     }
 
+    void findCells();
+
+    bool storeData(const std::string& path);
+
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);
 
@@ -39,6 +46,8 @@ public:
 
 private:
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
+
+    std::vector<std::unique_ptr<DataContainer>> m_data;
 
     std::function<cv::Mat&(bool& sucessful)> m_imageGetterFunction;
 };
