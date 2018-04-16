@@ -1,5 +1,6 @@
 #ifndef CELLSORTER_CSHELPER_H
 #define CELLSORTER_CSHELPER_H
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include "experiment.h"
