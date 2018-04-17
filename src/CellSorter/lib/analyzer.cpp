@@ -207,9 +207,8 @@ void Analyzer::cleanObjects() {
         DataContainer* dc = m_Experiment.data[i].get();
         cv::Rect bb_i = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
         cv::Rect bb_o = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
-        remove.at(i) = (*dc).size() < 25
-                       || ((bb_i.x + bb_i.width) > m_Experiment.inlet - 1)
-                       || ((bb_o.x + bb_o.width) < m_Experiment.outlet);
+        remove.at(i) = (*dc).size() < 25 || ((bb_i.x + bb_i.width) > m_Experiment.inlet - 1) ||
+                       ((bb_o.x + bb_o.width) < m_Experiment.outlet);
     }
 }
 
@@ -218,9 +217,8 @@ void Analyzer::cleanObjects() {
  * @param path
  * @return
  */
-bool Analyzer::storeData(const std::string &path) {
-
-
+bool Analyzer::storeData(const std::string& path) {
+    return false;
 }
 
 /// Debug helpers
