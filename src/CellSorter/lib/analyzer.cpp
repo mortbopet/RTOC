@@ -184,23 +184,33 @@ void Analyzer::findObjects() {
 }
 
 /**
- * @brief Removes cells that doesn't go all the way trough
+ * @brief Clean Object-vector from objects with insufficient data
+ * @details
  */
 void Analyzer::cleanObjects() {
     unsigned int count_threshold = 25;
+
     auto n = m_Experiment.data.size();
     std::vector<bool> remove(n);
     // Start by removing objects with less than fl frames
     m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
                                            m_Experiment.data.end(),
                                            [](DataContainer* dc) { return (*dc).size() < count_threshold; }));
-    for (unsigned long i = 0; i < n; i++) {
 
-        // Here: Check first frame of detected object - is it before inlet?
+    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
+                                           m_Experiment.data.end(),
+                                           [](DataContainer* dc) {
+                                               cv::Rect bb = (*dc).front()->getValue(data::BoundingBox);
+                                               return (bb.x + bb.width) > (m_Experiment.inlet - 1);
+                                           }));
 
-        // Here: Check last frame of detected object - is it after outlet?
+    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
+                                           m_Experiment.data.end(),
+                                           [](DataContainer* dc) {
+                                               cv::Rect bb = (*dc).back()->getValue(data::BoundingBox);
+                                               return (bb.x + bb.width) < m_Experiment.outlet;
+                                           }));
 
-    }
 }
 
 /// Debug helpers
