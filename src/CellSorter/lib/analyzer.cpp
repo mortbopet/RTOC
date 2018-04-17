@@ -188,28 +188,37 @@ void Analyzer::findObjects() {
  * @details
  */
 void Analyzer::cleanObjects() {
-    unsigned int count_threshold = 25;
-
     auto n = m_Experiment.data.size();
     std::vector<bool> remove(n);
-    // Start by removing objects with less than fl frames
+    // Start by removing objects with less than count_threshold frames
+    /*
     m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
                                            m_Experiment.data.end(),
-                                           [](DataContainer* dc) { return (*dc).size() < count_threshold; }));
+                                           [](std::unique_ptr<DataContainer> dc) { return (*dc).size() < 25; }));
 
     m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
                                            m_Experiment.data.end(),
-                                           [](DataContainer* dc) {
-                                               cv::Rect bb = (*dc).front()->getValue(data::BoundingBox);
-                                               return (bb.x + bb.width) > (m_Experiment.inlet - 1);
+                                           [](std::unique_ptr<DataContainer> dc) {
+                                               cv::Rect bb = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
+                                               return (bb.x + bb.width) > ((*dc).front()->getValue<int>(data::Inlet) - 1);
                                            }));
 
     m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
                                            m_Experiment.data.end(),
-                                           [](DataContainer* dc) {
-                                               cv::Rect bb = (*dc).back()->getValue(data::BoundingBox);
-                                               return (bb.x + bb.width) < m_Experiment.outlet;
+                                           [](std::unique_ptr<DataContainer> dc) {
+                                               cv::Rect bb = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
+                                               return (bb.x + bb.width) < (*dc).front()->getValue<int>(data::Outlet);
                                            }));
+    */
+}
+
+/**
+ * @brief function for storing data from experiment
+ * @param path
+ * @return
+ */
+bool Analyzer::storeData(const std::string &path) {
+
 
 }
 
