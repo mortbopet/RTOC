@@ -15,7 +15,7 @@ file(GLOB LIB_HEADERS lib/*.h)
 ######################################################################
 ## Multi-thread setup
 ######################################################################
-SET(WITH_MT OFF CACHE BOOL "Build with doxygen document generation")
+SET(WITH_MT OFF CACHE BOOL "Build with Multi-threading")
 
 ######################################################################
 ## endof Multi-thread setup
@@ -154,7 +154,7 @@ endif()
 ## Doxygen setup
 ######################################################################
 # first we can indicate the documentation build as an option and set it to ON by default
-SET(BUILD_DOCS OFF CACHE BOOL "Build with Multi-threading")
+SET(BUILD_DOCS OFF CACHE BOOL "Build with doxygen documentation generation")
 
 if(${BUILD_DOCS})
     # check if Doxygen is installed
