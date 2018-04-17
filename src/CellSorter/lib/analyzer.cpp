@@ -210,6 +210,13 @@ void Analyzer::cleanObjects() {
         remove.at(i) = (*dc).size() < 25 || ((bb_i.x + bb_i.width) > m_Experiment.inlet - 1) ||
                        ((bb_o.x + bb_o.width) < m_Experiment.outlet);
     }
+
+    // Burde være i sin egen funktion
+    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
+                                           m_Experiment.data.end(),
+                                           [thresh = count_threshold](const auto& dc) { return (*dc).size() < thresh; }),
+                            m_Experiment.data.end());
+
 }
 
 /**
