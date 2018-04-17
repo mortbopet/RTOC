@@ -202,24 +202,25 @@ void Analyzer::cleanObjects() {
 
     auto n = m_Experiment.data.size();
     std::vector<bool> remove(n);
-    // Start by removing objects with less than fl frames
-    /*
-    m_Experiment.data.erase(
-        std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(),
-                       [=](DataContainer* dc) { return (*dc).size() < count_threshold; }));
 
-    m_Experiment.data.erase(
-        std::remove_if(m_Experiment.dat a.begin(), m_Experiment.data.end(), [=](DataContainer* dc) {
-            cv::Rect bb = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
-            return (bb.x + bb.width) > (m_Experiment.inlet - 1);
-        }));
+    for (unsigned long i = 0; i < n; i++) {
+        DataContainer* dc = m_Experiment.data[i].get();
+        cv::Rect bb_i = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
+        cv::Rect bb_o = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
+        remove.at(i) = (*dc).size() < 25
+                       || ((bb_i.x + bb_i.width) > m_Experiment.inlet - 1)
+                       || ((bb_o.x + bb_o.width) < m_Experiment.outlet);
+    }
+}
 
-    m_Experiment.data.erase(
-        std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(), [=](DataContainer* dc) {
-            cv::Rect bb = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
-            return (bb.x + bb.width) < m_Experiment.outlet;
-        }));
-        */
+/**
+ * @brief function for storing data from experiment
+ * @param path
+ * @return
+ */
+bool Analyzer::storeData(const std::string &path) {
+
+
 }
 
 /// Debug helpers
