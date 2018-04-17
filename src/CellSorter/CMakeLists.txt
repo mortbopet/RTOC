@@ -26,7 +26,10 @@ SET(WITH_MT OFF CACHE BOOL "Build with doxygen document generation")
 ######################################################################
 SET(BUILD_GUI OFF CACHE BOOL "Build GUI")
 if(${BUILD_GUI})
+    if(WIN32)
+    else()
     add_definitions(-fPIC)
+    endif()
 
     # Add acquisitor subdirectory
     add_subdirectory(../AcquisitionApp "${CMAKE_CURRENT_BINARY_DIR}/AcquisitionApp")
@@ -64,6 +67,7 @@ if(${BUILD_GUI})
     file ( GLOB RESOURCES
      ../*.qrc
     )
+
     add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
     target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
 else()
