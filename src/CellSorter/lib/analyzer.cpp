@@ -212,11 +212,11 @@ void Analyzer::cleanObjects() {
     }
 
     // Burde være i sin egen funktion
-    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
-                                           m_Experiment.data.end(),
-                                           [thresh = count_threshold](const auto& dc) { return (*dc).size() < thresh; }),
+    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(),
+                                           [thresh = count_threshold](const auto& dc) {
+                                               return (*dc).size() < thresh;
+                                           }),
                             m_Experiment.data.end());
-
 }
 
 /**
@@ -226,7 +226,6 @@ void Analyzer::cleanObjects() {
  * @return
  */
 bool Analyzer::storeData(const std::string& path) {
-    
     return false;
 }
 
@@ -283,17 +282,36 @@ bool Analyzer::loadSetup(const string& path) {
     return true;
 }
 
-//bool Analyzer::exportContainers(const std::vector<DataContainer&>, const std::string& path, const std::string& filename) {
-//    template <typename Archive>
-//    ofstream outputFile;
-//    outputFile.open(path + '/' + filename + '.csv');
-//
-//
-//
-//    //void serialize(Archive & ar, unsigned int version) {
-//    //    ar& boost::serialization::make_nvp("processbase",
-//    //                                       boost::serialization::base_object<ProcessBase>(*this));
-//    //    ar&(m_lowThreshold);
-//    //    ar&(m_highThreshold);
-//    //}
-//}
+/**
+ *
+ * @param datacontainers
+ * @param path
+ * @return
+ */
+
+bool Analyzer::exportExperiment(const std::vector<DataContainer&> datacontainers,
+                                const std::string& path) {
+    template <typename Archive>
+    ofstream outputFile;
+    outputFile.open("outputfile.csv");
+    // 1)
+    // In first row, attribute names and their corresponding object-number are outputtet
+    std::vector<std::string> attributes = datacontainers[0].extractAttributeNames();
+    outputFile << attributes[0];
+    for (long i = attributes.size(); i > 0; i--) {
+        outputFile << attributes[i] + ',';
+    }
+    outputFile << '\n';
+    attributes.clear();
+    // 2)
+    // In the following rows, output object-values of each container are put output into each row
+    for (int i = 0; i < datacontainers.size(); i++) {
+        outputFile << 'Datacontainer ' + std::to_string(i + 1);
+        std::vector<double> containerValues = datacontainers[i].extractContainer();
+        for (long j = 0; j < containerValues.size(); j++) {
+            outputFile << containerValues[j] + ',';
+        }
+        outputFile << '\n';
+    }
+    return true;
+}

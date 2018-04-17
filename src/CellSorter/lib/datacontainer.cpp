@@ -124,6 +124,8 @@ std::vector<std::string> DataContainer::extractAttributeNames() {
                  "Attribute " + std::to_string(j+1));  // REWRITE LAST PART, so specific name is given
         }
     }
+    // Outputs the output(y) of container at the end of attributes(x)
+    returnVector.push_back("Y");
     return returnVector;
 }
 
