@@ -14,7 +14,7 @@ file(GLOB LIB_HEADERS lib/*.h)
 ######################################################################
 ## Multi-thread setup
 ######################################################################
-SET(WITH_MT OFF CACHE BOOL "Build with Multi-threading")
+SET(WITH_MT OFF CACHE BOOL "Build with doxygen document generation")
 
 ######################################################################
 ## endof Multi-thread setup
