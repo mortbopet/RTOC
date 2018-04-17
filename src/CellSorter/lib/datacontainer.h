@@ -141,11 +141,15 @@ public:
 
     std::vector<double> extractObject(int objIndex);
     std::vector<double> extractContainer();
+    std::vector<std::string> extractAttributeNames();
 
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
     size_t size() { return m_data.size(); };
+
+    void setClass(int classification) {m_class = classification;};
+    int getClass() {return m_class;};
 
     DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
@@ -163,6 +167,7 @@ public:
 private:
     std::vector<DataObject*> m_data;
     int m_dataFlags = 0;
+    int m_class;
 
     bool m_locked = false;
     size_t m_objectSize;

@@ -113,6 +113,15 @@ std::vector<double> DataContainer::extractContainer() {
     return returnVector;
 }
 
+std::vector<std::string> DataContainer::extractAttributeNames() {
+    std::vector<std::string> returnVector;
+
+
+
+
+    return returnVector;
+}
+
 int DataContainer::numberOfFlags() {
     int number = 0;
     for (int i = 0; i < 32; i++) {

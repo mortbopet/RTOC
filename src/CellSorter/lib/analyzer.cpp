@@ -283,12 +283,17 @@ bool Analyzer::loadSetup(const string& path) {
     return true;
 }
 
-//bool Analyzer::exportContainers(const std::vector<DataContainer&>, const std::string& path) {
-//    template <typename Archive>
-//    void serialize(Archive & ar, unsigned int version) {
-//        ar& boost::serialization::make_nvp("processbase",
-//                                           boost::serialization::base_object<ProcessBase>(*this));
-//        ar&(m_lowThreshold);
-//        ar&(m_highThreshold);
-//    }
-//}
+bool Analyzer::exportContainers(const std::vector<DataContainer&>, const std::string& path, const std::string& filename) {
+    template <typename Archive>
+    ofstream outputFile;
+    outputFile.open(path + '/' + filename + '.csv');
+
+
+
+    //void serialize(Archive & ar, unsigned int version) {
+    //    ar& boost::serialization::make_nvp("processbase",
+    //                                       boost::serialization::base_object<ProcessBase>(*this));
+    //    ar&(m_lowThreshold);
+    //    ar&(m_highThreshold);
+    //}
+}
