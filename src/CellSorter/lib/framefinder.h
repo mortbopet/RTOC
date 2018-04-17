@@ -3,7 +3,6 @@
 
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <QFileInfoList>
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <opencv/cv.hpp>
@@ -16,13 +15,6 @@ struct Frame {
     bool accepted;
 
     bool operator<(const Frame& rhs) const { return id < rhs.id; }
-};
-
-struct Frame_Q {
-    QFileInfo fileinfo;
-    int id;
-
-    bool operator<(const Frame_Q& rhs) const { return id < rhs.id; }
 };
 
 /**
@@ -47,6 +39,14 @@ bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 
+#include <QFileInfoList>
+
+struct Frame_Q {
+    QFileInfo fileinfo;
+    int id;
+
+    bool operator<(const Frame_Q& rhs) const { return id < rhs.id; }
+};
 void sort_qfilelist(QFileInfoList& qfil, const QString& del1 = "_", const QString& del2 = ".");
 
 #endif  // FRAMEFINDER_FFHELPERS_H
