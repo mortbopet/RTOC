@@ -260,4 +260,11 @@ TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
         std::vector<double> compareMatrix = {20.1, 3.1, 23.1, 4.1, 26.1, 12.1};
         REQUIRE (container.extractContainer() == compareMatrix);
     }
+
+    SECTION("extractAttributeNames") {
+        std::vector<std::string> compareVector = {"C1: Attribute 1", "C1: Attribute 2",
+                                                  "C2: Attribute 1", "C2: Attribute 2",
+                                                  "C3: Attribute 1", "C3: Attribute 2"};
+        REQUIRE (container.extractAttributeNames() == compareVector);
+    }
 }

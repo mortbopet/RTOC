@@ -115,10 +115,15 @@ std::vector<double> DataContainer::extractContainer() {
 
 std::vector<std::string> DataContainer::extractAttributeNames() {
     std::vector<std::string> returnVector;
-
-
-
-
+    // Goes through all DataObjects
+    for (int i = 0; i < size(); i++) {
+        // Goes through all attributes for that given object (Need to exclude non-double values)
+        for (int j = 0; j < numberOfFlags(); j++) {
+            returnVector.push_back
+                ("C" + std::to_string(i+1) + ": " +
+                 "Attribute " + std::to_string(j+1));  // REWRITE LAST PART, so specific name is given
+        }
+    }
     return returnVector;
 }
 
