@@ -69,34 +69,34 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
 
 std::vector<double> DataContainer::extractObject(int objIndex) {
     std::vector<double> returnVector;
-    if ((1 << 0) & m_dataFlags) {
+    if (data::Area & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Area));
     }
-    if ((1 << 3) & m_dataFlags) {
+    if (data::Circularity & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Circularity));
     }
-    if ((1 << 4) & m_dataFlags) {
+    if (data::ConvexArea & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::ConvexArea));
     }
-    if ((1 << 5) & m_dataFlags) {
+    if (data::Eccentricity & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Eccentricity));
     }
-    if ((1 << 7) & m_dataFlags) {
+    if (data::GradientScore & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::GradientScore));
     }
-    if ((1 << 11) & m_dataFlags) {
+    if (data::Major_axis & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Major_axis));
     }
-    if ((1 << 12) & m_dataFlags) {
+    if (data::Minor_axis & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Minor_axis));
     }
-    if ((1 << 13) & m_dataFlags) {
+    if (data::Solidity & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Solidity));
     }
-    if ((1 << 14) & m_dataFlags) {
+    if (data::Symmetry & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Symmetry));
     }
-    if ((1 << 15) & m_dataFlags) {
+    if (data::Perimeter & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Perimeter));
     }
     return returnVector;
