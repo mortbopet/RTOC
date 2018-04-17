@@ -4,7 +4,6 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 
-
 void Analyzer::loadExperimentPreset(const std::string& img_path) {
     m_Experiment.defaultSettings(img_path);
 }
@@ -100,23 +99,23 @@ void Analyzer::findObjects() {
             if (cellNum < 0) {
                 newcell = true;
             } else {
-                Tracker term(frameNo-1);
+                Tracker term(frameNo - 1);
 
                 currentCells = matlab::find<Tracker>(tracker, term);
 
                 if (currentCells.empty()) {
                     newcell = true;
                 } else {
-
                     // Calculate distances
-                    for (const Tracker &cc : currentCells) {
+                    for (const Tracker& cc : currentCells) {
                         centroid = dc[i]->getValue<cv::Point>(data::Centroid);
                         dist = matlab::dist(centroid, cc.centroid);
-                        if (dist < -10) dist = 100;
+                        if (dist < -10)
+                            dist = 100;
                         d.push_back(dist);
                     }
 
-                    std::pair<double,unsigned long> p = matlab::min<double>(d);
+                    std::pair<double, unsigned long> p = matlab::min<double>(d);
                     dist = p.first;
                     t = currentCells.at(p.second);
 
@@ -125,7 +124,7 @@ void Analyzer::findObjects() {
 
                     // Set threshold
                     if (centroid.x <= m_Experiment.inlet - 5) {
-                        dist_thres = 5.0;   // Should be a settable variable
+                        dist_thres = 5.0;  // Should be a settable variable
                     } else {
                         dist_thres = 20.0;  // Should be a settable variable
                     }
@@ -135,7 +134,6 @@ void Analyzer::findObjects() {
                 }
             }
             if (newcell) {
-
                 cellNum++;
 
                 m_Experiment.data.emplace_back(new DataContainer(0xffff));
@@ -147,32 +145,44 @@ void Analyzer::findObjects() {
                 (*m_Experiment.data[cellNum])[0]->setValue(data::Label, cellNum);
 
                 (*m_Experiment.data[cellNum])[0]->setValue(data::Frame, frameNo);
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Circularity, dc[i]->getValue<double>(data::Circularity));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
+                (*m_Experiment.data[cellNum])[0]->setValue(
+                    data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
+                (*m_Experiment.data[cellNum])[0]->setValue(
+                    data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
+                (*m_Experiment.data[cellNum])[0]->setValue(
+                    data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
+                (*m_Experiment.data[cellNum])[0]->setValue(
+                    data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
+                (*m_Experiment.data[cellNum])[0]->setValue(
+                    data::Circularity, dc[i]->getValue<double>(data::Circularity));
+                (*m_Experiment.data[cellNum])[0]->setValue(data::Symmetry,
+                                                           dc[i]->getValue<double>(data::Symmetry));
+                (*m_Experiment.data[cellNum])[0]->setValue(
+                    data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
 
                 t.cell_no = cellNum;
 
             } else {
-
                 sameCell = t.cell_no;
 
                 m_Experiment.data[sameCell]->appendNew();
                 auto index = m_Experiment.data[sameCell]->size() - 1;
 
                 (*m_Experiment.data[sameCell])[index]->setValue(data::Frame, frameNo);
-                (*m_Experiment.data[sameCell])[index]->setValue(data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
-                (*m_Experiment.data[sameCell])[index]->setValue(data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
-                (*m_Experiment.data[sameCell])[index]->setValue(data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
-                (*m_Experiment.data[sameCell])[index]->setValue(data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
-                (*m_Experiment.data[sameCell])[index]->setValue(data::Circularity, dc[i]->getValue<double>(data::Circularity));
-                (*m_Experiment.data[sameCell])[index]->setValue(data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
-                (*m_Experiment.data[sameCell])[index]->setValue(data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
-
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::Circularity, dc[i]->getValue<double>(data::Circularity));
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
+                (*m_Experiment.data[sameCell])[index]->setValue(
+                    data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
             }
             t.frame_no = frameNo;
             t.centroid = dc[i]->getValue<cv::Point>(data::Centroid);
@@ -188,38 +198,28 @@ void Analyzer::findObjects() {
  * @details
  */
 void Analyzer::cleanObjects() {
+    unsigned int count_threshold = 25;
+
     auto n = m_Experiment.data.size();
     std::vector<bool> remove(n);
-    // Start by removing objects with less than count_threshold frames
+    // Start by removing objects with less than fl frames
     /*
-    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
-                                           m_Experiment.data.end(),
-                                           [](std::unique_ptr<DataContainer> dc) { return (*dc).size() < 25; }));
+    m_Experiment.data.erase(
+        std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(),
+                       [=](DataContainer* dc) { return (*dc).size() < count_threshold; }));
 
-    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
-                                           m_Experiment.data.end(),
-                                           [](std::unique_ptr<DataContainer> dc) {
-                                               cv::Rect bb = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
-                                               return (bb.x + bb.width) > ((*dc).front()->getValue<int>(data::Inlet) - 1);
-                                           }));
+    m_Experiment.data.erase(
+        std::remove_if(m_Experiment.dat a.begin(), m_Experiment.data.end(), [=](DataContainer* dc) {
+            cv::Rect bb = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
+            return (bb.x + bb.width) > (m_Experiment.inlet - 1);
+        }));
 
-    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
-                                           m_Experiment.data.end(),
-                                           [](std::unique_ptr<DataContainer> dc) {
-                                               cv::Rect bb = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
-                                               return (bb.x + bb.width) < (*dc).front()->getValue<int>(data::Outlet);
-                                           }));
-    */
-}
-
-/**
- * @brief function for storing data from experiment
- * @param path
- * @return
- */
-bool Analyzer::storeData(const std::string &path) {
-
-
+    m_Experiment.data.erase(
+        std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(), [=](DataContainer* dc) {
+            cv::Rect bb = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
+            return (bb.x + bb.width) < m_Experiment.outlet;
+        }));
+        */
 }
 
 /// Debug helpers

@@ -20,6 +20,7 @@ private slots:
     void on_groupBox_toggled(bool arg1);
 
 private:
+    void setToolTips();
     void setupDataOptions();
     Ui::ExperimentSetup* ui;
 

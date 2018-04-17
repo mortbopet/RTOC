@@ -25,14 +25,14 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="store">
+           <widget class="QPushButton" name="load">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="load">
+           <widget class="QPushButton" name="store">
             <property name="text">
              <string/>
             </property>
