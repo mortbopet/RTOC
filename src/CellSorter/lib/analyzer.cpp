@@ -221,10 +221,12 @@ void Analyzer::cleanObjects() {
 
 /**
  * @brief function for storing data from experiment
+ * @details Stores the contents of `m_Experiment.data` to some external file
  * @param path
  * @return
  */
 bool Analyzer::storeData(const std::string& path) {
+    
     return false;
 }
 
