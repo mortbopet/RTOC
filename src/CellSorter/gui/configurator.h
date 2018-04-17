@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <string>
+#include "imagedisplayerwidget.h"
 #include "parameterdelegate.h"
 #include "processinterface.h"
 #include "treemodel.h"
@@ -34,6 +35,8 @@ private:
     Ui::Configurator* ui;
     ProcessInterface* m_interface;
     ParameterDelegate* m_delegate;
+
+    ImageDisplayerWidget* m_imagedisplayer;
 
     QModelIndex insertChild(const QModelIndex& index, QList<QVariant> values);
     void insertRow(const QModelIndex& index, QList<QVariant> values);

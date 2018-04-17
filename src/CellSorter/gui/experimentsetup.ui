@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>598</width>
-    <height>471</height>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,16 +17,84 @@
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="help">
-       <property name="text">
-        <string/>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="3">
+        <widget class="QPushButton" name="run">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Run experiment</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="help">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit"/>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="setExperimentPath">
+         <property name="text">
+          <string>Set</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="l_etype">
+         <property name="text">
+          <string>Experiment type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBox"/>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="l_outputpath">
@@ -35,22 +103,22 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Set</string>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="experimentPath">
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="l_etype">
+        <widget class="QLabel" name="l_ename">
          <property name="text">
-          <string>Experiment type:</string>
+          <string>Experiment name:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="comboBox"/>
+        <widget class="QLineEdit" name="experimentName"/>
        </item>
       </layout>
      </item>
@@ -77,7 +145,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="4" column="0">
                 <widget class="QCheckBox" name="contExec">
                  <property name="text">
                   <string>Continue experiment after 'Recording time' has elapsed</string>
@@ -85,7 +153,7 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBox"/>
+                <widget class="QSpinBox" name="rectime"/>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="l_fps">
@@ -95,7 +163,17 @@
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QSpinBox" name="spinBox_2"/>
+                <widget class="QSpinBox" name="fps"/>
+               </item>
+               <item row="3" column="0">
+                <widget class="QCheckBox" name="runProcessing">
+                 <property name="text">
+                  <string>Run processing</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -129,6 +207,9 @@
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
@@ -165,7 +246,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>raw_</string>
+             <string>raw</string>
             </property>
            </widget>
           </item>
@@ -189,7 +270,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>processed_</string>
+             <string>processed</string>
             </property>
            </widget>
           </item>

@@ -38,6 +38,8 @@ QWidget* ParameterDelegate::createEditor(QWidget* parent, const QStyleOptionView
             return cb;
         }
     }
+    Q_ASSERT(false);
+    return nullptr;
 }
 
 void ParameterDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const {
