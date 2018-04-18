@@ -12,8 +12,6 @@
 
 #include <functional>
 
-
-
 class Analyzer {
 public:
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
@@ -49,7 +47,7 @@ public:
 private:
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
 
-    std::vector<std::unique_ptr<DataContainer>> m_data; // experiment data here ? (JL, 17-04-18)
+    std::vector<std::unique_ptr<DataContainer>> m_data;  // experiment data here ? (JL, 17-04-18)
 
     std::function<cv::Mat&(bool& sucessful)> m_imageGetterFunction;
 };

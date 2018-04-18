@@ -9,7 +9,7 @@ void Analyzer::loadExperimentPreset(const std::string& img_path) {
 }
 
 void Analyzer::loadImagesFromFolder() {
-    std::vector<Frame> frames;
+    std::vector<framefinder::Frame> frames;
     std::string img_folder = m_Experiment.imagePath;
     get_files(frames, img_folder);
     accept_or_reject(frames, img_folder, m_Experiment.intensity_threshold);
@@ -33,7 +33,7 @@ void Analyzer::loadImagesFromText() {
  * @brief
  * @param bg : background image to be used
  */
-void Analyzer::setBG(const cv::Mat &bg) {
+void Analyzer::setBG(const cv::Mat& bg) {
     m_bg = bg;
 }
 
@@ -102,7 +102,7 @@ void Analyzer::findObjects() {
     int numObjects = 0;
     DataContainer dc(0xffff);
 
-    for (const Frame& f : m_Experiment.processed) {
+    for (const framefinder::Frame& f : m_Experiment.processed) {
         cv::Mat img_to_show = f.image;
 
         // Get data from blobs in frame
@@ -225,11 +225,11 @@ void Analyzer::cleanObjects() {
     }
 
     // Burde være i sin egen funktion
-    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(),
-                                           m_Experiment.data.end(),
-                                           [thresh = count_threshold](const auto& dc) { return (*dc).size() < thresh; }),
+    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(),
+                                           [thresh = count_threshold](const auto& dc) {
+                                               return (*dc).size() < thresh;
+                                           }),
                             m_Experiment.data.end());
-
 }
 
 /**
@@ -239,7 +239,6 @@ void Analyzer::cleanObjects() {
  * @return
  */
 bool Analyzer::storeData(const std::string& path) {
-
     return false;
 }
 
