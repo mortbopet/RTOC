@@ -293,11 +293,12 @@ bool Analyzer::exportExperiment() {
     m_Experiment.data[0]->extractAttributeNames();
 
     std::ofstream out("test.csv");
+
     // 1)
     // In first row, attribute names and their corresponding object-number are outputtet
     std::vector<std::string> attributes = m_Experiment.data[0]->extractAttributeNames();
     out << "EXPERIMENT NAME" << ",";
-    for (long i = attributes.size(); i > 0; i--) {
+    for (int i = 0; i < attributes.size(); i++) {
         out << attributes[i] << "," ;
     }
     out << '\n';
@@ -305,7 +306,7 @@ bool Analyzer::exportExperiment() {
     // 2)
     // In the following rows, output object-values of each container are put output into each row
     for (int i = 0; i < m_Experiment.data[0]->size(); i++) {
-        out << "Datacontainer " << std::to_string(i + 1) << ",";
+        out << "Observation " << std::to_string(i + 1) << ",";
         std::vector<double> containerValues = m_Experiment.data[i]->extractContainer();
         for (long j = 0; j < containerValues.size(); j++) {
             out << containerValues[j] << ",";
