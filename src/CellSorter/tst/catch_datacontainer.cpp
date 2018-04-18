@@ -1,5 +1,6 @@
 #include "catch.hpp"
 
+#include "../lib/analyzer.h"
 #include "../lib/datacontainer.h"
 
 TEST_CASE("DataContainer Class Test", "[full], [datacontainer]") {
@@ -212,12 +213,8 @@ TEST_CASE("dataFlag and values (multiple at once)", "[full], [datacontainer]") {
         REQUIRE(container[0]->getValue<double>(data::Perimeter) == 3.433);
         // assert get.PixelIdxList here
     }
-    SECTION("set some data-types") {
-
-    }
-    SECTION("set some other data-types") {
-
-    }
+    SECTION("set some data-types") {}
+    SECTION("set some other data-types") {}
 }
 
 TEST_CASE("numberOfFlags") {
@@ -251,20 +248,54 @@ TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
         std::vector<double> compareVector1 = {20.1, 3.1};
         std::vector<double> compareVector2 = {23.1, 4.1};
         std::vector<double> compareVector3 = {26.1, 12.1};
-        REQUIRE (container.extractObject(0) == compareVector1);
-        REQUIRE (container.extractObject(1) == compareVector2);
-        REQUIRE (container.extractObject(2) == compareVector3);
+        REQUIRE(container.extractObject(0) == compareVector1);
+        REQUIRE(container.extractObject(1) == compareVector2);
+        REQUIRE(container.extractObject(2) == compareVector3);
     }
 
     SECTION("Extract all data from multiple data objects within same container") {
         std::vector<double> compareMatrix = {20.1, 3.1, 23.1, 4.1, 26.1, 12.1};
-        REQUIRE (container.extractContainer() == compareMatrix);
+        REQUIRE(container.extractContainer() == compareMatrix);
     }
 
     SECTION("extractAttributeNames") {
-        std::vector<std::string> compareVector = {"C1: Attribute 1", "C1: Attribute 2",
-                                                  "C2: Attribute 1", "C2: Attribute 2",
-                                                  "C3: Attribute 1", "C3: Attribute 2"};
-        REQUIRE (container.extractAttributeNames() == compareVector);
+        std::vector<std::string> compareVector = {"C1: Attribute 1",
+                                                  "C1: Attribute 2",
+                                                  "C2: Attribute 1",
+                                                  "C2: Attribute 2",
+                                                  "C3: Attribute 1",
+                                                  "C3: Attribute 2",
+                                                  "Y"};
+        REQUIRE(container.extractAttributeNames() == compareVector);
+    }
+}
+
+// !TEMP! TEST CASE FOR ANALYZER //
+
+TEST_CASE("exportExperiment") {
+
+    std::vector<std::unique_ptr<DataContainer>> listOfContainers;
+    listOfContainers.emplace_back(new DataContainer(0x0011));
+    listOfContainers[0]->appendNew();
+    listOfContainers[0]->appendNew();
+    listOfContainers.emplace_back(new DataContainer(0x0011));
+    listOfContainers[1]->appendNew();
+    listOfContainers[1]->appendNew();
+
+    (*listOfContainers[0])[0]->setValue(data::Area, 20.1);
+    (*listOfContainers[0])[1]->setValue(data::Area, 23.1);
+    (*listOfContainers[0])[0]->setValue(data::ConvexArea, 3.1);
+    (*listOfContainers[0])[1]->setValue(data::ConvexArea, 4.1);
+
+    (*listOfContainers[1])[0]->setValue(data::Area, 20.1);
+    (*listOfContainers[1])[1]->setValue(data::Area, 23.1);
+    (*listOfContainers[1])[0]->setValue(data::ConvexArea, 3.1);
+    (*listOfContainers[1])[1]->setValue(data::ConvexArea, 4.1);
+
+    //Analyzer analyzer;
+
+    SECTION("exportExperiment") {
+        analyzer.exportExperiment(listOfContainers);
+        REQUIRE(1 == 1);
     }
 }

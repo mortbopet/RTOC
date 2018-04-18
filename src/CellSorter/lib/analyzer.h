@@ -34,7 +34,7 @@ public:
     void findObjects();
     void cleanObjects();
 
-    bool exportExperiment(const std::vector<DataContainer &> datacontainers, const std::string &path);
+    bool exportExperiment(std::vector<DataContainer> datacontainers);
 
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);

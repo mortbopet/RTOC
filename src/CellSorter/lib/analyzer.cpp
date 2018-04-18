@@ -289,29 +289,31 @@ bool Analyzer::loadSetup(const string& path) {
  * @return
  */
 
-bool Analyzer::exportExperiment(const std::vector<DataContainer&> datacontainers,
-                                const std::string& path) {
-    template <typename Archive>
-    ofstream outputFile;
-    outputFile.open("outputfile.csv");
+bool Analyzer::exportExperiment(std::vector<DataContainer> datacontainers) {
+    //template <typename Archive>
+    //ofstream outputFile;
+    //outputFile.open("outputfile.csv");
+    std::string outputFile;
     // 1)
     // In first row, attribute names and their corresponding object-number are outputtet
     std::vector<std::string> attributes = datacontainers[0].extractAttributeNames();
-    outputFile << attributes[0];
+    outputFile += attributes[0];
     for (long i = attributes.size(); i > 0; i--) {
-        outputFile << attributes[i] + ',';
+        outputFile += (attributes[i] + ',');
     }
-    outputFile << '\n';
+    outputFile += '\n';
     attributes.clear();
     // 2)
     // In the following rows, output object-values of each container are put output into each row
     for (int i = 0; i < datacontainers.size(); i++) {
-        outputFile << 'Datacontainer ' + std::to_string(i + 1);
+        outputFile += 'Datacontainer ';
+        outputFile += std::to_string(i + 1);
         std::vector<double> containerValues = datacontainers[i].extractContainer();
         for (long j = 0; j < containerValues.size(); j++) {
-            outputFile << containerValues[j] + ',';
+            outputFile += containerValues[j];
+            outputFile += ",";
         }
-        outputFile << '\n';
+        outputFile += '\n';
     }
     return true;
 }
