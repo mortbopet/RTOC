@@ -128,7 +128,8 @@ std::vector<std::string> DataContainer::extractAttributeNames() {
         }
     }
     // Outputs the output(y) of container at the end of attributes(x)
-    returnVector.push_back("Y");
+    returnVector.push_back("Output");
+    std::reverse(returnVector.begin(), returnVector.end());
     return returnVector;
 }
 

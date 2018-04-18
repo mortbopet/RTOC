@@ -14,7 +14,30 @@ int main(int argc, char** argv) {
     Timer t;
     Analyzer analyzer;
 
+    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x0011));
+    analyzer.m_Experiment.data[0]->appendNew();
+    analyzer.m_Experiment.data[0]->appendNew();
+    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x0011));
+    analyzer.m_Experiment.data[1]->appendNew();
+    analyzer.m_Experiment.data[1]->appendNew();
+
+    (*analyzer.m_Experiment.data[0])[0]->setValue(data::Area, 20.1);
+    (*analyzer.m_Experiment.data[0])[1]->setValue(data::Area, 23.1);
+    (*analyzer.m_Experiment.data[0])[0]->setValue(data::ConvexArea, 3.1);
+    (*analyzer.m_Experiment.data[0])[1]->setValue(data::ConvexArea, 4.1);
+
+    (*analyzer.m_Experiment.data[1])[0]->setValue(data::Area, 20.1);
+    (*analyzer.m_Experiment.data[1])[1]->setValue(data::Area, 23.1);
+    (*analyzer.m_Experiment.data[1])[0]->setValue(data::ConvexArea, 3.1);
+    (*analyzer.m_Experiment.data[1])[1]->setValue(data::ConvexArea, 4.1);
+
+    analyzer.exportExperiment();
+
 #ifdef BUILD_GUI
+
+
+
+
     Q_INIT_RESOURCE(icons);
     QApplication a(argc, argv);
 

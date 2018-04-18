@@ -292,29 +292,26 @@ bool Analyzer::loadSetup(const string& path) {
 bool Analyzer::exportExperiment() {
     m_Experiment.data[0]->extractAttributeNames();
 
-    //ofstream outputFile;
-    //outputFile.open("outputfile.csv");
-    std::string outputFile;
+    std::ofstream out("test.csv");
     // 1)
     // In first row, attribute names and their corresponding object-number are outputtet
     std::vector<std::string> attributes = m_Experiment.data[0]->extractAttributeNames();
-    outputFile += attributes[0];
+    out << "EXPERIMENT NAME" << ",";
     for (long i = attributes.size(); i > 0; i--) {
-        outputFile += (attributes[i] + ',');
+        out << attributes[i] << "," ;
     }
-    outputFile += '\n';
+    out << '\n';
     attributes.clear();
     // 2)
     // In the following rows, output object-values of each container are put output into each row
     for (int i = 0; i < m_Experiment.data[0]->size(); i++) {
-        outputFile += 'Datacontainer ';
-        outputFile += std::to_string(i + 1);
+        out << "Datacontainer " << std::to_string(i + 1) << ",";
         std::vector<double> containerValues = m_Experiment.data[i]->extractContainer();
         for (long j = 0; j < containerValues.size(); j++) {
-            outputFile += containerValues[j];
-            outputFile += ",";
+            out << containerValues[j] << ",";
         }
-        outputFile += '\n';
+        out << '\n';
     }
+    out.close();
     return true;
 }
