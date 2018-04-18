@@ -74,9 +74,9 @@ void Configurator::updateModel() {
         QString type = QString::fromStdString(
             m_interface->doActionForType(process->getTypeName(), ProcessTypeAction::GetName));
 
-        insertRow(m_model->index(m_model->rowCount() - 1, 0),
-                  QList<QVariant>() << processIndex << type << ""
-                                    << "");
+        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>()
+                                                                  << processIndex << type << ""
+                                                                  << "");
         auto parameters = process->getParameters();
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();
