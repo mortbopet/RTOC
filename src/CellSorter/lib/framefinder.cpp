@@ -40,7 +40,7 @@ int framefinder::files_from_folder(std::vector<std::string>& files, const std::s
  * @return      :   extracted std::string
  */
 std::string framefinder::extractBetween(const std::string& src, const std::string& first,
-                           const std::string& last) {
+                                        const std::string& last) {
     long a = src.rfind(first);
     if (a < 0)
         return "NOT_FOUND";
@@ -109,7 +109,7 @@ bool framefinder::hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int
  * @param path_dis      :   string          :   path to "discarded" txt-file
  */
 void framefinder::accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
-                      const double& threshold) {
+                                   const double& threshold) {
     double crit = 0.0;
 
     cv::Mat lastMoved = cv::imread(img_folder + "/" + frames[0].filename, cv::IMREAD_GRAYSCALE);

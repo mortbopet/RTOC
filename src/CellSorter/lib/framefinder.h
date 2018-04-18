@@ -1,16 +1,15 @@
 #ifndef FRAMEFINDER_FFHELPERS_H
 #define FRAMEFINDER_FFHELPERS_H
 
-#include <QFileInfoList>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <QFileInfoList>
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <opencv/cv.hpp>
 #include <vector>
 
 namespace framefinder {
-
 
 struct Frame {
     cv::Mat image;
@@ -43,7 +42,7 @@ bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 
-} // framefinder
+}  // namespace framefinder
 
 namespace framefinder_Q {
 struct Frame_Q {
@@ -55,5 +54,5 @@ struct Frame_Q {
 
 void sort_qfilelist(QFileInfoList& qfil, const QString& del1 = "_", const QString& del2 = ".");
 
-}; // framefinder_Q
+};      // namespace framefinder_Q
 #endif  // FRAMEFINDER_FFHELPERS_H
