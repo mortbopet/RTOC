@@ -28,7 +28,8 @@ enum DataFlags {
     Solidity = 1 << 13,
     Symmetry = 1 << 14,
     Perimeter = 1 << 15,
-    PixelIdxList = 1 << 16
+    PixelIdxList = 1 << 16,
+    OutputValue = 1 << 17
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
@@ -49,7 +50,8 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {Solidity, sizeof(double)},
                                            {Symmetry, sizeof(double)},
                                            {Perimeter, sizeof(double)},
-                                           {PixelIdxList, sizeof(std::vector<cv::Point>*)}};
+                                           {PixelIdxList, sizeof(std::vector<cv::Point>*)},
+                                           {OutputValue, sizeof(double)}};
 
 // Data types which can be extracted through GUI - gui uses this map to generate available data
 // points for data extraction
@@ -66,7 +68,8 @@ static std::map<DataFlags, std::string> guiMap{{Area, "Area"},
                                                {Minor_axis, "Minor axis"},
                                                {Solidity, "Solidity"},
                                                {Symmetry, "Symmetry"},
-                                               {Perimeter, "Perimeter"}};
+                                               {Perimeter, "Perimeter"},
+                                               {OutputValue, "Output value"}};
 
 }  // namespace data
 
@@ -148,14 +151,12 @@ public:
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
     size_t size() { return m_data.size(); };
 
-    void setClass(int classification) {m_class = classification;};
-    int getClass() {return m_class;};
-
     DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
 
     DataObject* front() { return m_data.front(); };
-    DataObject* back() { return m_data.back(); };;
+    DataObject* back() { return m_data.back(); };
+    ;
 
     std::vector<DataObject*>::iterator begin() { return m_data.begin(); }
     std::vector<DataObject*>::iterator end() { return m_data.end(); }
@@ -167,14 +168,12 @@ public:
 private:
     std::vector<DataObject*> m_data;
     int m_dataFlags = 0;
-    int m_class;
 
     bool m_locked = false;
     size_t m_objectSize;
 
 protected:
     void calculateObjectSize();
-
 };
 
 #endif  // DATACONTAINER_H

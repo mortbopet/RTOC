@@ -75,7 +75,7 @@ std::vector<double> DataContainer::extractObject(int objIndex) {
     if (data::Circularity & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Circularity));
     }
-    if (data::ConvexArea & m_dataFlags) {
+    if (data::Area & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::ConvexArea));
     }
     if (data::Eccentricity & m_dataFlags) {
@@ -98,6 +98,9 @@ std::vector<double> DataContainer::extractObject(int objIndex) {
     }
     if (data::Perimeter & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Perimeter));
+    }
+    if (data::OutputValue & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::OutputValue));
     }
     return returnVector;
 }
