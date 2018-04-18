@@ -17,11 +17,24 @@ void Analyzer::loadImagesFromFolder() {
     get_rejected(frames, m_Experiment.dis);
 }
 
+/**
+ * @brief
+ *
+ * @warning NOT IMPLEMENTED
+ */
 void Analyzer::loadImagesFromText() {
     std::string accepted;  // Path to accepted text-file
     std::string rejected;  // Path to rejected text-file
     // Compile img_folder path with filenames from text-files
     // and push frames to m_Experiment
+}
+
+/**
+ * @brief
+ * @param bg : background image to be used
+ */
+void Analyzer::setBG(const cv::Mat &bg) {
+    m_bg = bg;
 }
 
 /**
@@ -226,7 +239,7 @@ void Analyzer::cleanObjects() {
  * @return
  */
 bool Analyzer::storeData(const std::string& path) {
-    
+
     return false;
 }
 

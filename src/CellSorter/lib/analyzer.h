@@ -21,6 +21,7 @@ public:
     void loadExperimentPreset(const std::string& img_path);
     void loadImagesFromFolder();
     void loadImagesFromText();
+    void setBG(const cv::Mat& bg);
     void selectBG();
     void runProcesses();
     void runAnalyzer();
