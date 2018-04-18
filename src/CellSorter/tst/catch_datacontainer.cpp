@@ -277,32 +277,3 @@ TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
         //REQUIRE(container.extractAttributeNames() == compareVector);
     }
 }
-
-// !TEMP! TEST CASE FOR ANALYZER //
-
-TEST_CASE("exportExperiment") {
-    Analyzer analyzer;
-    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x0011));
-    analyzer.m_Experiment.data[0]->appendNew();
-    analyzer.m_Experiment.data[0]->appendNew();
-    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x0011));
-    analyzer.m_Experiment.data[1]->appendNew();
-    analyzer.m_Experiment.data[1]->appendNew();
-
-    (*analyzer.m_Experiment.data[0])[0]->setValue(data::Area, 20.1);
-    (*analyzer.m_Experiment.data[0])[1]->setValue(data::Area, 23.1);
-    (*analyzer.m_Experiment.data[0])[0]->setValue(data::ConvexArea, 3.1);
-    (*analyzer.m_Experiment.data[0])[1]->setValue(data::ConvexArea, 4.1);
-
-    (*analyzer.m_Experiment.data[1])[0]->setValue(data::Area, 20.1);
-    (*analyzer.m_Experiment.data[1])[1]->setValue(data::Area, 23.1);
-    (*analyzer.m_Experiment.data[1])[0]->setValue(data::ConvexArea, 3.1);
-    (*analyzer.m_Experiment.data[1])[1]->setValue(data::ConvexArea, 4.1);
-
-    SECTION("exportExperiment") {
-        analyzer.m_Experiment.data[0]->extractAttributeNames();
-        analyzer.exportExperiment();
-
-        REQUIRE(1 == 1);
-    }
-}

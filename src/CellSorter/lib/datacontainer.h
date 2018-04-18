@@ -142,7 +142,7 @@ public:
     void setDataFlags(long flag);
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
-    std::vector<double> extractObject(int objIndex);
+    std::vector<double> extractObject(int objIndex, int lastObject);
     std::vector<double> extractContainer();
     std::vector<std::string> extractAttributeNames();
 

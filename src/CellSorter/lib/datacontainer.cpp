@@ -67,7 +67,7 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
     calculateObjectSize();
 }
 
-std::vector<double> DataContainer::extractObject(int objIndex) {
+std::vector<double> DataContainer::extractObject(int objIndex, int lastObject) {
     std::vector<double> returnVector;
     if (data::Area & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Area));
@@ -99,7 +99,8 @@ std::vector<double> DataContainer::extractObject(int objIndex) {
     if (data::Perimeter & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Perimeter));
     }
-    if (data::OutputValue & m_dataFlags) {
+    if ((data::OutputValue & m_dataFlags) &&
+        ((lastObject - 1) == objIndex)) {  // Checks if last object is hit, returns output value
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::OutputValue));
     }
     return returnVector;
@@ -109,7 +110,7 @@ std::vector<double> DataContainer::extractContainer() {
     std::vector<double> returnVector;
     long sizeOfContainer = size();
     for (int i = 0; i < sizeOfContainer; i++) {
-        std::vector<double> returnVectorTemp = extractObject(i);
+        std::vector<double> returnVectorTemp = extractObject(i, size());
         returnVector.insert(returnVector.end(), returnVectorTemp.begin(), returnVectorTemp.end());
     }
 
@@ -121,22 +122,25 @@ std::vector<std::string> DataContainer::extractAttributeNames() {
     // Goes through all DataObjects
     for (int i = 0; i < size(); i++) {
         // Goes through all attributes for that given object (Need to exclude non-double values)
-        for (int j = 0; j < numberOfFlags(); j++) {
-            returnVector.push_back
-                ("C" + std::to_string(i+1) + ": " +
-                 "Attribute " + std::to_string(j+1));  // REWRITE LAST PART, so specific name is given
+        for (int j = 0; j < (numberOfFlags() - 1);
+             j++) {  // We subtract '1' to ignore the output for all objects except the very last
+                     // one
+            returnVector.push_back(
+                "C" + std::to_string(i + 1) + ": " + "Attribute " +
+                std::to_string(j + 1));  // REWRITE LAST PART, so specific name is given
         }
     }
-    // Outputs the output(y) of container at the end of attributes(x)
     returnVector.push_back("Output");
-    std::reverse(returnVector.begin(), returnVector.end());
     return returnVector;
 }
 
 int DataContainer::numberOfFlags() {
     int number = 0;
     for (int i = 0; i < 32; i++) {
-        if (0b1 & (m_dataFlags >> i)) {
+        if ((0b1 & (m_dataFlags >> i)) && (0b1 << i) != data::BoundingBox &&
+            (0b1 << i) != data::Centroid && (0b1 << i) != data::Frame &&
+            (0b1 << i) != data::Inlet && (0b1 << i) != data::Outlet && (0b1 << i) != data::Label &&
+            (0b1 << i) != data::PixelIdxList) {
             number++;
         }
     }
