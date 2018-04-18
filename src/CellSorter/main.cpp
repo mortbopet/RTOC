@@ -14,24 +14,39 @@ int main(int argc, char** argv) {
     Timer t;
     Analyzer analyzer;
 
-    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x0011));
-    analyzer.m_Experiment.data[0]->appendNew();
-    analyzer.m_Experiment.data[0]->appendNew();
-    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x0011));
-    analyzer.m_Experiment.data[1]->appendNew();
-    analyzer.m_Experiment.data[1]->appendNew();
-
-    (*analyzer.m_Experiment.data[0])[0]->setValue(data::Area, 20.1);
-    (*analyzer.m_Experiment.data[0])[1]->setValue(data::Area, 23.1);
-    (*analyzer.m_Experiment.data[0])[0]->setValue(data::ConvexArea, 3.1);
-    (*analyzer.m_Experiment.data[0])[1]->setValue(data::ConvexArea, 4.1);
-
-    (*analyzer.m_Experiment.data[1])[0]->setValue(data::Area, 20.1);
-    (*analyzer.m_Experiment.data[1])[1]->setValue(data::Area, 23.1);
-    (*analyzer.m_Experiment.data[1])[0]->setValue(data::ConvexArea, 3.1);
-    (*analyzer.m_Experiment.data[1])[1]->setValue(data::ConvexArea, 4.1);
-
-    analyzer.exportExperiment();
+    //// TEMP PLACE FOR TEST ////
+    // Create 20 random containers, each with 20 objects ERROR: THOSE VALUES MUST BE EQUAL?
+    //double randomNumber;
+    //int numberOfContainers = 20;
+    //int numberOfObjects = 20;
+    //for (int i = 0; i < numberOfContainers; i++) {
+    //    analyzer.m_Experiment.data.emplace_back(new DataContainer(0x3ffff));
+    //    for (int j = 0; j < numberOfObjects; j++) {
+    //        analyzer.m_Experiment.data[i]->appendNew();
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Area, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::ConvexArea, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Circularity, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Eccentricity, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::GradientScore, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Major_axis, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Minor_axis, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Solidity, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Symmetry, randomNumber);
+    //        randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::Perimeter, randomNumber);
+    //        (*analyzer.m_Experiment.data[i])[j]->setValue(data::OutputValue, (i%2)*1.0);
+    //    }
+    //}
+    //analyzer.exportExperiment();
 
 #ifdef BUILD_GUI
 
