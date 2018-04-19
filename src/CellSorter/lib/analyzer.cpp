@@ -74,6 +74,9 @@ void Analyzer::runProcesses() {
  * @param img
  */
 void Analyzer::processSingleFrame(cv::Mat& img) {
+    if (m_bg.empty()) {
+        m_bg = img.clone();
+    }
     processImage(img, m_bg);
 }
 
