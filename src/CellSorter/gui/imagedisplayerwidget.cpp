@@ -45,8 +45,8 @@ void ImageDisplayerWidget::displayImage(int index) {
             m_image = cv::imread(m_imageFileList[index].absoluteFilePath().toStdString(),
                                  cv::IMREAD_GRAYSCALE);
             m_analyzer->processSingleFrame(m_image);
-            ui->image->setPixmap(QPixmap::fromImage(QImage(
-                (unsigned char*)m_image.data, m_image.cols, m_image.rows, QImage::Format_Grayscale8)));
+            ui->image->setPixmap(QPixmap::fromImage(QImage(m_image.data, m_image.cols,
+                                                           m_image.rows, QImage::Format_Grayscale8)));
         } else {
             // Regular mode, just display the image onto the label
             ui->image->setPixmap(QPixmap(m_imageFileList[index].absoluteFilePath()));
