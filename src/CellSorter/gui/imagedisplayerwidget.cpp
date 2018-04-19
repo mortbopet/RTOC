@@ -26,6 +26,14 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     // Disable slider & play button by default
     ui->imageSlider->setEnabled(false);
     ui->play->setEnabled(false);
+
+    // By default, do not show "view unprocessed image" on a standard imagedisplayerwidget
+    ui->showUnprocessed->hide();
+    ui->unprocessed->hide();
+
+    connect(ui->showUnprocessed, &QCheckBox::toggled, this, &ImageDisplayerWidget::refreshImage);
+    connect(ui->showUnprocessed, &QCheckBox::toggled,
+            [=](bool checked) { ui->unprocessed->setVisible(checked); });
 }
 
 ImageDisplayerWidget::~ImageDisplayerWidget() {
@@ -49,6 +57,12 @@ void ImageDisplayerWidget::displayImage(int index) {
             // An analyzer has been set, load image as a cv::mat and process it through analyzer
             m_image = cv::imread(m_imageFileList[index].absoluteFilePath().toStdString(),
                                  cv::IMREAD_GRAYSCALE);
+            // Render unprocessed image
+            if (ui->showUnprocessed->isChecked()) {
+                ui->unprocessed->setPixmap(QPixmap::fromImage(
+                    QImage(m_image.data, m_image.cols, m_image.rows, QImage::Format_Grayscale8)));
+            }
+            // Process image and set preview image
             m_analyzer->processSingleFrame(m_image);
             ui->image->setPixmap(QPixmap::fromImage(
                 QImage(m_image.data, m_image.cols, m_image.rows, QImage::Format_Grayscale8)));
@@ -61,6 +75,8 @@ void ImageDisplayerWidget::displayImage(int index) {
 
 void ImageDisplayerWidget::setAnalyzer(Analyzer* analyzer) {
     m_analyzer = analyzer;
+    // Show the "show unprocessed image" checkbox
+    ui->showUnprocessed->show();
 }
 
 cv::Mat* ImageDisplayerWidget::getNextImage(bool& successful) {
