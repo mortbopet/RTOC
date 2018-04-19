@@ -34,7 +34,7 @@ public:
     void findObjects();
     void cleanObjects();
 
-    bool exportExperiment();
+    bool exportExperiment(const string& path);
 
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);
