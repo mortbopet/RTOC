@@ -8,6 +8,7 @@
 
 #include <opencv/cv.hpp>
 
+#include "../lib/analyzer.h"
 #include "../lib/framefinder.h"
 
 namespace Ui {
@@ -23,6 +24,7 @@ public:
 
     cv::Mat* getNextImage(bool& successfull);
     void reset();
+    void setAnalyzer(Analyzer* analyzer);
 
 public slots:
     void setPath(const QString& path);
@@ -45,12 +47,16 @@ private:
 
     cv::Mat m_image;
 
+    bool m_processImages = false;
+
     int m_acqIndex;
     int m_nImages;
     QDir m_dir;
     QFileInfoList m_imageFileList;
 
     QTimer m_playTimer;
+
+    Analyzer* m_analyzer;
 };
 
 #endif  // IMAGEDISPLAYERWIDGET_H

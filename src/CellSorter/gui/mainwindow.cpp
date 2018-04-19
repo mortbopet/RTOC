@@ -14,7 +14,7 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     ui->setupUi(this);
 
     m_processInterface = new ProcessInterface(m_analyzer);
-    m_configurator = new Configurator(m_processInterface);
+    m_configurator = new Configurator(m_processInterface, m_analyzer);
     m_experimentSetup = new ExperimentSetup(m_analyzer);
     ui->configLayout->addWidget(m_configurator);
     ui->experimentLayout->addWidget(m_experimentSetup);

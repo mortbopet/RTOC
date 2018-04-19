@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include <QHeaderView>
 
-Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
+Configurator::Configurator(ProcessInterface* interface, Analyzer* analyzer, QWidget* parent)
     : m_interface(interface), QWidget(parent), ui(new Ui::Configurator) {
     ui->setupUi(this);
 
@@ -58,6 +58,9 @@ Configurator::Configurator(ProcessInterface* interface, QWidget* parent)
     // create image displayer for previewing processed images
     m_imagedisplayer = new ImageDisplayerWidget();
     ui->previewLayout->addWidget(m_imagedisplayer);
+
+    // Set an analyzer for the image configurator so it will preview processed images
+    m_imagedisplayer->setAnalyzer(analyzer);
 }
 
 void Configurator::updateModel() {
@@ -74,9 +77,9 @@ void Configurator::updateModel() {
         QString type = QString::fromStdString(
             m_interface->doActionForType(process->getTypeName(), ProcessTypeAction::GetName));
 
-        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>()
-                                                                  << processIndex << type << ""
-                                                                  << "");
+        insertRow(m_model->index(m_model->rowCount() - 1, 0),
+                  QList<QVariant>() << processIndex << type << ""
+                                    << "");
         auto parameters = process->getParameters();
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();
