@@ -34,10 +34,11 @@ public:
     void findObjects();
     void cleanObjects();
 
-    bool storeData(const std::string& path);
+    bool exportExperiment();
 
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);
+    bool storeData(const std::string& path);
 
     void showImg(const int& delay);
     static void showImg(const cv::Mat& img, const int& delay);

@@ -28,7 +28,8 @@ enum DataFlags {
     Solidity = 1 << 13,
     Symmetry = 1 << 14,
     Perimeter = 1 << 15,
-    PixelIdxList = 1 << 16
+    PixelIdxList = 1 << 16,
+    OutputValue = 1 << 17
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
@@ -49,7 +50,8 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {Solidity, sizeof(double)},
                                            {Symmetry, sizeof(double)},
                                            {Perimeter, sizeof(double)},
-                                           {PixelIdxList, sizeof(std::vector<cv::Point>*)}};
+                                           {PixelIdxList, sizeof(std::vector<cv::Point>*)},
+                                           {OutputValue, sizeof(double)}};
 
 // Data types which can be extracted through GUI - gui uses this map to generate available data
 // points for data extraction
@@ -66,7 +68,8 @@ static std::map<DataFlags, std::string> guiMap{{Area, "Area"},
                                                {Minor_axis, "Minor axis"},
                                                {Solidity, "Solidity"},
                                                {Symmetry, "Symmetry"},
-                                               {Perimeter, "Perimeter"}};
+                                               {Perimeter, "Perimeter"},
+                                               {OutputValue, "Output value"}};
 
 }  // namespace data
 
@@ -139,8 +142,9 @@ public:
     void setDataFlags(long flag);
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
-    std::vector<double> extractObject(int objIndex);
+    std::vector<double> extractObject(int objIndex, int lastObject);
     std::vector<double> extractContainer();
+    std::vector<std::string> extractAttributeNames();
 
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
