@@ -42,7 +42,7 @@ public:
     void showImg(const int& delay);
     static void showImg(const cv::Mat& img, const int& delay);
 
-    Experiment m_Experiment;  // CHECK IF THOSE CAN BE PRIVATE
+    Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
     cv::Mat m_img;
     cv::Mat m_bg;
 

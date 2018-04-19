@@ -10,7 +10,7 @@
  * @param img_path
  */
 void Analyzer::loadExperimentPreset(const std::string& img_path) {
-    m_Experiment.defaultSettings(img_path);
+    m_experiment.defaultSettings(img_path);
 }
 
 /**
@@ -20,11 +20,11 @@ void Analyzer::loadExperimentPreset(const std::string& img_path) {
  */
 void Analyzer::loadImagesFromFolder() {
     std::vector<framefinder::Frame> frames;
-    std::string img_folder = m_Experiment.imagePath;
+    std::string img_folder = m_experiment.imagePath;
     get_files(frames, img_folder);
-    accept_or_reject(frames, img_folder, m_Experiment.intensity_threshold);
-    get_accepted(frames, m_Experiment.acc);
-    get_rejected(frames, m_Experiment.dis);
+    accept_or_reject(frames, img_folder, m_experiment.intensity_threshold);
+    get_accepted(frames, m_experiment.acc);
+    get_rejected(frames, m_experiment.dis);
 }
 
 /**
@@ -36,7 +36,7 @@ void Analyzer::loadImagesFromText() {
     std::string accepted;  // Path to accepted text-file
     std::string rejected;  // Path to rejected text-file
     // Compile img_folder path with filenames from text-files
-    // and push frames to m_Experiment
+    // and push frames to m_experiment
 }
 
 /**
@@ -55,7 +55,7 @@ void Analyzer::setBG(const cv::Mat& bg) {
  * @warning DEPRECATED
  */
 void Analyzer::selectBG() {
-    m_bg = m_Experiment.dis[10].image;  // Sets as background
+    m_bg = m_experiment.dis[10].image;  // Sets as background
 }
 
 /**
@@ -106,7 +106,7 @@ void Analyzer::runAnalyzer() {
             m_bg = m_img;
         } else {
             processImage(m_img, m_bg);
-            m_Experiment.processed.push_back({m_img, "", m_Experiment.cellNum++, true});
+            m_experiment.processed.push_back({m_img, "", m_experiment.cellNum++, true});
         }
     }
 }
@@ -140,7 +140,7 @@ void Analyzer::findObjects() {
     int numObjects = 0;
     DataContainer dc(0xffff);
 
-    for (const framefinder::Frame& f : m_Experiment.processed) {
+    for (const framefinder::Frame& f : m_experiment.processed) {
         cv::Mat img_to_show = f.image;
 
         // Get data from blobs in frame
@@ -174,7 +174,7 @@ void Analyzer::findObjects() {
                     currentCells.clear();
 
                     // Set threshold
-                    if (centroid.x <= m_Experiment.inlet - 5) {
+                    if (centroid.x <= m_experiment.inlet - 5) {
                         dist_thres = 5.0;  // Should be a settable variable
                     } else {
                         dist_thres = 20.0;  // Should be a settable variable
@@ -187,28 +187,28 @@ void Analyzer::findObjects() {
             if (newcell) {
                 cellNum++;
 
-                m_Experiment.data.emplace_back(new DataContainer(0xffff));
-                m_Experiment.data[cellNum]->appendNew();
+                m_experiment.data.emplace_back(new DataContainer(0xffff));
+                m_experiment.data[cellNum]->appendNew();
 
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Inlet, m_Experiment.inlet);
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Outlet, m_Experiment.outlet);
+                (*m_experiment.data[cellNum])[0]->setValue(data::Inlet, m_experiment.inlet);
+                (*m_experiment.data[cellNum])[0]->setValue(data::Outlet, m_experiment.outlet);
                 // yref ???
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Label, cellNum);
+                (*m_experiment.data[cellNum])[0]->setValue(data::Label, cellNum);
 
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Frame, frameNo);
-                (*m_Experiment.data[cellNum])[0]->setValue(
+                (*m_experiment.data[cellNum])[0]->setValue(data::Frame, frameNo);
+                (*m_experiment.data[cellNum])[0]->setValue(
                     data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
-                (*m_Experiment.data[cellNum])[0]->setValue(
+                (*m_experiment.data[cellNum])[0]->setValue(
                     data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
-                (*m_Experiment.data[cellNum])[0]->setValue(
+                (*m_experiment.data[cellNum])[0]->setValue(
                     data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
-                (*m_Experiment.data[cellNum])[0]->setValue(
+                (*m_experiment.data[cellNum])[0]->setValue(
                     data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
-                (*m_Experiment.data[cellNum])[0]->setValue(
+                (*m_experiment.data[cellNum])[0]->setValue(
                     data::Circularity, dc[i]->getValue<double>(data::Circularity));
-                (*m_Experiment.data[cellNum])[0]->setValue(data::Symmetry,
+                (*m_experiment.data[cellNum])[0]->setValue(data::Symmetry,
                                                            dc[i]->getValue<double>(data::Symmetry));
-                (*m_Experiment.data[cellNum])[0]->setValue(
+                (*m_experiment.data[cellNum])[0]->setValue(
                     data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
 
                 t.cell_no = cellNum;
@@ -216,23 +216,23 @@ void Analyzer::findObjects() {
             } else {
                 sameCell = t.cell_no;
 
-                m_Experiment.data[sameCell]->appendNew();
-                auto index = m_Experiment.data[sameCell]->size() - 1;
+                m_experiment.data[sameCell]->appendNew();
+                auto index = m_experiment.data[sameCell]->size() - 1;
 
-                (*m_Experiment.data[sameCell])[index]->setValue(data::Frame, frameNo);
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(data::Frame, frameNo);
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::Centroid, dc[i]->getValue<cv::Point>(data::Centroid));
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::BoundingBox, dc[i]->getValue<cv::Rect>(data::BoundingBox));
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::Major_axis, dc[i]->getValue<double>(data::Major_axis));
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::Eccentricity, dc[i]->getValue<double>(data::Eccentricity));
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::Circularity, dc[i]->getValue<double>(data::Circularity));
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::Symmetry, dc[i]->getValue<double>(data::Symmetry));
-                (*m_Experiment.data[sameCell])[index]->setValue(
+                (*m_experiment.data[sameCell])[index]->setValue(
                     data::GradientScore, dc[i]->getValue<double>(data::GradientScore));
             }
             t.frame_no = frameNo;
@@ -253,23 +253,23 @@ void Analyzer::findObjects() {
 void Analyzer::cleanObjects() {
     unsigned int count_threshold = 25;
 
-    auto n = m_Experiment.data.size();
+    auto n = m_experiment.data.size();
     std::vector<bool> remove(n);
 
     for (unsigned long i = 0; i < n; i++) {
-        DataContainer* dc = m_Experiment.data[i].get();
+        DataContainer* dc = m_experiment.data[i].get();
         cv::Rect bb_i = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
         cv::Rect bb_o = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
-        remove.at(i) = (*dc).size() < 25 || ((bb_i.x + bb_i.width) > m_Experiment.inlet - 1) ||
-                       ((bb_o.x + bb_o.width) < m_Experiment.outlet);
+        remove.at(i) = (*dc).size() < 25 || ((bb_i.x + bb_i.width) > m_experiment.inlet - 1) ||
+                       ((bb_o.x + bb_o.width) < m_experiment.outlet);
     }
 
     // Burde være i sin egen funktion
-    m_Experiment.data.erase(std::remove_if(m_Experiment.data.begin(), m_Experiment.data.end(),
+    m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
                                            [thresh = count_threshold](const auto& dc) {
                                                return (*dc).size() < thresh;
                                            }),
-                            m_Experiment.data.end());
+                            m_experiment.data.end());
 }
 
 /**
