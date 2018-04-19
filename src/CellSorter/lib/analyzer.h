@@ -47,8 +47,7 @@ public:
     cv::Mat m_bg;
 
 private:
-    void processImage(cv::Mat &img, cv::Mat &bg,
-                      Experiment &experiment);
+    void processImage(cv::Mat &img, cv::Mat &bg);
 
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
 

@@ -64,7 +64,7 @@ void Analyzer::selectBG() {
  *
  */
 void Analyzer::runProcesses() {
-    processImage(m_img, m_bg, m_Experiment);
+    processImage(m_img, m_bg);
 }
 
 /**
@@ -74,7 +74,7 @@ void Analyzer::runProcesses() {
  * @param img
  */
 void Analyzer::processSingleFrame(cv::Mat& img) {
-    processImage(img, m_bg, m_Experiment);
+    processImage(img, m_bg);
 }
 
 /**
@@ -85,7 +85,7 @@ void Analyzer::processSingleFrame(cv::Mat& img) {
  * @param bg
  */
 void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
-    processImage(img, bg, m_Experiment);
+    processImage(img, bg);
 }
 
 /**
@@ -105,7 +105,7 @@ void Analyzer::runAnalyzer() {
         if (m_bg.dims == 0) {
             m_bg = m_img;
         } else {
-            processImage(m_img, m_bg, m_Experiment);
+            processImage(m_img, m_bg);
             m_Experiment.processed.push_back({m_img, "", m_Experiment.cellNum++, true});
         }
     }
@@ -340,9 +340,9 @@ bool Analyzer::loadSetup(const string& path) {
     return true;
 }
 
-void Analyzer::processImage(cv::Mat &img, cv::Mat &bg, Experiment &experiment) {
+void Analyzer::processImage(cv::Mat &img, cv::Mat &bg) {
     for (const auto& process : m_processes) {
-        process->doProcessing(img, bg, experiment);
+        process->doProcessing(img, bg, m_experiment);
     }
 }
 
