@@ -166,27 +166,17 @@ void framefinder::get_rejected(const std::vector<Frame>& frames, std::vector<Fra
  * @param del2  :   QString&        :   last delimiter
  */
 
-void framefinder_Q::sort_qfilelist(QFileInfoList& qfil, const QString& del1, const QString& del2) {
+void framefinder::sort_qfilelist(QFileInfoList& qfil, const std::string& del1, const std::string& del2) {
     // Allocate vector
     auto n = qfil.size();
     std::vector<Frame_Q> fn(n);
 
-    // Generate regex pattern matcher for extracting number between delimiters. use QRegExp::escape
-    // for escaping possible RegEx special characters in delimiters
-    QRegularExpression pattern(
-        QString("%1(.*)%2").arg(QRegExp::escape(del1)).arg(QRegExp::escape(del2)));
-
-    // Get file-numbers
-    QRegularExpressionMatch match;
+    // Get file-numbers and accept_or_reject
     for (int i = 0; i < n; i++) {
-        match = pattern.match(qfil[i].fileName());
-        int id = 0;
-        if (match.hasMatch()) {
-            id = match.captured(1).toInt();
-        }
-        fn[i] = {qfil[i], id};
+        auto id = (int)strtol(framefinder::extractBetween(qfil[i].fileName().toStdString()).c_str(), nullptr, 10);
+        Frame_Q fq = {qfil[i], id};
+        fn[i] = fq;
     }
-
     // Sort
     sort(fn.begin(), fn.end());
 

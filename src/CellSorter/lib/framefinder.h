@@ -42,9 +42,8 @@ bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 
-}  // namespace framefinder
+//------------------------------------------------------------------------------
 
-namespace framefinder_Q {
 struct Frame_Q {
     QFileInfo fileinfo;
     int id;
@@ -52,7 +51,7 @@ struct Frame_Q {
     bool operator<(const Frame_Q& rhs) const { return id < rhs.id; }
 };
 
-void sort_qfilelist(QFileInfoList& qfil, const QString& del1 = "_", const QString& del2 = ".");
+void sort_qfilelist(QFileInfoList& qfil, const std::string& del1 = "_", const std::string& del2 = ".");
 
-};      // namespace framefinder_Q
+};      // namespace framefinder
 #endif  // FRAMEFINDER_FFHELPERS_H
