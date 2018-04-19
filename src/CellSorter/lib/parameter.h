@@ -33,7 +33,7 @@
 
 #define SPLITCHAR '|'
 
-#define RANGE_SET   (1 << 0)
+#define RANGE_SET (1 << 0)
 #define DEFAULT_SET (1 << 1)
 
 using namespace std;
@@ -148,7 +148,9 @@ void ValueParameter<T>::setRange(T start, T stop) {
 template <typename T>
 void ValueParameter<T>::setValue(T v) {
     m_isInitialized |= DEFAULT_SET;
-    assert((v >= m_range.first) && (v <= m_range.second));
+    if (!((v >= m_range.first) && (v <= m_range.second))) {
+        throw runtime_error("default value is outside parameter range");
+    }
     m_val = v;
 }
 

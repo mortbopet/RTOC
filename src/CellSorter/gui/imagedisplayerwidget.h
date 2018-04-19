@@ -28,6 +28,7 @@ public:
 
 public slots:
     void setPath(const QString& path);
+    void refreshImage();
 
 private slots:
     void on_play_clicked();

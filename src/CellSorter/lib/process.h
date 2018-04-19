@@ -29,6 +29,7 @@
  *  3. In the constructor, specify a valid range for value parameters, and valid options for ENUM
  *  parameters
  *  4. Set default values of parameters in constructor
+ *  Note: Setting the range must be done before setting the default value!
  *  5. create Serialize function in your class (this must include all parameters that have been set
  * for the class, see ie. Morph::Serialize)
  *  6. Register the class for serialization - This is done at the bottom of process.cpp

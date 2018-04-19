@@ -18,6 +18,13 @@ Configurator::Configurator(ProcessInterface* interface, Analyzer* analyzer, QWid
     ui->load->setIcon(QIcon(":/icons/resources/load.svg"));
     ui->store->setIcon(QIcon(":/icons/resources/save.svg"));
 
+    // create image displayer for previewing processed images
+    m_imagedisplayer = new ImageDisplayerWidget();
+    ui->previewLayout->addWidget(m_imagedisplayer);
+
+    // Set an analyzer for the image configurator so it will preview processed images
+    m_imagedisplayer->setAnalyzer(analyzer);
+
     // Gather options from interface
     auto processTypes = m_interface->getProcessTypes();
     for (const auto& type : processTypes) {
@@ -54,13 +61,6 @@ Configurator::Configurator(ProcessInterface* interface, Analyzer* analyzer, QWid
 
     // Reload model
     updateModel();
-
-    // create image displayer for previewing processed images
-    m_imagedisplayer = new ImageDisplayerWidget();
-    ui->previewLayout->addWidget(m_imagedisplayer);
-
-    // Set an analyzer for the image configurator so it will preview processed images
-    m_imagedisplayer->setAnalyzer(analyzer);
 }
 
 void Configurator::updateModel() {
@@ -151,6 +151,9 @@ void Configurator::updateModel() {
         processIndex++;
     }
     m_model->setModelLoading(false);
+
+    // refresh the preview image
+    m_imagedisplayer->refreshImage();
 }
 
 QModelIndex Configurator::insertChild(const QModelIndex& index, QList<QVariant> values) {

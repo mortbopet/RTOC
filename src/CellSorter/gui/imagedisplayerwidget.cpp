@@ -37,6 +37,11 @@ void ImageDisplayerWidget::setPath(const QString& path) {
     indexDirectory();
 }
 
+void ImageDisplayerWidget::refreshImage() {
+    // reload/process the current image
+    displayImage(ui->imageSlider->value());
+}
+
 void ImageDisplayerWidget::displayImage(int index) {
     // display image at index from the current selected directory
     if (!m_imageFileList.isEmpty() && m_imageFileList.size() > index) {
@@ -45,8 +50,8 @@ void ImageDisplayerWidget::displayImage(int index) {
             m_image = cv::imread(m_imageFileList[index].absoluteFilePath().toStdString(),
                                  cv::IMREAD_GRAYSCALE);
             m_analyzer->processSingleFrame(m_image);
-            ui->image->setPixmap(QPixmap::fromImage(QImage(m_image.data, m_image.cols,
-                                                           m_image.rows, QImage::Format_Grayscale8)));
+            ui->image->setPixmap(QPixmap::fromImage(
+                QImage(m_image.data, m_image.cols, m_image.rows, QImage::Format_Grayscale8)));
         } else {
             // Regular mode, just display the image onto the label
             ui->image->setPixmap(QPixmap(m_imageFileList[index].absoluteFilePath()));
@@ -90,7 +95,7 @@ void ImageDisplayerWidget::indexDirectory() {
             << "*.jpg"
             << "*.bmp";
     m_imageFileList = m_dir.entryInfoList(filters, QDir::Files);
-    framefinder_Q::sort_qfilelist(m_imageFileList);
+    framefinder::sort_qfilelist(m_imageFileList);
 
     m_nImages = m_imageFileList.size();
 
