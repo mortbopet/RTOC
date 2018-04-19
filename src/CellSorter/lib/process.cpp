@@ -15,9 +15,13 @@ void ProcessBase::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& prop
 Morph::Morph() {
     m_morphType.setOptions(map<cv::MorphTypes, string>{{cv::MorphTypes::MORPH_CLOSE, "Closing"},
                                                        {cv::MorphTypes::MORPH_OPEN, "Opening"}});
-    m_morphValueX.setRange(0, 100);
-    m_morphValueY.setRange(0, 100);
     m_morphType.setValue(cv::MORPH_CLOSE);
+
+    m_morphValueX.setRange(1, 100);
+    m_morphValueX.setValue(1);
+    m_morphValueY.setRange(1, 100);
+    m_morphValueY.setValue(1);
+
 }
 
 void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -33,7 +37,9 @@ void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const 
 
 Binarize::Binarize() {
     m_maxVal.setRange(0, 255);
+    m_maxVal.setValue(255);
     m_edgeThreshold.setRange(0, 255);
+    m_edgeThreshold.setValue(0);
 }
 
 void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -42,6 +48,7 @@ void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) con
 
 Normalize::Normalize() {
     m_normalizeStrength.setRange(0, 0xffff);
+    m_normalizeStrength.setValue(4096);
 }
 
 void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -50,6 +57,7 @@ void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) co
 
 SubtractBG::SubtractBG() {
     m_edgeThreshold.setRange(0, 1);
+    m_edgeThreshold.setValue(0.272);
 }
 
 void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
@@ -89,11 +97,14 @@ void ClearBorder::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) 
 }
 ClearBorder::ClearBorder() {
     m_borderWidth.setRange(0, 255);
+    m_borderWidth.setValue(2);
 }
 
 Canny::Canny() {
-    m_lowThreshold.setRange(0, 100);
-    m_highThreshold.setRange(0, 100);
+    m_lowThreshold.setRange(0, 255);
+    m_lowThreshold.setValue(0);
+    m_highThreshold.setRange(0, 255);
+    m_highThreshold.setValue(255);
 }
 FloodFillProcess::FloodFillProcess() {}
 
@@ -108,9 +119,12 @@ PropFilter::PropFilter() {
         {matlab::regionPropTypes::Major_axis, "MajorAxisLength"},
         {matlab::regionPropTypes::Minor_axis, "MinorAxisLength"},
         {matlab::regionPropTypes::Solidity, "Solidity"}});
+    m_regionPropsTypes.setValue(matlab::regionPropTypes::Area);
 
-    m_lowerLimit.setRange(0, DBL_MAX);  // Range is subject to change..
+    m_lowerLimit.setRange(0, DBL_MAX);
+    m_lowerLimit.setValue(0);
     m_upperLimit.setRange(0, DBL_MAX);
+    m_upperLimit.setValue(0);
 }
 
 void PropFilter::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {

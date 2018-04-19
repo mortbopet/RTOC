@@ -33,6 +33,9 @@
 
 #define SPLITCHAR '|'
 
+#define RANGE_SET   (1 << 0)
+#define DEFAULT_SET (1 << 1)
+
 using namespace std;
 
 enum class ParameterType { Int, Double, Enum };
@@ -66,8 +69,8 @@ protected:
     string m_name;
     ParameterType m_type;
     bool m_isModifiable = true;
-    bool m_isInitialized = false;  // Set when setting range or options. Assert is thrown if this is
-                                   // not done, to force implementer to set range or options
+    int m_isInitialized = 0x00;  // Set when setting range or options. Assert is thrown if this is
+                                 // not done, to force implementer to set range or options
 
 private:
     // Private assignment operator. This ensures us that even though the Parameter is declared as a
@@ -85,11 +88,12 @@ public:
     ValueParameter(vector<ParameterBase*>& parent, std::string name, T initialValue = T());
 
     void setRange(T start, T stop);
-
-    void setValue(T v) { m_val = v; }
+    void setValue(T v);
     const T& getValue() const {
-        if (!m_isInitialized)
-            throw std::runtime_error("value parameter is not initialized");
+        if (!(m_isInitialized & RANGE_SET))
+            throw std::runtime_error("parameter range/options not set.");
+        if (!(m_isInitialized & DEFAULT_SET))
+            throw std::runtime_error("parameter default not set.");
         return m_val;
     }
 
@@ -136,9 +140,16 @@ ValueParameter<T>::ValueParameter(vector<ParameterBase*>& parentProcessContainer
 
 template <typename T>
 void ValueParameter<T>::setRange(T start, T stop) {
-    m_isInitialized = true;
+    m_isInitialized |= RANGE_SET;
     m_range = std::pair<T, T>(start, stop);
     updateOptions();
+}
+
+template <typename T>
+void ValueParameter<T>::setValue(T v) {
+    m_isInitialized |= DEFAULT_SET;
+    assert((v >= m_range.first) && (v <= m_range.second));
+    m_val = v;
 }
 
 template <typename T>
@@ -161,10 +172,12 @@ public:
 
     void setOptions(map<T, string>);
 
-    void setValue(T v) { m_val = v; }
+    void setValue(T v);
     const T& getValue() const {
-        if (!m_isInitialized)
-            throw std::runtime_error("value parameter is not initialized");
+        if (!(m_isInitialized & RANGE_SET))
+            throw std::runtime_error("parameter range/options not set.");
+        if (!(m_isInitialized & DEFAULT_SET))
+            throw std::runtime_error("parameter default not set.");
         return m_val;
     }
 
@@ -196,9 +209,15 @@ EnumParameter<T>::EnumParameter(vector<ParameterBase*>& parentProcessContainer, 
 
 template <typename T>
 void EnumParameter<T>::setOptions(map<T, string> options) {
-    m_isInitialized = true;
+    m_isInitialized |= RANGE_SET;
     m_enumOptions = options;
     updateOptions();
+}
+
+template <typename T>
+void EnumParameter<T>::setValue(T v) {
+    m_isInitialized |= DEFAULT_SET;
+    m_val = v;
 }
 
 template <typename T>

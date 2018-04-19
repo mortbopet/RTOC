@@ -32,6 +32,8 @@
  *  5. create Serialize function in your class (this must include all parameters that have been set
  * for the class, see ie. Morph::Serialize)
  *  6. Register the class for serialization - This is done at the bottom of process.cpp
+ *
+ *  @todo Write actual tutorial on this
  */
 namespace {
 // Compile time string length generation
@@ -63,7 +65,7 @@ constexpr bool checkDisplayName(char const* name) {
     ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName)
 
 #define CREATE_VALUE_PARM_DEFAULT(type, name, displayName, default) \
-    ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName s, default)
+    ValueParameter<type> name = ValueParameter<type>(PARAMETER_CONTAINER, displayName, default)
 }  // namespace
 
 class ProcessBase {
@@ -263,7 +265,6 @@ std::string executeActionForType(processContainerPtr ptr, ProcessTypeAction acti
     switch (action) {
         case ProcessTypeAction::GetName: {
             return T::getName();
-            break;
         }
         case ProcessTypeAction::Create: {
             ptr->push_back(std::make_unique<T>());
