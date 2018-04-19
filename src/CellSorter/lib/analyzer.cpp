@@ -4,10 +4,20 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 
+
+/**
+ * @brief
+ * @param img_path
+ */
 void Analyzer::loadExperimentPreset(const std::string& img_path) {
     m_Experiment.defaultSettings(img_path);
 }
 
+/**
+ * @brief
+ *
+ * @warning DEPRECATED
+ */
 void Analyzer::loadImagesFromFolder() {
     std::vector<framefinder::Frame> frames;
     std::string img_folder = m_Experiment.imagePath;
@@ -30,7 +40,9 @@ void Analyzer::loadImagesFromText() {
 }
 
 /**
- * @brief
+ * @brief Sets analyzer background
+ * @details
+ *
  * @param bg : background image to be used
  */
 void Analyzer::setBG(const cv::Mat& bg) {
@@ -47,16 +59,39 @@ void Analyzer::selectBG() {
 }
 
 /**
- * @brief
+ * @brief Run all processes on
+ * @details
+ *
  */
 void Analyzer::runProcesses() {
-    for (const auto& process : m_processes) {
-        process->doProcessing(m_img, m_bg, m_Experiment);
-    }
+    processImage(m_img, m_bg, m_Experiment, m_processes);
+}
+
+/**
+ * @brief Process a single frame
+ * @details Assuming background is set in Analyzer
+ *
+ * @param img
+ */
+void Analyzer::processSingleFrame(cv::Mat& img) {
+    processImage(img, m_bg, m_Experiment, m_processes);
+}
+
+/**
+ * @brief Overload: Process a single frame
+ * @details
+ *
+ * @param img
+ * @param bg
+ */
+void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
+    processImage(img, bg, m_Experiment, m_processes);
 }
 
 /**
  * @brief
+ * @details
+ *
  */
 void Analyzer::runAnalyzer() {
     bool success;
@@ -70,23 +105,26 @@ void Analyzer::runAnalyzer() {
         if (m_bg.dims == 0) {
             m_bg = m_img;
         } else {
-            for (const auto& process : m_processes) {
-                process->doProcessing(m_img, m_bg, m_Experiment);
-            }
+            processImage(m_img, m_bg, m_Experiment, m_processes);
             m_Experiment.processed.push_back({m_img, "", m_Experiment.cellNum++, true});
         }
     }
 }
 
 /**
- * @brief
+ * @brief Clears the process tree
+ * @details
+ *
  */
 void Analyzer::resetProcesses() {
     m_processes.clear();
 }
 
+
 /**
  * @brief
+ * @details
+ *
  */
 void Analyzer::findObjects() {
     cv::Point centroid;
@@ -209,6 +247,8 @@ void Analyzer::findObjects() {
 /**
  * @brief Clean Object-vector from objects with insufficient data
  * @details
+ *
+ * @warning NOT FULLY IMPLEMENTED
  */
 void Analyzer::cleanObjects() {
     unsigned int count_threshold = 25;
@@ -235,6 +275,7 @@ void Analyzer::cleanObjects() {
 /**
  * @brief function for storing data from experiment
  * @details Stores the contents of `m_Experiment.data` to some external file
+ *
  * @param path
  * @return
  */
@@ -257,6 +298,8 @@ void Analyzer::showImg(const cv::Mat& img, const int& delay) {
 
 /**
  * @brief
+ * @details
+ *
  * @param path
  * @return
  */
@@ -277,6 +320,8 @@ bool Analyzer::storeSetup(const string& path) {
 
 /**
  * @brief
+ * @details
+ *
  * @param path
  * @return
  */
@@ -294,3 +339,11 @@ bool Analyzer::loadSetup(const string& path) {
     }
     return true;
 }
+
+void Analyzer::processImage(cv::Mat &img, cv::Mat &bg, Experiment &experiment,
+                            std::vector<std::unique_ptr<ProcessBase>> &processes) {
+    for (const auto& process : processes) {
+        process->doProcessing(img, bg, experiment);
+    }
+}
+

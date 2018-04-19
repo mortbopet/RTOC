@@ -24,7 +24,8 @@ public:
     void runProcesses();
     void runAnalyzer();
     void resetProcesses();
-    void showImg(const int& delay);
+    void processSingleFrame(cv::Mat& img);
+    void processSingleFrame(cv::Mat& img, cv::Mat& bg);
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
         m_imageGetterFunction = function;
@@ -38,6 +39,7 @@ public:
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);
 
+    void showImg(const int& delay);
     static void showImg(const cv::Mat& img, const int& delay);
 
     Experiment m_Experiment;  // CHECK IF THOSE CAN BE PRIVATE
@@ -45,6 +47,9 @@ public:
     cv::Mat m_bg;
 
 private:
+    void processImage(cv::Mat &img, cv::Mat &bg,
+                      Experiment &experiment, std::vector<std::unique_ptr<ProcessBase>> &processes);
+
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
 
     std::vector<std::unique_ptr<DataContainer>> m_data;  // experiment data here ? (JL, 17-04-18)
