@@ -305,7 +305,7 @@ bool Analyzer::exportExperiment() {
     attributes.clear();
     // 2)
     // In the following rows, output object-values of each container are put output into each row
-    for (int i = 0; i < m_Experiment.data[0]->size(); i++) {
+    for (int i = 0; i < m_Experiment.data.size(); i++) {
         out << "Observation " << std::to_string(i + 1) << ",";
         std::vector<double> containerValues = m_Experiment.data[i]->extractContainer();
         for (long j = 0; j < containerValues.size(); j++) {

@@ -113,7 +113,6 @@ std::vector<double> DataContainer::extractContainer() {
         std::vector<double> returnVectorTemp = extractObject(i, size());
         returnVector.insert(returnVector.end(), returnVectorTemp.begin(), returnVectorTemp.end());
     }
-
     return returnVector;
 }
 
