@@ -274,7 +274,7 @@ void Analyzer::cleanObjects() {
 
 /**
  * @brief function for storing data from experiment
- * @details Stores the contents of `m_Experiment.data` to some external file
+ * @details Stores the contents of `m_experiment.data` to some external file
  *
  * @param path
  * @return
@@ -348,14 +348,14 @@ bool Analyzer::loadSetup(const string& path) {
  * @return
  */
 
-bool Analyzer::exportExperiment() {
-    m_Experiment.data[0]->extractAttributeNames();
+bool Analyzer::exportExperiment(const string& path) {
+    m_experiment.data[0]->extractAttributeNames();
 
-    std::ofstream out("test.csv");
+    std::ofstream out(path);
 
     // 1)
     // In first row, attribute names and their corresponding object-number are outputtet
-    std::vector<std::string> attributes = m_Experiment.data[0]->extractAttributeNames();
+    std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeNames();
     out << "EXPERIMENT NAME" << ",";
     for (int i = 0; i < attributes.size(); i++) {
         out << attributes[i] << "," ;
@@ -364,9 +364,9 @@ bool Analyzer::exportExperiment() {
     attributes.clear();
     // 2)
     // In the following rows, output object-values of each container are put output into each row
-    for (int i = 0; i < m_Experiment.data.size(); i++) {
+    for (int i = 0; i < m_experiment.data.size(); i++) {
         out << "Observation " << std::to_string(i + 1) << ",";
-        std::vector<double> containerValues = m_Experiment.data[i]->extractContainer();
+        std::vector<double> containerValues = m_experiment.data[i]->extractContainer();
         for (long j = 0; j < containerValues.size(); j++) {
             out << containerValues[j] << ",";
         }
