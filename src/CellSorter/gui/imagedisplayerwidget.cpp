@@ -40,7 +40,7 @@ void ImageDisplayerWidget::setPath(const QString& path) {
 void ImageDisplayerWidget::displayImage(int index) {
     // display image at index from the current selected directory
     if (!m_imageFileList.isEmpty() && m_imageFileList.size() > index) {
-        if (m_processImages) {
+        if (m_analyzer != nullptr) {
             // An analyzer has been set, load image as a cv::mat and process it through analyzer
             m_image = cv::imread(m_imageFileList[index].absoluteFilePath().toStdString(),
                                  cv::IMREAD_GRAYSCALE);
@@ -56,7 +56,6 @@ void ImageDisplayerWidget::displayImage(int index) {
 
 void ImageDisplayerWidget::setAnalyzer(Analyzer* analyzer) {
     m_analyzer = analyzer;
-    m_processImages = true;
 }
 
 cv::Mat* ImageDisplayerWidget::getNextImage(bool& successful) {

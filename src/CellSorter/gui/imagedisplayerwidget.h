@@ -47,8 +47,6 @@ private:
 
     cv::Mat m_image;
 
-    bool m_processImages = false;
-
     int m_acqIndex;
     int m_nImages;
     QDir m_dir;
@@ -56,7 +54,7 @@ private:
 
     QTimer m_playTimer;
 
-    Analyzer* m_analyzer;
+    Analyzer* m_analyzer = nullptr;
 };
 
 #endif  // IMAGEDISPLAYERWIDGET_H
