@@ -4,24 +4,24 @@
 
 TEST_CASE("exists()", "[full], [framefinder]") {
     SECTION("basic operation") {
-        REQUIRE(exists("./Makefile"));
-        REQUIRE(!exists("./Makefsidfj"));
-        REQUIRE(exists("./CMakeFiles/"));
-        REQUIRE(exists("./CMakeFiles/CellSorter_test.dir/"));
+        REQUIRE(framefinder::exists("./Makefile"));
+        REQUIRE(!framefinder::exists("./Makefsidfj"));
+        REQUIRE(framefinder::exists("./CMakeFiles/"));
+        REQUIRE(framefinder::exists("./CMakeFiles/CellSorter_test.dir/"));
     }
 }
 
 TEST_CASE("files_from_folder()", "[full], [framefinder]") {
     std::vector<std::string> files;
     SECTION("check if able to find files in build dir") {
-        REQUIRE(files_from_folder(files, "./") != 0);
+        REQUIRE(framefinder::files_from_folder(files, "./") != 0);
     }
     SECTION("check error output when folder doesn't exist") {
-        REQUIRE(files_from_folder(files, "./x_x_x/") == -1);
+        REQUIRE(framefinder::files_from_folder(files, "./x_x_x/") == -1);
     }
 }
 
-TEST_CASE("extractBetween", "[full], [framefinder]") {
+TEST_CASE("framefinder::extractBetween", "[full], [framefinder]") {
     std::string a = "some_test.here";
     std::string b = "some_other_test.here";
     std::string c = "some_test.here.right";
@@ -29,29 +29,29 @@ TEST_CASE("extractBetween", "[full], [framefinder]") {
     std::string e = "some_best.other_test.here";
     std::string f = "some.stuff_not_found";
     SECTION("check correct string to pass (long function)") {
-        REQUIRE(extractBetween(a, "_", ".") == "test");
-        REQUIRE(extractBetween(b, "_", ".") == "test");
-        REQUIRE(extractBetween(c, "_", ".") == "test");
-        REQUIRE(extractBetween(d, "_", ".") == "test");
-        REQUIRE(extractBetween(e, "_", ".") == "test");
-        REQUIRE(extractBetween(a, "some", "test") == "_");
-        REQUIRE(extractBetween(b, "some", "_test") == "_other");
-        REQUIRE(extractBetween(c, "test", "here") == ".");
+        REQUIRE(framefinder::extractBetween(a, "_", ".") == "test");
+        REQUIRE(framefinder::extractBetween(b, "_", ".") == "test");
+        REQUIRE(framefinder::extractBetween(c, "_", ".") == "test");
+        REQUIRE(framefinder::extractBetween(d, "_", ".") == "test");
+        REQUIRE(framefinder::extractBetween(e, "_", ".") == "test");
+        REQUIRE(framefinder::extractBetween(a, "some", "test") == "_");
+        REQUIRE(framefinder::extractBetween(b, "some", "_test") == "_other");
+        REQUIRE(framefinder::extractBetween(c, "test", "here") == ".");
     }
     SECTION("check correct string to pass (short function)") {
-        REQUIRE(extractBetween(a) == "test");
-        REQUIRE(extractBetween(b) == "test");
-        REQUIRE(extractBetween(c) == "test");
-        REQUIRE(extractBetween(d) == "test");
-        REQUIRE(extractBetween(e) == "test");
+        REQUIRE(framefinder::extractBetween(a) == "test");
+        REQUIRE(framefinder::extractBetween(b) == "test");
+        REQUIRE(framefinder::extractBetween(c) == "test");
+        REQUIRE(framefinder::extractBetween(d) == "test");
+        REQUIRE(framefinder::extractBetween(e) == "test");
     }
     SECTION("check error/not_found output (long function)") {
-        REQUIRE(extractBetween(a, "tst", "xtx") == "NOT_FOUND");
-        REQUIRE(extractBetween(f, "_", ".") == "NOT_FOUND");
-        REQUIRE(extractBetween(f, "a", "stuff") == "NOT_FOUND");
+        REQUIRE(framefinder::extractBetween(a, "tst", "xtx") == "NOT_FOUND");
+        REQUIRE(framefinder::extractBetween(f, "_", ".") == "NOT_FOUND");
+        REQUIRE(framefinder::extractBetween(f, "a", "stuff") == "NOT_FOUND");
     }
     SECTION("check error/not_found output (short function)") {
-        REQUIRE(extractBetween(f) == "NOT_FOUND");
+        REQUIRE(framefinder::extractBetween(f) == "NOT_FOUND");
     }
 }
 

@@ -32,7 +32,7 @@
  *  5. create Serialize function in your class (this must include all parameters that have been set
  * for the class, see ie. Morph::Serialize)
  *  6. Register the class for serialization - This is done at the bottom of process.cpp
-*/
+ */
 namespace {
 // Compile time string length generation
 // https://stackoverflow.com/a/36390498/6714645
@@ -304,7 +304,7 @@ static std::string queryActionForType(processContainerPtr ptr, const std::string
     }
     assert("Action attempted on unregistered process type");
 }
-}
+}  // namespace P
 // --------------------------------------------------------
 
 // Serializers

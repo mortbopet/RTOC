@@ -9,6 +9,8 @@
 #include <opencv/cv.hpp>
 #include <vector>
 
+namespace framefinder {
+
 struct Frame {
     cv::Mat image;
     std::string filename;
@@ -16,13 +18,6 @@ struct Frame {
     bool accepted;
 
     bool operator<(const Frame& rhs) const { return id < rhs.id; }
-};
-
-struct Frame_Q {
-    QFileInfo fileinfo;
-    int id;
-
-    bool operator<(const Frame_Q& rhs) const { return id < rhs.id; }
 };
 
 /**
@@ -47,6 +42,17 @@ bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold);
 void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output);
 void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output);
 
+}  // namespace framefinder
+
+namespace framefinder_Q {
+struct Frame_Q {
+    QFileInfo fileinfo;
+    int id;
+
+    bool operator<(const Frame_Q& rhs) const { return id < rhs.id; }
+};
+
 void sort_qfilelist(QFileInfoList& qfil, const QString& del1 = "_", const QString& del2 = ".");
 
+};      // namespace framefinder_Q
 #endif  // FRAMEFINDER_FFHELPERS_H

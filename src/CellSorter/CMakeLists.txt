@@ -25,55 +25,47 @@ SET(WITH_MT OFF CACHE BOOL "Build with Multi-threading")
 ######################################################################
 ## GUI setup
 ######################################################################
-SET(BUILD_GUI OFF CACHE BOOL "Build GUI")
-if(${BUILD_GUI})
-    if(WIN32)
-    else()
-    add_definitions(-fPIC)
-    endif()
-
-    # Add acquisitor subdirectory
-    add_subdirectory(../AcquisitionApp "${CMAKE_CURRENT_BINARY_DIR}/AcquisitionApp")
-
-    # Set preprocessor flag to trigger gui in main.cpp
-    add_definitions(-DBUILD_GUI)
-
-    # Instruct CMake to run moc automatically when needed.
-    set(CMAKE_AUTOMOC ON)
-    set(CMAKE_INCLUDE_CURRENT_DIR ON)
-    set(CMAKE_AUTOUIC ON)
-    set(CMAKE_AUTORCC ON)
-
-    # Find Qt5Core and Qt5Widgets
-    find_package(Qt5Core REQUIRED)
-    find_package(Qt5Widgets REQUIRED)
-
-    # For finding Qt includes
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-    include_directories(${Qt5Widgets_INCLUDE_DIRS})
-    include_directories(${Qt5Core_INCLUDE_DIRS})
-
-    file(GLOB GUI_SRC
-        gui/*.cpp
-        )
-    file(GLOB GUI_H
-        gui/*.h
-        )
-
-    # set Qt specific files
-    file ( GLOB UIS
-     gui/*.ui
-    )
-
-    file ( GLOB RESOURCES
-     ../*.qrc
-    )
-
-    add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
-    target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
+if(WIN32)
 else()
-    add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS})
+add_definitions(-fPIC)
 endif()
+
+# Add acquisitor subdirectory
+add_subdirectory(../AcquisitionApp "${CMAKE_CURRENT_BINARY_DIR}/AcquisitionApp")
+
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+# Find Qt5Core and Qt5Widgets
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+
+# For finding Qt includes
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+include_directories(${Qt5Core_INCLUDE_DIRS})
+
+file(GLOB GUI_SRC
+    gui/*.cpp
+    )
+file(GLOB GUI_H
+    gui/*.h
+    )
+
+# set Qt specific files
+file ( GLOB UIS
+ gui/*.ui
+)
+
+file ( GLOB RESOURCES
+ ../*.qrc
+)
+
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
+target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
 ######################################################################
 ## endof GUI setup
 ######################################################################

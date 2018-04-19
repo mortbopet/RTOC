@@ -12,8 +12,6 @@
 
 #include <functional>
 
-
-
 class Analyzer {
 public:
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
@@ -21,11 +19,13 @@ public:
     void loadExperimentPreset(const std::string& img_path);
     void loadImagesFromFolder();
     void loadImagesFromText();
+    void setBG(const cv::Mat& bg);
     void selectBG();
     void runProcesses();
     void runAnalyzer();
     void resetProcesses();
-    void showImg(const int& delay);
+    void processSingleFrame(cv::Mat& img);
+    void processSingleFrame(cv::Mat& img, cv::Mat& bg);
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
         m_imageGetterFunction = function;
@@ -40,16 +40,19 @@ public:
     bool loadSetup(const std::string& path);
     bool storeData(const std::string& path);
 
+    void showImg(const int& delay);
     static void showImg(const cv::Mat& img, const int& delay);
 
-    Experiment m_Experiment;  // CHECK IF THOSE CAN BE PRIVATE
+    Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
     cv::Mat m_img;
     cv::Mat m_bg;
 
 private:
+    void processImage(cv::Mat &img, cv::Mat &bg);
+
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
 
-    std::vector<std::unique_ptr<DataContainer>> m_data; // experiment data here ? (JL, 17-04-18)
+    std::vector<std::unique_ptr<DataContainer>> m_data;  // experiment data here ? (JL, 17-04-18)
 
     std::function<cv::Mat&(bool& sucessful)> m_imageGetterFunction;
 };

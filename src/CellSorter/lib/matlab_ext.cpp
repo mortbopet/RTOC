@@ -1,15 +1,14 @@
 #include "matlab_ext.h"
 
-
 namespace matlab {
-void bwareaopen(cv::Mat &im, double size) {
+void bwareaopen(cv::Mat& im, double size) {
     // Only accept CV_8UC
     if (im.channels() != 1 || im.type() != CV_8U) {
         return;
     }
 
     // Find all contours
-    std::vector<std::vector<cv::Point> > contours;
+    std::vector<std::vector<cv::Point>> contours;
     cv::findContours(im.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
     for (int i = 0; i < contours.size(); i++) {
@@ -23,7 +22,7 @@ void bwareaopen(cv::Mat &im, double size) {
     }
 }
 
-int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
+int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
@@ -40,9 +39,9 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
     double symmetry = 0.0;
     double perimeter = 0.0;
 
-    int i = 0; // dataContainer index
+    int i = 0;  // dataContainer index
     // for every contour -> new regionprops object with m_parameters
-    for (const std::vector<cv::Point> &contour : contours) {
+    for (const std::vector<cv::Point>& contour : contours) {
         dc.appendNew();
 
         /// Area
@@ -50,14 +49,16 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
             // Compute the area of the contour (not exact pixel count!)
             area = cv::contourArea(contour, false);
 
-            if (dataFlags & data::Area) dc[i]->setValue(data::Area, area);
+            if (dataFlags & data::Area)
+                dc[i]->setValue(data::Area, area);
         }
         /// Centroid
         if (dataFlags & (data::Centroid | data::GradientScore | data::Symmetry)) {
             cv::Moments m = cv::moments(contour, false);
             centroid = cv::Point(int(m.m10 / m.m00), int(m.m01 / m.m00));
 
-            if (dataFlags & data::Centroid) dc[i]->setValue(data::Centroid, centroid);
+            if (dataFlags & data::Centroid)
+                dc[i]->setValue(data::Centroid, centroid);
         }
         /// Convex Area
         if (dataFlags & (data::ConvexArea | data::Solidity)) {
@@ -65,25 +66,29 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
             cv::convexHull(contour, hull);
             convexArea = cv::contourArea(hull, false);
 
-            if (dataFlags & data::ConvexArea) dc[i]->setValue(data::ConvexArea, convexArea);
+            if (dataFlags & data::ConvexArea)
+                dc[i]->setValue(data::ConvexArea, convexArea);
         }
         /// Major Axis
-        if (dataFlags & (data::Major_axis | data::Minor_axis | data::Eccentricity | data::Symmetry)) {
+        if (dataFlags &
+            (data::Major_axis | data::Minor_axis | data::Eccentricity | data::Symmetry)) {
             if (contour.size() > 5) {
                 cv::RotatedRect fit = cv::fitEllipse(contour);
                 majorAxis = cv::max(fit.size.width, fit.size.height);
                 minorAxis = cv::min(fit.size.width, fit.size.height);
 
-                if (dataFlags & data::Major_axis) dc[i]->setValue(data::Major_axis, majorAxis);
-                if (dataFlags & data::Minor_axis) dc[i]->setValue(data::Minor_axis, minorAxis);
-
+                if (dataFlags & data::Major_axis)
+                    dc[i]->setValue(data::Major_axis, majorAxis);
+                if (dataFlags & data::Minor_axis)
+                    dc[i]->setValue(data::Minor_axis, minorAxis);
             }
         }
         /// Perimeter
         if (dataFlags & (data::Perimeter | data::Circularity)) {
             perimeter = cv::arcLength(contour, true);
 
-            if (dataFlags & data::Perimeter) dc[i]->setValue(data::Perimeter, perimeter);
+            if (dataFlags & data::Perimeter)
+                dc[i]->setValue(data::Perimeter, perimeter);
         }
         /// Bounding Box
         if (dataFlags & data::BoundingBox) {
@@ -99,9 +104,9 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
             float radius;
             cv::minEnclosingCircle(contour, center, radius);
             cv::Mat temp0 = cv::Mat::zeros(img.rows, img.cols, CV_8U);
-            cv::circle(temp0, center, (int) radius, cv::Scalar(255), 1);
+            cv::circle(temp0, center, (int)radius, cv::Scalar(255), 1);
 
-            circularity = area / (pow((double) radius, 2) * M_PI);
+            circularity = area / (pow((double)radius, 2) * M_PI);
 
             dc[i]->setValue(data::Circularity, circularity);
         }
@@ -115,12 +120,13 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
         if (dataFlags & data::GradientScore) {
             if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
                 (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
-
-                cv::Rect roi = cv::Rect((int) round(centroid.x - 5.5), (int) round(centroid.x + 5.5),
-                                        (int) round(centroid.y - 22.5), (int) round(centroid.y + 22.5));
+                cv::Rect roi =
+                    cv::Rect((int)round(centroid.x - 5.5), (int)round(centroid.x + 5.5),
+                             (int)round(centroid.y - 22.5), (int)round(centroid.y + 22.5));
 
                 cv::Mat temp = cv::Mat(img, roi);
-                cv::Canny(temp, temp, 0.2, 0.7);    // arbitrery threshold (picture should be binary at this point)
+                cv::Canny(temp, temp, 0.2,
+                          0.7);  // arbitrery threshold (picture should be binary at this point)
                 gradientScore = cv::sum(temp(cv::Range(6, 7), cv::Range::all()))[0];
 
                 dc[i]->setValue(data::GradientScore, gradientScore);
@@ -136,9 +142,9 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
         if (dataFlags & data::Symmetry) {
             if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
                 (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
-
-                cv::Rect roi = cv::Rect((int) round(centroid.x - 4.5), (int) round(centroid.x + 4.5),
-                                        (int) round(centroid.y - 22.5), (int) round(centroid.y + 22.5));
+                cv::Rect roi =
+                    cv::Rect((int)round(centroid.x - 4.5), (int)round(centroid.x + 4.5),
+                             (int)round(centroid.y - 22.5), (int)round(centroid.y + 22.5));
 
                 cv::Mat temp = cv::Mat(img, roi);
                 double im_min;
@@ -169,7 +175,7 @@ int regionProps(const cv::Mat &img, const int &dataFlags, DataContainer &dc) {
         i++;
     }
     return i;
-} // regionProps
+}  // regionProps
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
     for (const cv::Point& p : *points) {
@@ -179,21 +185,21 @@ void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
 void floodFill(cv::Mat& img) {
     // Assert that the image has been binarized
     cv::Mat img_inv;
-    cv::bitwise_not(img,img_inv);
-    cv::floodFill(img_inv, cv::Point(0,0), cv::Scalar(0));
+    cv::bitwise_not(img, img_inv);
+    cv::floodFill(img_inv, cv::Point(0, 0), cv::Scalar(0));
     cv::bitwise_or(img, img_inv, img);
 }
 void floodFill(cv::Mat& img, const cv::Point& p) {
     // Assert that the image has been binarized
     cv::Mat img_inv;
-    cv::bitwise_not(img,img_inv);
+    cv::bitwise_not(img, img_inv);
     cv::floodFill(img_inv, p, cv::Scalar(0));
     cv::bitwise_or(img, img_inv, img);
 }
 
 double dist(const cv::Point& p0, const cv::Point& p1) {
     cv::Point d = p0 - p1;
-    return cv::sqrt(d.x*d.x + d.y*d.y);
+    return cv::sqrt(d.x * d.x + d.y * d.y);
 }
 
-}
+}  // namespace matlab

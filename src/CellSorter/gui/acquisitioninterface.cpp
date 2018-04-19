@@ -26,7 +26,7 @@ cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
         }
 
         if (m_ffEnabled) {
-            if (hasChanged(m_lastImage, *newImage, m_threshold)) {
+            if (framefinder::hasChanged(m_lastImage, *newImage, m_threshold)) {
                 // A sufficient change between current and last image has been detected, return the
                 // newly acquired image
                 m_lastImage = *newImage;

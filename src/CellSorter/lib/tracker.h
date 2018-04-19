@@ -7,8 +7,11 @@ struct Tracker {
     int frame_no;
 
     Tracker() = default;
-    Tracker(int c) {cell_no = 0; frame_no = c;}
+    Tracker(int c) {
+        cell_no = 0;
+        frame_no = c;
+    }
     bool operator==(Tracker& rhs) { return frame_no == rhs.frame_no; }
 };
 
-#endif //CELLSORTER_TRACKER_H
+#endif  // CELLSORTER_TRACKER_H

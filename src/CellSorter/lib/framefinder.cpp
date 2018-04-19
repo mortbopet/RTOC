@@ -2,7 +2,7 @@
 
 #include <QRegularExpression>
 
-bool exists(const std::string& path) {
+bool framefinder::exists(const std::string& path) {
     struct stat buf;
     return stat(path.c_str(), &buf) == 0;
 }
@@ -17,7 +17,7 @@ bool exists(const std::string& path) {
  * @param   folder  :   vector<string> with file names
  * @return          :   Files found
  */
-int files_from_folder(std::vector<std::string>& files, const std::string& folder) {
+int framefinder::files_from_folder(std::vector<std::string>& files, const std::string& folder) {
     if (!exists(folder)) {
         return -1;
     }
@@ -39,8 +39,8 @@ int files_from_folder(std::vector<std::string>& files, const std::string& folder
  * @param last  :   last delimiter (default = ".")
  * @return      :   extracted std::string
  */
-std::string extractBetween(const std::string& src, const std::string& first,
-                           const std::string& last) {
+std::string framefinder::extractBetween(const std::string& src, const std::string& first,
+                                        const std::string& last) {
     long a = src.rfind(first);
     if (a < 0)
         return "NOT_FOUND";
@@ -58,7 +58,7 @@ std::string extractBetween(const std::string& src, const std::string& first,
  * @param mode      :   FILE_LIST_MODE  :   Set output mode
  * @return          :   int             :   error code
  */
-int get_files(std::vector<Frame>& files, const std::string& folder) {
+int framefinder::get_files(std::vector<Frame>& files, const std::string& folder) {
     std::vector<std::string> file_paths;
     // Get size and return if empty or error
     int count = files_from_folder(file_paths, folder);
@@ -82,15 +82,17 @@ int get_files(std::vector<Frame>& files, const std::string& folder) {
 }
 
 /**
- * @brief hasChanged determines whether img2 is different from img1. Given a movement threshold the two images a
- * subtracted from eachother and the largest pixel value are found. _Movement_ is then detected if the max-pixel value
+ * @brief hasChanged determines whether img2 is different from img1. Given a movement threshold the
+ * two images a
+ * subtracted from eachother and the largest pixel value are found. _Movement_ is then detected if
+ * the max-pixel value
  * is larger than the given threshold.
  * @param img1          :   cv::Mat()   :   old image
  * @param img2          :   cv::Mat()   :   new image
  * @param threshold     :   int         :   movement threshold
  * @return              :   bool        :   true if movement, otherwise false
  */
-bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold) {
+bool framefinder::hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold) {
     double crit = 0.0;
     cv::minMaxIdx(img1 - img2, nullptr, &crit);
     int crit_ = crit;
@@ -106,8 +108,8 @@ bool hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold) 
  * @param path_acc      :   string          :   path to "accepted" txt-file
  * @param path_dis      :   string          :   path to "discarded" txt-file
  */
-void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
-                      const double& threshold) {
+void framefinder::accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
+                                   const double& threshold) {
     double crit = 0.0;
 
     cv::Mat lastMoved = cv::imread(img_folder + "/" + frames[0].filename, cv::IMREAD_GRAYSCALE);
@@ -133,7 +135,7 @@ void accept_or_reject(std::vector<Frame>& frames, const std::string& img_folder,
     }
 }
 
-void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output) {
+void framefinder::get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output) {
     for (const Frame& f : frames) {
         if (f.accepted) {
             output.emplace_back(f);
@@ -141,7 +143,7 @@ void get_accepted(const std::vector<Frame>& frames, std::vector<Frame>& output) 
     }
 }
 
-void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) {
+void framefinder::get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) {
     for (const Frame& f : frames) {
         if (!f.accepted) {
             output.push_back(f);
@@ -156,13 +158,15 @@ void get_rejected(const std::vector<Frame>& frames, std::vector<Frame>& output) 
  * /filename[del1][id number][del2].[ext]
  * @example
  * filename of qfile: /photo_1342.png
- * where del1 = "_" and del2 ".", the file would get id 1342. The list is then sorted accordingly to those id's
+ * where del1 = "_" and del2 ".", the file would get id 1342. The list is then sorted accordingly to
+ * those id's
  *
  * @param qfil  :   QFileInfoList&  :   list to be sorted
  * @param del1  :   QString&        :   first delimiter
  * @param del2  :   QString&        :   last delimiter
  */
-void sort_qfilelist(QFileInfoList& qfil, const QString& del1, const QString& del2) {
+
+void framefinder_Q::sort_qfilelist(QFileInfoList& qfil, const QString& del1, const QString& del2) {
     // Allocate vector
     auto n = qfil.size();
     std::vector<Frame_Q> fn(n);
