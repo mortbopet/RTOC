@@ -267,12 +267,36 @@ void Analyzer::cleanObjects() {
                        ((bb_o.x + bb_o.width) < m_experiment.outlet);
     }
 
-    // Burde være i sin egen funktion
+    /// Following should be part of dependent experiment subclass
+    /// Where subclass type_of_experiment includes the different remove-conditions ig
+    /// __def: remove_cond1():__
+    ///     [thresh = count_threshold](const auto& dc) {
+    ///         return (*dc).size() < thresh;
+    ///     }
+    ///
+    // Remove objects with less than #count_threshold frames
     m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
                                            [thresh = count_threshold](const auto& dc) {
                                                return (*dc).size() < thresh;
                                            }),
                             m_experiment.data.end());
+
+    // Remove objects not represented before inlet
+    m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
+                                           [inlet = m_experiment.inlet](const auto& dc) {
+                                               cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
+                                               return ((bb_i.x + bb_i.width) > inlet - 1);
+                                           }),
+                            m_experiment.data.end());
+
+    // Remove objects not represented after outlet
+    m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
+                                           [outlet = m_experiment.outlet](const auto& dc) {
+                                               cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
+                                               return ((bb_o.x + bb_o.width) < outlet);
+                                           }),
+                            m_experiment.data.end());
+
 }
 
 /**
