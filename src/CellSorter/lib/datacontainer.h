@@ -56,6 +56,8 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
 // Data types which can be extracted through GUI - gui uses this map to generate available data
 // points for data extraction
 static std::map<DataFlags, std::string> guiMap{{Area, "Area"},
+                                               {BoundingBox, "BoundingBox"},
+                                               {Centroid, "Centroid"},
                                                {Circularity, "Circularity"},
                                                {ConvexArea, "Convex area"},
                                                {Eccentricity, "Eccentricity"},
@@ -143,8 +145,10 @@ public:
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
     std::vector<double> extractObject(int objIndex, int lastObject);
+    std::vector<double> extractObjectInDoubles(int objIndex);
     std::vector<double> extractContainer();
     std::vector<std::string> extractAttributeNames();
+    std::vector<std::string> extractAttributeName();
 
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }

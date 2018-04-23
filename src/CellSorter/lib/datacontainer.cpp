@@ -106,6 +106,67 @@ std::vector<double> DataContainer::extractObject(int objIndex, int lastObject) {
     return returnVector;
 }
 
+std::vector<double> DataContainer::extractObjectInDoubles(int objIndex) {
+    std::vector<double> returnVector;
+    if (data::Area & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Area));
+    }
+    if (data::BoundingBox & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).height);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).width);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).x);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).y);
+    }
+    if (data::Centroid & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Centroid).x);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Centroid).y);
+    }
+    if (data::Circularity & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Circularity));
+    }
+    if (data::ConvexArea & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::ConvexArea));
+    }
+    if (data::Eccentricity & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Eccentricity));
+    }
+    if (data::Frame & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Frame));
+    }
+    if (data::GradientScore & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::GradientScore));
+    }
+    if (data::Inlet & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Inlet));
+    }
+    if (data::Outlet & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Outlet));
+    }
+    if (data::Label & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Label));
+    }
+    if (data::Major_axis & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Major_axis));
+    }
+    if (data::Minor_axis & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Minor_axis));
+    }
+    if (data::Solidity & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Solidity));
+    }
+    if (data::Symmetry & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Symmetry));
+    }
+    if (data::Perimeter & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::Perimeter));
+    }
+    if (data::OutputValue & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::OutputValue));
+    }
+    return returnVector;
+}
+
+
 std::vector<double> DataContainer::extractContainer() {
     std::vector<double> returnVector;
     size_t sizeOfContainer = size();
@@ -129,6 +190,16 @@ std::vector<std::string> DataContainer::extractAttributeNames() {
         }
     }
     returnVector.emplace_back("Output");
+    return returnVector;
+}
+
+std::vector<std::string> DataContainer::extractAttributeName() {
+    std::vector<std::string> returnVector;
+    for (const auto& item : data::guiMap) {
+        if (item.first != data::PixelIdxList) {
+            returnVector.push_back(item.second);
+        }
+    }
     return returnVector;
 }
 

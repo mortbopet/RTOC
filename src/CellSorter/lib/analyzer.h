@@ -35,6 +35,7 @@ public:
     void cleanObjects();
 
     bool exportExperiment(const string& path);
+    bool exportAllFormat(const string& path);
 
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);

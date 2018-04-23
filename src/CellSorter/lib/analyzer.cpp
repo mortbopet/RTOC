@@ -376,6 +376,35 @@ bool Analyzer::exportExperiment(const string& path) {
     return true;
 }
 
+bool Analyzer::exportAllFormat(const string& path) {
+    std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeName();
+    std::ofstream out(path);
+    // Adds list of attributes
+    for (int i = 0; i < attributes.size(); i++) {
+        out << attributes[i] << "'";
+    }
+
+    // Adds number of containers
+    out << "\n" << m_experiment.data.size() << "\n";
+
+    // Goes through all containers
+    for (int i = 0; i < m_experiment.data.size(); i++) {
+        out << "Observation" << (i+1) << " " << m_experiment.data[i]->size() << "\n";
+
+        // Goes through all objects
+        for (int j = 0; j < m_experiment.data[i]->size(); j++) {
+            // Extracts vector of doubles from object
+            std::vector<double> objectVector = m_experiment.data[i]->extractObjectInDoubles(j);
+            for (const auto& item : objectVector) {
+                out << item << " ";
+            }
+            out << "\n";
+        }
+    }
+    out.close();
+    return true;
+}
+
 void Analyzer::processImage(cv::Mat &img, cv::Mat &bg) {
     for (const auto& process : m_processes) {
         process->doProcessing(img, bg, m_experiment);
