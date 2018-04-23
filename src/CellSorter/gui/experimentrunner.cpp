@@ -1,5 +1,5 @@
-#include "experimentprogresswidget.h"
-#include "ui_experimentprogresswidget.h"
+#include "experimentrunner.h"
+#include "ui_experimentrunner.h"
 
 #include <QMessageBox>
 #include <QPushButton>
@@ -8,8 +8,8 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
-ExperimentProgressWidget::ExperimentProgressWidget(Analyzer* analyzer, Setup setup, QWidget* parent)
-    : QDialog(parent), ui(new Ui::ExperimentProgressWidget), m_analyzer(analyzer) {
+ExperimentRunner::ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* parent)
+    : QDialog(parent), ui(new Ui::ExperimentRunner), m_analyzer(analyzer) {
     ui->setupUi(this);
 
     // change "Abort" button to stop acquisition
@@ -22,31 +22,31 @@ ExperimentProgressWidget::ExperimentProgressWidget(Analyzer* analyzer, Setup set
     // done with acquisition
     m_acqTimer = new QTimer(this);
     m_acqTimer->setInterval(250);
-    connect(m_acqTimer, &QTimer::timeout, this, &ExperimentProgressWidget::acqTimerElapsed);
+    connect(m_acqTimer, &QTimer::timeout, this, &ExperimentRunner::acqTimerElapsed);
     m_time.start();
     m_acqTimer->start();
 
     // Setup future watchers
     connect(&m_acqFutureWatcher, &QFutureWatcher<void>::finished, this,
-            &ExperimentProgressWidget::acquisitionFinished);
+            &ExperimentRunner::acquisitionFinished);
     connect(&m_dataFutureWatcher, &QFutureWatcher<void>::finished, this,
-            &ExperimentProgressWidget::dataExtractionFinished);
+            &ExperimentRunner::dataExtractionFinished);
 
     // Setup data extraction timer
     m_dataTimer = new QTimer(this);
     m_dataTimer->setInterval(250);
-    connect(m_dataTimer, &QTimer::timeout, this, &ExperimentProgressWidget::dataTimerElapsed);
+    connect(m_dataTimer, &QTimer::timeout, this, &ExperimentRunner::dataTimerElapsed);
 
     // Start the experiment
     QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::runAnalyzer, setup);
     m_acqFutureWatcher.setFuture(future);
 }
 
-ExperimentProgressWidget::~ExperimentProgressWidget() {
+ExperimentRunner::~ExperimentRunner() {
     delete ui;
 }
 
-void ExperimentProgressWidget::acquisitionFinished() {
+void ExperimentRunner::acquisitionFinished() {
     // set progress bar to 100%
     ui->acqProgress->setMaximum(1);
     ui->acqProgress->setValue(1);
@@ -66,7 +66,7 @@ void ExperimentProgressWidget::acquisitionFinished() {
     m_dataTimer->start();
 }
 
-void ExperimentProgressWidget::dataExtractionFinished() {
+void ExperimentRunner::dataExtractionFinished() {
     // do stuff
     QMessageBox::information(this, "Experiment finished", "Good stuff, it worked");
 
@@ -74,11 +74,11 @@ void ExperimentProgressWidget::dataExtractionFinished() {
     accept();
 }
 
-void ExperimentProgressWidget::on_pushButton_2_clicked() {}
+void ExperimentRunner::on_pushButton_2_clicked() {}
 
-void ExperimentProgressWidget::on_pushButton_clicked() {}
+void ExperimentRunner::on_pushButton_clicked() {}
 
-void ExperimentProgressWidget::acqTimerElapsed() {
+void ExperimentRunner::acqTimerElapsed() {
     int seconds = m_time.elapsed() / 1000;
     ui->elapsed->setText(QString::number(seconds));
 
@@ -93,14 +93,14 @@ void ExperimentProgressWidget::acqTimerElapsed() {
     ui->acqCount->setText(QString::number(acquiredImages));
 }
 
-void ExperimentProgressWidget::dataTimerElapsed() {
+void ExperimentRunner::dataTimerElapsed() {
     // poll analyzer for current frame being processed.
     int currentFrame = m_analyzer->m_currentProcessingFrame;
     ui->dataProgress->setValue(currentFrame);
     ui->processImageN->setText(QString::number(currentFrame));
 }
 
-void ExperimentProgressWidget::reject() {
+void ExperimentRunner::reject() {
     QString warning =
         "Are you sure you want to stop the experiment? Images will NOT be saved to the disk";
     if (QMessageBox::question(this, "Stop experiment", warning) == QMessageBox::Yes) {
@@ -108,7 +108,7 @@ void ExperimentProgressWidget::reject() {
     }
 }
 
-void ExperimentProgressWidget::on_buttonBox_clicked(QAbstractButton* button) {
+void ExperimentRunner::on_buttonBox_clicked(QAbstractButton* button) {
     if (button == ui->buttonBox->button(QDialogButtonBox::Abort)) {
         // Stop acquisition and run data processing
         m_analyzer->stopAnalyzer();

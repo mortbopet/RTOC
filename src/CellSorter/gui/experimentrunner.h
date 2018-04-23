@@ -1,5 +1,5 @@
-#ifndef EXPERIMENTPROGRESSWIDGET_H
-#define EXPERIMENTPROGRESSWIDGET_H
+#ifndef EXPERIMENTRUNNER_H
+#define EXPERIMENTRUNNER_H
 
 #include <QAbstractButton>
 #include <QDialog>
@@ -10,16 +10,16 @@
 #include "../lib/analyzer.h"
 
 namespace Ui {
-class ExperimentProgressWidget;
+class ExperimentRunner;
 }
 
-class ExperimentProgressWidget : public QDialog {
+class ExperimentRunner : public QDialog {
     Q_OBJECT
 
 public:
-    explicit ExperimentProgressWidget(Analyzer* analyzer, Setup setup, QWidget* parent = 0);
-    ~ExperimentProgressWidget();
-    Ui::ExperimentProgressWidget* ui;
+    explicit ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* parent = 0);
+    ~ExperimentRunner();
+    Ui::ExperimentRunner* ui;
 
 public slots:
     void reject() override;
@@ -44,4 +44,4 @@ private:
     QFutureWatcher<void> m_dataFutureWatcher;
 };
 
-#endif  // EXPERIMENTPROGRESSWIDGET_H
+#endif  // EXPERIMENTRUNNER_H

@@ -8,8 +8,8 @@
 #include <QToolTip>
 
 #include "../lib/datacontainer.h"
-#include "experimentprogresswidget.h"
-#include "ui_experimentprogresswidget.h"
+#include "experimentrunner.h"
+#include "ui_experimentrunner.h"
 
 ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* interface,
                                  QWidget* parent)
@@ -162,7 +162,7 @@ void ExperimentSetup::on_run_clicked() {
     }
 
     // we can run the experiment
-    ExperimentProgressWidget runner(m_analyzer, m_currentSetup);
+    ExperimentRunner runner(m_analyzer, m_currentSetup);
     runner.ui->experimentName->setText(ui->experimentName->text());
     runner.exec();
 }
