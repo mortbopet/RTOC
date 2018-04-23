@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QToolTip>
+
 #include "../lib/datacontainer.h"
 #include "experimentprogresswidget.h"
 #include "ui_experimentprogresswidget.h"
@@ -158,16 +159,12 @@ void ExperimentSetup::on_run_clicked() {
                     .arg(m_experimentPath));
             return;
         }
-        if (!setupExperimentDirectory())
-            ;
     }
 
     // we can run the experiment
-    ExperimentProgressWidget runner;
+    ExperimentProgressWidget runner(m_analyzer, m_currentSetup);
     runner.ui->experimentName->setText(ui->experimentName->text());
-    if (runner.exec()) {
-        ;
-    }
+    runner.exec();
 }
 
 bool ExperimentSetup::setupExperimentDirectory() const {

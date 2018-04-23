@@ -95,22 +95,25 @@ void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
  * @details
  *
  */
-void Analyzer::runAnalyzer(const Setup& setup) {
+void Analyzer::runAnalyzer(Setup setup) {
     bool success;
     while (true) {
         m_img = m_imageGetterFunction(success);
 
-        if (!success) {
+        if (!success || m_asyncStopAnalyzer) {
             break;
         }
 
         if (m_bg.dims == 0) {
             m_bg = m_img;
         } else {
-            processImage(m_img, m_bg);
-            m_experiment.processed.push_back({m_img, "", m_experiment.cellNum++, true});
+            if (setup.runProcessing) {
+                processImage(m_img, m_bg);
+                m_experiment.processed.push_back({m_img, "", m_experiment.cellNum++, true});
+            }
         }
     }
+    m_asyncStopAnalyzer = false;  // reset
 }
 
 /**
@@ -143,6 +146,8 @@ void Analyzer::findObjects() {
 
     for (const framefinder::Frame& f : m_experiment.processed) {
         cv::Mat img_to_show = f.image;
+        m_currentProcessingFrame =
+            f.id;  // this value is used by the GUI to get the current processing status
 
         // Get data from blobs in frame
         numObjects = matlab::regionProps(f.image, 0xffff, dc);

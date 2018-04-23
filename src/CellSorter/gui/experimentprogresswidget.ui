@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,0,0">
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="acq">
        <property name="title">
         <string>Acquisition</string>
        </property>
@@ -88,7 +88,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QProgressBar" name="progressBar">
+           <widget class="QProgressBar" name="acqProgress">
             <property name="maximum">
              <number>0</number>
             </property>

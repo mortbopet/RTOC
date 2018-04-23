@@ -13,6 +13,7 @@
 #include <functional>
 
 struct Setup {
+    bool runProcessing = true;
     bool storeRaw = false;
     bool storeProcessed = false;
     std::string rawPrefix;
@@ -31,10 +32,11 @@ public:
     void setBG(const cv::Mat& bg);
     void selectBG();
     void runProcesses();
-    void runAnalyzer(const Setup& setup);
+    void runAnalyzer(Setup setup);
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
+    void stopAnalyzer() { m_asyncStopAnalyzer = true; }
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
         m_imageGetterFunction = function;
@@ -55,8 +57,11 @@ public:
     Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
     cv::Mat m_img;
     cv::Mat m_bg;
+    int m_currentProcessingFrame;
 
 private:
+    bool m_asyncStopAnalyzer = false;  // called externally when analyzer should stop preliminarily
+
     void processImage(cv::Mat& img, cv::Mat& bg);
 
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
