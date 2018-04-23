@@ -21,7 +21,6 @@ Morph::Morph() {
     m_morphValueX.setValue(1);
     m_morphValueY.setRange(1, 100);
     m_morphValueY.setValue(1);
-
 }
 
 void Morph::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {

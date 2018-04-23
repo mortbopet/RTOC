@@ -12,6 +12,15 @@
 
 #include <functional>
 
+struct Setup {
+    bool storeRaw = false;
+    bool storeProcessed = false;
+    std::string rawPrefix;
+    std::string processedPrefix;
+    std::string outputPath;
+    std::string experimentName;
+};
+
 class Analyzer {
 public:
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
@@ -22,7 +31,7 @@ public:
     void setBG(const cv::Mat& bg);
     void selectBG();
     void runProcesses();
-    void runAnalyzer();
+    void runAnalyzer(const Setup& setup);
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
@@ -48,7 +57,7 @@ public:
     cv::Mat m_bg;
 
 private:
-    void processImage(cv::Mat &img, cv::Mat &bg);
+    void processImage(cv::Mat& img, cv::Mat& bg);
 
     std::vector<std::unique_ptr<ProcessBase>> m_processes;
 

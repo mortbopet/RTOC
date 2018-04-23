@@ -6,6 +6,9 @@ AcquisitionInterface::AcquisitionInterface(ImageDisplayerWidget* displayer)
 cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
     cv::Mat* newImage;
 
+    successful =
+        false;  // initially, we break if the selected acquisition source cannot retrieve an image
+
     // Get new image from current source
     while (true) {
         switch (m_source) {
@@ -43,5 +46,7 @@ cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
 }
 
 void AcquisitionInterface::reset() {
+    // Reset all acquisition devices such that they are ready to be queried for images from their
+    // initial state/position
     m_imageDisplayerWidget->reset();
 }

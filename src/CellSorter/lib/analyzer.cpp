@@ -4,7 +4,6 @@
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 
-
 /**
  * @brief
  * @param img_path
@@ -96,7 +95,7 @@ void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
  * @details
  *
  */
-void Analyzer::runAnalyzer() {
+void Analyzer::runAnalyzer(const Setup& setup) {
     bool success;
     while (true) {
         m_img = m_imageGetterFunction(success);
@@ -122,7 +121,6 @@ void Analyzer::runAnalyzer() {
 void Analyzer::resetProcesses() {
     m_processes.clear();
 }
-
 
 /**
  * @brief
@@ -282,21 +280,24 @@ void Analyzer::cleanObjects() {
                             m_experiment.data.end());
 
     // Remove objects not represented before inlet
-    m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
-                                           [inlet = m_experiment.inlet](const auto& dc) {
-                                               cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
-                                               return ((bb_i.x + bb_i.width) > inlet - 1);
-                                           }),
-                            m_experiment.data.end());
+    m_experiment.data.erase(
+        std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
+                       [inlet = m_experiment.inlet](const auto& dc) {
+                           cv::Rect bb_i =
+                               (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
+                           return ((bb_i.x + bb_i.width) > inlet - 1);
+                       }),
+        m_experiment.data.end());
 
     // Remove objects not represented after outlet
-    m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
-                                           [outlet = m_experiment.outlet](const auto& dc) {
-                                               cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
-                                               return ((bb_o.x + bb_o.width) < outlet);
-                                           }),
-                            m_experiment.data.end());
-
+    m_experiment.data.erase(
+        std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
+                       [outlet = m_experiment.outlet](const auto& dc) {
+                           cv::Rect bb_o =
+                               (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
+                           return ((bb_o.x + bb_o.width) < outlet);
+                       }),
+        m_experiment.data.end());
 }
 
 /**
@@ -367,7 +368,6 @@ bool Analyzer::loadSetup(const string& path) {
     return true;
 }
 
-
 /**
  *
  * @param datacontainers
@@ -383,9 +383,10 @@ bool Analyzer::exportExperiment(const string& path) {
     // 1)
     // In first row, attribute names and their corresponding object-number are outputtet
     std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeNames();
-    out << "EXPERIMENT NAME" << ",";
+    out << "EXPERIMENT NAME"
+        << ",";
     for (int i = 0; i < attributes.size(); i++) {
-        out << attributes[i] << "," ;
+        out << attributes[i] << ",";
     }
     out << '\n';
     attributes.clear();
@@ -403,7 +404,7 @@ bool Analyzer::exportExperiment(const string& path) {
     return true;
 }
 
-void Analyzer::processImage(cv::Mat &img, cv::Mat &bg) {
+void Analyzer::processImage(cv::Mat& img, cv::Mat& bg) {
     for (const auto& process : m_processes) {
         process->doProcessing(img, bg, m_experiment);
     }

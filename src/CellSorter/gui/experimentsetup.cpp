@@ -10,8 +10,9 @@
 #include "experimentprogresswidget.h"
 #include "ui_experimentprogresswidget.h"
 
-ExperimentSetup::ExperimentSetup(Analyzer* analyzer, QWidget* parent)
-    : m_analyzer(analyzer), QWidget(parent), ui(new Ui::ExperimentSetup) {
+ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* interface,
+                                 QWidget* parent)
+    : m_analyzer(analyzer), m_interface(interface), QWidget(parent), ui(new Ui::ExperimentSetup) {
     ui->setupUi(this);
 
     // setup tooltips
@@ -32,10 +33,27 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, QWidget* parent)
     ui->rawPrefix->setValidator(validator);
     ui->processedPrefix->setValidator(validator);
     ui->experimentName->setValidator(validator);
+
+    // Connect all editors to updateSetup
+    connect(ui->storeRaw, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
+    connect(ui->storeProcessed, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
+    connect(ui->experimentName, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
+    connect(ui->experimentPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
+    connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
+    connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
 }
 
 ExperimentSetup::~ExperimentSetup() {
     delete ui;
+}
+
+void ExperimentSetup::updateCurrentSetup() {
+    m_currentSetup.storeRaw = ui->storeRaw->isChecked();
+    m_currentSetup.storeProcessed = ui->storeProcessed->isChecked();
+    m_currentSetup.rawPrefix = ui->rawPrefix->text().toStdString();
+    m_currentSetup.processedPrefix = ui->processedPrefix->text().toStdString();
+    m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
+    m_currentSetup.experimentName = ui->experimentName->text().toStdString();
 }
 
 void ExperimentSetup::setToolTips() {
@@ -68,6 +86,18 @@ void ExperimentSetup::setToolTips() {
 }
 
 bool ExperimentSetup::verifyCanRunExperiment() {
+    // Check whether the acquisitor has a valid source and is ready
+    bool success = false;
+    m_interface->getNextImage(success);
+    m_interface->reset();
+    if (!success) {
+        QMessageBox::warning(
+            this, "Error",
+            QString("Could not retrieve image from acquisition source. Has a valid acquisition "
+                    "source been set up in the Acquisition tab?"));
+        return false;
+    }
+
     // Check whether an experiment directory and name has been set
     if (ui->experimentName->text().isEmpty() || ui->experimentPath->text().isEmpty()) {
         QMessageBox::warning(this, "Error", QString("Please set a valid experiment name and path"));

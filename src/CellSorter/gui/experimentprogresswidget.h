@@ -1,6 +1,7 @@
 #ifndef EXPERIMENTPROGRESSWIDGET_H
 #define EXPERIMENTPROGRESSWIDGET_H
 
+#include <QAbstractButton>
 #include <QDialog>
 #include <QTime>
 #include <QWidget>
@@ -17,11 +18,16 @@ public:
     ~ExperimentProgressWidget();
     Ui::ExperimentProgressWidget* ui;
 
+public slots:
+    void reject() override;
+
 private slots:
     void on_pushButton_2_clicked();
     void on_pushButton_clicked();
 
     void timerElapsed();
+
+    void on_buttonBox_clicked(QAbstractButton* button);
 
 private:
     QTimer* m_timer;

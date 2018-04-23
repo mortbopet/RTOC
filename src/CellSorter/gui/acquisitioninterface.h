@@ -19,9 +19,7 @@ public:
     AcquisitionInterface(ImageDisplayerWidget* imageDisplayer);
 
     void reset();
-
     void setAcqSourceState(AcqSource source) { m_source = source; }
-
     cv::Mat& getNextImage(bool& successful);
 
 public:

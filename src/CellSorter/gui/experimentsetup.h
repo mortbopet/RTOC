@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "../lib/analyzer.h"
+#include "acquisitioninterface.h"
 
 namespace Ui {
 class ExperimentSetup;
@@ -13,7 +14,8 @@ class ExperimentSetup : public QWidget {
     Q_OBJECT
 
 public:
-    explicit ExperimentSetup(Analyzer* analyzer, QWidget* parent = 0);
+    explicit ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* interface,
+                             QWidget* parent = 0);
     ~ExperimentSetup();
 
 private slots:
@@ -23,6 +25,7 @@ private slots:
 
     void on_setExperimentPath_clicked();
     bool verifyCanRunExperiment();
+    void updateCurrentSetup();
 
 private:
     void setToolTips();
@@ -30,8 +33,10 @@ private:
     Ui::ExperimentSetup* ui;
 
     Analyzer* m_analyzer;
-
+    AcquisitionInterface* m_interface;
     QString m_experimentPath;
+
+    Setup m_currentSetup;
 
     // Functions related to running the experiment
     bool setupExperimentDirectory() const;

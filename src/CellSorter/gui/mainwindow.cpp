@@ -13,9 +13,19 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     : m_analyzer(analyzer), QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    // Add ImageDisplayerWidget
+    m_imageDisplayerWidget = new ImageDisplayerWidget();
+    ui->imageLayout->addWidget(m_imageDisplayerWidget);
+
+    // Bind ("connect") analyzer and AcquisitionInterface through the imageGetterFunction
+    m_acqInterface = new AcquisitionInterface(m_imageDisplayerWidget);
+    analyzer->setImageGetterFunction(
+        [=](bool& successful) -> cv::Mat& { return m_acqInterface->getNextImage(successful); });
+
+    // create various objects
     m_processInterface = new ProcessInterface(m_analyzer);
     m_configurator = new Configurator(m_processInterface, m_analyzer);
-    m_experimentSetup = new ExperimentSetup(m_analyzer);
+    m_experimentSetup = new ExperimentSetup(m_analyzer, m_acqInterface);
     ui->configLayout->addWidget(m_configurator);
     ui->experimentLayout->addWidget(m_experimentSetup);
 
@@ -35,17 +45,8 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     connect(ui->fftresh, &QSpinBox::editingFinished,
             [=] { m_acqInterface->setFFThresh(ui->fftresh->value()); });
 
-    // Add ImageDisplayerWidget
-    m_imageDisplayerWidget = new ImageDisplayerWidget();
-    ui->imageLayout->addWidget(m_imageDisplayerWidget);
-
     // setup acquisition source combobox
     setupAcqCombobox();
-
-    // Bind ("connect") analyzer and AcquisitionInterface through the imageGetterFunction
-    m_acqInterface = new AcquisitionInterface(m_imageDisplayerWidget);
-    analyzer->setImageGetterFunction(
-        [=](bool& successful) -> cv::Mat& { return m_acqInterface->getNextImage(successful); });
 
     // Connect frame finder checkbox to acquisitionInterface
     connect(ui->enableFF, &QCheckBox::stateChanged, this, &MainWindow::ffStateChanged);
