@@ -47,10 +47,6 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     analyzer->setImageGetterFunction(
         [=](bool& successful) -> cv::Mat& { return m_acqInterface->getNextImage(successful); });
 
-    // connect run analyzer button to analyzer
-    ui->runAnalyzer->setIcon(QIcon(":/icons/resources/play-button.svg"));
-    connect(ui->runAnalyzer, &QPushButton::clicked, [=] { m_analyzer->runAnalyzer(); });
-
     // Connect frame finder checkbox to acquisitionInterface
     connect(ui->enableFF, &QCheckBox::stateChanged, this, &MainWindow::ffStateChanged);
 

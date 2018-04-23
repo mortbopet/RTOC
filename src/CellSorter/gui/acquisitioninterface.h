@@ -33,7 +33,7 @@ private:
 
     int m_threshold = 0;
 
-    AcqSource m_source;
+    AcqSource m_source = AcqSource::Folder;
     ImageDisplayerWidget* m_imageDisplayerWidget;
 
     cv::Mat m_lastImage;

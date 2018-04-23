@@ -34,6 +34,9 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     connect(ui->showUnprocessed, &QCheckBox::toggled, this, &ImageDisplayerWidget::refreshImage);
     connect(ui->showUnprocessed, &QCheckBox::toggled,
             [=](bool checked) { ui->unprocessed->setVisible(checked); });
+
+    // Initialize
+    reset();
 }
 
 ImageDisplayerWidget::~ImageDisplayerWidget() {

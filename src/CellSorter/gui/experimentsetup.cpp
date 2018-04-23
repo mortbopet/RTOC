@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QToolTip>
 #include "../lib/datacontainer.h"
+#include "experimentprogresswidget.h"
+#include "ui_experimentprogresswidget.h"
 
 ExperimentSetup::ExperimentSetup(Analyzer* analyzer, QWidget* parent)
     : m_analyzer(analyzer), QWidget(parent), ui(new Ui::ExperimentSetup) {
@@ -128,6 +130,13 @@ void ExperimentSetup::on_run_clicked() {
         }
         if (!setupExperimentDirectory())
             ;
+    }
+
+    // we can run the experiment
+    ExperimentProgressWidget runner;
+    runner.ui->experimentName->setText(ui->experimentName->text());
+    if (runner.exec()) {
+        ;
     }
 }
 
