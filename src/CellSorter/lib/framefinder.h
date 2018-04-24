@@ -13,9 +13,9 @@ namespace framefinder {
 
 struct Frame {
     cv::Mat image;
-    std::string filename;
+    std::string filename;   // Is this really used ???
     int id;
-    bool accepted;
+    bool accepted;          // Is this really used ???
 
     bool operator<(const Frame& rhs) const { return id < rhs.id; }
 };
