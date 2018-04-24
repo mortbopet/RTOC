@@ -33,10 +33,12 @@ public:
     void selectBG();
     void runProcesses();
     void runAnalyzer(Setup setup);
+    void writeImages(Setup setup);
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
     void stopAnalyzer() { m_asyncStopAnalyzer = true; }
+    void resetAnalyzer();
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
         m_imageGetterFunction = function;

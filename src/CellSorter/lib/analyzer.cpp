@@ -101,23 +101,15 @@ void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
 namespace fs = boost::filesystem;
 
 void Analyzer::runAnalyzer(Setup setup) {
-    fs::path experimentFolder = fs::path(setup.outputPath) / fs::path(setup.experimentName);
-    fs::path rawPath = experimentFolder / fs::path(setup.rawPrefix);
-    fs::path processedPath = experimentFolder / fs::path(setup.processedPrefix);
-
     bool success;
     while (true) {
         m_img = m_imageGetterFunction(success);
-        if (setup.storeRaw) {
-            std::string filepath =
-                (rawPath /
-                 fs::path(setup.rawPrefix + to_string(m_experiment.processed.size()) + ".png"))
-                    .string();
-            cv::imwrite(filepath, m_img);
-        }
 
         if (!success || m_asyncStopAnalyzer) {
             break;
+        }
+        if (setup.storeRaw) {
+            m_experiment.rawBuffer.push_back(m_img);
         }
 
         if (m_bg.dims == 0) {
@@ -125,19 +117,46 @@ void Analyzer::runAnalyzer(Setup setup) {
         } else {
             if (setup.runProcessing) {
                 processImage(m_img, m_bg);
-                if (setup.storeProcessed) {
-                    std::string filepath =
-                        (processedPath /
-                         fs::path(setup.processedPrefix + to_string(m_experiment.processed.size()) +
-                                  ".png"))
-                            .string();
-                    cv::imwrite(filepath, m_img);
-                }
                 m_experiment.processed.push_back({m_img, "", m_experiment.cellNum++, true});
             }
         }
     }
     m_asyncStopAnalyzer = false;  // reset
+}
+/**
+ * @brief Saves current images in rawBuffer and processed to disk
+ * @param setup
+ */
+void Analyzer::writeImages(Setup setup) {
+    fs::path experimentFolder = fs::path(setup.outputPath) / fs::path(setup.experimentName);
+    fs::path rawPath = experimentFolder / fs::path(setup.rawPrefix);
+    fs::path processedPath = experimentFolder / fs::path(setup.processedPrefix);
+
+    if (setup.storeRaw) {
+        for (const auto& image : m_experiment.rawBuffer) {
+            // store raw
+            std::string filepath =
+                (rawPath /
+                 fs::path(setup.rawPrefix + to_string(m_experiment.processed.size()) + ".png"))
+                    .string();
+            cv::imwrite(filepath, image);
+        }
+    }
+
+    // store processed
+    if (setup.storeProcessed) {
+        for (const auto& frame : m_experiment.processed) {
+            std::string filepath =
+                (processedPath / fs::path(setup.processedPrefix +
+                                          to_string(m_experiment.processed.size()) + ".png"))
+                    .string();
+            cv::imwrite(filepath, frame.image);
+        }
+    }
+}
+
+void Analyzer::resetAnalyzer() {
+    m_experiment.reset();
 }
 
 /**
