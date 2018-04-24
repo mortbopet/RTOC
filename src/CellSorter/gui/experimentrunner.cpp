@@ -9,7 +9,7 @@
 #include <QtConcurrent/QtConcurrent>
 
 ExperimentRunner::ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* parent)
-    : QDialog(parent), ui(new Ui::ExperimentRunner), m_analyzer(analyzer) {
+    : QDialog(parent), ui(new Ui::ExperimentRunner), m_setup(setup), m_analyzer(analyzer) {
     ui->setupUi(this);
 
     // change "Abort" button to stop acquisition
@@ -38,7 +38,7 @@ ExperimentRunner::ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* par
     connect(m_dataTimer, &QTimer::timeout, this, &ExperimentRunner::dataTimerElapsed);
 
     // Start the experiment
-    QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::runAnalyzer, setup);
+    QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::runAnalyzer, m_setup);
     m_acqFutureWatcher.setFuture(future);
 }
 
@@ -67,6 +67,13 @@ void ExperimentRunner::acquisitionFinished() {
 }
 
 void ExperimentRunner::dataExtractionFinished() {
+    // Export experiment data to file - should probably be async
+    std::string filename = QDir(QDir(QString::fromStdString(m_setup.outputPath))
+                                    .filePath(QString::fromStdString(m_setup.experimentName)))
+                               .filePath("data.someFormat")
+                               .toStdString();
+    m_analyzer->exportExperiment(filename);
+
     // do stuff
     QMessageBox::information(this, "Experiment finished", "Good stuff, it worked");
 

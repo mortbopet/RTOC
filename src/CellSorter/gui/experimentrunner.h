@@ -36,6 +36,8 @@ private slots:
     void on_buttonBox_clicked(QAbstractButton* button);
 
 private:
+    Setup m_setup;
+
     Analyzer* m_analyzer;
     QTimer* m_acqTimer;
     QTimer* m_dataTimer;

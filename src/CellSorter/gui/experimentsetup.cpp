@@ -173,8 +173,10 @@ bool ExperimentSetup::setupExperimentDirectory() const {
         return false;
     } else {
         QDir().mkdir(m_experimentPath);
-        QDir().mkdir(QDir(m_experimentPath).filePath(ui->rawPrefix->text()));
-        QDir().mkdir(QDir(m_experimentPath).filePath(ui->processedPrefix->text()));
+        if (ui->storeRaw->isChecked())
+            QDir().mkdir(QDir(m_experimentPath).filePath(ui->rawPrefix->text()));
+        if (ui->storeProcessed->isChecked())
+            QDir().mkdir(QDir(m_experimentPath).filePath(ui->processedPrefix->text()));
     }
     return true;
 }
