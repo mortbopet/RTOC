@@ -39,12 +39,6 @@ class Experiment {
     std::vector<std::unique_ptr<ConditionBase>> m_conditions;   // Ikke egentig syntaks
                                                                 // Holder listen af conditions der gør at et objekt bliver slettet
                                                                 //  - Kunne teknisk set godt ligge under analyzer
-    /* Eksempel:
-    *
-    *
-    *
-    ***
-
 
 
 }

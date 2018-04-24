@@ -20,7 +20,7 @@ int ObjectFinder::findObjects(Experiment& experiment) {
             if (m_frameTracker.empty()) {
                 newcell = true;
             } else {
-                m_centroid = dc[i]->getValue<cv::Point>(data::Centroid)
+                m_centroid = dc[i]->getValue<cv::Point>(data::Centroid);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
                 m_dist = res.first;
                 m_track = res.second;
@@ -62,7 +62,7 @@ std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& obje
         d.push_back(dist);
     }
     std::pair<double, unsigned long> p = matlab::min<double>(d);
-    return (p.first, listOfObjects.at(p.second));
+    return std::pair<double, Tracker>(p.first, listOfObjects.at(p.second));
 }
 
 /**
