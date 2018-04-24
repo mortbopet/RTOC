@@ -11,6 +11,7 @@
 #include <opencv/cv.h>
 #include <QMetaType>
 #include "imagedisplayerwidget.h"
+#include "genericcamerawidget.h"
 enum class AcqSource { Camera, Folder, Webcam };
 Q_DECLARE_METATYPE(AcqSource)
 
@@ -33,6 +34,7 @@ private:
 
     AcqSource m_source = AcqSource::Folder;
     ImageDisplayerWidget* m_imageDisplayerWidget;
+    GenericCameraWidget* m_genericCameraWidget;
 
     cv::Mat m_lastImage;
 };

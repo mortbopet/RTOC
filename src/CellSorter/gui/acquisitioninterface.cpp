@@ -16,6 +16,7 @@ cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
                 break;
             }
             case AcqSource::Webcam: {
+                newImage = m_genericCameraWidget->getNextImage(successful);
                 break;
             }
             case AcqSource::Folder: {
