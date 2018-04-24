@@ -13,6 +13,13 @@ namespace Ui {
 class ExperimentRunner;
 }
 
+/**
+ * @brief The ExperimentRunner class
+ * Works by having various asynchronous calls to Analyzer functions. Each call has an accompanying
+ * futureWatcher, which, when the future has returned, will trigger a state change in the
+ * ExperimentRunner. It is in these state changes that new functions are called, and the GUI is
+ * updated/modified.
+ */
 class ExperimentRunner : public QDialog {
     Q_OBJECT
 
@@ -25,25 +32,26 @@ public slots:
     void reject() override;
 
 private slots:
-    void on_pushButton_2_clicked();
-    void on_pushButton_clicked();
-    void acquisitionFinished();
-    void dataExtractionFinished();
-
-    void acqTimerElapsed();
-    void dataTimerElapsed();
+    void guiUpdateTimerElapsed();
 
     void on_buttonBox_clicked(QAbstractButton* button);
 
 private:
+    enum class State { Acquiring, StoringImages, GettingData, StoringData, Finished };
+    void stateChanged(State state);
+
+    State m_state;
     Setup m_setup;
 
     Analyzer* m_analyzer;
-    QTimer* m_acqTimer;
-    QTimer* m_dataTimer;
+    QTimer* m_timer;
     QTime m_time;
+
+    // A future is set for each state change
     QFutureWatcher<void> m_acqFutureWatcher;
-    QFutureWatcher<void> m_dataFutureWatcher;
+    QFutureWatcher<void> m_storeImageFutureWatcher;
+    QFutureWatcher<void> m_storeDataFutureWatcher;
+    QFutureWatcher<void> m_getDataFutureWatcher;
 };
 
 #endif  // EXPERIMENTRUNNER_H

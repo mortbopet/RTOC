@@ -15,111 +15,161 @@ ExperimentRunner::ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* par
     // change "Abort" button to stop acquisition
     ui->buttonBox->button(QDialogButtonBox::Abort)->setText("Finish acquisition");
 
-    ui->acqCount->setText(0);
-    ui->dataextraction->setEnabled(false);
+    // Setup future watchers to trigger state switching
+    connect(&m_acqFutureWatcher, &QFutureWatcher<void>::finished,
+            [=] { stateChanged(State::StoringImages); });
+    connect(&m_storeImageFutureWatcher, &QFutureWatcher<void>::finished,
+            [=] { stateChanged(State::GettingData); });
+    connect(&m_getDataFutureWatcher, &QFutureWatcher<void>::finished,
+            [=] { stateChanged(State::StoringData); });
+    connect(&m_storeDataFutureWatcher, &QFutureWatcher<void>::finished,
+            [=] { stateChanged(State::Finished); });
 
-    // Setup gui update timer - used for querying analyzer for current progress and whether it is
-    // done with acquisition
-    m_acqTimer = new QTimer(this);
-    m_acqTimer->setInterval(250);
-    connect(m_acqTimer, &QTimer::timeout, this, &ExperimentRunner::acqTimerElapsed);
+    // Setup gui update timer - used for querying analyzer for current progress
+    m_timer = new QTimer(this);
+    m_timer->setInterval(250);
+    connect(m_timer, &QTimer::timeout, this, &ExperimentRunner::guiUpdateTimerElapsed);
     m_time.start();
-    m_acqTimer->start();
-
-    // Setup future watchers
-    connect(&m_acqFutureWatcher, &QFutureWatcher<void>::finished, this,
-            &ExperimentRunner::acquisitionFinished);
-    connect(&m_dataFutureWatcher, &QFutureWatcher<void>::finished, this,
-            &ExperimentRunner::dataExtractionFinished);
-
-    // Setup data extraction timer
-    m_dataTimer = new QTimer(this);
-    m_dataTimer->setInterval(250);
-    connect(m_dataTimer, &QTimer::timeout, this, &ExperimentRunner::dataTimerElapsed);
+    m_timer->start();
 
     // Start the experiment
-    QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::runAnalyzer, m_setup);
-    m_acqFutureWatcher.setFuture(future);
+    stateChanged(State::Acquiring);
 }
 
 ExperimentRunner::~ExperimentRunner() {
     delete ui;
 }
 
-void ExperimentRunner::acquisitionFinished() {
-    // set progress bar to 100%
-    ui->acqProgress->setMaximum(1);
-    ui->acqProgress->setValue(1);
-    // disable acquisition view and enable data extraction view
-    ui->acq->setEnabled(false);
-    ui->dataextraction->setEnabled(true);
-    m_acqTimer->stop();  // dont update acquisition values anymore
+void ExperimentRunner::stateChanged(State state) {
+    // Executes state switching logic. Works in conjunction with
+    // Experimentrunner::guiUpdateTimerElapsed
 
-    // Setup data extraction toolbar
-    ui->dataProgress->setMaximum(m_analyzer->m_experiment.processed.size() - 1);
+    m_state = state;
 
-    // Start data extraction and start data timer
-    QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::findObjects);
-    m_dataFutureWatcher.setFuture(future);
+    switch (m_state) {
+        case State::Acquiring: {
+            ui->infoLabel->setText("Acquiring images from source...");
+            // Run the experiment
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::runAnalyzer, m_setup);
+            m_acqFutureWatcher.setFuture(future);
 
-    m_time.restart();
-    m_dataTimer->start();
-}
+            ui->acqCount->setText(0);
+            ui->dataextraction->setEnabled(false);
+            return;
+        }
+        case State::StoringImages: {
+            ui->infoLabel->setText("Storing images to disk...");
+            // ACQUISITION FINISHED
 
-void ExperimentRunner::dataExtractionFinished() {
-    // Export experiment data to file - should probably be async
-    std::string filename = QDir(QDir(QString::fromStdString(m_setup.outputPath))
-                                    .filePath(QString::fromStdString(m_setup.experimentName)))
-                               .filePath("data.someFormat")
-                               .toStdString();
-    m_analyzer->exportExperiment(filename);
+            // Start image storing (Always startet, but quickly terminates if user did not set any
+            // store options
 
-    // do stuff
-    QMessageBox::information(this, "Experiment finished", "Good stuff, it worked");
+            // Calculate size of progress bar
+            int nImages = 0;
+            nImages = m_setup.storeProcessed ? m_analyzer->m_experiment.processed.size() + nImages
+                                             : nImages;
+            nImages =
+                m_setup.storeRaw ? m_analyzer->m_experiment.rawBuffer.size() + nImages : nImages;
 
-    // Close dialog
-    accept();
-}
+            ui->acqProgress->setMaximum(nImages);
+            ui->acqProgress->setValue(0);
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages, m_setup);
+            m_storeImageFutureWatcher.setFuture(future);
+            return;
+        }
+        case State::GettingData: {
+            ui->infoLabel->setText("Extracting data from images...");
 
-void ExperimentRunner::on_pushButton_2_clicked() {}
+            // force acqProgressbar to 100%
+            ui->acqProgress->setMaximum(1);
+            ui->acqProgress->setValue(1);
 
-void ExperimentRunner::on_pushButton_clicked() {}
+            // disable acquisition view and enable data extraction view
+            ui->acq->setEnabled(false);
+            ui->dataextraction->setEnabled(true);
 
-void ExperimentRunner::acqTimerElapsed() {
-    int seconds = m_time.elapsed() / 1000;
-    ui->elapsed->setText(QString::number(seconds));
+            // Setup data extraction toolbar
+            ui->dataProgress->setMaximum(m_analyzer->m_experiment.processed.size() - 1);
 
-    size_t acquiredImages = m_analyzer->m_experiment.processed.size();
+            // Start data extraction
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::findObjects);
+            m_getDataFutureWatcher.setFuture(future);
+            return;
+        }
+        case State::StoringData: {
+            ui->infoLabel->setText("Storing data to file...");
+            // DATA GENERATION FINISHED
+            // Export experiment data to file - should probably be async as to not block GUI
+            std::string filename =
+                QDir(QDir(QString::fromStdString(m_setup.outputPath))
+                         .filePath(QString::fromStdString(m_setup.experimentName)))
+                    .filePath("data.someFormat")
+                    .toStdString();
 
-    // Guesstimate current FPS rate
-    int currentFps = acquiredImages / (seconds * 1.0);
-    if (currentFps > 0) {
-        ui->fps->setText(QString::number(currentFps));
+            QFuture<void> future =
+                QtConcurrent::run(m_analyzer, &Analyzer::exportExperiment, filename);
+            m_storeDataFutureWatcher.setFuture(future);
+            return;
+        }
+        case State::Finished: {
+            // force data progress bar to 100%
+            ui->dataProgress->setMaximum(1);
+            ui->dataProgress->setValue(1);
+
+            ui->infoLabel->setText("Finished experiment");
+            // Change the button box to be in a "finalized" state, because we can only exit the
+            // window now
+            ui->buttonBox->button(QDialogButtonBox::Abort)->setText("Close window");
+            ui->buttonBox->button(QDialogButtonBox::Cancel)->hide();
+            return;
+        }
     }
-    // Set current image progress
-    ui->acqCount->setText(QString::number(acquiredImages));
 }
 
-void ExperimentRunner::dataTimerElapsed() {
-    // poll analyzer for current frame being processed.
-    int currentFrame = m_analyzer->m_currentProcessingFrame;
-    ui->dataProgress->setValue(currentFrame);
-    ui->processImageN->setText(QString::number(currentFrame));
+void ExperimentRunner::guiUpdateTimerElapsed() {
+    if (m_state == State::Acquiring) {
+        int seconds = m_time.elapsed() / 1000;
+        ui->elapsed->setText(QString::number(seconds));
+
+        size_t acquiredImages = m_analyzer->m_experiment.processed.size();
+
+        // Guesstimate current FPS rate
+        int currentFps = acquiredImages / (seconds * 1.0);
+        if (currentFps > 0) {
+            ui->fps->setText(QString::number(currentFps));
+        }
+        // Set current image progress
+        ui->acqCount->setText(QString::number(acquiredImages));
+    } else if (m_state == State::StoringImages) {
+        int currentFrame = m_analyzer->m_currentProcessingFrame;
+        ui->acqProgress->setValue(currentFrame);
+    } else if (m_state == State::GettingData) {
+        int currentFrame = m_analyzer->m_currentProcessingFrame;
+        ui->dataProgress->setValue(currentFrame);
+        ui->processImageN->setText(QString::number(currentFrame));
+    }
 }
 
 void ExperimentRunner::reject() {
-    QString warning =
-        "Are you sure you want to stop the experiment? Images will NOT be saved to the disk";
-    if (QMessageBox::question(this, "Stop experiment", warning) == QMessageBox::Yes) {
-        QDialog::reject();
+    if (m_state != State::Finished) {
+        QString warning =
+            "Are you sure you want to stop the experiment? Images will NOT be saved to the disk";
+        if (QMessageBox::question(this, "Stop experiment", warning) == QMessageBox::Yes) {
+            QDialog::reject();
+        }
     }
 }
 
 void ExperimentRunner::on_buttonBox_clicked(QAbstractButton* button) {
-    if (button == ui->buttonBox->button(QDialogButtonBox::Abort)) {
-        // Stop acquisition and run data processing
-        m_analyzer->stopAnalyzer();
-    } else if (button == ui->buttonBox->button(QDialogButtonBox::Cancel)) {
-        this->reject();
+    if (m_state != State::Finished) {
+        if (button == ui->buttonBox->button(QDialogButtonBox::Abort)) {
+            // Stop acquisition and run data processing
+            m_analyzer->stopAnalyzer();
+        } else if (button == ui->buttonBox->button(QDialogButtonBox::Cancel)) {
+            this->reject();
+        }
+    } else {
+        // Experiment is finished, so we can only (successfully) close the window at this point
+        accept();
     }
 }

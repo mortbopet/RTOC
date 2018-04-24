@@ -101,6 +101,8 @@ void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
 namespace fs = boost::filesystem;
 
 void Analyzer::runAnalyzer(Setup setup) {
+    resetAnalyzer();
+
     bool success;
     while (true) {
         m_img = m_imageGetterFunction(success);
@@ -132,25 +134,30 @@ void Analyzer::writeImages(Setup setup) {
     fs::path rawPath = experimentFolder / fs::path(setup.rawPrefix);
     fs::path processedPath = experimentFolder / fs::path(setup.processedPrefix);
 
+    m_currentProcessingFrame = 0;
+
     if (setup.storeRaw) {
+        int index = 0;
         for (const auto& image : m_experiment.rawBuffer) {
+            m_currentProcessingFrame++;
             // store raw
             std::string filepath =
-                (rawPath /
-                 fs::path(setup.rawPrefix + to_string(m_experiment.processed.size()) + ".png"))
-                    .string();
+                (rawPath / fs::path(setup.rawPrefix + "_" + to_string(index) + ".png")).string();
             cv::imwrite(filepath, image);
+            index++;
         }
     }
 
     // store processed
     if (setup.storeProcessed) {
+        int index = 0;
         for (const auto& frame : m_experiment.processed) {
+            m_currentProcessingFrame++;
             std::string filepath =
-                (processedPath / fs::path(setup.processedPrefix +
-                                          to_string(m_experiment.processed.size()) + ".png"))
+                (processedPath / fs::path(setup.processedPrefix + "_" + to_string(index) + ".png"))
                     .string();
             cv::imwrite(filepath, frame.image);
+            index++;
         }
     }
 }
@@ -424,7 +431,7 @@ bool Analyzer::loadSetup(const string& path) {
  * @return
  */
 
-bool Analyzer::exportExperiment(const string& path) {
+void Analyzer::exportExperiment(const string& path) {
     m_experiment.data[0]->extractAttributeNames();
 
     std::ofstream out(path);
@@ -450,7 +457,6 @@ bool Analyzer::exportExperiment(const string& path) {
         out << '\n';
     }
     out.close();
-    return true;
 }
 
 void Analyzer::processImage(cv::Mat& img, cv::Mat& bg) {

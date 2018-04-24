@@ -159,12 +159,11 @@ void ExperimentSetup::on_run_clicked() {
                     .arg(m_experimentPath));
             return;
         }
+        // we can run the experiment
+        ExperimentRunner runner(m_analyzer, m_currentSetup);
+        runner.ui->experimentName->setText(ui->experimentName->text());
+        runner.exec();
     }
-
-    // we can run the experiment
-    ExperimentRunner runner(m_analyzer, m_currentSetup);
-    runner.ui->experimentName->setText(ui->experimentName->text());
-    runner.exec();
 }
 
 bool ExperimentSetup::setupExperimentDirectory() const {
