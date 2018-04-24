@@ -25,8 +25,9 @@ private:
     Ui::GenericCameraWidget* ui;
 
     cv::VideoCapture m_vidcap;
+    bool m_open = false;
 
-    cv::Mat m_image;
+    cv::Mat m_image, m_capture;
 };
 
 #endif  // GENERICCAMERAWIDGET_H

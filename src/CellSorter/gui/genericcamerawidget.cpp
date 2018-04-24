@@ -4,6 +4,10 @@
 GenericCameraWidget::GenericCameraWidget(QWidget* parent)
     : QWidget(parent), ui(new Ui::GenericCameraWidget) {
     ui->setupUi(this);
+    m_open = m_vidcap.open(0);
+    if (!m_open) {
+        // Error handling
+    }
 }
 
 GenericCameraWidget::~GenericCameraWidget() {
@@ -11,12 +15,11 @@ GenericCameraWidget::~GenericCameraWidget() {
 }
 
 cv::Mat* GenericCameraWidget::getNextImage(bool &successful) {
-    cv::Mat img;
     successful = true;
 
-    if (m_vidcap.open(0)) {
-        m_vidcap >> img;
-        cv::cvtColor(img, m_image, CV_BGR2GRAY);
+    if (m_open) {
+        m_vidcap >> m_capture;
+        cv::cvtColor(m_capture, m_image, CV_BGR2GRAY);
     } else {
         successful = false;
     }
