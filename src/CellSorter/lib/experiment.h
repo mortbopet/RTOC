@@ -18,7 +18,7 @@ struct Experiment {
     int cellNum = 0;  // Used for cell registration
     std::vector<framefinder::Frame> acc, dis, processed;
     double intensity_threshold;
-    std::string imagePath;
+    std::string imagePath;      // !!! Deprecated
     std::vector<std::unique_ptr<DataContainer>> data;
 
     void defaultSettings(const std::string& imgPath) {
@@ -30,3 +30,27 @@ struct Experiment {
 };
 
 #endif  // EXPERIMENT_H
+
+
+
+/* Experiment bør kun holde nogle vigtige meta-data for den pågældende type Experiment
+
+class Experiment {
+    std::vector<std::unique_ptr<ConditionBase>> m_conditions;   // Ikke egentig syntaks
+                                                                // Holder listen af conditions der gør at et objekt bliver slettet
+                                                                //  - Kunne teknisk set godt ligge under analyzer
+    /* Eksempel:
+    *
+    *
+    *
+    ***
+
+
+
+}
+
+class RBC : Experiment {
+
+}
+
+*/
