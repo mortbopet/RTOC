@@ -58,8 +58,11 @@ void ExperimentRunner::stateChanged(State state) {
             return;
         }
         case State::StoringImages: {
-            ui->infoLabel->setText("Storing images to disk...");
             // ACQUISITION FINISHED
+            ui->infoLabel->setText("Storing images to disk...");
+
+            // make sure that the actual value of the acquired images is written
+            ui->acqCount->setText(QString::number(m_analyzer->m_experiment.processed.size()));
 
             // Start image storing (Always startet, but quickly terminates if user did not set any
             // store options
@@ -127,10 +130,12 @@ void ExperimentRunner::stateChanged(State state) {
 }
 
 void ExperimentRunner::guiUpdateTimerElapsed() {
-    if (m_state == State::Acquiring) {
-        int seconds = m_time.elapsed() / 1000;
+    int seconds = m_time.elapsed() / 1000;
+    if (m_state != State::Finished) {
         ui->elapsed->setText(QString::number(seconds));
+    }
 
+    if (m_state == State::Acquiring) {
         size_t acquiredImages = m_analyzer->m_experiment.processed.size();
 
         // Guesstimate current FPS rate
