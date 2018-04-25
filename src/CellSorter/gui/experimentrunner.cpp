@@ -130,16 +130,21 @@ void ExperimentRunner::stateChanged(State state) {
 }
 
 void ExperimentRunner::guiUpdateTimerElapsed() {
-    int seconds = m_time.elapsed() / 1000;
+    int ms = m_time.elapsed();
     if (m_state != State::Finished) {
-        ui->elapsed->setText(QString::number(seconds));
+        ui->elapsed->setText(QString::number(ms / 1000));
     }
 
     if (m_state == State::Acquiring) {
         size_t acquiredImages = m_analyzer->m_experiment.processed.size();
 
         // Guesstimate current FPS rate
-        int currentFps = acquiredImages / (seconds * 1.0);
+        static int preTime = 0;
+        static int preSize = 0;
+        double currentFps = ((acquiredImages - preSize) * 1000.0) / (ms - preTime);
+        preTime = ms;
+        preSize = acquiredImages;
+
         if (currentFps > 0) {
             ui->fps->setText(QString::number(currentFps));
         }
