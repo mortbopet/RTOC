@@ -111,7 +111,7 @@ void Analyzer::runAnalyzer(Setup setup) {
             break;
         }
         if (setup.storeRaw) {
-            m_experiment.rawBuffer.push_back(m_img);
+            m_experiment.rawBuffer.push_back(m_img.clone());
         }
 
         if (m_bg.dims == 0) {
