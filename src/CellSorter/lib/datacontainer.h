@@ -54,24 +54,24 @@ static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
                                            {OutputValue, sizeof(double)}};
 
 // Data types which can be extracted through GUI - gui uses this map to generate available data
-// points for data extraction
-static std::map<DataFlags, std::string> guiMap{{Area, "Area"},
-                                               {BoundingBox, "BoundingBox"},
-                                               {Centroid, "Centroid"},
-                                               {Circularity, "Circularity"},
-                                               {ConvexArea, "Convex area"},
-                                               {Eccentricity, "Eccentricity"},
-                                               {Frame, "Frame"},
-                                               {GradientScore, "Gradient score"},
-                                               {Inlet, "Inlet"},
-                                               {Outlet, "Outlet"},
-                                               {Label, "Label"},
-                                               {Major_axis, "Major axis"},
-                                               {Minor_axis, "Minor axis"},
-                                               {Solidity, "Solidity"},
-                                               {Symmetry, "Symmetry"},
-                                               {Perimeter, "Perimeter"},
-                                               {OutputValue, "Output value"}};
+// points for data extraction. The boolean value is set True, when the name should be displayed in GUI.
+static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(1, Area), "Area"},
+                                               {std::make_pair(0, BoundingBox), "BoundingBox"},
+                                               {std::make_pair(0, Centroid), "Centroid"},
+                                               {std::make_pair(1, Circularity), "Circularity"},
+                                               {std::make_pair(1, ConvexArea), "Convex area"},
+                                               {std::make_pair(1, Eccentricity), "Eccentricity"},
+                                               {std::make_pair(0, Frame), "Frame"},
+                                               {std::make_pair(1, GradientScore), "Gradient score"},
+                                               {std::make_pair(0, Inlet), "Inlet"},
+                                               {std::make_pair(0, Outlet), "Outlet"},
+                                               {std::make_pair(0, Label), "Label"},
+                                               {std::make_pair(1, Major_axis), "Major axis"},
+                                               {std::make_pair(1, Minor_axis), "Minor axis"},
+                                               {std::make_pair(1, Solidity), "Solidity"},
+                                               {std::make_pair(1, Symmetry), "Symmetry"},
+                                               {std::make_pair(1, Perimeter), "Perimeter"},
+                                               {std::make_pair(0, OutputValue), "Output value"}};
 
 }  // namespace data
 
@@ -144,10 +144,7 @@ public:
     void setDataFlags(long flag);
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
-    std::vector<double> extractObject(int objIndex, int lastObject);
     std::vector<double> extractObjectInDoubles(int objIndex);
-    std::vector<double> extractContainer();
-    std::vector<std::string> extractAttributeNames();
     std::vector<std::string> extractAttributeName();
 
     int numberOfFlags();
