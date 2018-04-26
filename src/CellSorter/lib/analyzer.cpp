@@ -330,34 +330,38 @@ bool Analyzer::loadSetup(const string& path) {
  */
 
 void Analyzer::exportExperiment(const string& path) {
-    if (m_setup.extractData) {
-        m_experiment.data[0]->extractAttributeNames();
-
-        std::ofstream out(path);
-
-        // 1)
-        // In first row, attribute names and their corresponding object-number are outputtet
-        std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeNames();
-        out << "EXPERIMENT NAME"
-            << ",";
-        for (int i = 0; i < attributes.size(); i++) {
-            out << attributes[i] << ",";
-        }
-        out << '\n';
-        attributes.clear();
-        // 2)
-        // In the following rows, output object-values of each container are put output into each
-        // row
-        for (int i = 0; i < m_experiment.data.size(); i++) {
-            out << "Observation " << std::to_string(i + 1) << ",";
-            std::vector<double> containerValues = m_experiment.data[i]->extractContainer();
-            for (long j = 0; j < containerValues.size(); j++) {
-                out << containerValues[j] << ",";
-            }
-            out << '\n';
-        }
-        out.close();
+    std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeName();
+    std::ofstream out(path);
+    // Adds list of attributes
+    for (int i = 0; i < attributes.size(); i++) {
+        out << attributes[i] << "'";
     }
+    out << "\n";
+
+    // Adds number number of values for chosen attributes
+    std::vector<int> attributeLengths = m_experiment.data[0]->extractAttributeLengths();
+    for (const auto& value : attributeLengths) {
+        out << value << " ";
+    }
+
+    // Adds number of containers
+    out << "\n" << m_experiment.data.size() << "\n";
+
+    // Goes through all containers
+    for (int i = 0; i < m_experiment.data.size(); i++) {
+        out << "Observation" << (i+1) << " " << m_experiment.data[i]->size() << "\n";
+
+        // Goes through all objects
+        for (int j = 0; j < m_experiment.data[i]->size(); j++) {
+            // Extracts vector of doubles from object
+            std::vector<double> objectVector = m_experiment.data[i]->extractObjectInDoubles(j);
+            for (const auto& item : objectVector) {
+                out << item << " ";
+            }
+            out << "\n";
+        }
+    }
+    out.close();
 }
 
 void Analyzer::processImage(cv::Mat& img, cv::Mat& bg) {
