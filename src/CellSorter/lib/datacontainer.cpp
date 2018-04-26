@@ -137,6 +137,15 @@ std::vector<std::string> DataContainer::extractAttributeName() {
     return returnVector;
 }
 
+std::vector<int> DataContainer::extractAttributeLengths() {
+    std::vector<int> returnVector;
+    for (const auto& item : data::typeMap) {
+        returnVector.push_back(std::get<0>(item.second));
+    }
+    return returnVector;
+}
+
+
 int DataContainer::numberOfFlags() {
     int number = 0;
     for (int i = 0; i < 32; i++) {

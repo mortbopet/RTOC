@@ -147,6 +147,7 @@ public:
 
     std::vector<double> extractObjectInDoubles(int objIndex);
     std::vector<std::string> extractAttributeName();
+    std::vector<int> extractAttributeLengths();
 
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }

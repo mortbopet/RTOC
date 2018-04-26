@@ -348,9 +348,12 @@ bool Analyzer::exportAllFormat(const string& path) {
     for (int i = 0; i < attributes.size(); i++) {
         out << attributes[i] << "'";
     }
-    // Adds number number of values for chosen attributes
-    for (int i = 0; i < m_experiment.data[i]->size(); i++) {
+    out << "\n";
 
+    // Adds number number of values for chosen attributes
+    std::vector<int> attributeLengths = m_experiment.data[0]->extractAttributeLengths();
+    for (const auto& value : attributeLengths) {
+        out << value << " ";
     }
 
     // Adds number of containers
