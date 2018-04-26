@@ -101,7 +101,7 @@ const T& DataObject::getValue(data::DataFlags dataFlag) {
     if (!(m_dataFlags & dataFlag)) {
         throw std::runtime_error("requested dataFlag is not set for the object");
     };
-    if (sizeof(T) != data::typeMap[dataFlag]) {
+    if (sizeof(T) != std::get<1>(data::typeMap[dataFlag])) {
         // This should be done with typeId's
         throw std::runtime_error("Type for set-value is different from type of dataFlag");
     }
@@ -116,7 +116,7 @@ void DataObject::setValue(data::DataFlags dataFlag, T value) {
     if (!(m_dataFlags & dataFlag)) {
         throw std::runtime_error("requested dataFlag is not set for the object");
     };
-    if (sizeof(T) != data::typeMap[dataFlag]) {
+    if (sizeof(T) != std::get<1>(data::typeMap[dataFlag])) {
         // This should be done with typeId's
         throw std::runtime_error("Type for set-value is different from type of dataFlag");
     }
