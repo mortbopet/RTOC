@@ -15,7 +15,7 @@ cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
             case AcqSource::IronManCamera: {
 #ifdef BUILD_ACQ
                 auto imageData = m_acquisitor->requestImageDataBlocking(successful);
-                m_ironmanImage = cv::Mat(m_ironManDimensions.first, m_ironManDimensions.second,
+                m_ironmanImage = cv::Mat(m_ironManDimensions.second, m_ironManDimensions.first,
                                          CV_8UC1, imageData->data());
                 newImage = &m_ironmanImage;
 #endif

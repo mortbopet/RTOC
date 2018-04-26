@@ -200,14 +200,23 @@ void Acquisitor::throwLastFgError() {
     throwLastFgError(m_FgHandle->getFgHandle());
 }
 
+#include <chrono>
+
 std::vector<char>* Acquisitor::requestImageDataBlocking(bool& successful) {
     // Request a pointer to the most recently acquisited image. This function does not use the Qt
     // event loop, and is blocking until the data has been copied
+    auto start = std::chrono::system_clock::now();
+    auto end = std::chrono::system_clock::now();
     m_requestImage = true;
-    while (m_requestImage)
-        ;
-    successful = true;  // a bit hacky but we should always do something with the input successful
-                        // variable, to adhere to the interface in AcquisitionInterface
+    successful = true;
+    while (m_requestImage) {
+        end = std::chrono::system_clock::now();
+        if (end - start > std::chrono::milliseconds(1000)) {
+            successful = false;
+            break;
+        }
+    }
+
     return &m_image;
 }
 
