@@ -4,7 +4,7 @@ AcquisitionInterface::AcquisitionInterface(ImageDisplayerWidget* displayer)
     : m_imageDisplayerWidget(displayer) {}
 
 cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
-    cv::Mat* newImage;
+    cv::Mat* newImage = nullptr;
 
     successful =
         false;  // initially, we break if the selected acquisition source cannot retrieve an image
@@ -36,6 +36,10 @@ cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
         }
 
         if (m_ffEnabled) {
+            if (m_lastImage.empty()) {
+                // last image needs to be initialized
+                m_lastImage = *newImage;
+            }
             if (framefinder::hasChanged(m_lastImage, *newImage, m_threshold)) {
                 // A sufficient change between current and last image has been detected, return the
                 // newly acquired image

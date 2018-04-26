@@ -95,9 +95,7 @@ int framefinder::get_files(std::vector<Frame>& files, const std::string& folder)
 bool framefinder::hasChanged(const cv::Mat& img1, const cv::Mat& img2, const int& threshold) {
     double crit = 0.0;
     cv::minMaxIdx(img1 - img2, nullptr, &crit);
-    int crit_ = crit;
-    crit_ >>= 8;  // crit /= 256
-    return crit_ > threshold;
+    return crit > threshold;
 }
 
 /**
@@ -166,14 +164,16 @@ void framefinder::get_rejected(const std::vector<Frame>& frames, std::vector<Fra
  * @param del2  :   QString&        :   last delimiter
  */
 
-void framefinder::sort_qfilelist(QFileInfoList& qfil, const std::string& del1, const std::string& del2) {
+void framefinder::sort_qfilelist(QFileInfoList& qfil, const std::string& del1,
+                                 const std::string& del2) {
     // Allocate vector
     auto n = qfil.size();
     std::vector<Frame_Q> fn(n);
 
     // Get file-numbers and accept_or_reject
     for (int i = 0; i < n; i++) {
-        auto id = (int)strtol(framefinder::extractBetween(qfil[i].fileName().toStdString()).c_str(), nullptr, 10);
+        auto id = (int)strtol(framefinder::extractBetween(qfil[i].fileName().toStdString()).c_str(),
+                              nullptr, 10);
         Frame_Q fq = {qfil[i], id};
         fn[i] = fq;
     }
