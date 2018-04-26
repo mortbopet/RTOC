@@ -42,6 +42,9 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* inter
     connect(ui->experimentPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
+
+    // Update current setup to load default GUI values
+    updateCurrentSetup();
 }
 
 ExperimentSetup::~ExperimentSetup() {
