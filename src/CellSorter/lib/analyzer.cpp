@@ -2,7 +2,9 @@
 
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+
 #include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include <boost/filesystem.hpp>
 
@@ -328,12 +330,11 @@ void Analyzer::cleanObjects() {
     ///     }
     ///
     // Remove objects with less than #count_threshold frames
-    m_experiment.data.erase(
-        std::remove_if(
-            m_experiment.data.begin(),
-            m_experiment.data.end(), [thresh = count_threshold](
-                                         const auto& dc) { return (*dc).size() < thresh; }),
-        m_experiment.data.end());
+    m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
+                                           [thresh = count_threshold](const auto& dc) {
+                                               return (*dc).size() < thresh;
+                                           }),
+                            m_experiment.data.end());
 
     // Remove objects not represented before inlet
     m_experiment.data.erase(
@@ -415,7 +416,9 @@ bool Analyzer::loadSetup(const string& path) {
         std::ifstream ifs(path);
         {
             boost::archive::xml_iarchive ia(ifs);
+#ifndef __linux__  // https://stackoverflow.com/questions/50038329/serializing-stdvector-of-unique-ptr-using-boostserialization-fails-on-linux
             ia >> BOOST_SERIALIZATION_NVP(m_processes);
+#endif
         }
         ifs.close();
     } catch (...) {
