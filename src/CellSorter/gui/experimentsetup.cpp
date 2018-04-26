@@ -11,9 +11,8 @@
 #include "experimentrunner.h"
 #include "ui_experimentrunner.h"
 
-ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* interface,
-                                 QWidget* parent)
-    : m_analyzer(analyzer), m_interface(interface), QWidget(parent), ui(new Ui::ExperimentSetup) {
+ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent)
+    : m_analyzer(analyzer), m_interface(iface), QWidget(parent), ui(new Ui::ExperimentSetup) {
     ui->setupUi(this);
 
     // setup tooltips

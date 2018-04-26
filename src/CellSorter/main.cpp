@@ -1,5 +1,4 @@
 #include <QApplication>
-#include "../AcquisitionApp/src/acquisitionwidget.h"
 #include "gui/mainwindow.h"
 #include "lib/analyzer.h"
 

@@ -14,8 +14,7 @@ class ExperimentSetup : public QWidget {
     Q_OBJECT
 
 public:
-    explicit ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* interface,
-                             QWidget* parent = 0);
+    explicit ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent = 0);
     ~ExperimentSetup();
 
 private slots:

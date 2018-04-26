@@ -18,7 +18,7 @@ class Configurator : public QWidget {
     Q_OBJECT
 
 public:
-    explicit Configurator(ProcessInterface* interface, Analyzer* analyzer, QWidget* parent = 0);
+    explicit Configurator(ProcessInterface* iface, Analyzer* analyzer, QWidget* parent = 0);
     ~Configurator();
 
 private slots:

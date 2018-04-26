@@ -9,12 +9,11 @@
 #include <unistd.h>
 #endif
 
-#include <QObject>
-
 #include <fgrab_define.h>
 #include <fgrab_prototyp.h>
 #include <fgrab_struct.h>
 #include <siso_genicam.h>
+#include <QObject>
 #include <stdexcept>
 
 #include <QFuture>

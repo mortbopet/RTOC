@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-if(BUILD_ACQ)
-    # Set preprocessor flag to trigger inclusion of acquisitor parts in program
-    add_definitions(-DBUILD_ACQ)
-endif()
-
 set (CMAKE_CXX_STANDARD 14)
 cmake_policy(SET CMP0020 NEW)
 project(CellSorter)
@@ -34,9 +29,6 @@ if(WIN32)
 else()
 add_definitions(-fPIC)
 endif()
-
-# Add acquisitor subdirectory
-add_subdirectory(../AcquisitionApp "${CMAKE_CURRENT_BINARY_DIR}/AcquisitionApp")
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -69,11 +61,17 @@ file ( GLOB RESOURCES
  ../*.qrc
 )
 
+if(${BUILD_ACQ})
+    add_definitions(-DBUILD_ACQ)
+endif()
+
+add_subdirectory(AcquisitionApp)
 add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
 target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
 ######################################################################
 ## endof GUI setup
 ######################################################################
+
 
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})

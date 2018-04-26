@@ -11,6 +11,8 @@ endif(COMMAND cmake_policy)
 if(${BUILD_ACQ})
     message( STATUS "\nBUILDING WITH ACQUISITION APP")
     if( DEFINED ENV{SISODIR5} )
+        # Set preprocessor flag to trigger inclusion of acquisitor parts in program
+        add_definitions(-DBUILD_ACQ)
       message( STATUS "\nSISODIR5 environment variable detected at: " $ENV{SISODIR5}
           "\nThis variable is required for linking against SiliconSoftware provided
           headers and libraries.")
@@ -77,7 +79,7 @@ if(${BUILD_ACQ})
     FIND_PACKAGE(SisoGenicamLib REQUIRED)
 
     # SiliconSoftware runtime directories
-    include_directories(${FgLib5_INCLUDE_DIR} ${SisoGenicam_INCLUDE_DIR})
+    target_include_directories(acquisitor_lib PUBLIC ${FgLib5_INCLUDE_DIR} ${SisoGenicam_INCLUDE_DIR})
 
     # Link SiliconSoftware libraries
     target_link_libraries( ${PROJECT_NAME}
@@ -92,4 +94,5 @@ if(${BUILD_ACQ})
     target_link_libraries( ACQ_LIB
         acquisitor_lib
     )
+
 endif()

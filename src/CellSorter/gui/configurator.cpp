@@ -6,8 +6,8 @@
 #include <QFileDialog>
 #include <QHeaderView>
 
-Configurator::Configurator(ProcessInterface* interface, Analyzer* analyzer, QWidget* parent)
-    : m_interface(interface), QWidget(parent), ui(new Ui::Configurator) {
+Configurator::Configurator(ProcessInterface* iface, Analyzer* analyzer, QWidget* parent)
+    : m_interface(iface), QWidget(parent), ui(new Ui::Configurator) {
     ui->setupUi(this);
 
     // Set icons
@@ -40,7 +40,7 @@ Configurator::Configurator(ProcessInterface* interface, Analyzer* analyzer, QWid
     }
 
     // Setup tree view
-    m_model = new TreeModel(m_interface->getContainerPtr(), interface);
+    m_model = new TreeModel(m_interface->getContainerPtr(), iface);
     ui->tree->setModel(m_model);
     connect(m_interface, &ProcessInterface::dataChanged, this, &Configurator::updateModel);
 
@@ -64,7 +64,7 @@ Configurator::Configurator(ProcessInterface* interface, Analyzer* analyzer, QWid
 }
 
 void Configurator::updateModel() {
-    // prevent setData() calls in model to send data changes to the processInterface
+    // prevent setData() calls in model to send data changes to the ProcessInterface
     m_model->setModelLoading(true);
     while (m_model->rowCount() > 0) {
         int row = m_model->rowCount() - 1;
@@ -77,9 +77,9 @@ void Configurator::updateModel() {
         QString type = QString::fromStdString(
             m_interface->doActionForType(process->getTypeName(), ProcessTypeAction::GetName));
 
-        insertRow(m_model->index(m_model->rowCount() - 1, 0),
-                  QList<QVariant>() << processIndex << type << ""
-                                    << "");
+        insertRow(m_model->index(m_model->rowCount() - 1, 0), QList<QVariant>()
+                                                                  << processIndex << type << ""
+                                                                  << "");
         auto parameters = process->getParameters();
         for (const auto& parameter : parameters) {
             auto optionStream = parameter->getOptions();

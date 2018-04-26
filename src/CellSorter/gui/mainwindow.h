@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "../AcquisitionApp/src/acquisitionwidget.h"
+#include "AcquisitionApp/src/acquisitionwidget.h"
 #include "acquisitioninterface.h"
 #include "configurator.h"
 #include "experimentsetup.h"

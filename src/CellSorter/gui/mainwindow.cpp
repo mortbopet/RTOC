@@ -63,7 +63,7 @@ void MainWindow::acqSelectionChanged(int index) {
     switch (source) {
         case AcqSource::Camera: {
 #ifdef BUILD_ACQ
-            ui->acqWidgets->setCurrentIndex(3);
+            ui->acqWidgets->setCurrentIndex(2);
 #else
             // Display error message
             cameraSelectedWithoutAcqBuilt();
