@@ -33,25 +33,26 @@ enum DataFlags {
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
-// This mapping is used by DataObject for memory allocation
-static std::map<DataFlags, size_t> typeMap{{Area, sizeof(double)},
-                                           {BoundingBox, sizeof(cv::Rect)},
-                                           {Centroid, sizeof(cv::Point)},
-                                           {Circularity, sizeof(double)},
-                                           {ConvexArea, sizeof(double)},
-                                           {Eccentricity, sizeof(double)},
-                                           {Frame, sizeof(int)},
-                                           {GradientScore, sizeof(double)},
-                                           {Inlet, sizeof(int)},
-                                           {Outlet, sizeof(int)},
-                                           {Label, sizeof(int)},
-                                           {Major_axis, sizeof(double)},
-                                           {Minor_axis, sizeof(double)},
-                                           {Solidity, sizeof(double)},
-                                           {Symmetry, sizeof(double)},
-                                           {Perimeter, sizeof(double)},
-                                           {PixelIdxList, sizeof(std::vector<cv::Point>*)},
-                                           {OutputValue, sizeof(double)}};
+// This mapping is used by DataObject for memory allocation. The 1st value in the pair defines the
+    // number of values the datatype contains
+static std::map<DataFlags, std::pair<int, size_t>> typeMap{{Area, std::make_pair(1, sizeof(double))},
+                                           {BoundingBox, std::make_pair(4, sizeof(cv::Rect))},
+                                           {Centroid, std::make_pair(2, sizeof(cv::Point))},
+                                           {Circularity, std::make_pair(1, sizeof(double))},
+                                           {ConvexArea, std::make_pair(1, sizeof(double))},
+                                           {Eccentricity, std::make_pair(1, sizeof(double))},
+                                           {Frame, std::make_pair(1, sizeof(int))},
+                                           {GradientScore, std::make_pair(1, sizeof(double))},
+                                           {Inlet, std::make_pair(1, sizeof(int))},
+                                           {Outlet, std::make_pair(1, sizeof(int))},
+                                           {Label, std::make_pair(1, sizeof(int))},
+                                           {Major_axis, std::make_pair(1, sizeof(double))},
+                                           {Minor_axis, std::make_pair(1, sizeof(double))},
+                                           {Solidity, std::make_pair(1, sizeof(double))},
+                                           {Symmetry, std::make_pair(1, sizeof(double))},
+                                           {Perimeter, std::make_pair(1, sizeof(double))},
+                                           {PixelIdxList, std::make_pair(1, sizeof(std::vector<cv::Point>*))},
+                                           {OutputValue, std::make_pair(1, sizeof(double))}};
 
 // Data types which can be extracted through GUI - gui uses this map to generate available data
 // points for data extraction. The boolean value is set True, when the name should be displayed in GUI.
@@ -103,7 +104,7 @@ const T& DataObject::getValue(data::DataFlags dataFlag) {
     if (!(m_dataFlags & dataFlag)) {
         throw std::runtime_error("requested dataFlag is not set for the object");
     };
-    if (sizeof(T) != data::typeMap[dataFlag]) {
+    if (sizeof(T) != std::get<1>(data::typeMap[dataFlag])) {
         // This should be done with typeId's
         throw std::runtime_error("Type for set-value is different from type of dataFlag");
     }
@@ -118,7 +119,7 @@ void DataObject::setValue(data::DataFlags dataFlag, T value) {
     if (!(m_dataFlags & dataFlag)) {
         throw std::runtime_error("requested dataFlag is not set for the object");
     };
-    if (sizeof(T) != data::typeMap[dataFlag]) {
+    if (sizeof(T) != std::get<1>(data::typeMap[dataFlag])) {
         // This should be done with typeId's
         throw std::runtime_error("Type for set-value is different from type of dataFlag");
     }
