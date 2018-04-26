@@ -13,9 +13,10 @@
 #include <functional>
 
 struct Setup {
-    bool runProcessing = true;
-    bool storeRaw = false;
-    bool storeProcessed = false;
+    bool runProcessing;
+    bool extractData;
+    bool storeRaw;
+    bool storeProcessed;
     std::string rawPrefix;
     std::string processedPrefix;
     std::string outputPath;
@@ -33,7 +34,7 @@ public:
     void selectBG();
     void runProcesses();
     void runAnalyzer(Setup setup);
-    void writeImages(Setup setup);
+    void writeImages();
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
@@ -62,6 +63,8 @@ public:
     int m_currentProcessingFrame;
 
 private:
+    Setup m_setup;
+
     bool m_asyncStopAnalyzer = false;  // called externally when analyzer should stop preliminarily
 
     void processImage(cv::Mat& img, cv::Mat& bg);

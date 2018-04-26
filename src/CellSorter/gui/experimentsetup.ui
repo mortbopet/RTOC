@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>598</width>
-    <height>535</height>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -198,7 +198,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="extractData">
        <property name="enabled">
         <bool>true</bool>
        </property>

@@ -76,7 +76,7 @@ void ExperimentRunner::stateChanged(State state) {
 
             ui->acqProgress->setMaximum(nImages);
             ui->acqProgress->setValue(0);
-            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages, m_setup);
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages);
             m_storeImageFutureWatcher.setFuture(future);
             return;
         }

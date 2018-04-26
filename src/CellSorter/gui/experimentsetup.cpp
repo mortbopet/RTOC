@@ -42,6 +42,7 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* inter
     connect(ui->experimentPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
+    connect(ui->extractData, &QGroupBox::toggled, [=] { updateCurrentSetup(); });
 
     // Update current setup to load default GUI values
     updateCurrentSetup();
@@ -58,6 +59,7 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.processedPrefix = ui->processedPrefix->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
+    m_currentSetup.extractData = ui->extractData->isChecked();
 }
 
 void ExperimentSetup::setToolTips() {
