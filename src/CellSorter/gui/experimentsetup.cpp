@@ -143,6 +143,8 @@ void ExperimentSetup::setupDataOptions() {
     int column = 0;
     int row = 0;
     for (const auto& option : data::guiMap) {
+<<<<<<< HEAD
+if (std::get<0>(option.first) == 1) {
         QCheckBox* checkbox = new QCheckBox(QString::fromStdString(option.second));
         ui->dataLayout->addWidget(checkbox, row, column);
 
@@ -157,6 +159,7 @@ void ExperimentSetup::setupDataOptions() {
         if (column == columns) {
             column = 0;
             row++;
+            }
         }
     }
 }
