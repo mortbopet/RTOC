@@ -50,7 +50,7 @@ class Acquisitor : public QObject {
 public:
     static Acquisitor* get();
     ~Acquisitor();
-    std::vector<char>* requestImageDataBlocking();
+    std::vector<char>* requestImageDataBlocking(bool& successful);
 
 public slots:
     int initialize(const QString& xmlPath, const QString& configPath, bool useConfigFile);

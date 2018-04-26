@@ -181,8 +181,8 @@ void Acquisitor::acquisitionSgc() {
 
             // Copy image buffer to m_image
             std::memcpy(m_image.data(), pos, m_image.size());
-            m_requestImage = false;
             emit sendImageData(m_image);
+            m_requestImage = false;
         }
         // Unblock the buffer
         Fg_setStatusEx(fgHandle, FG_UNBLOCK, bufNr, m_dmaPort, dmaHandle);
@@ -200,12 +200,14 @@ void Acquisitor::throwLastFgError() {
     throwLastFgError(m_FgHandle->getFgHandle());
 }
 
-std::vector<char>* Acquisitor::requestImageDataBlocking() {
+std::vector<char>* Acquisitor::requestImageDataBlocking(bool& successful) {
     // Request a pointer to the most recently acquisited image. This function does not use the Qt
     // event loop, and is blocking until the data has been copied
     m_requestImage = true;
     while (m_requestImage)
         ;
+    successful = true;  // a bit hacky but we should always do something with the input successful
+                        // variable, to adhere to the interface in AcquisitionInterface
     return &m_image;
 }
 

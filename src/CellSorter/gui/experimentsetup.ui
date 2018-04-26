@@ -209,7 +209,7 @@
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
@@ -230,6 +230,9 @@
            <widget class="QCheckBox" name="storeRaw">
             <property name="text">
              <string>Store raw (unprocessed) images</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -254,6 +257,9 @@
            <widget class="QCheckBox" name="storeProcessed">
             <property name="text">
              <string>Store processed images</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

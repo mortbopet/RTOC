@@ -10,9 +10,14 @@
 
 #include <opencv/cv.h>
 #include <QMetaType>
-#include "imagedisplayerwidget.h"
 #include "genericcamerawidget.h"
-enum class AcqSource { Camera, Folder, Webcam };
+#include "imagedisplayerwidget.h"
+
+#ifdef BUILD_ACQ
+#include "AcquisitionApp/acquisitor_src/acquisitor.h"
+#endif
+
+enum class AcqSource { IronManCamera, Folder, Webcam };
 Q_DECLARE_METATYPE(AcqSource)
 
 class AcquisitionInterface {
@@ -35,6 +40,18 @@ private:
     AcqSource m_source = AcqSource::Folder;
     ImageDisplayerWidget* m_imageDisplayerWidget;
     GenericCameraWidget* m_genericCameraWidget;
+
+#ifdef BUILD_ACQ
+public:
+    void setAcquisitor(Acquisitor* acq) { m_acquisitor = acq; }
+    void setIronManDimensions(QPair<int, int> dim) { m_ironManDimensions = dim; }
+
+private:
+    Acquisitor* m_acquisitor;
+    QPair<int, int> m_ironManDimensions;
+
+    cv::Mat m_ironmanImage;
+#endif
 
     cv::Mat m_lastImage;
 };

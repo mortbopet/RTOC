@@ -12,7 +12,13 @@ cv::Mat& AcquisitionInterface::getNextImage(bool& successful) {
     // Get new image from current source
     while (true) {
         switch (m_source) {
-            case AcqSource::Camera: {
+            case AcqSource::IronManCamera: {
+#ifdef BUILD_ACQ
+                auto imageData = m_acquisitor->requestImageDataBlocking(successful);
+                m_ironmanImage = cv::Mat(m_ironManDimensions.first, m_ironManDimensions.second,
+                                         CV_8UC1, imageData->data());
+                newImage = &m_ironmanImage;
+#endif
                 break;
             }
             case AcqSource::Webcam: {

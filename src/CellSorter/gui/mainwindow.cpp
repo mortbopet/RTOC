@@ -54,6 +54,10 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
 #ifdef BUILD_ACQ
     m_acquisitionWdiget = new AcquisitionWidget(this);
     ui->acqLayout->addWidget(m_acquisitionWdiget);
+
+    m_acqInterface->setAcquisitor(Acquisitor::get());
+    connect(Acquisitor::get(), &Acquisitor::imageDimensionsChanged,
+            [=](QPair<int, int> p) { m_acqInterface->setIronManDimensions(p); });
 #endif
 }
 
@@ -61,7 +65,7 @@ void MainWindow::acqSelectionChanged(int index) {
     // Decode source value
     AcqSource source = ui->acqSource->itemData(index).value<AcqSource>();
     switch (source) {
-        case AcqSource::Camera: {
+        case AcqSource::IronManCamera: {
 #ifdef BUILD_ACQ
             ui->acqWidgets->setCurrentIndex(2);
 #else
@@ -91,7 +95,7 @@ void MainWindow::setupAcqCombobox() {
     ui->acqSource->addItem("Image folder", QVariant::fromValue(AcqSource::Folder));
     ui->acqSource->addItem("Generic camera", QVariant::fromValue(AcqSource::Webcam));
     ui->acqSource->addItem("microEnable 5 ironman AQ8-CXP6D",
-                           QVariant::fromValue(AcqSource::Camera));
+                           QVariant::fromValue(AcqSource::IronManCamera));
 
     connect(ui->acqSource, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             &MainWindow::acqSelectionChanged);
