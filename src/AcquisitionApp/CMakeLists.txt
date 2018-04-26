@@ -9,9 +9,8 @@ endif(COMMAND cmake_policy)
 
 # Check that required environment variables are set
 if(${BUILD_ACQ})
+    message( STATUS "\nBUILDING WITH ACQUISITION APP")
     if( DEFINED ENV{SISODIR5} )
-        # Set preprocessor flag to trigger inclusion of acquisitor parts in program
-        add_definitions(-DBUILD_ACQ)
       message( STATUS "\nSISODIR5 environment variable detected at: " $ENV{SISODIR5}
           "\nThis variable is required for linking against SiliconSoftware provided
           headers and libraries.")

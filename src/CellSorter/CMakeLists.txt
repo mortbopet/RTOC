@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
+if(BUILD_ACQ)
+    # Set preprocessor flag to trigger inclusion of acquisitor parts in program
+    add_definitions(-DBUILD_ACQ)
+endif()
+
 set (CMAKE_CXX_STANDARD 14)
 cmake_policy(SET CMP0020 NEW)
 project(CellSorter)
