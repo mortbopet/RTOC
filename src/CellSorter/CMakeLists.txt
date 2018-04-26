@@ -107,7 +107,7 @@ target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 ######################################################################
 if(WIN32)
     # Find Boost
-    set(Boost_NO_SYSTEM_PATHS ON)
+    set(Boost_NO_SYSTEM_PATHS OFF)
     set(BOOST_INCLUDEDIR "$ENV{BOOST_ROOT}")
     find_package(Boost REQUIRED)
     message(STATUS ${BOOST_INCLUDEDIR})
@@ -132,10 +132,19 @@ if(WIN32)
     set_link_libraries(${PROJECT_NAME})
     set_link_libraries( ${TEST_EXECUTABLE})
 else()
+    if(UNIX)
+        set(Boost_NO_SYSTEM_PATHS OFF)
+        set(BOOST_INCLUDEDIR "$ENV{BOOST_ROOT}")
+    endif()
     find_package(Boost COMPONENTS system filesystem serialization REQUIRED)
-    target_link_libraries(CellSorter_lib ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
-    target_link_libraries( ${PROJECT_NAME} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
-    target_link_libraries( ${TEST_EXECUTABLE} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
+
+    macro(set_link_libraries app)
+        target_link_libraries(${ARGV0} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
+    endmacro()
+
+    set_link_libraries(CellSorter_lib)
+    set_link_libraries(${PROJECT_NAME})
+    set_link_libraries(${TEST_EXECUTABLE})
 endif()
 ######################################################################
 ## endof Boost setup
