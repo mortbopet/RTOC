@@ -67,22 +67,44 @@ void DataContainer::addDataFlag(data::DataFlags flag) {
     calculateObjectSize();
 }
 
-std::vector<double> DataContainer::extractObject(int objIndex, int lastObject) {
+std::vector<double> DataContainer::extractObjectInDoubles(int objIndex) {
     std::vector<double> returnVector;
     if (data::Area & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Area));
     }
+    if (data::BoundingBox & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).height);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).width);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).x);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Rect>(data::BoundingBox).y);
+    }
+    if (data::Centroid & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Centroid).x);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Centroid).y);
+    }
     if (data::Circularity & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Circularity));
     }
-    if (data::Area & m_dataFlags) {
+    if (data::ConvexArea & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::ConvexArea));
     }
     if (data::Eccentricity & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Eccentricity));
     }
+    if (data::Frame & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Frame));
+    }
     if (data::GradientScore & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::GradientScore));
+    }
+    if (data::Inlet & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Inlet));
+    }
+    if (data::Outlet & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Outlet));
+    }
+    if (data::Label & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Label));
     }
     if (data::Major_axis & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Major_axis));
@@ -99,36 +121,27 @@ std::vector<double> DataContainer::extractObject(int objIndex, int lastObject) {
     if (data::Perimeter & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::Perimeter));
     }
-    if ((data::OutputValue & m_dataFlags) &&
-        ((lastObject - 1) == objIndex)) {  // Checks if last object is hit, returns output value
+    if (data::OutputValue & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::OutputValue));
     }
     return returnVector;
 }
 
-std::vector<double> DataContainer::extractContainer() {
-    std::vector<double> returnVector;
-    size_t sizeOfContainer = size();
-    for (int i = 0; i < sizeOfContainer; i++) {
-        std::vector<double> returnVectorTemp = extractObject(i, size());
-        returnVector.insert(returnVector.end(), returnVectorTemp.begin(), returnVectorTemp.end());
+std::vector<std::string> DataContainer::extractAttributeName() {
+    std::vector<std::string> returnVector;
+    for (const auto& item : data::guiMap) {
+        if (std::get<1>(item.first) != data::PixelIdxList) {
+            returnVector.push_back(item.second);
+        }
     }
     return returnVector;
 }
 
-std::vector<std::string> DataContainer::extractAttributeNames() {
-    std::vector<std::string> returnVector;
-    for (int i = 0; i < size(); i++) {
-        for (const auto& item : data::guiMap) {
-            if ((item.first & m_dataFlags) &&
-                (item.first != data::Frame && item.first != data::Inlet &&
-                 item.first != data::Outlet && item.first != data::Label &&
-                 item.first != data::OutputValue)) {
-                returnVector.emplace_back("C" + std::to_string(i + 1) + ": " + item.second);
-            }
-        }
+std::vector<int> DataContainer::extractAttributeLengths() {
+    std::vector<int> returnVector;
+    for (const auto& item : data::typeMap) {
+        returnVector.push_back(std::get<0>(item.second));
     }
-    returnVector.emplace_back("Output");
     return returnVector;
 }
 
