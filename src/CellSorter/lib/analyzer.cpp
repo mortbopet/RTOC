@@ -128,7 +128,6 @@ void Analyzer::runAnalyzer(Setup setup) {
             }
         }
     }
-    m_asyncStopAnalyzer = false;  // reset
 }
 /**
  * @brief Saves current images in rawBuffer and processed to disk
@@ -169,6 +168,7 @@ void Analyzer::writeImages() {
 
 void Analyzer::resetAnalyzer() {
     m_experiment.reset();
+    m_asyncStopAnalyzer = false;
 }
 
 /**
@@ -337,11 +337,12 @@ void Analyzer::cleanObjects() {
         ///     }
         ///
         // Remove objects with less than #count_threshold frames
-        m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
-                                               [thresh = count_threshold](const auto& dc) {
-                                                   return (*dc).size() < thresh;
-                                               }),
-                                m_experiment.data.end());
+        m_experiment.data.erase(
+            std::remove_if(
+                m_experiment.data.begin(),
+                m_experiment.data.end(), [thresh = count_threshold](
+                                             const auto& dc) { return (*dc).size() < thresh; }),
+            m_experiment.data.end());
 
         // Remove objects not represented before inlet
         m_experiment.data.erase(

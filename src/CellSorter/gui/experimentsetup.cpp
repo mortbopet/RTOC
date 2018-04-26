@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QThread>
 #include <QToolTip>
 
 #include "../lib/datacontainer.h"
@@ -164,9 +165,15 @@ void ExperimentSetup::on_run_clicked() {
             return;
         }
         // we can run the experiment
+        QThread* runnerThread = new QThread(this);
         ExperimentRunner runner(m_analyzer, m_currentSetup);
         runner.ui->experimentName->setText(ui->experimentName->text());
+        runner.moveToThread(runnerThread);
+        runnerThread->start();
         runner.exec();
+        runnerThread->quit();
+        runnerThread->wait();
+        delete runnerThread;
     }
 }
 
