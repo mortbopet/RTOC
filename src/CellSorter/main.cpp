@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     //// TEMP PLACE FOR TEST ////
     double randomNumber;
     int numberOfContainers = 100;
-    int numberOfObjects = 20;
+    int numberOfObjects = 30;
     for (int i = 0; i < numberOfContainers; i++) {
         analyzer.m_experiment.data.emplace_back(new DataContainer(0x3ffff));
         int counter = 0;
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
             randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
             (*analyzer.m_experiment.data[i])[j]->setValue(data::Area, randomNumber);
             (*analyzer.m_experiment.data[i])[j]->setValue(data::BoundingBox, cv::Rect(0, 5, 10, 15));
-            (*analyzer.m_experiment.data[i])[j]->setValue(data::Centroid, cv::Point(5, 70));
+            (*analyzer.m_experiment.data[i])[j]->setValue(data::Centroid, cv::Point(5*j, 70));
             randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
             (*analyzer.m_experiment.data[i])[j]->setValue(data::ConvexArea, randomNumber);
             randomNumber = 1 + ( std::rand() % ( 100 - 1 + 1 ) );
