@@ -21,7 +21,7 @@ size_t DataObject::getBytesToData(data::DataFlags flag) {
     // the map is found in m_dataFlags, increment bytesToData with the corresponding data size.
     for (const auto& item : data::typeMap) {
         if (!(item.first & flag) && (item.first & m_dataFlags)) {
-            bytesToData += item.second;
+            bytesToData += std::get<1>(item.second);
         } else {
             break;
         }
@@ -44,7 +44,7 @@ void DataContainer::calculateObjectSize() {
     m_objectSize = 0;
     for (const auto& item : data::typeMap) {
         if (item.first & m_dataFlags) {
-            m_objectSize += item.second;
+            m_objectSize += std::get<1>(item.second);
         }
     }
 }

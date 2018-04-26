@@ -230,36 +230,3 @@ TEST_CASE("numberOfFlags") {
         REQUIRE(container3.numberOfFlags() == 0);
     }
 }
-
-TEST_CASE("extractDataObjectVector and extractDataContainerVector") {
-    DataContainer container;
-    container.setDataFlags(0x20011);
-    container.appendNew();
-    container.appendNew();
-    container.appendNew();
-    container[0]->setValue(data::Area, 20.1);
-    container[1]->setValue(data::Area, 23.1);
-    container[2]->setValue(data::Area, 26.1);
-    container[0]->setValue(data::ConvexArea, 3.1);
-    container[1]->setValue(data::ConvexArea, 4.1);
-    container[2]->setValue(data::ConvexArea, 12.1);
-    container[0]->setValue(data::OutputValue, 1.0);
-    container[1]->setValue(data::OutputValue, 1.0);
-    container[2]->setValue(data::OutputValue, 1.0);
-
-
-    SECTION("Extract all data from a single data object") {
-        //REQUIRE(container.extractObject(0)[1] == 3.1);
-        std::vector<double> compareVector1 = {20.1, 3.1, 1.0};
-        std::vector<double> compareVector2 = {23.1, 4.1, 1.0};
-        std::vector<double> compareVector3 = {26.1, 12.1, 1.0};
-        //REQUIRE(container.extractObject(0) == compareVector1);
-        //REQUIRE(container.extractObject(1) == compareVector2);
-        //REQUIRE(container.extractObject(2) == compareVector3);
-    }
-
-    SECTION("Extract all data from multiple data objects within same container") {
-        std::vector<double> compareMatrix = {20.1, 3.1, 23.1, 4.1, 26.1, 12.1};
-        REQUIRE (container.extractContainer() == compareMatrix);
-    }
-}
