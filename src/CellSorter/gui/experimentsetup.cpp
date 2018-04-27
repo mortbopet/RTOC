@@ -60,6 +60,7 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
     m_currentSetup.extractData = ui->extractData->isChecked();
+    m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
 }
 
 void ExperimentSetup::setToolTips() {
@@ -164,6 +165,9 @@ void ExperimentSetup::on_run_clicked() {
                     .arg(m_experimentPath));
             return;
         }
+        // Update setup - just to be sure that we have the latest changes
+        updateCurrentSetup();
+
         // we can run the experiment
         QThread* runnerThread = new QThread(this);
         ExperimentRunner runner(m_analyzer, m_currentSetup);
