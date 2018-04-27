@@ -17,6 +17,7 @@ struct Setup {
     bool extractData;
     bool storeRaw;
     bool storeProcessed;
+    long dataFlags = 0;
     std::string rawPrefix;
     std::string processedPrefix;
     std::string outputPath;

@@ -16,13 +16,14 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
     : m_analyzer(analyzer), m_interface(iface), QWidget(parent), ui(new Ui::ExperimentSetup) {
     ui->setupUi(this);
 
+    // Create data options
+    setupDataOptions();
+
     // setup tooltips
     ui->help->setIcon(QIcon(":/icons/resources/question.svg"));
     setToolTips();
 
     ui->run->setIcon(QIcon(":/icons/resources/play-button.svg"));
-
-    setupDataOptions();
 
     // connect static checkboxes
     connect(ui->storeRaw, &QCheckBox::clicked, ui->rawPrefix, &QLineEdit::setEnabled);
@@ -140,7 +141,12 @@ void ExperimentSetup::setupDataOptions() {
     for (const auto& option : data::guiMap) {
         QCheckBox* checkbox = new QCheckBox(QString::fromStdString(option.second));
         ui->dataLayout->addWidget(checkbox, row, column);
-        // connect stuff here
+
+        // Create connector slot for each checkbox which sets its corresponding bit in dataFlags to
+        // the state reported by QCheckBox::toggled
+        connect(checkbox, &QCheckBox::toggled, [=](bool state) {
+            m_currentSetup.dataFlags ^= (-state ^ m_currentSetup.dataFlags) & option.first;
+        });
 
         // Logic for inserting checkboxes into the layout correctly
         column++;
