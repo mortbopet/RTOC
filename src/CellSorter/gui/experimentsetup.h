@@ -25,6 +25,7 @@ private slots:
     void on_setExperimentPath_clicked();
     bool verifyCanRunExperiment();
     void updateCurrentSetup();
+    void connectWidgets();
 
 private:
     void setToolTips();

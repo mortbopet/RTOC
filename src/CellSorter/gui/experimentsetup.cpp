@@ -36,6 +36,13 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
     ui->processedPrefix->setValidator(validator);
     ui->experimentName->setValidator(validator);
 
+    connectWidgets();
+
+    // Update current setup to load default GUI values
+    updateCurrentSetup();
+}
+
+void ExperimentSetup::connectWidgets() {
     // Connect all editors to updateSetup
     connect(ui->storeRaw, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
     connect(ui->storeProcessed, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
@@ -44,9 +51,6 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
     connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->extractData, &QGroupBox::toggled, [=] { updateCurrentSetup(); });
-
-    // Update current setup to load default GUI values
-    updateCurrentSetup();
 }
 
 ExperimentSetup::~ExperimentSetup() {
