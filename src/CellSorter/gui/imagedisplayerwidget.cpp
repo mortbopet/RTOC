@@ -2,6 +2,7 @@
 #include "ui_imagedisplayerwidget.h"
 
 #include <QFileDialog>
+#include <QtConcurrent/QtConcurrent>
 
 ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     : QWidget(parent), ui(new Ui::ImageDisplayerWidget) {
@@ -35,6 +36,12 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     connect(ui->showUnprocessed, &QCheckBox::toggled,
             [=](bool checked) { ui->unprocessed->setVisible(checked); });
 
+    // setup directory indexing future - this is used to be able to display a progress widget while
+    // indexing into a directory, indexing into directories with a large number of images (30k+) on
+    // slow hard drives can take multiple seconds.
+    connect(&m_directoryIndexingWatcher, &QFutureWatcher<void>::finished, this,
+            &ImageDisplayerWidget::directoryIndexingFinished);
+
     // Initialize
     reset();
 }
@@ -45,7 +52,40 @@ ImageDisplayerWidget::~ImageDisplayerWidget() {
 
 void ImageDisplayerWidget::setPath(const QString& path) {
     m_dir.setPath(path);
-    indexDirectory();
+
+    // Create busy-progress widget
+    m_directoryIndexingProgress = new QProgressDialog("Indexing files...", QString(), 0, 0, this);
+    m_directoryIndexingProgress->setWindowModality(Qt::WindowModal);
+    m_directoryIndexingProgress->setAutoReset(false);
+    m_directoryIndexingProgress->setMinimumDuration(0);
+
+    // Display progress dialog
+    m_directoryIndexingProgress->setValue(0);
+
+    // Asynchronously call indexDirectory, so as to not block the gui event loop while indexing
+    // (failing to do so will make the progress dialog not update)
+    QFuture<void> future = QtConcurrent::run(this, &ImageDisplayerWidget::indexDirectory);
+    m_directoryIndexingWatcher.setFuture(future);
+}
+
+void ImageDisplayerWidget::directoryIndexingFinished() {
+    // Async call to ImageDisplayerWidget::indexDirectory has finished,
+
+    m_directoryIndexingProgress->reset();
+    delete m_directoryIndexingProgress;
+
+    // Set slider range
+    ui->imageSlider->setRange(1, m_nImages);
+
+    ui->ips->setRange(1, m_nImages);
+
+    // Load first image
+    ui->imageSlider->setValue(1);
+    on_imageSlider_sliderMoved(ui->imageSlider->value());
+
+    // enable slider & play button
+    ui->imageSlider->setEnabled(true);
+    ui->play->setEnabled(true);
 }
 
 void ImageDisplayerWidget::refreshImage() {
@@ -117,19 +157,6 @@ void ImageDisplayerWidget::indexDirectory() {
     framefinder::sort_qfilelist(m_imageFileList);
 
     m_nImages = m_imageFileList.size();
-
-    // Set slider range
-    ui->imageSlider->setRange(1, m_nImages);
-
-    ui->ips->setRange(1, m_nImages);
-
-    // Load first image
-    ui->imageSlider->setValue(1);
-    on_imageSlider_sliderMoved(ui->imageSlider->value());
-
-    // enable slider & play button
-    ui->imageSlider->setEnabled(true);
-    ui->play->setEnabled(true);
 }
 
 void ImageDisplayerWidget::on_play_clicked() {

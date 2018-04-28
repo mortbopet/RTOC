@@ -2,6 +2,8 @@
 #define IMAGEDISPLAYERWIDGET_H
 
 #include <QDir>
+#include <QFutureWatcher>
+#include <QProgressDialog>
 #include <QStringList>
 #include <QTimer>
 #include <QWidget>
@@ -29,6 +31,7 @@ public:
 public slots:
     void setPath(const QString& path);
     void refreshImage();
+    void directoryIndexingFinished();
 
 private slots:
     void on_play_clicked();
@@ -56,6 +59,9 @@ private:
     QTimer m_playTimer;
 
     Analyzer* m_analyzer = nullptr;
+
+    QFutureWatcher<void> m_directoryIndexingWatcher;
+    QProgressDialog* m_directoryIndexingProgress;
 };
 
 #endif  // IMAGEDISPLAYERWIDGET_H
