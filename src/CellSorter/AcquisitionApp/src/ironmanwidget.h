@@ -1,11 +1,11 @@
-#ifndef ACQUISITIONWIDGET_H
-#define ACQUISITIONWIDGET_H
+#ifndef IRONMANWIDGET_H
+#define IRONMANWIDGET_H
 
 #ifdef BUILD_ACQ
 #include "../acquisitor_src/acquisitor.h"
 #endif
 
-#include "imagedisplayer.h"
+#include "cameradisplayerwidget.h"
 #include "logger.h"
 
 #include <QTimer>
@@ -15,12 +15,12 @@ namespace Ui {
 class AcquisitionWidget;
 }
 
-class AcquisitionWidget : public QWidget {
+class IronManWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit AcquisitionWidget(QWidget* parent = 0);
-    ~AcquisitionWidget();
+    explicit IronManWidget(QWidget* parent = 0);
+    ~IronManWidget();
 
 private slots:
     void on_actionExit_triggered();
@@ -34,7 +34,7 @@ private slots:
     void on_xmlPathButton_clicked();
 
 private:
-    ImageDisplayer m_imageDisplayer;
+    CameraDisplayerWidget m_imageDisplayer;
 
     Ui::AcquisitionWidget* m_ui;
     Logger* m_logger;
@@ -46,9 +46,9 @@ private slots:
     void setButtonStates(AcqState state);
 
 private:
-    // The acquisitor object is initialized to reside as a permanent object in a separate thread.
-    // All communication is facilitated through signals/slots through QMetaObject::InvokeMethod
+// The acquisitor object is initialized to reside as a permanent object in a separate thread.
+// All communication is facilitated through signals/slots through QMetaObject::InvokeMethod
 #endif
 };
 
-#endif  // ACQUISITIONWIDGET_H
+#endif  // IRONMANWIDGET_H

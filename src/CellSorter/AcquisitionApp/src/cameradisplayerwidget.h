@@ -1,14 +1,14 @@
-#ifndef IMAGEDISPLAYER_H
-#define IMAGEDISPLAYER_H
+#ifndef CAMERADISPLAYERWIDGET_H
+#define CAMERADISPLAYERWIDGET_H
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QTimer>
 
-class ImageDisplayer : public QGraphicsScene {
+class CameraDisplayerWidget : public QGraphicsScene {
     Q_OBJECT
 public:
-    ImageDisplayer();
+    CameraDisplayerWidget();
 
     void startRequestingImages();
     void stopRequestingImages();
@@ -30,4 +30,4 @@ private:
     bool m_settingImage = false;
 };
 
-#endif  // IMAGEDISPLAYER_H
+#endif  // CAMERADISPLAYERWIDGET_H

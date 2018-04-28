@@ -1,4 +1,4 @@
-#include "acquisitionwidget.h"
+#include "ironmanwidget.h"
 
 #include "ui_acquisitionwidget.h"
 
@@ -7,7 +7,7 @@
 #include <QOpenGLWidget>
 #include <QPushButton>
 
-AcquisitionWidget::AcquisitionWidget(QWidget* parent)
+IronManWidget::IronManWidget(QWidget* parent)
     : QWidget(parent), m_ui(new Ui::AcquisitionWidget) {
     m_ui->setupUi(this);
 
@@ -127,11 +127,11 @@ void AcquisitionWidget::initializeFramegrabber() {
 
 #endif
 
-AcquisitionWidget::~AcquisitionWidget() {
+IronManWidget::~IronManWidget() {
     delete m_ui;
 }
 
-void AcquisitionWidget::on_actionExit_triggered() {
+void IronManWidget::on_actionExit_triggered() {
 #ifdef BUILD_ACQ
     // Safely deinitialize the framegrabber
     Acquisitor::get()->stopAcq();
@@ -140,7 +140,7 @@ void AcquisitionWidget::on_actionExit_triggered() {
     QApplication::exit();
 }
 
-void AcquisitionWidget::on_txtPathButton_clicked() {
+void IronManWidget::on_txtPathButton_clicked() {
     auto filename =
         QFileDialog::getOpenFileName(this, "Open parameters file", "", "txt file (*.txt)");
     if (!filename.isNull()) {
@@ -148,7 +148,7 @@ void AcquisitionWidget::on_txtPathButton_clicked() {
     }
 }
 
-void AcquisitionWidget::on_xmlPathButton_clicked() {
+void IronManWidget::on_xmlPathButton_clicked() {
     auto filename =
         QFileDialog::getOpenFileName(this, "Open configuration file", "", "XML file (*.xml)");
     if (!filename.isNull()) {
@@ -156,11 +156,11 @@ void AcquisitionWidget::on_xmlPathButton_clicked() {
     }
 }
 
-void AcquisitionWidget::on_clearLog_clicked() {
+void IronManWidget::on_clearLog_clicked() {
     m_ui->log->clear();
 }
 
-void AcquisitionWidget::on_scale_currentIndexChanged(const QString& arg1) {
+void IronManWidget::on_scale_currentIndexChanged(const QString& arg1) {
     if (arg1 == QString("Fit to view")) {
         m_ui->graphicsView->fitInView(m_ui->graphicsView->sceneRect(), Qt::KeepAspectRatio);
     } else {
@@ -172,6 +172,6 @@ void AcquisitionWidget::on_scale_currentIndexChanged(const QString& arg1) {
     }
 }
 
-void AcquisitionWidget::on_spinBox_valueChanged(int arg1) {
+void IronManWidget::on_spinBox_valueChanged(int arg1) {
     m_imageDisplayer.setImageInterval(arg1);
 }

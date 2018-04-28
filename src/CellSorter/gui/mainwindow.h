@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "AcquisitionApp/src/acquisitionwidget.h"
+#include "AcquisitionApp/src/ironmanwidget.h"
 #include "acquisitioninterface.h"
 #include "configurator.h"
 #include "experimentsetup.h"
@@ -33,7 +33,7 @@ private:
     ProcessInterface* m_processInterface;
     Configurator* m_configurator;
     Analyzer* m_analyzer;
-    AcquisitionWidget* m_acquisitionWdiget;
+    IronManWidget* m_acquisitionWdiget;
     ImageDisplayerWidget* m_imageDisplayerWidget;
     AcquisitionInterface* m_acqInterface;
     ExperimentSetup* m_experimentSetup;
