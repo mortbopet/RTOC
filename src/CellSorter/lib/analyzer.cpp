@@ -8,6 +8,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <chrono>
+
 /**
  * @brief
  * @param img_path
@@ -102,6 +104,22 @@ void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
 
 namespace fs = boost::filesystem;
 
+namespace {
+typedef std::chrono::high_resolution_clock Clock;
+}
+
+using namespace std::chrono;
+
+void Analyzer::spinLockWait(int micros) const {
+    auto since_epoch = Clock::now().time_since_epoch();
+
+    int cnt = 0;
+    while ((duration_cast<microseconds>(Clock::now().time_since_epoch()).count() -
+            duration_cast<microseconds>(since_epoch).count()) < micros) {
+        cnt++;
+    };
+}
+
 void Analyzer::runAnalyzer(Setup setup) {
     resetAnalyzer();
 
@@ -110,6 +128,9 @@ void Analyzer::runAnalyzer(Setup setup) {
 
     bool success;
     while (true) {
+        // Wait until we are supposed to get the next image
+        // spinLockWait(100);
+
         m_img = m_imageGetterFunction(success);
 
         if (!success || m_asyncStopAnalyzer) {
@@ -187,7 +208,7 @@ void Analyzer::resetProcesses() {
  */
 void Analyzer::findObjects() {
     if (m_setup.extractData) {
-        for (const framefinder::Frame& f: m_experiment.processed) {
+        for (const framefinder::Frame& f : m_experiment.processed) {
             m_objectFinder.setFrame(f.image);
             m_objectFinder.findObjects(m_experiment);
         }
@@ -223,12 +244,11 @@ void Analyzer::cleanObjects() {
         ///     }
         ///
         // Remove objects with less than #count_threshold frames
-        m_experiment.data.erase(
-            std::remove_if(
-                m_experiment.data.begin(),
-                m_experiment.data.end(), [thresh = count_threshold](
-                                             const auto& dc) { return (*dc).size() < thresh; }),
-            m_experiment.data.end());
+        m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
+                                               [thresh = count_threshold](const auto& dc) {
+                                                   return (*dc).size() < thresh;
+                                               }),
+                                m_experiment.data.end());
 
         // Remove objects not represented before inlet
         m_experiment.data.erase(
@@ -349,7 +369,7 @@ void Analyzer::exportExperiment(const string& path) {
 
     // Goes through all containers
     for (int i = 0; i < m_experiment.data.size(); i++) {
-        out << "Observation" << (i+1) << " " << m_experiment.data[i]->size() << "\n";
+        out << "Observation" << (i + 1) << " " << m_experiment.data[i]->size() << "\n";
 
         // Goes through all objects
         for (int j = 0; j < m_experiment.data[i]->size(); j++) {

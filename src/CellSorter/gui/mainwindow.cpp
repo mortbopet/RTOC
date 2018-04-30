@@ -9,9 +9,14 @@
 #include <QMessageBox>
 #include <QToolTip>
 
-MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
-    : m_analyzer(analyzer), QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    // Create analyzer and move it to separate thread
+    QThread* analyzerThread = new QThread();
+    m_analyzer = new Analyzer();
+    m_analyzer->moveToThread(analyzerThread);
+    analyzerThread->start();
 
     // Add ImageDisplayerWidget
     m_imageDisplayerWidget = new ImageDisplayerWidget();
@@ -19,8 +24,9 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
 
     // Bind ("connect") analyzer and AcquisitionInterface through the imageGetterFunction
     m_acqInterface = new AcquisitionInterface(m_imageDisplayerWidget);
-    analyzer->setImageGetterFunction(
+    m_analyzer->setImageGetterFunction(
         [=](bool& successful) -> cv::Mat& { return m_acqInterface->getNextImage(successful); });
+    m_acqInterface->moveToThread(analyzerThread);
 
     // create various objects
     m_processInterface = new ProcessInterface(m_analyzer);

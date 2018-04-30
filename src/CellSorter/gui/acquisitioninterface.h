@@ -20,7 +20,8 @@
 enum class AcqSource { IronManCamera, Folder, Webcam };
 Q_DECLARE_METATYPE(AcqSource)
 
-class AcquisitionInterface {
+class AcquisitionInterface : public QObject {
+    Q_OBJECT
 public:
     AcquisitionInterface(ImageDisplayerWidget* imageDisplayer);
 

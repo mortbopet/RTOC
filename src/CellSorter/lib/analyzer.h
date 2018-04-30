@@ -5,9 +5,9 @@
 #include <iostream>
 #include "experiment.h"
 #include "framefinder.h"
+#include "objectfinder.h"
 #include "process.h"
 #include "tracker.h"
-#include "objectfinder.h"
 
 #include <opencv/cv.hpp>
 
@@ -25,7 +25,8 @@ struct Setup {
     std::string experimentName;
 };
 
-class Analyzer {
+class Analyzer : public QObject {
+    Q_OBJECT
 public:
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
 
@@ -65,6 +66,8 @@ public:
     int m_currentProcessingFrame;
 
 private:
+    void spinLockWait(int microseconds) const;
+
     Setup m_setup;
 
     ObjectFinder m_objectFinder;
