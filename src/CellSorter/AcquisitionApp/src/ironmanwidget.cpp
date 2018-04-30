@@ -1,14 +1,13 @@
 #include "ironmanwidget.h"
 
-#include "ui_acquisitionwidget.h"
+#include "ui_ironmanwidget.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QOpenGLWidget>
 #include <QPushButton>
 
-IronManWidget::IronManWidget(QWidget* parent)
-    : QWidget(parent), m_ui(new Ui::AcquisitionWidget) {
+IronManWidget::IronManWidget(QWidget* parent) : QWidget(parent), m_ui(new Ui::IronManWidget) {
     m_ui->setupUi(this);
 
     // connect image request from ImageDisplayer
@@ -22,22 +21,21 @@ IronManWidget::IronManWidget(QWidget* parent)
 #ifdef BUILD_ACQ
 
     // Setup ImageDisplayer requests to the acquisitor
-    connect(&m_imageDisplayer, &ImageDisplayer::requestImage, Acquisitor::get(),
+    connect(&m_imageDisplayer, &CameraDisplayerWidget::requestImage, Acquisitor::get(),
             &Acquisitor::requestImageData, Qt::QueuedConnection);
 
     // connect Acquisitor to UI
     connect(Acquisitor::get(), &Acquisitor::sendImageData, &m_imageDisplayer,
-            &ImageDisplayer::setImage, Qt::QueuedConnection);
+            &CameraDisplayerWidget::setImage, Qt::QueuedConnection);
     connect(Acquisitor::get(), &Acquisitor::writeToLog, m_logger, &Logger::writeLineToLog,
             Qt::QueuedConnection);
-    connect(Acquisitor::get(), &Acquisitor::stateChanged, this, &AcquisitionWidget::acqStateChanged,
+    connect(Acquisitor::get(), &Acquisitor::stateChanged, this, &IronManWidget::acqStateChanged,
             Qt::QueuedConnection);
     connect(Acquisitor::get(), &Acquisitor::imageDimensionsChanged, &m_imageDisplayer,
-            &ImageDisplayer::setImageDimensions, Qt::QueuedConnection);
+            &CameraDisplayerWidget::setImageDimensions, Qt::QueuedConnection);
 
     // connect Acquisitor initializer
-    connect(m_ui->initialize, &QPushButton::clicked, this,
-            &AcquisitionWidget::initializeFramegrabber);
+    connect(m_ui->initialize, &QPushButton::clicked, this, &IronManWidget::initializeFramegrabber);
 
     // Disable start-acq button by default
     m_ui->start->setEnabled(false);
@@ -54,7 +52,7 @@ IronManWidget::IronManWidget(QWidget* parent)
 }
 
 #ifdef BUILD_ACQ
-void AcquisitionWidget::acqStateChanged(AcqState state) {
+void IronManWidget::acqStateChanged(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
             m_logger->setDotPrinterState(false);
@@ -79,7 +77,7 @@ void AcquisitionWidget::acqStateChanged(AcqState state) {
     setButtonStates(state);
 }
 
-void AcquisitionWidget::setButtonStates(AcqState state) {
+void IronManWidget::setButtonStates(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
             // Acquisitor is no longer initialized/initialization failed
@@ -109,7 +107,7 @@ void AcquisitionWidget::setButtonStates(AcqState state) {
     }
 }
 
-void AcquisitionWidget::initializeFramegrabber() {
+void IronManWidget::initializeFramegrabber() {
     if (m_ui->initWithConfig->isChecked() &&
         (m_ui->xmlPath->text().isEmpty() || m_ui->configPath->text().isEmpty())) {
         QString errMsg = m_ui->configPath->text().isEmpty()

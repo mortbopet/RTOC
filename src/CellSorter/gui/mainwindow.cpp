@@ -52,7 +52,7 @@ MainWindow::MainWindow(Analyzer* analyzer, QWidget* parent)
     connect(ui->enableFF, &QCheckBox::stateChanged, this, &MainWindow::ffStateChanged);
 
 #ifdef BUILD_ACQ
-    m_acquisitionWdiget = new AcquisitionWidget(this);
+    m_acquisitionWdiget = new IronManWidget(this);
     ui->acqLayout->addWidget(m_acquisitionWdiget);
 
     m_acqInterface->setAcquisitor(Acquisitor::get());

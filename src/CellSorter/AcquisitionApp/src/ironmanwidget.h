@@ -12,7 +12,7 @@
 #include <QWidget>
 
 namespace Ui {
-class AcquisitionWidget;
+class IronManWidget;
 }
 
 class IronManWidget : public QWidget {
@@ -36,7 +36,7 @@ private slots:
 private:
     CameraDisplayerWidget m_imageDisplayer;
 
-    Ui::AcquisitionWidget* m_ui;
+    Ui::IronManWidget* m_ui;
     Logger* m_logger;
 
 #ifdef BUILD_ACQ

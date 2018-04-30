@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AcquisitionWidget</class>
- <widget class="QWidget" name="AcquisitionWidget">
+ <class>IronManWidget</class>
+ <widget class="QWidget" name="IronManWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
