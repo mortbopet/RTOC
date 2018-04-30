@@ -13,7 +13,7 @@
 
 class ObjectFinder {
 public:
-    ObjectFinder() { connectedComponents.setDataFlags(0xffff); }
+    ObjectFinder() { m_connectedComponents.setDataFlags(0xffff); }
     int findObjects(Experiment& experiment);
 
     void setFrame(const cv::Mat& image);
@@ -28,10 +28,10 @@ private:
     double m_dist;
     double m_distThreshold;
     cv::Point m_centroid;
-    DataContainer connectedComponents;
+    DataContainer m_connectedComponents;
 
     std::pair<double, Tracker> findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects);
-    void writeToDataVector(const bool& newcell, const int& i, Experiment& experiment);
+    void writeToDataVector(const bool& newobject, const int& cc_number, Experiment& experiment);
 
 };
 

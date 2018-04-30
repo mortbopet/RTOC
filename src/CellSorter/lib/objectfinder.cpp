@@ -6,8 +6,7 @@
  */
 int ObjectFinder::findObjects(Experiment& experiment) {
     bool newcell;
-    DataContainer dc(0xffff);
-    int numObjects = matlab::regionProps(m_frame.image, 0xffff, connectedComponents);
+    int numObjects = matlab::regionProps(m_frame.image, 0xffff, m_connectedComponents);
 
     for (int i = 0; i < numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -20,7 +19,7 @@ int ObjectFinder::findObjects(Experiment& experiment) {
             if (m_frameTracker.empty()) {
                 newcell = true;
             } else {
-                m_centroid = dc[i]->getValue<cv::Point>(data::Centroid);
+                m_centroid = m_connectedComponents[i]->getValue<cv::Point>(data::Centroid);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
                 m_dist = res.first;
                 m_track = res.second;
@@ -62,7 +61,7 @@ std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& obje
         d.push_back(dist);
     }
     std::pair<double, unsigned long> p = matlab::min<double>(d);
-    return std::pair<double, Tracker>(p.first, listOfObjects.at(p.second));
+    return {p.first, listOfObjects.at(p.second)};
 }
 
 /**
@@ -73,8 +72,8 @@ void ObjectFinder::setFrame(const cv::Mat& image) {
     m_frame = {image,"",m_frameNum,true};
 }
 
-void ObjectFinder::writeToDataVector(const bool& newcell, const int& i, Experiment& experiment) {
-    if (newcell) {
+void ObjectFinder::writeToDataVector(const bool& newobject, const int& cc_number, Experiment& experiment) {
+    if (newobject) {
 
         experiment.data.emplace_back(new DataContainer(0xffff));
         experiment.data[m_cellNum]->appendNew();
@@ -86,21 +85,21 @@ void ObjectFinder::writeToDataVector(const bool& newcell, const int& i, Experime
 
         (*experiment.data[m_cellNum])[0]->setValue(data::Frame, m_frameNum);
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::Centroid, connectedComponents[i]->getValue<cv::Point>(data::Centroid));
+                data::Centroid, m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid));
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::BoundingBox, connectedComponents[i]->getValue<cv::Rect>(data::BoundingBox));
+                data::BoundingBox, m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox));
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::Major_axis, connectedComponents[i]->getValue<double>(data::Major_axis));
+                data::Major_axis, m_connectedComponents[cc_number]->getValue<double>(data::Major_axis));
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::Eccentricity, connectedComponents[i]->getValue<double>(data::Eccentricity));
+                data::Eccentricity, m_connectedComponents[cc_number]->getValue<double>(data::Eccentricity));
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::Circularity, connectedComponents[i]->getValue<double>(data::Circularity));
+                data::Circularity, m_connectedComponents[cc_number]->getValue<double>(data::Circularity));
         (*experiment.data[m_cellNum])[0]->setValue(data::Symmetry,
-                                                   connectedComponents[i]->getValue<double>(data::Symmetry));
+                                                   m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::GradientScore, connectedComponents[i]->getValue<double>(data::GradientScore));
+                data::GradientScore, m_connectedComponents[cc_number]->getValue<double>(data::GradientScore));
 
-        m_track.cell_no = m_cellNum++;
+        m_track.cell_no = m_cellNum;
 
     } else {
 
@@ -109,21 +108,21 @@ void ObjectFinder::writeToDataVector(const bool& newcell, const int& i, Experime
 
         (*experiment.data[m_track.cell_no])[index]->setValue(data::Frame, m_frameNum);
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Centroid, connectedComponents[i]->getValue<cv::Point>(data::Centroid));
+                data::Centroid, m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid));
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::BoundingBox, connectedComponents[i]->getValue<cv::Rect>(data::BoundingBox));
+                data::BoundingBox, m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox));
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Major_axis, connectedComponents[i]->getValue<double>(data::Major_axis));
+                data::Major_axis, m_connectedComponents[cc_number]->getValue<double>(data::Major_axis));
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Eccentricity, connectedComponents[i]->getValue<double>(data::Eccentricity));
+                data::Eccentricity, m_connectedComponents[cc_number]->getValue<double>(data::Eccentricity));
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Circularity, connectedComponents[i]->getValue<double>(data::Circularity));
+                data::Circularity, m_connectedComponents[cc_number]->getValue<double>(data::Circularity));
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Symmetry, connectedComponents[i]->getValue<double>(data::Symmetry));
+                data::Symmetry, m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
         (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::GradientScore, connectedComponents[i]->getValue<double>(data::GradientScore));
+                data::GradientScore, m_connectedComponents[cc_number]->getValue<double>(data::GradientScore));
     }
     m_track.frame_no = m_frameNum;
-    m_track.centroid = connectedComponents[i]->getValue<cv::Point>(data::Centroid);
+    m_track.centroid = m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid);
     m_trackerList.push_back(m_track);
 }
