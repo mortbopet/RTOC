@@ -39,11 +39,51 @@ int ObjectFinder::findObjects(Experiment& experiment) {
         writeToDataVector(newObject, i, experiment);
         m_cellNum++;
     }
-
-
     m_frameNum++;
-
     return numObjects;
+}
+
+unsigned long ObjectFinder::cleanObjects(Experiment& e) {
+    unsigned long length = e.data.size();
+
+    e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool {
+        cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
+        return ((bb_o.x + bb_o.width) < e.outlet);
+    }), e.data.end());
+    e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool  {
+        cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
+        return ((bb_i.x + bb_i.width) > e.inlet - 1);
+    }), e.data.end());
+    e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool {
+        return (*dc).size() < m_countThreshold;
+    }), e.data.end());
+
+    return length - e.data.size();
+}
+
+/**
+ * @brief
+ * @warning NOT REALLY IMPLEMENTED
+ * @param experiment
+ */
+void ObjectFinder::setConditions(const Experiment& experiment) {
+    m_conditions.emplace_back(
+            [&](const DataContainer* dc) -> bool {
+                cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
+                return ((bb_o.x + bb_o.width) < experiment.outlet);
+            });
+
+    m_conditions.emplace_back(
+            [&](const DataContainer* dc) -> bool  {
+                cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
+                return ((bb_i.x + bb_i.width) > experiment.inlet - 1);
+            });
+
+    m_conditions.emplace_back(
+            [&](const DataContainer* dc) -> bool {
+                return (*dc).size() < m_countThreshold;
+            });
+
 }
 
 /**

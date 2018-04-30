@@ -212,6 +212,8 @@ void Analyzer::findObjects() {
             m_objectFinder.setFrame(f.image);
             m_objectFinder.findObjects(m_experiment);
         }
+
+        m_objectFinder.cleanObjects(m_experiment);
     }
 }
 

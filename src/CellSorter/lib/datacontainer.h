@@ -151,13 +151,13 @@ public:
     int numberOfFlags();
     void clearDataFlags() { m_dataFlags = 0; }
     void clear() { m_data.clear(); }  // called whenever a m_dataFlags is changed
-    size_t size() { return m_data.size(); }
+    size_t size() const { return m_data.size(); }
 
     DataObject* appendNew();
     DataObject* operator[](size_t idx) { return m_data[idx]; }
 
-    DataObject* front() { return m_data.front(); }
-    DataObject* back() { return m_data.back(); }
+    DataObject* front() const { return m_data.front(); }
+    DataObject* back() const { return m_data.back(); }
 
     std::vector<DataObject*>::iterator begin() { return m_data.begin(); }
     std::vector<DataObject*>::iterator end() { return m_data.end(); }
