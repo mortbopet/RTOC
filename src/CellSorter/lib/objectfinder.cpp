@@ -5,19 +5,19 @@
  * @return
  */
 int ObjectFinder::findObjects(Experiment& experiment) {
-    bool newcell;
+    bool newObject;
     int numObjects = matlab::regionProps(m_frame.image, 0xffff, m_connectedComponents);
 
     for (int i = 0; i < numObjects; i++) {
         if (m_cellNum <= 0) {
-            newcell = true;
+            newObject = true;
         } else {
             Tracker term(m_frameNum - 1);
 
             m_frameTracker = matlab::find<Tracker>(m_trackerList, term);
 
             if (m_frameTracker.empty()) {
-                newcell = true;
+                newObject = true;
             } else {
                 m_centroid = m_connectedComponents[i]->getValue<cv::Point>(data::Centroid);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
@@ -32,11 +32,11 @@ int ObjectFinder::findObjects(Experiment& experiment) {
                 }
 
                 // Determine whether new or not from threshold
-                newcell = m_dist > m_distThreshold;
+                newObject = m_dist > m_distThreshold;
             }
         }
 
-        writeToDataVector(newcell, i, experiment);
+        writeToDataVector(newObject, i, experiment);
         m_cellNum++;
     }
 
@@ -72,8 +72,8 @@ void ObjectFinder::setFrame(const cv::Mat& image) {
     m_frame = {image,"",m_frameNum,true};
 }
 
-void ObjectFinder::writeToDataVector(const bool& newobject, const int& cc_number, Experiment& experiment) {
-    if (newobject) {
+void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment) {
+    if (newObject) {
 
         experiment.data.emplace_back(new DataContainer(0xffff));
         experiment.data[m_cellNum]->appendNew();

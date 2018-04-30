@@ -31,7 +31,7 @@ private:
     DataContainer m_connectedComponents;
 
     std::pair<double, Tracker> findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects);
-    void writeToDataVector(const bool& newobject, const int& cc_number, Experiment& experiment);
+    void writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment);
 
 };
 
