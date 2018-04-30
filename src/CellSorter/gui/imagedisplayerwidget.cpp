@@ -12,6 +12,7 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
 
     // set icons
     ui->play->setIcon(QIcon(":/icons/resources/play-button.svg"));
+    ui->loop->setIcon(QIcon(":/icons/resources/loop-button.svg"));
 
     // set image counter default text
     ui->imageCounter->setText("Image: #/#");
@@ -27,6 +28,7 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     // Disable slider & play button by default
     ui->imageSlider->setEnabled(false);
     ui->play->setEnabled(false);
+    ui->loop->setEnabled(false);
 
     // By default, do not show "view unprocessed image" on a standard imagedisplayerwidget
     ui->showUnprocessed->hide();
@@ -86,6 +88,7 @@ void ImageDisplayerWidget::directoryIndexingFinished() {
     // enable slider & play button
     ui->imageSlider->setEnabled(true);
     ui->play->setEnabled(true);
+    ui->loop->setEnabled(true);
 }
 
 void ImageDisplayerWidget::refreshImage() {
@@ -128,13 +131,17 @@ void ImageDisplayerWidget::setAnalyzer(Analyzer* analyzer) {
 cv::Mat* ImageDisplayerWidget::getNextImage(bool& successful) {
     successful = true;
 
-    if (m_acqIndex < m_imageFileList.size()) {
-        m_image = cv::imread(m_imageFileList[m_acqIndex++].absoluteFilePath().toStdString(),
-                             cv::IMREAD_GRAYSCALE);
-    } else {
-        successful = false;
-        return &m_image;
+    if (m_acqIndex >= m_imageFileList.size()) {
+        if (ui->loop->isChecked()) {
+            m_acqIndex = 0;
+        } else {
+            successful = false;
+            return &m_image;
+        }
     }
+
+    m_image = cv::imread(m_imageFileList[m_acqIndex++].absoluteFilePath().toStdString(),
+                             cv::IMREAD_GRAYSCALE);
 
     if (!m_image.data) {
         successful = false;
@@ -175,9 +182,14 @@ void ImageDisplayerWidget::on_play_clicked() {
 void ImageDisplayerWidget::playTimerTimeout() {
     // stop timer if last indexed image is reached
     if (ui->imageSlider->value() == m_nImages) {
-        ui->play->setChecked(false);
-        on_play_clicked();
-        m_playTimer.stop();
+        if (ui->loop->isChecked()) {
+            ui->imageSlider->setValue(0);
+            on_imageSlider_sliderMoved(ui->imageSlider->value());
+        } else {
+            ui->play->setChecked(false);
+            on_play_clicked();
+            m_playTimer.stop();
+        }
     } else {
         ui->imageSlider->setValue(ui->imageSlider->value() + 1);
         on_imageSlider_sliderMoved(ui->imageSlider->value());

@@ -76,6 +76,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="loop">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QSlider" name="imageSlider">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
