@@ -23,7 +23,7 @@ private:
     std::vector<Tracker> m_trackerList, m_frameTracker;
 
     framefinder::Frame m_frame;
-    int m_cellNum = -1;
+    int m_cellNum = 0;
     int m_frameNum = 0;
     double m_dist;
     double m_distThreshold;
