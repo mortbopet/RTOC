@@ -7,6 +7,7 @@
 #include "framefinder.h"
 #include "process.h"
 #include "tracker.h"
+#include "objectfinder.h"
 
 #include <opencv/cv.hpp>
 
@@ -65,6 +66,8 @@ public:
 
 private:
     Setup m_setup;
+
+    ObjectFinder m_objectFinder;
 
     bool m_asyncStopAnalyzer = false;  // called externally when analyzer should stop preliminarily
 
