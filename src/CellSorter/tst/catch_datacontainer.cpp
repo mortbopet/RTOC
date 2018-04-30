@@ -217,7 +217,7 @@ TEST_CASE("dataFlag and values (multiple at once)", "[full], [datacontainer]") {
     SECTION("set some other data-types") {}
 }
 
-TEST_CASE("numberOfFlags") {
+TEST_CASE("numberOfFlags", "[full], [datacontainer]") {
     DataContainer container1;
     DataContainer container2;
     DataContainer container3;
