@@ -120,6 +120,9 @@ void ImageDisplayerWidget::setAnalyzer(Analyzer* analyzer) {
     m_analyzer = analyzer;
     // Show the "show unprocessed image" checkbox
     ui->showUnprocessed->show();
+
+    // Display images from the test image directory
+    setPath("./test_images");
 }
 
 cv::Mat* ImageDisplayerWidget::getNextImage(bool& successful) {
