@@ -143,22 +143,22 @@ void ExperimentSetup::setupDataOptions() {
     int column = 0;
     int row = 0;
     for (const auto& option : data::guiMap) {
+        if (std::get<0>(option.first) == 1) {
+            QCheckBox* checkbox = new QCheckBox(QString::fromStdString(option.second));
+            ui->dataLayout->addWidget(checkbox, row, column);
 
-if (std::get<0>(option.first) == 1) {
-        QCheckBox* checkbox = new QCheckBox(QString::fromStdString(option.second));
-        ui->dataLayout->addWidget(checkbox, row, column);
+            // Create connector slot for each checkbox which sets its corresponding bit in dataFlags
+            // to the state reported by QCheckBox::toggled
+            connect(checkbox, &QCheckBox::toggled, [=](bool state) {
+                m_currentSetup.dataFlags ^=
+                    (-state ^ m_currentSetup.dataFlags) & std::get<1>(option.first);
+            });
 
-        // Create connector slot for each checkbox which sets its corresponding bit in dataFlags to
-        // the state reported by QCheckBox::toggled
-        connect(checkbox, &QCheckBox::toggled, [=](bool state) {
-            m_currentSetup.dataFlags ^= (-state ^ m_currentSetup.dataFlags) & std::get<1>(option.first);
-        });
-
-        // Logic for inserting checkboxes into the layout correctly
-        column++;
-        if (column == columns) {
-            column = 0;
-            row++;
+            // Logic for inserting checkboxes into the layout correctly
+            column++;
+            if (column == columns) {
+                column = 0;
+                row++;
             }
         }
     }
@@ -182,15 +182,9 @@ void ExperimentSetup::on_run_clicked() {
         updateCurrentSetup();
 
         // we can run the experiment
-        QThread* runnerThread = new QThread(this);
         ExperimentRunner runner(m_analyzer, m_currentSetup);
         runner.ui->experimentName->setText(ui->experimentName->text());
-        runner.moveToThread(runnerThread);
-        runnerThread->start();
         runner.exec();
-        runnerThread->quit();
-        runnerThread->wait();
-        delete runnerThread;
     }
 }
 
