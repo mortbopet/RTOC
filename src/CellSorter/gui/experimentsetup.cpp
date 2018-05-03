@@ -164,7 +164,7 @@ if (std::get<0>(option.first) == 1) {
     }
 }
 
-void ExperimentSetup::on_groupBox_toggled(bool arg1) {}
+// void ExperimentSetup::on_groupBox_toggled(bool arg1) {}
 
 void ExperimentSetup::on_run_clicked() {
     if (verifyCanRunExperiment()) {
