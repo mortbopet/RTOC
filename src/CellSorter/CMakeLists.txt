@@ -12,15 +12,6 @@ find_package(OpenCV REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
-######################################################################
-## Multi-thread setup
-######################################################################
-SET(WITH_MT OFF CACHE BOOL "Build with Multi-threading")
-
-######################################################################
-## endof Multi-thread setup
-######################################################################
-
 
 ######################################################################
 ## GUI setup
@@ -188,4 +179,4 @@ endif()
 
 ## copy test images to output directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../test_images DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../presets DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)

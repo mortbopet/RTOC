@@ -31,6 +31,8 @@ private slots:
     void on_store_clicked();
 
 private:
+    QString m_current_dir = QDir::currentPath() + "/presets";
+
     TreeModel* m_model;
     Ui::Configurator* ui;
     ProcessInterface* m_interface;
