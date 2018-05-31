@@ -164,8 +164,6 @@ void ExperimentSetup::setupDataOptions() {
     }
 }
 
-// void ExperimentSetup::on_groupBox_toggled(bool arg1) {}
-
 void ExperimentSetup::on_run_clicked() {
     if (verifyCanRunExperiment()) {
         m_experimentPath = QDir(ui->experimentPath->text()).filePath(ui->experimentName->text());

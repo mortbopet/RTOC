@@ -18,8 +18,6 @@ public:
     ~ExperimentSetup();
 
 private slots:
-    // void on_groupBox_toggled(bool arg1);
-
     void on_run_clicked();
 
     void on_setExperimentPath_clicked();
