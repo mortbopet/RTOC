@@ -165,6 +165,8 @@ void ExperimentRunner::reject() {
         QString warning =
             "Are you sure you want to stop the experiment? Images will NOT be saved to the disk";
         if (QMessageBox::question(this, "Stop experiment", warning) == QMessageBox::Yes) {
+            // Stop analyzer
+            m_analyzer->stopAnalyzer();
             QDialog::reject();
         }
     }

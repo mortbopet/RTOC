@@ -41,7 +41,7 @@ public:
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
-    void stopAnalyzer() { m_asyncStopAnalyzer = true; }
+    void stopAnalyzer();
     void resetAnalyzer();
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
@@ -67,6 +67,7 @@ public:
 
 private:
     void spinLockWait(int microseconds) const;
+    void asyncStop();
 
     Setup m_setup;
 

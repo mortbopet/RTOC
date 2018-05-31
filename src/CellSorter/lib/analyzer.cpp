@@ -10,6 +10,33 @@
 
 #include <chrono>
 
+void Analyzer::stopAnalyzer() {
+    // Sets async stop flag. This flag is checked various places in the different analysis steps. If
+    // flag is detected, CHECK_ASYNC_STOP is called, and given function will jump to its ASYNC_END
+    // exit-strategy
+    m_asyncStopAnalyzer = true;
+}
+
+#define CHECK_ASYNC_STOP       \
+    if (m_asyncStopAnalyzer) { \
+        goto async_stop;       \
+    }
+
+// End statement for a CHECK_ASYNC_STOP function, with side effects specified in the lambda function
+#define ASYNC_END_SIDEEFFECT(function) \
+    return;                            \
+    async_stop:                        \
+    resetAnalyzer();                   \
+    function();                        \
+    return;
+
+// End statement for a CHECK_ASYNC_STOP function, with no sideeffects
+#define ASYNC_END    \
+    return;          \
+    async_stop:      \
+    resetAnalyzer(); \
+    return;
+
 /**
  * @brief
  * @param img_path
@@ -134,6 +161,8 @@ void Analyzer::runAnalyzer(Setup setup) {
         m_img = m_imageGetterFunction(success);
 
         if (!success || m_asyncStopAnalyzer) {
+            m_asyncStopAnalyzer = false;  // reset, such that the same flag can be used to stop
+                                          // further execution steps
             break;
         }
         if (m_setup.storeRaw) {
@@ -164,6 +193,7 @@ void Analyzer::writeImages() {
     if (m_setup.storeRaw) {
         int index = 0;
         for (const auto& image : m_experiment.rawBuffer) {
+            CHECK_ASYNC_STOP
             m_currentProcessingFrame++;
             // store raw
             std::string filepath =
@@ -177,6 +207,7 @@ void Analyzer::writeImages() {
     if (m_setup.storeProcessed) {
         int index = 0;
         for (const auto& frame : m_experiment.processed) {
+            CHECK_ASYNC_STOP
             m_currentProcessingFrame++;
             std::string filepath = (processedPath / fs::path(m_setup.processedPrefix + "_" +
                                                              to_string(index) + ".png"))
@@ -185,6 +216,7 @@ void Analyzer::writeImages() {
             index++;
         }
     }
+    ASYNC_END
 }
 
 void Analyzer::resetAnalyzer() {
@@ -209,12 +241,14 @@ void Analyzer::resetProcesses() {
 void Analyzer::findObjects() {
     if (m_setup.extractData) {
         for (const framefinder::Frame& f : m_experiment.processed) {
+            CHECK_ASYNC_STOP
             m_objectFinder.setFrame(f.image);
             m_objectFinder.findObjects(m_experiment);
         }
 
         m_objectFinder.cleanObjects(m_experiment);
     }
+    ASYNC_END
 }
 
 /**
@@ -231,6 +265,7 @@ void Analyzer::cleanObjects() {
         std::vector<bool> remove(n);
 
         for (unsigned long i = 0; i < n; i++) {
+            CHECK_ASYNC_STOP
             DataContainer* dc = m_experiment.data[i].get();
             cv::Rect bb_i = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
             cv::Rect bb_o = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
@@ -272,6 +307,7 @@ void Analyzer::cleanObjects() {
                            }),
             m_experiment.data.end());
     }
+    ASYNC_END
 }
 
 /**
@@ -371,6 +407,7 @@ void Analyzer::exportExperiment(const string& path) {
 
     // Goes through all containers
     for (int i = 0; i < m_experiment.data.size(); i++) {
+        CHECK_ASYNC_STOP
         out << "Observation" << (i + 1) << " " << m_experiment.data[i]->size() << "\n";
 
         // Goes through all objects
@@ -384,6 +421,7 @@ void Analyzer::exportExperiment(const string& path) {
         }
     }
     out.close();
+    ASYNC_END_SIDEEFFECT(([&out]() { out.close(); }))
 }
 
 void Analyzer::processImage(cv::Mat& img, cv::Mat& bg) {
