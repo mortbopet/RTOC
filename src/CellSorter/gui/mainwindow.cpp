@@ -150,6 +150,7 @@ void MainWindow::on_actionLoad_project_file_triggered() {
                 ia >> boost::serialization::make_nvp("analyzer", *m_analyzer);
                 ia >> boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
                 ia >> boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+                m_processInterface->dataChanged();
             }
             ifs.close();
         } catch (...) {

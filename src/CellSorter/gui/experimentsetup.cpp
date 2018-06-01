@@ -219,6 +219,13 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
     SERIALIZE_CHECKBOX(ar, ui->extractData, ExtractData);
+    for (auto dataOption : ui->extractData->findChildren<QCheckBox*>()) {
+        bool v = dataOption->isChecked();
+        QString name = dataOption->text();
+        name.replace(' ', '_');
+        ar& boost::serialization::make_nvp(name.toStdString().c_str(), v);
+        dataOption->setChecked(v);
+    }
 }
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(ExperimentSetup)
