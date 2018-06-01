@@ -162,8 +162,14 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
         }
         /// PixelIdxList
         if (dataFlags & data::PixelIdxList) {
-            cv::Mat filledImage(img.rows, img.cols, CV_8U);
-            cv::fillConvexPoly(filledImage, contour, cv::Scalar(255));
+            // Init black canvas
+            cv::Mat filledImage(img.rows, img.cols, CV_8U, cv::Scalar(0));
+            // Reorder pixels from found contour
+            std::vector<cv::Point> contour2;
+            cv::convexHull(contour,contour2);
+            // Paint filled contour
+            cv::fillConvexPoly(filledImage, contour2, cv::Scalar(255));
+            // Get pixel list
             std::vector<cv::Point> c_0;
             cv::findNonZero(filledImage, c_0);
             // Create new PixelIdxList and pass to datacontainer
@@ -179,7 +185,7 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
     for (const cv::Point& p : *points) {
-        img.at<uchar>(p) = 0;
+        img.at<uchar>(p) = 120;
     }
 }
 void floodFill(cv::Mat& img) {
