@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow(const QString& projectFilePath = QString(), QWidget* parent = 0);
     ~MainWindow();
 
     friend class boost::serialization::access;
@@ -31,6 +31,7 @@ private slots:
     void acqSelectionChanged(int index);
     void ffStateChanged(int state);
 
+    void loadProjectFile(const QString& filename);
     void on_actionLoad_project_file_triggered();
     void on_actionStore_project_file_triggered();
 

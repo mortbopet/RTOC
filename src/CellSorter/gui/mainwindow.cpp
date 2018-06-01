@@ -10,7 +10,8 @@
 #include <QThread>
 #include <QToolTip>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
     // Create analyzer and move it to separate thread
@@ -66,6 +67,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(Acquisitor::get(), &Acquisitor::imageDimensionsChanged,
             [=](QPair<int, int> p) { m_acqInterface->setIronManDimensions(p); });
 #endif
+
+    // Load project file if specified
+    if (!projectFilePath.isNull()) {
+        loadProjectFile(projectFilePath);
+    }
 }
 
 void MainWindow::acqSelectionChanged(int index) {
@@ -138,9 +144,7 @@ void MainWindow::serialize(Archive& ar, const unsigned int version) const {
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(MainWindow)
 
-void MainWindow::on_actionLoad_project_file_triggered() {
-    auto filename = QFileDialog::getOpenFileName(this, "Open project file", QDir::currentPath(),
-                                                 "xml file (*.xml)");
+void MainWindow::loadProjectFile(const QString& filename) {
     if (!filename.isNull()) {
         try {
             std::ifstream ifs(filename.toStdString());
@@ -159,6 +163,12 @@ void MainWindow::on_actionLoad_project_file_triggered() {
             QMessageBox::warning(this, "Error", "Could not load project file");
         }
     }
+}
+
+void MainWindow::on_actionLoad_project_file_triggered() {
+    auto filename = QFileDialog::getOpenFileName(this, "Open project file", QDir::currentPath(),
+                                                 "xml file (*.xml)");
+    loadProjectFile(filename);
 }
 
 void MainWindow::on_actionStore_project_file_triggered() {

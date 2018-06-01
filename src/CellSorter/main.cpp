@@ -10,7 +10,12 @@ int main(int argc, char** argv) {
     Q_INIT_RESOURCE(icons);
     QApplication a(argc, argv);
 
-    MainWindow window;
+    QString projectFileName = QString();
+    if (argc == 2) {
+        projectFileName = QString::fromLatin1(argv[1]);
+    }
+
+    MainWindow window(projectFileName);
     window.show();
 
     return a.exec();
