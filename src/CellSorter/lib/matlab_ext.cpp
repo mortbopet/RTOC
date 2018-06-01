@@ -185,7 +185,7 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
     for (const cv::Point& p : *points) {
-        img.at<uchar>(p) = 120;
+        img.at<uchar>(p) = 0;
     }
 }
 void floodFill(cv::Mat& img) {
