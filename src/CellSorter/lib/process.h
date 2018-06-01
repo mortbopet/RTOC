@@ -305,6 +305,8 @@ static std::string queryActionForType(processContainerPtr ptr, const std::string
         return executeActionForType<Canny>(ptr, action);
     }
     assert("Action attempted on unregistered process type");
+
+    return ""; // avoid compiler warning, statement IS unreachable
 }
 }  // namespace P
 // --------------------------------------------------------
