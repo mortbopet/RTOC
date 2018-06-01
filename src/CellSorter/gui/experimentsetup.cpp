@@ -79,17 +79,11 @@ void ExperimentSetup::setToolTips() {
     ui->l_etype->setToolTip(
         "<nobr>Set the experiment type to match</nobr>set experiment-specific parameters");
     ui->l_fps->setToolTip(
-        "<nobr>Frames per second. This value is used for both</nobr> bounding the rate at which "
-        "the "
-        "acquisition source is requested images, as well as being used to calculate the buffersize"
-        "for writing the unsaved images to.");
+        "<nobr>Frames per second. This value is used for</nobr> bounding the rate at which "
+        "the acquisition source is requested images.");
     ui->l_rectime->setToolTip(
-        "<nobr>The recording time is both used for calulating image buffersize</nobr> as well as "
-        "automatically stopping the acquisition if below checkbox is not set");
-    ui->contExec->setToolTip(
-        "<nobr>If set, experiment will continue acquisition after </nobr> set execution time has "
-        "elapsed. This can result in a reduction in acquisition rate, if images have to be written "
-        "to the disk.");
+        "<nobr>Stop acquisition after recording time has elapsed.</nobr> Set to 0 to do continuous "
+        "acquisition (manual stop of experiment).");
     ui->experimentName->setToolTip(
         "Experiment name will be used in generation of folder & file names");
     ui->runProcessing->setToolTip(
