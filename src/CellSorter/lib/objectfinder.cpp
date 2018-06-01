@@ -1,8 +1,8 @@
 #include "objectfinder.h"
 
 /**
- * @brief
- * @return
+ * @brief Main method of objectfinder
+ * @return Count of found objects
  */
 int ObjectFinder::findObjects(Experiment& experiment) {
     bool newObject;
@@ -45,6 +45,11 @@ int ObjectFinder::findObjects(Experiment& experiment) {
     return numObjects;
 }
 
+/**
+ * @brief Removes objects from foundObject-list from Experiment e
+ * @param e Experiment
+ * @return How many objects that have been removed
+ */
 unsigned long ObjectFinder::cleanObjects(Experiment& e) {
     unsigned long length = e.data.size();
 
@@ -114,6 +119,13 @@ void ObjectFinder::setFrame(const cv::Mat& image) {
     m_frame = {image,"",m_frameNum,true};
 }
 
+
+/**
+ * @brief
+ * @param newObject
+ * @param cc_number
+ * @param experiment
+ */
 void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment) {
     if (newObject) {
 
