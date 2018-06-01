@@ -128,3 +128,34 @@ void MainWindow::cameraSelectedWithoutAcqBuilt() {
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+bool MainWindow::loadProject(const QString& path) {
+    try {
+        std::ifstream ifs(path.toStdString());
+        {
+            boost::archive::xml_iarchive ia(ifs);
+            ia >> BOOST_SERIALIZATION_NVP(m_analyzer);
+            ia >> BOOST_SERIALIZATION_NVP(m_experimentSetup);
+        }
+        ifs.close();
+    } catch (...) {
+        return false;
+    }
+    return true;
+}
+
+bool MainWindow::storeProject(const QString& path) {
+    // Serialize current processes in m_processes in .xml file
+    try {
+        std::ofstream ofs(path.toStdString());
+        {
+            boost::archive::xml_oarchive oa(ofs);
+            oa << BOOST_SERIALIZATION_NVP(m_analyzer);
+            oa << BOOST_SERIALIZATION_NVP(m_experimentSetup);
+        }
+        ofs.close();
+    } catch (...) {
+        return false;
+    }
+    return true;
+}

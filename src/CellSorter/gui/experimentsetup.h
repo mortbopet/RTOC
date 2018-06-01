@@ -6,6 +6,14 @@
 #include "../lib/analyzer.h"
 #include "acquisitioninterface.h"
 
+#include "boost/serialization/nvp.hpp"
+#include "boost/serialization/serialization.hpp"
+
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
+#include "guihelpers.h"
+
 namespace Ui {
 class ExperimentSetup;
 }
@@ -15,7 +23,15 @@ class ExperimentSetup : public QWidget {
 
 public:
     explicit ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent = 0);
+    explicit ExperimentSetup() {
+        /*Default constructor required for serialization but should never be used*/
+        Q_ASSERT(false);
+    }
+
     ~ExperimentSetup();
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version) const;
 
 private slots:
     void on_run_clicked();

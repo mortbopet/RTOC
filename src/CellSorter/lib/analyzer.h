@@ -9,6 +9,12 @@
 #include "process.h"
 #include "tracker.h"
 
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
+#include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/vector.hpp>
+
 #include <opencv/cv.hpp>
 
 #include <functional>
@@ -29,7 +35,7 @@ class Analyzer : public QObject {
     Q_OBJECT
 public:
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
-    
+
     void loadImagesFromText();
     void setBG(const cv::Mat& bg);
     void selectBG();
@@ -62,6 +68,19 @@ public:
     cv::Mat m_img;
     cv::Mat m_bg;
     int m_currentProcessingFrame;
+
+    // Serialization function for project storage
+    template <class Archive>
+    void save(Archive& ar, const unsigned int version) const {
+        // note, version is always the latest when saving
+        ar& BOOST_SERIALIZATION_NVP(m_processes);
+    }
+    template <class Archive>
+    void load(Archive& ar, const unsigned int version) {
+        m_processes.clear();
+        ar& BOOST_SERIALIZATION_NVP(m_processes);
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 private:
     void spinLockWait(int microseconds) const;

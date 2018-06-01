@@ -1,11 +1,5 @@
 #include "analyzer.h"
 
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-
-#include <boost/serialization/unique_ptr.hpp>
-#include <boost/serialization/vector.hpp>
-
 #include <boost/filesystem.hpp>
 
 #include <chrono>
@@ -36,7 +30,6 @@ void Analyzer::stopAnalyzer() {
     async_stop:      \
     resetAnalyzer(); \
     return;
-
 
 /**
  * @brief

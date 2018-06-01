@@ -22,6 +22,9 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
+    bool loadProject(const QString& path);
+    bool storeProject(const QString& path);
+
 private slots:
     void cameraSelectedWithoutAcqBuilt();
     void acqSelectionChanged(int index);
