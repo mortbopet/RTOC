@@ -11,6 +11,12 @@
 #include <QTimer>
 #include <QWidget>
 
+#include "boost/serialization/nvp.hpp"
+#include "boost/serialization/serialization.hpp"
+
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
 namespace Ui {
 class IronManWidget;
 }
@@ -21,6 +27,10 @@ class IronManWidget : public QWidget {
 public:
     explicit IronManWidget(QWidget* parent = 0);
     ~IronManWidget();
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version) const;
 
 private slots:
     void on_actionExit_triggered();

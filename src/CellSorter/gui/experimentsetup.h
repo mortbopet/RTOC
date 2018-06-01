@@ -23,10 +23,7 @@ class ExperimentSetup : public QWidget {
 
 public:
     explicit ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent = 0);
-    explicit ExperimentSetup() {
-        /*Default constructor required for serialization but should never be used*/
-        Q_ASSERT(false);
-    }
+    IMPLEMENT_INVALID_DEFAULT_CONSTRUCTOR(ExperimentSetup)
 
     ~ExperimentSetup();
     friend class boost::serialization::access;

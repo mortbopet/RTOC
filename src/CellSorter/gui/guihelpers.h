@@ -9,6 +9,11 @@
 #include "boost/serialization/nvp.hpp"
 #include "boost/serialization/serialization.hpp"
 
+/* Sometimes, default constructors are needed for pointers, but should never be used. This macro
+ * implements this default constructor*/
+#define IMPLEMENT_INVALID_DEFAULT_CONSTRUCTOR(classname) \
+    explicit classname() { Q_ASSERT(false); }
+
 // To have template definitions of widget serializers in .cpp file, we need to explicitely
 // instantiate for the required archives (in our case, xml archives)
 #define EXPLICIT_INSTANTIATE_XML_ARCHIVE(classname)                   \

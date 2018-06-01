@@ -129,6 +129,15 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+template <class Archive>
+void MainWindow::serialize(Archive& ar, const unsigned int version) const {
+    ar& BOOST_SERIALIZATION_NVP(ui->acqSource);
+    ar& BOOST_SERIALIZATION_NVP(ui->fftresh);
+    ar& BOOST_SERIALIZATION_NVP(ui->enableFF);
+}
+
+EXPLICIT_INSTANTIATE_XML_ARCHIVE(MainWindow)
+
 bool MainWindow::loadProject(const QString& path) {
     try {
         std::ifstream ifs(path.toStdString());

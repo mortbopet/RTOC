@@ -1,5 +1,6 @@
 #include "ironmanwidget.h"
 
+#include "../gui/guihelpers.h"
 #include "ui_ironmanwidget.h"
 
 #include <QFileDialog>
@@ -173,3 +174,16 @@ void IronManWidget::on_scale_currentIndexChanged(const QString& arg1) {
 void IronManWidget::on_spinBox_valueChanged(int arg1) {
     m_imageDisplayer.setImageInterval(arg1);
 }
+
+template <class Archive>
+void IronManWidget::serialize(Archive& ar, const unsigned int version) const {
+    ar& BOOST_SERIALIZATION_NVP(ui->storeRaw);
+    ar& BOOST_SERIALIZATION_NVP(ui->storeProcessed);
+    ar& BOOST_SERIALIZATION_NVP(ui->experimentName);
+    ar& BOOST_SERIALIZATION_NVP(ui->experimentPath);
+    ar& BOOST_SERIALIZATION_NVP(ui->processedPrefix);
+    ar& BOOST_SERIALIZATION_NVP(ui->rawPrefix);
+    ar& BOOST_SERIALIZATION_NVP(ui->extractData);
+}
+
+EXPLICIT_INSTANTIATE_XML_ARCHIVE(IronManWidget)
