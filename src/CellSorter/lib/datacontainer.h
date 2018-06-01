@@ -10,6 +10,7 @@
 #include "opencv/cv.hpp"
 
 namespace data {
+
 // Enumeration of the various parameters that can be extracted from an image, using open CV
 enum DataFlags {
     Area = 1 << 0,

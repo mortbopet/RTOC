@@ -20,10 +20,11 @@ size_t DataObject::getBytesToData(data::DataFlags flag) {
     // Iterate through the typeMap and match against flag. Until flag is found, if other flags in
     // the map is found in m_dataFlags, increment bytesToData with the corresponding data size.
     for (const auto& item : data::typeMap) {
-        if (!(item.first & flag) && (item.first & m_dataFlags)) {
-            bytesToData += std::get<1>(item.second);
-        } else {
+        if (item.first & flag) {
             break;
+        }
+        if (item.first & m_dataFlags) {
+            bytesToData += std::get<1>(item.second);
         }
     }
     return bytesToData;
