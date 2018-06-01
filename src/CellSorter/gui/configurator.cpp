@@ -1,6 +1,7 @@
 #include "configurator.h"
 #include "ui_configurator.h"
 
+#include "guihelpers.h"
 #include "treeitem.h"
 
 #include <QFileDialog>
@@ -238,16 +239,23 @@ void Configurator::on_down_clicked() {
 }
 
 void Configurator::on_load_clicked() {
-    auto filename = QFileDialog::getOpenFileName(this, "Open process configuration file", m_current_dir,
-                                                 "pcs file (*.pcs)");
+    auto filename = QFileDialog::getOpenFileName(this, "Open process configuration file",
+                                                 m_current_dir, "pcs file (*.pcs)");
     if (!filename.isNull())
         m_interface->loadSetup(filename);
 }
 
 void Configurator::on_store_clicked() {
     auto defaultDir = QDir::currentPath();
-    auto filename = QFileDialog::getSaveFileName(this, "Save process configuration file", m_current_dir,
-                                                 "pcs file (*.pcs)");
+    auto filename = QFileDialog::getSaveFileName(this, "Save process configuration file",
+                                                 m_current_dir, "pcs file (*.pcs)");
     if (!filename.isNull())
         m_interface->storeSetup(filename);
 }
+
+template <class Archive>
+void Configurator::serialize(Archive& ar, const unsigned int version) const {
+    ar& boost::serialization::make_nvp("imagedisplayerwidget", *m_imagedisplayer);
+}
+
+EXPLICIT_INSTANTIATE_XML_ARCHIVE(Configurator)

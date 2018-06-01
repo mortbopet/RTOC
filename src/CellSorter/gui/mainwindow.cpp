@@ -150,6 +150,8 @@ void MainWindow::on_actionLoad_project_file_triggered() {
                 ia >> boost::serialization::make_nvp("analyzer", *m_analyzer);
                 ia >> boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
                 ia >> boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+                ia >>
+                    boost::serialization::make_nvp("imagedisplayerwidget", *m_imageDisplayerWidget);
                 m_processInterface->dataChanged();
             }
             ifs.close();
@@ -171,6 +173,8 @@ void MainWindow::on_actionStore_project_file_triggered() {
                 oa << boost::serialization::make_nvp("analyzer", *m_analyzer);
                 oa << boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
                 oa << boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+                oa << boost::serialization::make_nvp("imagedisplayerwidget",
+                                                     *m_imageDisplayerWidget);
             }
             ofs.close();
         } catch (...) {

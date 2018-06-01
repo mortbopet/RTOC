@@ -28,6 +28,14 @@ public:
     void reset();
     void setAnalyzer(Analyzer* analyzer);
 
+    friend class boost::serialization::access;
+    // Serialization function for project storage
+    template <class Archive>
+    void save(Archive& ar, const unsigned int version) const;
+    template <class Archive>
+    void load(Archive& ar, const unsigned int version);
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 public slots:
     void setPath(const QString& path);
     void refreshImage();

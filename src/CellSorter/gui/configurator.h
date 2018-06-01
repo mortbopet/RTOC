@@ -21,6 +21,10 @@ public:
     explicit Configurator(ProcessInterface* iface, Analyzer* analyzer, QWidget* parent = 0);
     ~Configurator();
 
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version) const;
+
 private slots:
     void on_add_clicked();
     void on_remove_clicked();

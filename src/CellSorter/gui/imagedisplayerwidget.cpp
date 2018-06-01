@@ -1,6 +1,8 @@
 #include "imagedisplayerwidget.h"
 #include "ui_imagedisplayerwidget.h"
 
+#include "guihelpers.h"
+
 #include <QFileDialog>
 #include <QtConcurrent/QtConcurrent>
 
@@ -141,7 +143,7 @@ cv::Mat* ImageDisplayerWidget::getNextImage(bool& successful) {
     }
 
     m_image = cv::imread(m_imageFileList[m_acqIndex++].absoluteFilePath().toStdString(),
-                             cv::IMREAD_GRAYSCALE);
+                         cv::IMREAD_GRAYSCALE);
 
     if (!m_image.data) {
         successful = false;
@@ -217,3 +219,34 @@ void ImageDisplayerWidget::on_setPath_clicked() {
         setPath(dirName);
     }
 }
+
+template <class Archive>
+void ImageDisplayerWidget::save(Archive& ar, const unsigned int version) const {
+    SERIALIZE_LINEEDIT(ar, ui->path, path);
+    SERIALIZE_SPINBOX(ar, ui->ips, ips);
+    SERIALIZE_CHECKBOX(ar, ui->showUnprocessed, showUnprocessed);
+    SERIALIZE_SPINBOX(ar, ui->imageSlider, imageSlider);
+}
+
+template <class Archive>
+void ImageDisplayerWidget::load(Archive& ar, const unsigned int version) {
+    SERIALIZE_LINEEDIT(ar, ui->path, path);
+    setPath(ui->path->text());
+    SERIALIZE_SPINBOX(ar, ui->ips, ips);
+    SERIALIZE_CHECKBOX(ar, ui->showUnprocessed, showUnprocessed);
+    SERIALIZE_SPINBOX(ar, ui->imageSlider, imageSlider);
+}
+
+// Explicit instantiation of template functions
+template void
+ImageDisplayerWidget::save<boost::archive::xml_iarchive>(boost::archive::xml_iarchive&,
+                                                         const unsigned int) const;
+template void
+ImageDisplayerWidget::save<boost::archive::xml_oarchive>(boost::archive::xml_oarchive&,
+                                                         const unsigned int) const;
+template void
+ImageDisplayerWidget::load<boost::archive::xml_iarchive>(boost::archive::xml_iarchive&,
+                                                         const unsigned int);
+template void
+ImageDisplayerWidget::load<boost::archive::xml_oarchive>(boost::archive::xml_oarchive&,
+                                                         const unsigned int);
