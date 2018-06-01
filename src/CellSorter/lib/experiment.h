@@ -23,15 +23,8 @@ public:
     std::vector<framefinder::Frame> acc, dis, processed;
     std::vector<cv::Mat> rawBuffer;
     double intensity_threshold;
-    std::string imagePath;  // !!! Deprecated
     std::vector<std::unique_ptr<DataContainer>> data;
 
-    void defaultSettings(const std::string& imgPath) {
-        inlet = 80;
-        outlet = 200;
-        intensity_threshold = 0.0354;
-        imagePath = imgPath;
-    }
 
     void reset() {
         acc.clear();

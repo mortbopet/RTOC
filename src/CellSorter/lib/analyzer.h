@@ -29,9 +29,7 @@ class Analyzer : public QObject {
     Q_OBJECT
 public:
     processContainerPtr getProcessContainerPtr() { return &m_processes; }
-
-    void loadExperimentPreset(const std::string& img_path);
-    void loadImagesFromFolder();
+    
     void loadImagesFromText();
     void setBG(const cv::Mat& bg);
     void selectBG();

@@ -37,27 +37,6 @@ void Analyzer::stopAnalyzer() {
     resetAnalyzer(); \
     return;
 
-/**
- * @brief
- * @param img_path
- */
-void Analyzer::loadExperimentPreset(const std::string& img_path) {
-    m_experiment.defaultSettings(img_path);
-}
-
-/**
- * @brief
- *
- * @warning DEPRECATED
- */
-void Analyzer::loadImagesFromFolder() {
-    std::vector<framefinder::Frame> frames;
-    std::string img_folder = m_experiment.imagePath;
-    get_files(frames, img_folder);
-    accept_or_reject(frames, img_folder, m_experiment.intensity_threshold);
-    get_accepted(frames, m_experiment.acc);
-    get_rejected(frames, m_experiment.dis);
-}
 
 /**
  * @brief
