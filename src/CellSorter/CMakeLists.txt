@@ -91,9 +91,6 @@ add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
 target_link_libraries(${TEST_EXECUTABLE} Catch)
 # Link OpenCV and Cellsorter lib
 target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
-# Warning: Following adds access to private methods
-# FLAG MUST ONLY BE ADDED TO TEST EXECUTABLE
-set_target_properties(${TEST_EXECUTABLE} PROPERTIES COMPILE_FLAGS "-Dprivate=public")
 
 ######################################################################
 ## endof Catch2 setup
