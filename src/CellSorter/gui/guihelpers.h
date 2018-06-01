@@ -5,9 +5,12 @@
 #include <QComboBox>
 #include <QGroupBox>
 #include <QLineEdit>
+#include <QSpinBox>
 
 #include "boost/serialization/nvp.hpp"
 #include "boost/serialization/serialization.hpp"
+
+int GetIndexOfItem(const QComboBox& box, const QVariant& item);
 
 /* Sometimes, default constructors are needed for pointers, but should never be used. This macro
  * implements this default constructor*/
@@ -22,38 +25,47 @@
     template void classname::serialize<boost::archive::xml_oarchive>( \
         boost::archive::xml_oarchive&, const unsigned int) const;
 
-int GetIndexOfItem(const QComboBox& box, const QVariant& item);
+// Serialization macros for various GUI types to load/store gui state
+#define SERIALIZE_CHECKBOX(ar, o, name) \
+    auto name = o->isChecked();         \
+    ar& BOOST_SERIALIZATION_NVP(name);  \
+    o->setChecked(name);
 
-// Serialization operators for various GUI types to load/store gui state
+#define SERIALIZE_COMBOBOX(ar, o, name) \
+    auto name = o->currentText();       \
+    ar& BOOST_SERIALIZATION_NVP(name);  \
+    o->setCurrentIndex(o->findText(name));
+
+#define SERIALIZE_LINEEDIT(ar, o, name) \
+    auto name = o->text();              \
+    ar& BOOST_SERIALIZATION_NVP(name);  \
+    o->setText(name);
+
+#define SERIALIZE_SPINBOX(ar, o, name) \
+    auto name = o->value();            \
+    ar& BOOST_SERIALIZATION_NVP(name); \
+    o->setValue(name);
+
 namespace boost {
 namespace serialization {
 
 template <class Archive>
-void serialize(Archive& ar, QCheckBox& o, const unsigned int version) {
-    auto v = o.isChecked();
-    ar& BOOST_SERIALIZATION_NVP(v);
-    o.setChecked(v);
+inline void save(Archive& ar, const QString& s, const unsigned int) {
+    using boost::serialization::make_nvp;
+    ar << make_nvp("value", s.toStdString());
 }
 
 template <class Archive>
-void serialize(Archive& ar, QComboBox& o, const unsigned int version) {
-    auto v = o.currentText().toStdString();
-    ar& BOOST_SERIALIZATION_NVP(v);
-    o.setCurrentIndex(o.findText(QString::fromStdString(v)));
+inline void load(Archive& ar, QString& so, const unsigned int) {
+    using boost::serialization::make_nvp;
+    std::string s;
+    ar >> make_nvp("value", s);
+    so = QString::fromStdString(s);
 }
 
 template <class Archive>
-void serialize(Archive& ar, QGroupBox& o, const unsigned int version) {
-    auto v = o.isChecked();
-    ar& BOOST_SERIALIZATION_NVP(v);
-    o.setChecked(v);
-}
-
-template <class Archive>
-void serialize(Archive& ar, QLineEdit& o, const unsigned int version) {
-    auto v = o.text().toStdString();
-    ar& BOOST_SERIALIZATION_NVP(v);
-    o.setText(QString::fromStdString(v));
+inline void serialize(Archive& ar, QString& s, const unsigned int file_version) {
+    boost::serialization::split_free(ar, s, file_version);
 }
 
 }  // namespace serialization

@@ -177,13 +177,9 @@ void IronManWidget::on_spinBox_valueChanged(int arg1) {
 
 template <class Archive>
 void IronManWidget::serialize(Archive& ar, const unsigned int version) const {
-    ar& BOOST_SERIALIZATION_NVP(ui->storeRaw);
-    ar& BOOST_SERIALIZATION_NVP(ui->storeProcessed);
-    ar& BOOST_SERIALIZATION_NVP(ui->experimentName);
-    ar& BOOST_SERIALIZATION_NVP(ui->experimentPath);
-    ar& BOOST_SERIALIZATION_NVP(ui->processedPrefix);
-    ar& BOOST_SERIALIZATION_NVP(ui->rawPrefix);
-    ar& BOOST_SERIALIZATION_NVP(ui->extractData);
+    SERIALIZE_CHECKBOX(ar, m_ui->initWithConfig, InitWithConfig);
+    SERIALIZE_LINEEDIT(ar, m_ui->xmlPath, XmlPath);
+    SERIALIZE_LINEEDIT(ar, m_ui->configPath, ConfigPath);
 }
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(IronManWidget)

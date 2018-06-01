@@ -131,40 +131,49 @@ MainWindow::~MainWindow() {
 
 template <class Archive>
 void MainWindow::serialize(Archive& ar, const unsigned int version) const {
-    ar& BOOST_SERIALIZATION_NVP(ui->acqSource);
-    ar& BOOST_SERIALIZATION_NVP(ui->fftresh);
-    ar& BOOST_SERIALIZATION_NVP(ui->enableFF);
+    SERIALIZE_COMBOBOX(ar, ui->acqSource, AcquisitionSource);
+    SERIALIZE_SPINBOX(ar, ui->fftresh, FramefinderTreshold);
+    SERIALIZE_CHECKBOX(ar, ui->enableFF, EnableFrameFinder);
 }
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(MainWindow)
 
-bool MainWindow::loadProject(const QString& path) {
-    try {
-        std::ifstream ifs(path.toStdString());
-        {
-            boost::archive::xml_iarchive ia(ifs);
-            ia >> BOOST_SERIALIZATION_NVP(m_analyzer);
-            ia >> BOOST_SERIALIZATION_NVP(m_experimentSetup);
+void MainWindow::on_actionLoad_project_file_triggered() {
+    auto filename = QFileDialog::getOpenFileName(this, "Open project file", QDir::currentPath(),
+                                                 "xml file (*.xml)");
+    if (!filename.isNull()) {
+        try {
+            std::ifstream ifs(filename.toStdString());
+            {
+                boost::archive::xml_iarchive ia(ifs);
+                ia >> boost::serialization::make_nvp("MainWindow", *this);
+                ia >> boost::serialization::make_nvp("analyzer", *m_analyzer);
+                ia >> boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
+                ia >> boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+            }
+            ifs.close();
+        } catch (...) {
+            QMessageBox::warning(this, "Error", "Could not load project file");
         }
-        ifs.close();
-    } catch (...) {
-        return false;
     }
-    return true;
 }
 
-bool MainWindow::storeProject(const QString& path) {
-    // Serialize current processes in m_processes in .xml file
-    try {
-        std::ofstream ofs(path.toStdString());
-        {
-            boost::archive::xml_oarchive oa(ofs);
-            oa << BOOST_SERIALIZATION_NVP(m_analyzer);
-            oa << BOOST_SERIALIZATION_NVP(m_experimentSetup);
+void MainWindow::on_actionStore_project_file_triggered() {
+    auto filename = QFileDialog::getSaveFileName(this, "Save project file", QDir::currentPath(),
+                                                 "xml file (*.xml)");
+    if (!filename.isNull()) {
+        try {
+            std::ofstream ofs(filename.toStdString());
+            {
+                boost::archive::xml_oarchive oa(ofs);
+                oa << boost::serialization::make_nvp("MainWindow", *this);
+                oa << boost::serialization::make_nvp("analyzer", *m_analyzer);
+                oa << boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
+                oa << boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+            }
+            ofs.close();
+        } catch (...) {
+            QMessageBox::warning(this, "Error", "Could not store project file");
         }
-        ofs.close();
-    } catch (...) {
-        return false;
     }
-    return true;
 }

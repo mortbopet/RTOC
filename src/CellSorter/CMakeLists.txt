@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 set (CMAKE_CXX_STANDARD 14)
+
 cmake_policy(SET CMP0020 NEW)
 project(CellSorter)
 
@@ -74,6 +75,8 @@ add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
 
 
+SET(BUILD_TESTS OFF CACHE BOOL "Build with Catch unit tests")
+if(${BUILD_TESTS})
 ######################################################################
 ## Catch2 setup - TEST PROJECT
 ######################################################################
@@ -95,6 +98,7 @@ target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
 ######################################################################
 ## endof Catch2 setup
 ######################################################################
+endif()
 
 
 ######################################################################
@@ -110,6 +114,7 @@ if(WIN32)
     # include boost
     target_include_directories(CellSorter_lib PUBLIC ${BOOST_INCLUDEDIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
+    target_include_directories(AcquisitionApp PUBLIC ${BOOST_INCLUDEDIR})
 
     macro(set_link_libraries app)
         target_link_libraries(${ARGV0}
@@ -125,8 +130,9 @@ if(WIN32)
     # On windows, the app has been compiled with boost 1_66 and MSVC-14 (MSVC2015)
     set_link_libraries(CellSorter_lib)
     set_link_libraries(${PROJECT_NAME})
+    if(${BUILD_TESTS})
     set_link_libraries( ${TEST_EXECUTABLE})
-    set_link_libraries( ${AcquisitionApp})
+endif()
 else()
     if(UNIX)
         set(Boost_NO_SYSTEM_PATHS OFF)
@@ -140,7 +146,9 @@ else()
 
     set_link_libraries(CellSorter_lib)
     set_link_libraries(${PROJECT_NAME})
+    if(${BUILD_TESTS})
     set_link_libraries(${TEST_EXECUTABLE})
+endif()
 endif()
 ######################################################################
 ## endof Boost setup

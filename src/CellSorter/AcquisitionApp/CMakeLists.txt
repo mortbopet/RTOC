@@ -59,6 +59,25 @@ file ( GLOB RESOURCES
  resources/*.qrc
 )
 
+# Find Boost
+set(Boost_NO_SYSTEM_PATHS OFF)
+set(BOOST_INCLUDEDIR "$ENV{BOOST_ROOT}")
+find_package(Boost REQUIRED)
+message(STATUS ${BOOST_INCLUDEDIR})
+
+
+
+macro(set_link_libraries app)
+    target_link_libraries(${ARGV0}
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-gd-x64-1_66.lib"
+        debug     "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_serialization-vc141-mt-gd-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_system-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_filesystem-vc141-mt-x64-1_66.lib"
+        optimized "$ENV{BOOST_ROOT}/lib64-msvc-14.1/libboost_serialization-vc141-mt-x64-1_66.lib"
+        )
+endmacro()
+
 
 if(${BUILD_ACQ})
     add_library(acquisitor_lib ${ACQUISITOR_SOURCES} ${ACQUISITOR_HEADERS})
@@ -67,6 +86,9 @@ endif()
 add_library(ACQ_LIB ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets ACQ_LIB)
+set_link_libraries(${PROJECT_NAME})
+set_link_libraries(acquisitor_lib)
+target_include_directories(acquisitor_lib PUBLIC ${BOOST_INCLUDEDIR})
 
 
 # Handle link and includes for acquisitor lib / silicon software related

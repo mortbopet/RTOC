@@ -157,10 +157,28 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionLoad_project_file"/>
+    <addaction name="actionStore_project_file"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoad_project_file">
+   <property name="text">
+    <string>Load project file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionStore_project_file">
+   <property name="text">
+    <string>Store project file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

@@ -22,9 +22,6 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
-    bool loadProject(const QString& path);
-    bool storeProject(const QString& path);
-
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version) const;
@@ -33,6 +30,9 @@ private slots:
     void cameraSelectedWithoutAcqBuilt();
     void acqSelectionChanged(int index);
     void ffStateChanged(int state);
+
+    void on_actionLoad_project_file_triggered();
+    void on_actionStore_project_file_triggered();
 
 private:
     Ui::MainWindow* ui;

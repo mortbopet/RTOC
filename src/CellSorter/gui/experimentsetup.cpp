@@ -8,6 +8,8 @@
 #include <QThread>
 #include <QToolTip>
 
+#include "guihelpers.h"
+
 #include "../lib/datacontainer.h"
 #include "experimentrunner.h"
 #include "ui_experimentrunner.h"
@@ -210,13 +212,13 @@ void ExperimentSetup::on_setExperimentPath_clicked() {
 
 template <class Archive>
 void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
-    ar& BOOST_SERIALIZATION_NVP(ui->storeRaw);
-    ar& BOOST_SERIALIZATION_NVP(ui->storeProcessed);
-    ar& BOOST_SERIALIZATION_NVP(ui->experimentName);
-    ar& BOOST_SERIALIZATION_NVP(ui->experimentPath);
-    ar& BOOST_SERIALIZATION_NVP(ui->processedPrefix);
-    ar& BOOST_SERIALIZATION_NVP(ui->rawPrefix);
-    ar& BOOST_SERIALIZATION_NVP(ui->extractData);
+    SERIALIZE_CHECKBOX(ar, ui->storeRaw, storeRaw);
+    SERIALIZE_CHECKBOX(ar, ui->storeProcessed, storeProcessed);
+    SERIALIZE_LINEEDIT(ar, ui->experimentName, ExperimentName);
+    SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
+    SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
+    SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
+    SERIALIZE_CHECKBOX(ar, ui->extractData, ExtractData);
 }
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(ExperimentSetup)
