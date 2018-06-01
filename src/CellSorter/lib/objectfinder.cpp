@@ -37,7 +37,9 @@ int ObjectFinder::findObjects(Experiment& experiment) {
         }
 
         writeToDataVector(newObject, i, experiment);
-        m_cellNum++;
+        if (newObject) {
+            m_cellNum++;
+        }
     }
     m_frameNum++;
     return numObjects;
@@ -120,7 +122,6 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
 
         (*experiment.data[m_cellNum])[0]->setValue(data::Inlet, experiment.inlet);
         (*experiment.data[m_cellNum])[0]->setValue(data::Outlet, experiment.outlet);
-        // yref ???
         (*experiment.data[m_cellNum])[0]->setValue(data::Label, m_cellNum);
 
         (*experiment.data[m_cellNum])[0]->setValue(data::Frame, m_frameNum);
