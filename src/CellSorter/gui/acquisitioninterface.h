@@ -13,8 +13,8 @@
 #include "genericcamerawidget.h"
 #include "imagedisplayerwidget.h"
 
-#ifdef BUILD_ACQ
-#include "AcquisitionApp/acquisitor_src/acquisitor.h"
+#ifdef BUILD_IRONMAN
+#include "ironman_lib/acquisitor_src/acquisitor.h"
 #endif
 
 enum class AcqSource { IronManCamera, Folder, Webcam };
@@ -42,7 +42,7 @@ private:
     ImageDisplayerWidget* m_imageDisplayerWidget;
     GenericCameraWidget* m_genericCameraWidget;
 
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
 public:
     void setAcquisitor(Acquisitor* acq) { m_acquisitor = acq; }
     void setIronManDimensions(QPair<int, int> dim) { m_ironManDimensions = dim; }

@@ -19,7 +19,7 @@ IronManWidget::IronManWidget(QWidget* parent) : QWidget(parent), m_ui(new Ui::Ir
     m_logger = new Logger(this);
     m_logger->setLog(m_ui->log);
 
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
 
     // Setup ImageDisplayer requests to the acquisitor
     connect(&m_imageDisplayer, &CameraDisplayerWidget::requestImage, Acquisitor::get(),
@@ -52,7 +52,7 @@ IronManWidget::IronManWidget(QWidget* parent) : QWidget(parent), m_ui(new Ui::Ir
 #endif
 }
 
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
 void IronManWidget::acqStateChanged(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
@@ -131,7 +131,7 @@ IronManWidget::~IronManWidget() {
 }
 
 void IronManWidget::on_actionExit_triggered() {
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
     // Safely deinitialize the framegrabber
     Acquisitor::get()->stopAcq();
     Acquisitor::get()->deInitialize();

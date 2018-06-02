@@ -59,7 +59,7 @@ MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
     // Connect frame finder checkbox to acquisitionInterface
     connect(ui->enableFF, &QCheckBox::stateChanged, this, &MainWindow::ffStateChanged);
 
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
     m_acquisitionWdiget = new IronManWidget(this);
     ui->acqLayout->addWidget(m_acquisitionWdiget);
 
@@ -79,7 +79,7 @@ void MainWindow::acqSelectionChanged(int index) {
     AcqSource source = ui->acqSource->itemData(index).value<AcqSource>();
     switch (source) {
         case AcqSource::IronManCamera: {
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
             ui->acqWidgets->setCurrentIndex(2);
 #else
             // Display error message
@@ -153,7 +153,9 @@ void MainWindow::loadProjectFile(const QString& filename) {
                 ia >> boost::serialization::make_nvp("MainWindow", *this);
                 ia >> boost::serialization::make_nvp("analyzer", *m_analyzer);
                 ia >> boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
+#ifdef BUILD_IRONMAN
                 ia >> boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+#endif
                 ia >>
                     boost::serialization::make_nvp("imagedisplayerwidget", *m_imageDisplayerWidget);
                 m_processInterface->dataChanged();
@@ -182,7 +184,9 @@ void MainWindow::on_actionStore_project_file_triggered() {
                 oa << boost::serialization::make_nvp("MainWindow", *this);
                 oa << boost::serialization::make_nvp("analyzer", *m_analyzer);
                 oa << boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
+#ifdef BUILD_IRONMAN
                 oa << boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
+#endif
                 oa << boost::serialization::make_nvp("imagedisplayerwidget",
                                                      *m_imageDisplayerWidget);
             }

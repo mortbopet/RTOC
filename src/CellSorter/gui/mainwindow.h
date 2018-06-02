@@ -3,7 +3,10 @@
 
 #include <QMainWindow>
 
-#include "AcquisitionApp/src/ironmanwidget.h"
+#ifdef BUILD_IRONMAN
+#include "ironman_lib/src/ironmanwidget.h"
+#endif
+
 #include "acquisitioninterface.h"
 #include "configurator.h"
 #include "experimentsetup.h"
@@ -36,17 +39,19 @@ private slots:
     void on_actionStore_project_file_triggered();
 
 private:
-    Ui::MainWindow* ui;
+    void setupAcqCombobox();
 
+    Ui::MainWindow* ui;
     ProcessInterface* m_processInterface;
     Configurator* m_configurator;
     Analyzer* m_analyzer;
-    IronManWidget* m_acquisitionWdiget;
     ImageDisplayerWidget* m_imageDisplayerWidget;
     AcquisitionInterface* m_acqInterface;
     ExperimentSetup* m_experimentSetup;
 
-    void setupAcqCombobox();
+#ifdef BUILD_IRONMAN
+    IronManWidget* m_acquisitionWdiget;
+#endif
 };
 
 #endif  // MAINWINDOW_H

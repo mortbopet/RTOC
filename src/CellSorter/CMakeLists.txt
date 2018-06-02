@@ -8,7 +8,6 @@ project(CellSorter)
 #Environment variable $OpenCV_DIR must be set to the "build" folder of OpenCV
 find_package(OpenCV REQUIRED)
 
-
 # Define all source and header files in src/
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
@@ -53,13 +52,8 @@ file ( GLOB RESOURCES
  ../*.qrc
 )
 
-if(${BUILD_ACQ})
-    add_definitions(-DBUILD_ACQ)
-endif()
-
-add_subdirectory(AcquisitionApp)
 add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
-target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets ACQ_LIB)
+target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
 ######################################################################
 ## endof GUI setup
 ######################################################################
@@ -114,7 +108,6 @@ if(WIN32)
     # include boost
     target_include_directories(CellSorter_lib PUBLIC ${BOOST_INCLUDEDIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
-    target_include_directories(AcquisitionApp PUBLIC ${BOOST_INCLUDEDIR})
 
     macro(set_link_libraries app)
         target_link_libraries(${ARGV0}
@@ -186,6 +179,22 @@ endif()
 ######################################################################
 ## endof Doxygen setup
 ######################################################################
+
+######################################################################
+## IronMan camera lib setup
+######################################################################
+SET(BUILD_IRONMAN OFF CACHE BOOL "Build acquisition related tools")
+if(${BUILD_IRONMAN})
+    add_definitions(-DBUILD_IRONMAN)
+    add_subdirectory(ironman_lib)
+    target_link_libraries(CellSorter_lib ironman_lib)
+endif()
+######################################################################
+## end of IronMan camera lib setup
+######################################################################
+
+
+
 
 ## copy test images to output directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../test_images DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)

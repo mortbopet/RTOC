@@ -1,7 +1,7 @@
 #ifndef IRONMANWIDGET_H
 #define IRONMANWIDGET_H
 
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
 #include "../acquisitor_src/acquisitor.h"
 #endif
 
@@ -49,7 +49,7 @@ private:
     Ui::IronManWidget* m_ui;
     Logger* m_logger;
 
-#ifdef BUILD_ACQ
+#ifdef BUILD_IRONMAN
 private slots:
     void initializeFramegrabber();
     void acqStateChanged(AcqState state);

@@ -1,25 +1,21 @@
 cmake_minimum_required(VERSION 3.8)
-project(AcquisitionApp)
-
-SET(BUILD_ACQ ON CACHE BOOL "Build acquisition related tools")
+project(ironman_lib)
 
 if(COMMAND cmake_policy)
         cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
 # Check that required environment variables are set
-if(${BUILD_ACQ})
-    message( STATUS "\nBUILDING WITH ACQUISITION APP")
-    if( DEFINED ENV{SISODIR5} )
-        # Set preprocessor flag to trigger inclusion of acquisitor parts in program
-        add_definitions(-DBUILD_ACQ)
-      message( STATUS "\nSISODIR5 environment variable detected at: " $ENV{SISODIR5}
-          "\nThis variable is required for linking against SiliconSoftware provided
-          headers and libraries.")
-      message( STATUS "\nRemember to set the working directory to the silicon software .bin directory, or other directories containing the required .dll's")
-    else()
-      message( WARNING "\nSISODIR5 not set!")
-    endif()
+message( STATUS "\nBUILDING WITH ACQUISITION APP")
+if( DEFINED ENV{SISODIR5} )
+    # Set preprocessor flag to trigger inclusion of acquisitor parts in program
+    add_definitions(-DBUILD_ACQ)
+  message( STATUS "\nSISODIR5 environment variable detected at: " $ENV{SISODIR5}
+      "\nThis variable is required for linking against SiliconSoftware provided
+      headers and libraries.")
+  message( STATUS "\nRemember to set the working directory to the silicon software .bin directory, or other directories containing the required .dll's")
+else()
+  message( WARNING "\nSISODIR5 not set!")
 endif()
 
 set(CMAKE_CXX_STANDARD 11)
@@ -59,14 +55,8 @@ file ( GLOB RESOURCES
  resources/*.qrc
 )
 
-if(${BUILD_ACQ})
-    add_library(acquisitor_lib ${ACQUISITOR_SOURCES} ${ACQUISITOR_HEADERS})
-endif()
-
-add_library(ACQ_LIB ${LIB_SOURCES} ${LIB_HEADERS} ${UIS})
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets ACQ_LIB)
-target_include_directories(acquisitor_lib PUBLIC ${BOOST_INCLUDEDIR})
+add_library(${PROJECT_NAME} ${LIB_SOURCES} ${LIB_HEADERS} ${UIS} ${ACQUISITOR_SOURCES} ${ACQUISITOR_HEADERS})
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets)
 
 
 ######################################################################
@@ -81,7 +71,6 @@ if(WIN32)
 
     # include boost
     target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
-    target_include_directories(acquisitor_lib PUBLIC ${BOOST_INCLUDEDIR})
 
     macro(set_link_libraries app)
         target_link_libraries(${ARGV0}
@@ -95,7 +84,6 @@ if(WIN32)
     endmacro()
 
     # On windows, the app has been compiled with boost 1_66 and MSVC-14 (MSVC2015)
-    set_link_libraries(acquisitor_lib)
     set_link_libraries(${PROJECT_NAME})
 else()
     if(UNIX)
@@ -108,7 +96,6 @@ else()
         target_link_libraries(${ARGV0} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
     endmacro()
 
-    set_link_libraries(acquisitor_lib)
     set_link_libraries(${PROJECT_NAME})
 endif()
 ######################################################################
@@ -116,29 +103,20 @@ endif()
 ######################################################################
 
 # Handle link and includes for acquisitor lib / silicon software related
-if(${BUILD_ACQ})
-    # the SiliconSoftware provided libraries use some old c-style includes - the below macro must be defined to avoid compile errors
-    add_definitions(-D__STDC_LIMIT_MACROS)
-    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_INSTALL_PREFIX}/cmake/modules" "$ENV{SISODIR5}/cmake/modules")
-    INCLUDE(SisoPlatform)
-    FIND_PACKAGE(FgLib5 REQUIRED)
-    FIND_PACKAGE(SisoGenicamLib REQUIRED)
 
-    # SiliconSoftware runtime directories
-    target_include_directories(acquisitor_lib PUBLIC ${FgLib5_INCLUDE_DIR} ${SisoGenicam_INCLUDE_DIR})
+# the SiliconSoftware provided libraries use some old c-style includes - the below macro must be defined to avoid compile errors
+add_definitions(-D__STDC_LIMIT_MACROS)
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_INSTALL_PREFIX}/cmake/modules" "$ENV{SISODIR5}/cmake/modules")
+INCLUDE(SisoPlatform)
+FIND_PACKAGE(FgLib5 REQUIRED)
+FIND_PACKAGE(SisoGenicamLib REQUIRED)
 
-    # Link SiliconSoftware libraries
-    target_link_libraries( ${PROJECT_NAME}
-        ${FgLib5_LIBRARIES}
-        ${SisoGenicam_LIBRARIES}
-    )
-    target_link_libraries(${PROJECT_NAME} acquisitor_lib )
-    target_link_libraries( ACQ_LIB
-        ${FgLib5_LIBRARIES}
-        ${SisoGenicam_LIBRARIES}
-    )
-    target_link_libraries( ACQ_LIB
-        acquisitor_lib
-    )
+# SiliconSoftware runtime directories
+target_include_directories(${PROJECT_NAME} PUBLIC ${FgLib5_INCLUDE_DIR} ${SisoGenicam_INCLUDE_DIR})
 
-endif()
+# Link SiliconSoftware libraries
+target_link_libraries( ${PROJECT_NAME}
+    ${FgLib5_LIBRARIES}
+    ${SisoGenicam_LIBRARIES}
+)
+
