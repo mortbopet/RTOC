@@ -1,9 +1,7 @@
 #ifndef IRONMANWIDGET_H
 #define IRONMANWIDGET_H
 
-#ifdef BUILD_IRONMAN
 #include "../acquisitor_src/acquisitor.h"
-#endif
 
 #include "cameradisplayerwidget.h"
 #include "logger.h"
@@ -49,16 +47,14 @@ private:
     Ui::IronManWidget* m_ui;
     Logger* m_logger;
 
-#ifdef BUILD_IRONMAN
 private slots:
     void initializeFramegrabber();
     void acqStateChanged(AcqState state);
     void setButtonStates(AcqState state);
 
 private:
-// The acquisitor object is initialized to reside as a permanent object in a separate thread.
-// All communication is facilitated through signals/slots through QMetaObject::InvokeMethod
-#endif
+    // The acquisitor object is initialized to reside as a permanent object in a separate thread.
+    // All communication is facilitated through signals/slots through QMetaObject::InvokeMethod
 };
 
 #endif  // IRONMANWIDGET_H

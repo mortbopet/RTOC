@@ -19,8 +19,6 @@ IronManWidget::IronManWidget(QWidget* parent) : QWidget(parent), m_ui(new Ui::Ir
     m_logger = new Logger(this);
     m_logger->setLog(m_ui->log);
 
-#ifdef BUILD_IRONMAN
-
     // Setup ImageDisplayer requests to the acquisitor
     connect(&m_imageDisplayer, &CameraDisplayerWidget::requestImage, Acquisitor::get(),
             &Acquisitor::requestImageData, Qt::QueuedConnection);
@@ -49,10 +47,8 @@ IronManWidget::IronManWidget(QWidget* parent) : QWidget(parent), m_ui(new Ui::Ir
             QMetaObject::invokeMethod(Acquisitor::get(), "stopAcq", Qt::QueuedConnection);
         }
     });
-#endif
 }
 
-#ifdef BUILD_IRONMAN
 void IronManWidget::acqStateChanged(AcqState state) {
     switch (state) {
         case AcqState::Idle: {
@@ -84,6 +80,7 @@ void IronManWidget::setButtonStates(AcqState state) {
             // Acquisitor is no longer initialized/initialization failed
             m_ui->initialize->setEnabled(true);
             m_ui->initialize->setText("Initialize framegrabber");
+            m_ui->initWithConfig->setEnabled(true);
             break;
         }
         case AcqState::Initializing: {
@@ -124,18 +121,14 @@ void IronManWidget::initializeFramegrabber() {
                               Q_ARG(bool, m_ui->initWithConfig->isChecked()));
 }
 
-#endif
-
 IronManWidget::~IronManWidget() {
     delete m_ui;
 }
 
 void IronManWidget::on_actionExit_triggered() {
-#ifdef BUILD_IRONMAN
     // Safely deinitialize the framegrabber
     Acquisitor::get()->stopAcq();
     Acquisitor::get()->deInitialize();
-#endif
     QApplication::exit();
 }
 
