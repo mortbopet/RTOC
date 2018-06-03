@@ -9,6 +9,7 @@
 
 #include "boost/serialization/nvp.hpp"
 #include "boost/serialization/serialization.hpp"
+#include "boost/serialization/split_free.hpp"
 
 int GetIndexOfItem(const QComboBox& box, const QVariant& item);
 
@@ -47,7 +48,8 @@ namespace serialization {
 template <class Archive>
 inline void save(Archive& ar, const QString& s, const unsigned int) {
     using boost::serialization::make_nvp;
-    ar << make_nvp("value", s.toStdString());
+    auto _s = s.toStdString();
+    ar << make_nvp("value", _s);
 }
 
 template <class Archive>

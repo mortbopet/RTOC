@@ -78,7 +78,9 @@ public:
     template <class Archive>
     void load(Archive& ar, const unsigned int version) {
         m_processes.clear();
+#ifndef __linux__  // https://stackoverflow.com/questions/50038329/serializing-stdvector-of-unique-ptr-using-boostserialization-fails-on-linux
         ar& BOOST_SERIALIZATION_NVP(m_processes);
+#endif
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
