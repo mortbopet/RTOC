@@ -8,6 +8,7 @@
 #include "objectfinder.h"
 #include "process.h"
 #include "tracker.h"
+#include "machinelearning.h"
 
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>

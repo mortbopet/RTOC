@@ -52,7 +52,7 @@ file ( GLOB RESOURCES
  ../*.qrc
 )
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES} lib/machinelearning.cpp lib/machinelearning.h)
 target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
 ######################################################################
 ## endof GUI setup
