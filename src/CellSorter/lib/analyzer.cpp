@@ -78,7 +78,7 @@ void Analyzer::runProcesses() {
  * @param img
  */
 void Analyzer::processSingleFrame(cv::Mat& img) {
-    if (m_bg.empty()) {
+    if (m_bg.empty() || (m_bg.rows != img.rows || m_bg.cols != img.cols)) {
         m_bg = img.clone();
     }
     processImage(img, m_bg);
@@ -212,9 +212,12 @@ void Analyzer::resetProcesses() {
  */
 void Analyzer::findObjects() {
     if (m_setup.extractData) {
-        for (const framefinder::Frame& f : m_experiment.processed) {
+        unsigned long size = m_experiment.processed.size();
+        if (size != m_experiment.rawBuffer.size()) return;
+        for (int i = 0; i < size; i++) {
             CHECK_ASYNC_STOP
-            m_objectFinder.setFrame(f.image);
+            m_objectFinder.setRawImage(m_experiment.rawBuffer[i]);
+            m_objectFinder.setProcessedImage(m_experiment.processed[i].image);
             m_objectFinder.findObjects(m_experiment);
         }
 
