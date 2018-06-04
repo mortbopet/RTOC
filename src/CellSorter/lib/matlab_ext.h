@@ -18,7 +18,6 @@ enum regionPropTypes {
     Circularity = data::Circularity,
     ConvexArea = data::ConvexArea,
     Eccentricity = data::Eccentricity,
-    GradientScore = data::GradientScore,
     Major_axis = data::Major_axis,
     Minor_axis = data::Minor_axis,
     Solidity = data::Solidity,
@@ -30,6 +29,8 @@ enum regionPropTypes {
 void bwareaopen(cv::Mat& im, double size);
 
 int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
+double gradientScore(const cv::Mat& img, const cv::Point& centroid);
+
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points);
 

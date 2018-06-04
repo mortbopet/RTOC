@@ -32,7 +32,6 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
     double circularity = 0.0;
     double convexArea = 0.0;
     double eccentricity = 0.0;
-    double gradientScore = 0.0;
     double majorAxis = 0.0;
     double minorAxis = 0.0;
     double solidity = 0.0;
@@ -53,7 +52,7 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
                 dc[i]->setValue(data::Area, area);
         }
         /// Centroid
-        if (dataFlags & (data::Centroid | data::GradientScore | data::Symmetry)) {
+        if (dataFlags & (data::Centroid | data::Symmetry)) {
             cv::Moments m = cv::moments(contour, false);
             centroid = cv::Point(int(m.m10 / m.m00), int(m.m01 / m.m00));
 
@@ -116,22 +115,6 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
 
             dc[i]->setValue(data::Eccentricity, eccentricity);
         }
-        /// Gradient Score
-        if (dataFlags & data::GradientScore) {
-            if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
-                (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
-                cv::Rect roi =
-                    cv::Rect((int)round(centroid.x - 5.5), (int)round(centroid.x + 5.5),
-                             (int)round(centroid.y - 22.5), (int)round(centroid.y + 22.5));
-
-                cv::Mat temp = cv::Mat(img, roi);
-                cv::Canny(temp, temp, 0.2,
-                          0.7);  // arbitrery threshold (picture should be binary at this point)
-                gradientScore = cv::sum(temp(cv::Range(6, 7), cv::Range::all()))[0];
-
-                dc[i]->setValue(data::GradientScore, gradientScore);
-            }
-        }
         /// Solidity
         if (dataFlags & data::Solidity) {
             solidity = area / convexArea;
@@ -182,6 +165,21 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
     }
     return i;
 }  // regionProps
+
+
+double gradientScore(const cv::Mat& img, const cv::Point& centroid) {
+    if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
+        (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
+        cv::Rect roi =
+                cv::Rect((int)round(centroid.x - 5.5), (int)round(centroid.x + 5.5),
+                         (int)round(centroid.y - 22.5), (int)round(centroid.y + 22.5));
+
+        cv::Mat temp = cv::Mat(img, roi);
+        cv::Canny(temp, temp, 0.2, 0.7);  // arbitrary thresholds
+        return cv::sum(temp(cv::Range(6, 7), cv::Range::all()))[0];
+    }
+    return 0;
+}
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
     for (const cv::Point& p : *points) {

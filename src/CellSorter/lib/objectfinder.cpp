@@ -153,7 +153,9 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
         (*experiment.data[m_cellNum])[0]->setValue(data::Symmetry,
                                                    m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
         (*experiment.data[m_cellNum])[0]->setValue(
-                data::GradientScore, m_connectedComponents[cc_number]->getValue<double>(data::GradientScore));
+                data::GradientScore,
+                matlab::gradientScore(*m_processedImg,
+                                      m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid)));
 
         m_track.cell_no = m_cellNum;
 
