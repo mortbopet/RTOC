@@ -53,14 +53,17 @@ int ObjectFinder::findObjects(Experiment& experiment) {
 unsigned long ObjectFinder::cleanObjects(Experiment& e) {
     unsigned long length = e.data.size();
 
+    // Check if object reached outlet
     e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool {
         cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
         return ((bb_o.x + bb_o.width) < e.outlet);
     }), e.data.end());
+    // Check if object found before inlet
     e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool  {
         cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
         return ((bb_i.x + bb_i.width) > e.inlet - 1);
     }), e.data.end());
+    // Check if object has more than m_countThreshold
     e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool {
         return (*dc).size() < m_countThreshold;
     }), e.data.end());
