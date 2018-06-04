@@ -11,4 +11,7 @@
         <file>resources/load.svg</file>
         <file>resources/save.svg</file>
     </qresource>
+    <qresource>
+    	<file>resources/splashscreen.png</file>
+    </qresource>
 </RCC>

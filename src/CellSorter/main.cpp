@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include <QDebug>
+#include <QSplashScreen>
 
 int main(int argc, char** argv) {
     Q_INIT_RESOURCE(icons);
@@ -14,6 +15,13 @@ int main(int argc, char** argv) {
     if (argc == 2) {
         projectFileName = QString::fromLatin1(argv[1]);
     }
+
+    // Splash or nah
+    QPixmap pixmap(":/resources/splashscreen.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    a.processEvents();
+    // -------------
 
     MainWindow window(projectFileName);
     window.show();
