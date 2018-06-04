@@ -36,23 +36,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
 include_directories(${Qt5Core_INCLUDE_DIRS})
 
-file(GLOB GUI_SRC
-    gui/*.cpp
-    )
-file(GLOB GUI_H
-    gui/*.h
-    )
+file(GLOB GUI_SRC gui/*.cpp)
+file(GLOB GUI_H gui/*.h)
 
 # set Qt specific files
-file ( GLOB UIS
- gui/*.ui
-)
+file ( GLOB UIS gui/*.ui)
 
-file ( GLOB RESOURCES
- ../*.qrc
-)
+file ( GLOB RESOURCES ../*.qrc)
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES} lib/machinelearning.cpp lib/machinelearning.h)
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
 target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
 ######################################################################
 ## endof GUI setup
