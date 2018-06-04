@@ -54,25 +54,31 @@ static std::map<DataFlags, std::pair<int, size_t>> typeMap{{Area, std::make_pair
                                            {PixelIdxList, std::make_pair(1, sizeof(std::vector<cv::Point>*))},
                                            {OutputValue, std::make_pair(1, sizeof(double))}};
 
+enum Export {
+    Always = 1 << 0,
+    Gui = 1 << 1,
+    Never = 1 << 2
+};
+
 // Data types which can be extracted through GUI - gui uses this map to generate available data
 // points for data extraction. The boolean value is set True, when the name should be displayed in GUI.
-static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(1, Area), "Area"},
-                                               {std::make_pair(0, BoundingBox), "BoundingBox"},
-                                               {std::make_pair(0, Centroid), "Centroid"},
-                                               {std::make_pair(1, Circularity), "Circularity"},
-                                               {std::make_pair(1, ConvexArea), "Convex area"},
-                                               {std::make_pair(1, Eccentricity), "Eccentricity"},
-                                               {std::make_pair(0, Frame), "Frame"},
-                                               {std::make_pair(1, GradientScore), "Gradient score"},
-                                               {std::make_pair(0, Inlet), "Inlet"},
-                                               {std::make_pair(0, Outlet), "Outlet"},
-                                               {std::make_pair(0, Label), "Label"},
-                                               {std::make_pair(1, Major_axis), "Major axis"},
-                                               {std::make_pair(1, Minor_axis), "Minor axis"},
-                                               {std::make_pair(1, Solidity), "Solidity"},
-                                               {std::make_pair(1, Symmetry), "Symmetry"},
-                                               {std::make_pair(1, Perimeter), "Perimeter"},
-                                               {std::make_pair(0, OutputValue), "Output value"}};
+static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(Export::Gui, Area), "Area"},
+                                                                {std::make_pair(Export::Always, BoundingBox), "BoundingBox"},
+                                                                {std::make_pair(Export::Always, Centroid), "Centroid"},
+                                                                {std::make_pair(Export::Gui, Circularity), "Circularity"},
+                                                                {std::make_pair(Export::Gui, ConvexArea), "Convex area"},
+                                                                {std::make_pair(Export::Gui, Eccentricity), "Eccentricity"},
+                                                                {std::make_pair(Export::Always, Frame), "Frame"},
+                                                                {std::make_pair(Export::Gui, GradientScore), "Gradient score"},
+                                                                {std::make_pair(Export::Always, Inlet), "Inlet"},
+                                                                {std::make_pair(Export::Always, Outlet), "Outlet"},
+                                                                {std::make_pair(Export::Always, Label), "Label"},
+                                                                {std::make_pair(Export::Gui, Major_axis), "Major axis"},
+                                                                {std::make_pair(Export::Gui, Minor_axis), "Minor axis"},
+                                                                {std::make_pair(Export::Gui, Solidity), "Solidity"},
+                                                                {std::make_pair(Export::Gui, Symmetry), "Symmetry"},
+                                                                {std::make_pair(Export::Gui, Perimeter), "Perimeter"},
+                                                                {std::make_pair(Export::Always, OutputValue), "Output value"}};
 
 }  // namespace data
 
