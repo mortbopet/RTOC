@@ -53,14 +53,7 @@ void Analyzer::setBG(const cv::Mat& bg) {
     m_bg = bg;
 }
 
-/**
- * @brief
- *
- * @warning DEPRECATED
- */
-void Analyzer::selectBG() {
-    m_bg = m_experiment.dis[10].image;  // Sets as background
-}
+
 
 /**
  * @brief Run all processes on
@@ -146,7 +139,7 @@ void Analyzer::runAnalyzer(Setup setup) {
         } else {
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
-                m_experiment.processed.push_back({m_img, "", m_experiment.cellNum++, true});
+                m_experiment.processed.push_back(m_img.clone());
             }
         }
     }
@@ -178,13 +171,13 @@ void Analyzer::writeImages() {
     // store processed
     if (m_setup.storeProcessed) {
         int index = 0;
-        for (const auto& frame : m_experiment.processed) {
+        for (const auto& image : m_experiment.processed) {
             CHECK_ASYNC_STOP
             m_currentProcessingFrame++;
             std::string filepath = (processedPath / fs::path(m_setup.processedPrefix + "_" +
                                                              to_string(index) + ".png"))
                                        .string();
-            cv::imwrite(filepath, frame.image);
+            cv::imwrite(filepath, image);
             index++;
         }
     }
@@ -217,7 +210,7 @@ void Analyzer::findObjects() {
         for (int i = 0; i < size; i++) {
             CHECK_ASYNC_STOP
             m_objectFinder.setRawImage(m_experiment.rawBuffer[i]);
-            m_objectFinder.setProcessedImage(m_experiment.processed[i].image);
+            m_objectFinder.setProcessedImage(m_experiment.processed[i]);
             m_objectFinder.findObjects(m_experiment);
         }
 
@@ -365,19 +358,19 @@ bool Analyzer::loadSetup(const string& path) {
 void Analyzer::exportExperiment(const string& path) {
     std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeName();
     std::ofstream out(path);
-    // Adds list of attributes
-    for (int i = 0; i < attributes.size(); i++) {
-        out << attributes[i] << "'";
+    // Add list of attributes
+    for (const auto &attribute : attributes) {
+        out << attribute << "'";
     }
     out << "\n";
 
-    // Adds number number of values for chosen attributes
+    // Add number number of values for chosen attributes
     std::vector<int> attributeLengths = m_experiment.data[0]->extractAttributeLengths();
     for (const auto& value : attributeLengths) {
         out << value << " ";
     }
 
-    // Adds number of containers
+    // Add number of containers
     out << "\n" << m_experiment.data.size() << "\n";
 
     // Goes through all containers
