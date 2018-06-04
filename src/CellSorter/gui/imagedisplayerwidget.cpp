@@ -209,6 +209,8 @@ void ImageDisplayerWidget::on_ips_editingFinished() {
     int interval = 1000.0 / ui->ips->value();
     m_playTimer.setInterval(interval);
     m_playTimer.start();
+
+    ui->ips->clearFocus(); // remove focus from spinbox after edit
 }
 
 void ImageDisplayerWidget::on_setPath_clicked() {

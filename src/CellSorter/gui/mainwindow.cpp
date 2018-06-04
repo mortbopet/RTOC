@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QThread>
 #include <QToolTip>
+#include <QShortcut>
 
 MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -68,9 +69,33 @@ MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
             [=](QPair<int, int> p) { m_acqInterface->setIronManDimensions(p); });
 #endif
 
+    // Create tab-navigation shortcuts
+    QShortcut *shortcutMoveToRightTab = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Right), this);
+    QShortcut *shortcutMoveToLeftTab = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Left), this);
+    // Connect shortcuts
+    QObject::connect(shortcutMoveToRightTab, &QShortcut::activated,
+                     this, &MainWindow::moveToRightTab);
+    QObject::connect(shortcutMoveToLeftTab, &QShortcut::activated,
+                     this, &MainWindow::moveToLeftTab);
+    // Endof shortcuts setup --------
+
     // Load project file if specified
     if (!projectFilePath.isNull()) {
         loadProjectFile(projectFilePath);
+    }
+}
+
+void MainWindow::moveToRightTab() {
+    auto currentTab = ui->tabWidget->currentIndex();
+    if (currentTab < ui->tabWidget->count()) {
+        ui->tabWidget->setCurrentIndex(currentTab + 1);
+    }
+}
+
+void MainWindow::moveToLeftTab() {
+    auto currentTab = ui->tabWidget->currentIndex();
+    if (currentTab > 0) {
+        ui->tabWidget->setCurrentIndex(currentTab - 1);
     }
 }
 

@@ -38,6 +38,9 @@ private slots:
     void on_actionLoad_project_file_triggered();
     void on_actionStore_project_file_triggered();
 
+    void moveToRightTab();
+    void moveToLeftTab();
+
 private:
     void setupAcqCombobox();
 
