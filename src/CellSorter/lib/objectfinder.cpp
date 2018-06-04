@@ -6,7 +6,7 @@
  */
 int ObjectFinder::findObjects(Experiment& experiment) {
     bool newObject;
-    int numObjects = matlab::regionProps(m_frame.image, 0xffff, m_connectedComponents);
+    int numObjects = matlab::regionProps(*m_processedImg, 0xffff, m_connectedComponents);
 
     for (int i = 0; i < numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -111,12 +111,12 @@ std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& obje
     return {p.first, listOfObjects.at(p.second)};
 }
 
-/**
- * @brief
- * @param image
- */
-void ObjectFinder::setFrame(const cv::Mat& image) {
-    m_frame = {image,"",m_frameNum,true};
+void ObjectFinder::setRawImage(const cv::Mat& image) {
+    m_rawImg = &image;
+}
+
+void ObjectFinder::setProcessedImage(const cv::Mat& image) {
+    m_processedImg = &image;
 }
 
 

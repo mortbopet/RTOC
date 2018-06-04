@@ -19,7 +19,8 @@ public:
 
     unsigned long cleanObjects(Experiment& e);
 
-    void setFrame(const cv::Mat& image);
+    void setRawImage(const cv::Mat& image);
+    void setProcessedImage(const cv::Mat& image);
 
     void setConditions(const Experiment& experiment);
 
@@ -27,7 +28,8 @@ private:
     Tracker m_track;
     std::vector<Tracker> m_trackerList, m_frameTracker;
 
-    framefinder::Frame m_frame;
+    const cv::Mat* m_processedImg;
+    const cv::Mat* m_rawImg;
     int m_cellNum = 0;
     int m_frameNum = 0;
     double m_dist;
