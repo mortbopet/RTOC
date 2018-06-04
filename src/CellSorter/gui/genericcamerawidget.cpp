@@ -8,6 +8,12 @@ GenericCameraWidget::GenericCameraWidget(QWidget* parent)
     if (!m_open) {
         // Error handling
     }
+    
+    ui->image->setAlignment(Qt::AlignCenter);
+    
+    ui->play->setEnabled(false);
+    
+    
 }
 
 GenericCameraWidget::~GenericCameraWidget() {
@@ -29,4 +35,13 @@ cv::Mat* GenericCameraWidget::getNextImage(bool &successful) {
     }
 
     return &m_image;
+}
+
+void GenericCameraWidget::showImage() {
+    bool success = false;
+    getNextImage(success);
+    if (success) {
+        ui->image->setPixmap(QPixmap::fromImage(QImage(m_image.data, m_image.cols, m_image.rows, QImage::Format_Grayscale8)));
+    }
+
 }

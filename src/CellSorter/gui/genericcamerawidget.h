@@ -20,6 +20,7 @@ public:
     ~GenericCameraWidget();
 
     cv::Mat* getNextImage(bool& successful);
+    void showImage();
 
 private:
     Ui::GenericCameraWidget* ui;
