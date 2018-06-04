@@ -27,19 +27,19 @@ void Machinelearning::loadModel(const std::string &path) {
 }
 
 int Machinelearning::findClosestXpos(const int& pos, DataContainer& dataContainer) {
-    for (int i = 0; i < 0xff; i ++) {
+    for (int i = 0; i < _XBoundary; i++) {
         int index = 0;
         for (const auto& object : dataContainer) {
             auto centroid = object->getValue<cv::Point>(data::Centroid);
             if (( centroid.x > (pos-i)) && (centroid.x < (pos+i) )) {
                 return index;
             }
-            index += 1;
+            index++;
         }
     }
 }
 
-double Machinelearning::predictContainer(DataContainer& dataContainer) {
+double Machinelearning::predictObject(DataContainer &dataContainer) {
     double returnValue = 0;
     for (int i = 0; i < xpos.size(); i++) {
         // First, find the object with the given x-position
@@ -51,4 +51,12 @@ double Machinelearning::predictContainer(DataContainer& dataContainer) {
         returnValue += (attributeValue * coefficients[i]);
     }
     return returnValue;
+}
+
+int Machinelearning::get_XBoundary() const {
+    return _XBoundary;
+}
+
+void Machinelearning::set_XBoundary(int m_XBoundary) {
+    Machinelearning::_XBoundary = m_XBoundary;
 }
