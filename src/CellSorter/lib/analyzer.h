@@ -8,9 +8,8 @@
 #include "machinelearning.h"
 #include "objectfinder.h"
 #include "process.h"
-#include "tracker.h"
-#include "machinelearning.h"
 #include "setup.h"
+#include "tracker.h"
 
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
@@ -22,6 +21,9 @@
 
 #include <functional>
 
+// When adding a status bit type, make sure to create a corresponding error message handler in
+// ExperimentRunner::checkAnalyzerStatusMessage
+enum StatusBits { UnknownError = 1 << 0, NoObjectsFound = 1 << 1 };
 
 class Analyzer : public QObject {
     Q_OBJECT

@@ -216,7 +216,7 @@ void Analyzer::findObjects() {
             CHECK_ASYNC_STOP
             m_objectFinder.setRawImage(m_experiment.raw.front());
             m_objectFinder.setProcessedImage(m_experiment.processed.front());
-            m_objectFinder.findObjects(m_experiment);
+            m_objectFinder.findObjects(m_experiment, m_setup);
 
             // Pop images from raw and processed to write buffers
             m_experiment.writeBuffer_processed.push(m_experiment.processed.front());

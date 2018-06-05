@@ -192,14 +192,14 @@ void ExperimentRunner::on_buttonBox_clicked(QAbstractButton* button) {
     }
 }
 
-void ExperimentRunner::checkAnalyzerStatusMessage(const int status) const {
-    switch (status) {
-        case StatusBits::NoObjectsFound: {
-            QMessageBox::information(0, "Information",
-                                     "No objects found. Output data file will be empty");
-            break;
-        }
-        default:
-            break;
+namespace {
+#define CHECK_STATUS_BIT(status, bit, message)               \
+    if (status & bit) {                                      \
+        QMessageBox::information(0, "Information", message); \
     }
+}
+
+void ExperimentRunner::checkAnalyzerStatusMessage(const int status) const {
+    CHECK_STATUS_BIT(status, StatusBits::UnknownError, "Unknown error");
+    CHECK_STATUS_BIT(status, StatusBits::NoObjectsFound, "Could not find any objects");
 }
