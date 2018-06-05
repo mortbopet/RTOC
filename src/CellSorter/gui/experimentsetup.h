@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "../lib/setup.h"
 #include "../lib/analyzer.h"
 #include "acquisitioninterface.h"
 
@@ -13,6 +14,7 @@
 #include <boost/archive/xml_oarchive.hpp>
 
 #include "guihelpers.h"
+
 
 namespace Ui {
 class ExperimentSetup;

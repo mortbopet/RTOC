@@ -4,20 +4,23 @@
  * @brief Main method of objectfinder
  * @return Count of found objects
  */
-int ObjectFinder::findObjects(Experiment& experiment) {
-    bool newObject;
-    int numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_connectedComponents);
+int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
+    if (m_dataFlags != setup.dataFlags) {
+        m_dataFlags = setup.dataFlags;
+    }
+    //
+    m_numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_connectedComponents);
 
-    for (int i = 0; i < numObjects; i++) {
+    for (int i = 0; i < m_numObjects; i++) {
         if (m_cellNum <= 0) {
-            newObject = true;
+            m_newObject = true;
         } else {
             Tracker term(m_frameNum - 1);
 
             m_frameTracker = mathlab::find<Tracker>(m_trackerList, term);
 
             if (m_frameTracker.empty()) {
-                newObject = true;
+                m_newObject = true;
             } else {
                 m_centroid = m_connectedComponents[i]->getValue<cv::Point>(data::Centroid);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
@@ -32,17 +35,17 @@ int ObjectFinder::findObjects(Experiment& experiment) {
                 }
 
                 // Determine whether new or not from threshold
-                newObject = m_dist > m_distThreshold;
+                m_newObject = m_dist > m_distThreshold;
             }
         }
 
-        writeToDataVector(newObject, i, experiment);
-        if (newObject) {
+        writeToDataVector(m_newObject, i, experiment);
+        if (m_newObject) {
             m_cellNum++;
         }
     }
     m_frameNum++;
-    return numObjects;
+    return m_numObjects;
 }
 
 /**
@@ -130,9 +133,12 @@ void ObjectFinder::setProcessedImage(const cv::Mat& image) {
  * @param experiment
  */
 void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment) {
-    if (newObject) {
 
+
+    if (newObject) {
         experiment.data.emplace_back(new DataContainer(data::_ALL_FLAGS));
+
+        assert(m_cellNum <= experiment.data.size());
         experiment.data[m_cellNum]->appendNew();
 
         (*experiment.data[m_cellNum])[0]->setValue(data::Inlet, experiment.inlet);
@@ -166,6 +172,8 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
 
     } else {
 
+        assert(m_track.cell_no <= experiment.data.size());
+
         experiment.data[m_track.cell_no]->appendNew();
         auto index = experiment.data[m_track.cell_no]->size() - 1;
 
@@ -182,11 +190,11 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
                 data::Circularity, m_connectedComponents[cc_number]->getValue<double>(data::Circularity));
         (*experiment.data[m_track.cell_no])[index]->setValue(
                 data::Symmetry, m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
-        (*experiment.data[m_cellNum])[0]->setValue(
+        (*experiment.data[m_track.cell_no])[0]->setValue(
                 data::GradientScore,
                 mathlab::gradientScore(*m_rawImg,
                                        m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox)));
-        (*experiment.data[m_cellNum])[0]->setValue(
+        (*experiment.data[m_track.cell_no])[0]->setValue(
                 data::VerticalSymmetry,
                 mathlab::verticalSymmetry(*m_rawImg,
                                           m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox),
@@ -211,4 +219,8 @@ void ObjectFinder::reset() {
     m_processedImg = nullptr;
     m_rawImg = nullptr;
 
+}
+
+ObjectFinder::ObjectFinder() {
+    m_connectedComponents.setDataFlags(0xffff);
 }

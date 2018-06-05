@@ -10,12 +10,13 @@
 #include "mathlab.h"
 #include "framefinder.h"
 #include "experiment.h"
+#include "setup.h"
 
 class ObjectFinder {
 public:
-    ObjectFinder() { m_connectedComponents.setDataFlags(0xffff);}
+    ObjectFinder();
 
-    int findObjects(Experiment& experiment);
+    int findObjects(Experiment& experiment, const Setup& setup);
 
     unsigned long cleanObjects(Experiment& e);
 
@@ -34,6 +35,9 @@ private:
     const cv::Mat* m_rawImg;
     int m_cellNum = 0;
     int m_frameNum = 0;
+    bool m_newObject = false;
+    int m_numObjects = 0;
+    long m_dataFlags = 0;
     double m_dist;
     double m_distThreshold;
     int m_countThreshold = 25;
