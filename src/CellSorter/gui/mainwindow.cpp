@@ -7,9 +7,9 @@
 #include <QFileDialog>
 #include <QLabel>
 #include <QMessageBox>
+#include <QShortcut>
 #include <QThread>
 #include <QToolTip>
-#include <QShortcut>
 
 MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -70,13 +70,13 @@ MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
 #endif
 
     // Create tab-navigation shortcuts
-    QShortcut *shortcutMoveToRightTab = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Right), this);
-    QShortcut *shortcutMoveToLeftTab = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Left), this);
+    QShortcut* shortcutMoveToRightTab = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Right), this);
+    QShortcut* shortcutMoveToLeftTab = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Left), this);
     // Connect shortcuts
-    QObject::connect(shortcutMoveToRightTab, &QShortcut::activated,
-                     this, &MainWindow::moveToRightTab);
-    QObject::connect(shortcutMoveToLeftTab, &QShortcut::activated,
-                     this, &MainWindow::moveToLeftTab);
+    QObject::connect(shortcutMoveToRightTab, &QShortcut::activated, this,
+                     &MainWindow::moveToRightTab);
+    QObject::connect(shortcutMoveToLeftTab, &QShortcut::activated, this,
+                     &MainWindow::moveToLeftTab);
     // Endof shortcuts setup --------
 
     // Load project file if specified
@@ -178,6 +178,7 @@ void MainWindow::loadProjectFile(const QString& filename) {
                 ia >> boost::serialization::make_nvp("MainWindow", *this);
                 ia >> boost::serialization::make_nvp("analyzer", *m_analyzer);
                 ia >> boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
+                m_experimentSetup->updateCurrentSetup();  // transfer loaded values to current setup
 #ifdef BUILD_IRONMAN
                 ia >> boost::serialization::make_nvp("acquisitionwidget", *m_acquisitionWdiget);
 #endif

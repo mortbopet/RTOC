@@ -31,6 +31,13 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
     connect(ui->storeRaw, &QCheckBox::clicked, ui->rawPrefix, &QLineEdit::setEnabled);
     connect(ui->storeProcessed, &QCheckBox::clicked, ui->processedPrefix, &QLineEdit::setEnabled);
 
+    // Populate experiment types
+    for (const auto& item : etDescriptors.keys()) {
+        ui->experimentType->addItem(etDescriptors[item], QVariant::fromValue(item));
+    }
+    connect(ui->experimentType, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &ExperimentSetup::updateCurrentSetup);
+
     // Only allow alphanumeric characters in lineedit
     QRegExpValidator* validator = new QRegExpValidator();
     validator->setRegExp(QRegExp(QString("\\S+")));
@@ -52,7 +59,6 @@ void ExperimentSetup::connectWidgets() {
     connect(ui->experimentPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
-    connect(ui->extractData, &QGroupBox::toggled, [=] { updateCurrentSetup(); });
 }
 
 ExperimentSetup::~ExperimentSetup() {
@@ -66,8 +72,28 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.processedPrefix = ui->processedPrefix->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
-    m_currentSetup.extractData = ui->extractData->isChecked();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
+
+    m_currentSetup.extractData = false;
+    m_currentSetup.runProcessing = true;
+    switch (ui->experimentType->currentData(Qt::UserRole).value<ExperimentTypes>()) {
+        case ExperimentTypes::Acquisition: {
+            m_currentSetup.storeProcessed = false;  // can't store images when we haven't made them!
+            m_currentSetup.runProcessing = false;
+            break;
+        }
+        case ExperimentTypes::AcquisitionAndProcessing: {
+            break;
+        }
+        case ExperimentTypes::AcquisitionAndExtraction: {
+            m_currentSetup.extractData = true;
+            break;
+        }
+        case ExperimentTypes::AcquisitionAndRealTimeID: {
+            m_currentSetup.extractData = true;
+            break;
+        }
+    }
 }
 
 void ExperimentSetup::setToolTips() {
@@ -86,11 +112,6 @@ void ExperimentSetup::setToolTips() {
         "acquisition (manual stop of experiment).");
     ui->experimentName->setToolTip(
         "Experiment name will be used in generation of folder & file names");
-    ui->runProcessing->setToolTip(
-        "<nobr>If set, the processing pipeline as specified in the </nobr> processing tab will be "
-        "used in real-time when processing the images. Unsetting this variable can be used for "
-        "only acquiring images from the camera, or if very high speed acquisition is desired "
-        "(where real-time processing may bottleneck the image acquisition speed)");
 }
 
 bool ExperimentSetup::verifyCanRunExperiment() {
@@ -208,11 +229,11 @@ template <class Archive>
 void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_CHECKBOX(ar, ui->storeRaw, storeRaw);
     SERIALIZE_CHECKBOX(ar, ui->storeProcessed, storeProcessed);
+    SERIALIZE_COMBOBOX(ar, ui->experimentType, experimentType);
     SERIALIZE_LINEEDIT(ar, ui->experimentName, ExperimentName);
     SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
-    SERIALIZE_CHECKBOX(ar, ui->extractData, ExtractData);
     for (auto dataOption : ui->extractData->findChildren<QCheckBox*>()) {
         bool v = dataOption->isChecked();
         QString name = dataOption->text();
@@ -223,3 +244,24 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
 }
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(ExperimentSetup)
+
+void ExperimentSetup::on_experimentType_currentIndexChanged(int index) {
+    const auto type = ui->experimentType->currentData(Qt::UserRole).value<ExperimentTypes>();
+
+    if (type == ExperimentTypes::Acquisition) {
+        // disable storeProcessed stuff
+        ui->storeProcessed->setEnabled(false);
+        ui->processedPrefix->setEnabled(false);
+    } else {
+        ui->storeProcessed->setEnabled(true);
+        ui->processedPrefix->setEnabled(true);
+    }
+
+    if (type == ExperimentTypes::Acquisition || type == ExperimentTypes::AcquisitionAndProcessing) {
+        // disable extract data options
+        ui->extractData->setEnabled(false);
+        return;
+    } else {
+        ui->extractData->setEnabled(true);
+    }
+}

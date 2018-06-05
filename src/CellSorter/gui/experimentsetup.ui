@@ -79,10 +79,34 @@
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="1" column="0">
+        <widget class="QLabel" name="l_ename">
+         <property name="text">
+          <string>Experiment name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="experimentPath">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="experimentName"/>
+       </item>
        <item row="0" column="2">
         <widget class="QPushButton" name="setExperimentPath">
          <property name="text">
           <string>Set</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="l_outputpath">
+         <property name="text">
+          <string>Experiment output path:</string>
          </property>
         </widget>
        </item>
@@ -94,31 +118,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="comboBox"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="l_outputpath">
-         <property name="text">
-          <string>Experiment output path:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="experimentPath">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="l_ename">
-         <property name="text">
-          <string>Experiment name:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="experimentName"/>
+        <widget class="QComboBox" name="experimentType"/>
        </item>
       </layout>
      </item>
@@ -158,29 +158,7 @@
                <item row="2" column="1">
                 <widget class="QSpinBox" name="fps"/>
                </item>
-               <item row="3" column="0">
-                <widget class="QCheckBox" name="runProcessing">
-                 <property name="text">
-                  <string>Run processing</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
               </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="title">
-             <string>Experiment specific</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_10">
-             <item row="0" column="0">
-              <layout class="QGridLayout" name="gridLayout_9"/>
              </item>
             </layout>
            </widget>
@@ -199,10 +177,10 @@
         <string>Extract data</string>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">

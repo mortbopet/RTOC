@@ -15,6 +15,20 @@
 
 #include "guihelpers.h"
 
+enum class ExperimentTypes {
+    Acquisition,
+    AcquisitionAndProcessing,
+    AcquisitionAndExtraction,
+    AcquisitionAndRealTimeID
+};
+
+static QMap<ExperimentTypes, QString> etDescriptors{
+    {ExperimentTypes::Acquisition, "Acquisition only"},
+    {ExperimentTypes::AcquisitionAndProcessing, "Acquisition and image processing"},
+    {ExperimentTypes::AcquisitionAndExtraction, "Acquisition and extraction"},
+    {ExperimentTypes::AcquisitionAndRealTimeID, "Acquisition and realtime identification"}};
+
+Q_DECLARE_METATYPE(ExperimentTypes)
 
 namespace Ui {
 class ExperimentSetup;
@@ -31,13 +45,17 @@ public:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version) const;
 
+public slots:
+    void updateCurrentSetup();
+
 private slots:
     void on_run_clicked();
 
     void on_setExperimentPath_clicked();
     bool verifyCanRunExperiment();
-    void updateCurrentSetup();
     void connectWidgets();
+
+    void on_experimentType_currentIndexChanged(int index);
 
 private:
     void setToolTips();
