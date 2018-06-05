@@ -40,9 +40,6 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
         }
 
         writeToDataVector(m_newObject, i, experiment);
-        if (m_newObject) {
-            m_cellNum++;
-        }
     }
     m_frameNum++;
     return m_numObjects;
@@ -169,7 +166,7 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
                                           m_connectedComponents[cc_number]->getValue<double>(data::Major_axis)));
 
         m_track.cell_no = m_cellNum;
-
+        m_cellNum++;
     } else {
 
         assert(m_track.cell_no <= experiment.data.size());

@@ -355,6 +355,9 @@ bool Analyzer::loadSetup(const string& path) {
  */
 
 void Analyzer::exportExperiment(const string& path) {
+    if (m_experiment.data.empty()) {
+        return;
+    }
     std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeName();
     std::ofstream out(path);
     // Add list of attributes
