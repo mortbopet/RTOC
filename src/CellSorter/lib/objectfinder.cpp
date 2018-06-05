@@ -132,7 +132,7 @@ void ObjectFinder::setProcessedImage(const cv::Mat& image) {
 void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment) {
     if (newObject) {
 
-        experiment.data.emplace_back(new DataContainer(0xffff));
+        experiment.data.emplace_back(new DataContainer(data::_ALL_FLAGS));
         experiment.data[m_cellNum]->appendNew();
 
         (*experiment.data[m_cellNum])[0]->setValue(data::Inlet, experiment.inlet);
@@ -154,8 +154,13 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
                                                    m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
         (*experiment.data[m_cellNum])[0]->setValue(
                 data::GradientScore,
-                mathlab::gradientScore(*m_processedImg,
-                                      m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid)));
+                mathlab::gradientScore(*m_rawImg,
+                                      m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox)));
+        (*experiment.data[m_cellNum])[0]->setValue(
+                data::VerticalSymmetry,
+                mathlab::verticalSymmetry(*m_rawImg,
+                                          m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox),
+                                          m_connectedComponents[cc_number]->getValue<double>(data::Major_axis)));
 
         m_track.cell_no = m_cellNum;
 
@@ -177,10 +182,33 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
                 data::Circularity, m_connectedComponents[cc_number]->getValue<double>(data::Circularity));
         (*experiment.data[m_track.cell_no])[index]->setValue(
                 data::Symmetry, m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::GradientScore, m_connectedComponents[cc_number]->getValue<double>(data::GradientScore));
+        (*experiment.data[m_cellNum])[0]->setValue(
+                data::GradientScore,
+                mathlab::gradientScore(*m_rawImg,
+                                       m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox)));
+        (*experiment.data[m_cellNum])[0]->setValue(
+                data::VerticalSymmetry,
+                mathlab::verticalSymmetry(*m_rawImg,
+                                          m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox),
+                                          m_connectedComponents[cc_number]->getValue<double>(data::Major_axis)));
     }
     m_track.frame_no = m_frameNum;
     m_track.centroid = m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid);
     m_trackerList.push_back(m_track);
+}
+
+/**
+ * Resets ObjectFinder members, prior to new experiment
+ */
+void ObjectFinder::reset() {
+    m_track = Tracker();
+
+    m_trackerList.clear();
+    m_frameTracker.clear();
+
+    m_cellNum = 0;
+    m_frameNum = 0;
+    m_processedImg = nullptr;
+    m_rawImg = nullptr;
+
 }

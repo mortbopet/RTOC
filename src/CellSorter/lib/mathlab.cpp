@@ -167,19 +167,60 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
 }  // regionProps
 
 
-double gradientScore(const cv::Mat& img, const cv::Point& centroid) {
-    if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
-        (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
-        cv::Rect roi =
-                cv::Rect((int)round(centroid.x - 5.5), (int)round(centroid.x + 5.5),
-                         (int)round(centroid.y - 22.5), (int)round(centroid.y + 22.5));
+// -----------------------------
+//  Grayscale parameteres
+// -----------------------------
 
+/**
+ *
+ * @param img
+ * @param roi
+ * @return
+ */
+double gradientScore(const cv::Mat& img, const cv::Rect& roi) {
+    if ((roi.x > 0 && (roi.x + roi.width) < img.cols) && (roi.y > 0 && roi.y + roi.width < img.rows)) {
+        // Load image from ROI
         cv::Mat temp = cv::Mat(img, roi);
-        cv::Canny(temp, temp, 0.2, 0.7);  // arbitrary thresholds
+        // Get edges
+        cv::Canny(temp, temp, 0.2, 0.7);
+        // Sum up and return
         return cv::sum(temp(cv::Range(6, 7), cv::Range::all()))[0];
     }
-    return 0;
+    return -1;
 }
+
+/**
+ *
+ * @param img
+ * @param roi
+ * @param majorAxisLength
+ * @return
+ */
+double verticalSymmetry(const cv::Mat& img, const cv::Rect& roi, const double& majorAxisLength) {
+    if ((roi.x > 0 && (roi.x + roi.width) < img.cols) && (roi.y > 0 && roi.y + roi.width < img.rows)) {
+        // Load image from ROI
+        cv::Mat temp = cv::Mat(img, roi);
+        // Get min/max values
+        double tMin;
+        double tMax;
+        cv::minMaxIdx(temp, &tMin, &tMax);
+        // Recalculate image
+        temp = (temp - tMin) / (tMax - tMin);
+        // Get difference from fliplr image
+        cv::Mat flipped;
+        cv::flip(temp,flipped,1);
+        cv::absdiff(temp, flipped, temp);
+        // Normalize with majorAxisLength
+        return (cv::sum(temp)[0] / majorAxisLength);
+    }
+    return -1;
+}
+
+
+// -----------------------------
+//  endof Grayscale parameteres
+// -----------------------------
+
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points) {
     for (const cv::Point& p : *points) {

@@ -24,6 +24,8 @@ public:
 
     void setConditions(const Experiment& experiment);
 
+    void reset();
+
 private:
     Tracker m_track;
     std::vector<Tracker> m_trackerList, m_frameTracker;

@@ -30,7 +30,10 @@ enum DataFlags {
     Symmetry = 1 << 14,
     Perimeter = 1 << 15,
     PixelIdxList = 1 << 16,
-    OutputValue = 1 << 17
+    OutputValue = 1 << 17,
+    VerticalSymmetry = 1 << 18,
+    _ALL_FLAGS = 0xfffff
+
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
@@ -52,7 +55,8 @@ static std::map<DataFlags, std::pair<int, size_t>> typeMap{{Area, std::make_pair
                                            {Symmetry, std::make_pair(1, sizeof(double))},
                                            {Perimeter, std::make_pair(1, sizeof(double))},
                                            {PixelIdxList, std::make_pair(1, sizeof(std::vector<cv::Point>*))},
-                                           {OutputValue, std::make_pair(1, sizeof(double))}};
+                                           {OutputValue, std::make_pair(1, sizeof(double))},
+                                           {VerticalSymmetry, std::make_pair(1, sizeof(double))}};
 
 enum Export {
     Always = 1 << 0,
@@ -78,7 +82,8 @@ static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(
                                                                 {std::make_pair(Export::Gui, Solidity), "Solidity"},
                                                                 {std::make_pair(Export::Gui, Symmetry), "Symmetry"},
                                                                 {std::make_pair(Export::Gui, Perimeter), "Perimeter"},
-                                                                {std::make_pair(Export::Always, OutputValue), "Output value"}};
+                                                                {std::make_pair(Export::Always, OutputValue), "Output value"},
+                                                                {std::make_pair(Export::Gui, VerticalSymmetry), "Vertical symmetry"}};
 
 }  // namespace data
 
