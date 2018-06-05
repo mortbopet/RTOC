@@ -53,8 +53,6 @@ void Analyzer::setBG(const cv::Mat& bg) {
     m_bg = bg;
 }
 
-
-
 /**
  * @brief Run all processes on
  * @details
@@ -206,7 +204,8 @@ void Analyzer::resetProcesses() {
 void Analyzer::findObjects() {
     if (m_setup.extractData) {
         unsigned long size = m_experiment.processed.size();
-        if (size != m_experiment.rawBuffer.size()) return;
+        if (size != m_experiment.rawBuffer.size())
+            return;
         for (int i = 0; i < size; i++) {
             CHECK_ASYNC_STOP
             m_objectFinder.setRawImage(m_experiment.rawBuffer[i]);
@@ -359,7 +358,7 @@ void Analyzer::exportExperiment(const string& path) {
     std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeName();
     std::ofstream out(path);
     // Add list of attributes
-    for (const auto &attribute : attributes) {
+    for (const auto& attribute : attributes) {
         out << attribute << "'";
     }
     out << "\n";

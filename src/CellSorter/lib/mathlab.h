@@ -4,7 +4,7 @@
 #include <iterator>
 #include <opencv/cv.hpp>
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 #include <algorithm>
 #include <iostream>
 
@@ -32,7 +32,6 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
 
 double gradientScore(const cv::Mat& img, const cv::Rect& roi);
 double verticalSymmetry(const cv::Mat& img, const cv::Rect& roi, const double& majorAxisLength);
-
 
 void removePixels(cv::Mat img, std::vector<cv::Point>* points);
 
