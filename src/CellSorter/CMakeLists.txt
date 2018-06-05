@@ -41,7 +41,6 @@ file(GLOB GUI_H gui/*.h)
 
 # set Qt specific files
 file ( GLOB UIS gui/*.ui)
-
 file ( GLOB RESOURCES ../*.qrc)
 
 add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
@@ -54,7 +53,7 @@ target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
-# Create executables for cellsorter and cellsort_test
+# Create executables for cellsorter
 add_executable(${PROJECT_NAME} main.cpp)
 
 # Link OpenCV libraries

@@ -1,6 +1,6 @@
-#include "matlab_ext.h"
+#include "mathlab.h"
 
-namespace matlab {
+namespace mathlab {
 void bwareaopen(cv::Mat& im, double size) {
     // Only accept CV_8UC
     if (im.channels() != 1 || im.type() != CV_8U) {
@@ -206,4 +206,4 @@ double dist(const cv::Point& p0, const cv::Point& p1) {
     return cv::sqrt(d.x * d.x + d.y * d.y);
 }
 
-}  // namespace matlab
+}  // namespace mathlab

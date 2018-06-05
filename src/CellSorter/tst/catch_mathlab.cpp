@@ -1,22 +1,22 @@
 #include "catch.hpp"
 
-#include "../lib/matlab_ext.h"
+#include "lib/mathlab.h"
 
-TEST_CASE("Matlab namespace basic test", "[full], [matlab_ext]") {
+TEST_CASE("Mathlab namespace basic test", "[full], [mathlab]") {
     INFO("This test has not been written yet...");
 }
 
-TEST_CASE("Regionprops throws and hoes check", "[full], [matlab_ext]") {
+TEST_CASE("Regionprops throws and hoes check", "[full], [mathlab]") {
     // Initialize output container
     DataContainer output(0xffff);
     // Initialize test "image"
     cv::Mat img;
     SECTION("Take output from empty container") {
-        REQUIRE(matlab::regionProps(cv::Mat(), data::Area, output) == 0);
+        REQUIRE(mathlab::regionProps(cv::Mat(), data::Area, output) == 0);
     }
 }
 
-TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full], [matlab_ext]") {
+TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full], [mathlab]") {
     // Initialize output container
     DataContainer output(0xffff);
     // Initialize test "image"
@@ -24,40 +24,40 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
 
     SECTION("area") {
         img(cv::Rect(0,0,1,1)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Area, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Area, output) == 1);
         CHECK(output[0]->getValue<double>(data::Area) == 0);
         img(cv::Rect(0,0,2,2)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Area, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Area, output) == 1);
         CHECK(output[0]->getValue<double>(data::Area) == 1);
         img(cv::Rect(0,0,4,4)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Area, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Area, output) == 1);
         CHECK(output[0]->getValue<double>(data::Area) == 9);
         img(cv::Rect(50,50,10,10)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Area, output) == 2);
+        REQUIRE(mathlab::regionProps(img, data::Area, output) == 2);
         CHECK(output[0]->getValue<double>(data::Area) == 81);
         CHECK(output[1]->getValue<double>(data::Area) == 9);
     }
     SECTION("boundingBox") {
         img(cv::Rect(0,0,1,1)) = 255;
-        REQUIRE(matlab::regionProps(img, data::BoundingBox, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::BoundingBox, output) == 1);
         CHECK(output[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0,0,1,1));
         img(cv::Rect(0,0,5,5)) = 255;
-        REQUIRE(matlab::regionProps(img, data::BoundingBox, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::BoundingBox, output) == 1);
         CHECK(output[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0,0,5,5));
         img(cv::Rect(50,50,10,10)) = 255;
-        REQUIRE(matlab::regionProps(img, data::BoundingBox, output) == 2);
+        REQUIRE(mathlab::regionProps(img, data::BoundingBox, output) == 2);
         CHECK(output[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(50,50,10,10));
         CHECK(output[1]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0,0,5,5));
     }
     SECTION("centroid (rectangles)") {
         img(cv::Rect(10,10,7,7)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Centroid, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Centroid, output) == 1);
         CHECK(output[0]->getValue<cv::Point>(data::Centroid) == cv::Point(13,13));
         img(cv::Rect(10,10,9,9)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Centroid, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Centroid, output) == 1);
         CHECK(output[0]->getValue<cv::Point>(data::Centroid) == cv::Point(14,14));
         img(cv::Rect(40,40,13,13)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Centroid, output) == 2);
+        REQUIRE(mathlab::regionProps(img, data::Centroid, output) == 2);
         CHECK(output[0]->getValue<cv::Point>(data::Centroid) == cv::Point(46,46));
         CHECK(output[1]->getValue<cv::Point>(data::Centroid) == cv::Point(14,14));
     }
@@ -72,11 +72,11 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
         const cv::Point* ppt[1] = { polygon[0] };
         int npt[1] = { 6 };
         cv::fillPoly(img, ppt, npt, 1, cv::Scalar(255), 8);
-        REQUIRE(matlab::regionProps(img, data::Centroid, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Centroid, output) == 1);
         cv::Point centroid = output[0]->getValue<cv::Point>(data::Centroid);
         CHECK(centroid == cv::Point(29,24));
         cv::circle(img, cv::Point(140,50), 20, cv::Scalar(255), -1);
-        REQUIRE(matlab::regionProps(img, data::Centroid, output) == 2);
+        REQUIRE(mathlab::regionProps(img, data::Centroid, output) == 2);
         CHECK(output[0]->getValue<cv::Point>(data::Centroid) == cv::Point(140,50));
         CHECK(output[1]->getValue<cv::Point>(data::Centroid) == cv::Point(29,24));
     }
@@ -86,7 +86,7 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
         cv::circle(img, cv::Point(50,50), 10, cv::Scalar(255), -1);
         cv::circle(img, cv::Point(130,60), 50, cv::Scalar(255), -1);
         // img(cv::Rect(50,50,5,5)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Circularity, output) == 4);
+        REQUIRE(mathlab::regionProps(img, data::Circularity, output) == 4);
         CHECK(output[0]->getValue<double>(data::Circularity) == Approx(0.9).margin(0.1));
         CHECK(output[1]->getValue<double>(data::Circularity) == Approx(0.8).margin(0.1));
         CHECK(output[2]->getValue<double>(data::Circularity) == Approx(0.9).margin(0.1));
@@ -94,14 +94,14 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
     }
     SECTION("convexArea") {
         cv::circle(img, cv::Point(120,60), 10, cv::Scalar(255), -1);
-        REQUIRE(matlab::regionProps(img, data::ConvexArea, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::ConvexArea, output) == 1);
         CHECK(output[0]->getValue<double>(data::ConvexArea) == 304);
         // But is this the output we want? do we care?
     }
     SECTION("eccentricity") {
         cv::circle(img, cv::Point(120,60), 25, cv::Scalar(255), -1);
         img(cv::Rect(10,10,7,15)) = 255;
-        REQUIRE(matlab::regionProps(img, data::Eccentricity, output) == 2);
+        REQUIRE(mathlab::regionProps(img, data::Eccentricity, output) == 2);
         CHECK(output[0]->getValue<double>(data::Eccentricity) == 1);
         CHECK(output[1]->getValue<double>(data::Eccentricity) == Approx(0.38).margin(0.1));
         // zero zero is def not the right input..
@@ -111,13 +111,13 @@ TEST_CASE("Regionprops value verify (with simple non-rotated rectangles", "[full
     }
     SECTION("majorAxis and minorAxis") {
         cv::circle(img, cv::Point(120,60), 25, cv::Scalar(255), -1);
-        REQUIRE(matlab::regionProps(img, data::Major_axis | data::Minor_axis, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Major_axis | data::Minor_axis, output) == 1);
         CHECK(output[0]->getValue<double>(data::Major_axis) == Approx(49).margin(0.1));
         CHECK(output[0]->getValue<double>(data::Minor_axis) == Approx(49).margin(0.1));
     }
     SECTION("solidity") {
         cv::circle(img, cv::Point(120,60), 50, cv::Scalar(255), -1);
-        REQUIRE(matlab::regionProps(img, data::Solidity, output) == 1);
+        REQUIRE(mathlab::regionProps(img, data::Solidity, output) == 1);
         CHECK(output[0]->getValue<double>(data::Solidity) == Approx(1).margin(0.02));
     }
     SECTION("symmetry") {

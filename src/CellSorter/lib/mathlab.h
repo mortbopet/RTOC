@@ -4,13 +4,13 @@
 #include <iterator>
 #include <opencv/cv.hpp>
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <iostream>
 
 #include "datacontainer.h"
 
-namespace matlab {
+namespace mathlab {
 enum regionPropTypes {
     Area = data::Area,
     BoundingBox = data::BoundingBox,
@@ -68,6 +68,6 @@ std::vector<T> find(std::vector<T>& v, T& term) {
     return out;
 }
 
-}  // namespace matlab
+}  // namespace mathlab
 
 #endif  // CELLSORTER_MATLAB_EXT_H

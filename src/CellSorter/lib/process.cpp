@@ -72,7 +72,7 @@ void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props
     // Insert black vertical rectangle at (inlet - 10 : inlet + 10)
     cv::rectangle(bg_edge, cv::Rect(props.inlet - 10, 0, 20, bg.cols), cv::Scalar(0), cv::FILLED);
     // Open up (bwareaopen equivalent)
-    matlab::bwareaopen(bg_edge, 100);
+    mathlab::bwareaopen(bg_edge, 100);
     // Invert background cut and bitwise 'and' with image
     cv::bitwise_not(bg_edge, bg_edge);
     cv::bitwise_and(diff, bg_edge, img);
@@ -108,17 +108,17 @@ Canny::Canny() {
 FloodFillProcess::FloodFillProcess() {}
 
 void FloodFillProcess::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    matlab::floodFill(img);
+    mathlab::floodFill(img);
 }
 
 PropFilter::PropFilter() {
-    m_regionPropsTypes.setOptions(map<matlab::regionPropTypes, string>{
-        {matlab::regionPropTypes::Area, "Area"},
-        {matlab::regionPropTypes::ConvexArea, "ConvexArea"},
-        {matlab::regionPropTypes::Major_axis, "MajorAxisLength"},
-        {matlab::regionPropTypes::Minor_axis, "MinorAxisLength"},
-        {matlab::regionPropTypes::Solidity, "Solidity"}});
-    m_regionPropsTypes.setValue(matlab::regionPropTypes::Area);
+    m_regionPropsTypes.setOptions(map<mathlab::regionPropTypes, string>{
+        {mathlab::regionPropTypes::Area, "Area"},
+        {mathlab::regionPropTypes::ConvexArea, "ConvexArea"},
+        {mathlab::regionPropTypes::Major_axis, "MajorAxisLength"},
+        {mathlab::regionPropTypes::Minor_axis, "MinorAxisLength"},
+        {mathlab::regionPropTypes::Solidity, "Solidity"}});
+    m_regionPropsTypes.setValue(mathlab::regionPropTypes::Area);
 
     m_lowerLimit.setRange(0, DBL_MAX);
     m_lowerLimit.setValue(0);
@@ -132,14 +132,14 @@ void PropFilter::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) c
     DataContainer blobs(flags);
 
     // Get the number of found connected components and their data
-    int count = matlab::regionProps(img, flags, blobs);
+    int count = mathlab::regionProps(img, flags, blobs);
     // Loop through all blobs
     for (int i = 0; i < count; i++) {
         double res = blobs[i]->getValue<double>(static_cast<data::DataFlags>(m_regionPropsTypes.getValue()));
         // If criteria met - erase blob
         if (res < l[0] || res > l[1]) {
             auto vector2 = blobs[i]->getValue<std::vector<cv::Point>*>(data::PixelIdxList);
-            matlab::removePixels(img, vector2);
+            mathlab::removePixels(img, vector2);
         }
     }
 }

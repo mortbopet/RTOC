@@ -7,7 +7,7 @@
 #include "opencv/cv.hpp"
 
 #include "tracker.h"
-#include "matlab_ext.h"
+#include "mathlab.h"
 #include "framefinder.h"
 #include "experiment.h"
 

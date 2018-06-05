@@ -6,7 +6,7 @@
  */
 int ObjectFinder::findObjects(Experiment& experiment) {
     bool newObject;
-    int numObjects = matlab::regionProps(*m_processedImg, 0xffff, m_connectedComponents);
+    int numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_connectedComponents);
 
     for (int i = 0; i < numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -14,7 +14,7 @@ int ObjectFinder::findObjects(Experiment& experiment) {
         } else {
             Tracker term(m_frameNum - 1);
 
-            m_frameTracker = matlab::find<Tracker>(m_trackerList, term);
+            m_frameTracker = mathlab::find<Tracker>(m_trackerList, term);
 
             if (m_frameTracker.empty()) {
                 newObject = true;
@@ -105,12 +105,12 @@ std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& obje
     std::vector<double> d;
     // Calculate distances
     for (const Tracker& cc : listOfObjects) {
-        auto dist = matlab::dist(object, cc.centroid);
+        auto dist = mathlab::dist(object, cc.centroid);
         if (dist < -10)
             dist = 100;
         d.push_back(dist);
     }
-    std::pair<double, unsigned long> p = matlab::min<double>(d);
+    std::pair<double, unsigned long> p = mathlab::min<double>(d);
     return {p.first, listOfObjects.at(p.second)};
 }
 
@@ -154,7 +154,7 @@ void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number
                                                    m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
         (*experiment.data[m_cellNum])[0]->setValue(
                 data::GradientScore,
-                matlab::gradientScore(*m_processedImg,
+                mathlab::gradientScore(*m_processedImg,
                                       m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid)));
 
         m_track.cell_no = m_cellNum;

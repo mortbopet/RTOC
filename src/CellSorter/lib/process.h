@@ -11,7 +11,7 @@
 #include "datacontainer.h"
 
 #include "experiment.h"
-#include "matlab_ext.h"
+#include "mathlab.h"
 #include "parameter.h"
 
 #include <boost/serialization/base_object.hpp>
@@ -237,8 +237,8 @@ class PropFilter : public ProcessBase, public NameGenerator<PropFilter> {
 public:
     SETUP_PROCESS(PropFilter, "Property filter")
 
-    CREATE_ENUM_PARM_DEFAULT(matlab::regionPropTypes, m_regionPropsTypes, "Regionprop types",
-                             matlab::regionPropTypes::Area);
+    CREATE_ENUM_PARM_DEFAULT(mathlab::regionPropTypes, m_regionPropsTypes, "Regionprop types",
+                             mathlab::regionPropTypes::Area);
 
     CREATE_VALUE_PARM(double, m_lowerLimit, "Lower_Limit");
     CREATE_VALUE_PARM(double, m_upperLimit, "Upper_Limit");
