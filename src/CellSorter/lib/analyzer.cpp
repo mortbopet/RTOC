@@ -129,7 +129,7 @@ void Analyzer::runAnalyzer(Setup setup) {
             break;
         }
         if (m_setup.storeRaw) {
-            m_experiment.rawBuffer.push_back(m_img.clone());
+            m_experiment.raw.push(m_img.clone());
         }
 
         if (m_bg.dims == 0) {
@@ -137,7 +137,7 @@ void Analyzer::runAnalyzer(Setup setup) {
         } else {
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
-                m_experiment.processed.push_back(m_img.clone());
+                m_experiment.processed.push(m_img.clone());
             }
         }
     }
@@ -155,7 +155,8 @@ void Analyzer::writeImages() {
 
     if (m_setup.storeRaw) {
         int index = 0;
-        for (const auto& image : m_experiment.rawBuffer) {
+        while (!m_experiment.writeBuffer_raw.empty()) {
+            const auto image = m_experiment.writeBuffer_raw.front();
             CHECK_ASYNC_STOP
             m_currentProcessingFrame++;
             // store raw
@@ -163,13 +164,17 @@ void Analyzer::writeImages() {
                 (rawPath / fs::path(m_setup.rawPrefix + "_" + to_string(index) + ".png")).string();
             cv::imwrite(filepath, image);
             index++;
+
+            // pop image from buffer since it has been saved
+            m_experiment.writeBuffer_raw.pop();
         }
     }
 
     // store processed
     if (m_setup.storeProcessed) {
         int index = 0;
-        for (const auto& image : m_experiment.processed) {
+        while (!m_experiment.writeBuffer_processed.empty()) {
+            const auto image = m_experiment.writeBuffer_processed.front();
             CHECK_ASYNC_STOP
             m_currentProcessingFrame++;
             std::string filepath = (processedPath / fs::path(m_setup.processedPrefix + "_" +
@@ -177,6 +182,9 @@ void Analyzer::writeImages() {
                                        .string();
             cv::imwrite(filepath, image);
             index++;
+
+            // pop image from buffer since it has been saved
+            m_experiment.writeBuffer_processed.pop();
         }
     }
     ASYNC_END
@@ -185,6 +193,7 @@ void Analyzer::writeImages() {
 void Analyzer::resetAnalyzer() {
     m_experiment.reset();
     m_asyncStopAnalyzer = false;
+    m_status = 0;
 }
 
 /**
@@ -203,14 +212,18 @@ void Analyzer::resetProcesses() {
  */
 void Analyzer::findObjects() {
     if (m_setup.extractData) {
-        unsigned long size = m_experiment.processed.size();
-        if (size != m_experiment.rawBuffer.size())
-            return;
-        for (int i = 0; i < size; i++) {
+        while (!m_experiment.processed.empty() && !m_experiment.raw.empty()) {
             CHECK_ASYNC_STOP
-            m_objectFinder.setRawImage(m_experiment.rawBuffer[i]);
-            m_objectFinder.setProcessedImage(m_experiment.processed[i]);
-            m_objectFinder.findObjects(m_experiment,m_setup);
+            m_objectFinder.setRawImage(m_experiment.raw.front());
+            m_objectFinder.setProcessedImage(m_experiment.processed.front());
+            m_objectFinder.findObjects(m_experiment);
+
+            // Pop images from raw and processed to write buffers
+            m_experiment.writeBuffer_processed.push(m_experiment.processed.front());
+            m_experiment.writeBuffer_raw.push(m_experiment.raw.front());
+
+            m_experiment.processed.pop();
+            m_experiment.raw.pop();
         }
 
         m_objectFinder.cleanObjects(m_experiment);
@@ -356,8 +369,11 @@ bool Analyzer::loadSetup(const string& path) {
 
 void Analyzer::exportExperiment(const string& path) {
     if (m_experiment.data.empty()) {
+        // No objects to export
+        m_status |= StatusBits::NoObjectsFound;
         return;
     }
+
     std::vector<std::string> attributes = m_experiment.data[0]->extractAttributeName();
     std::ofstream out(path);
     // Add list of attributes

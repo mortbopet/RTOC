@@ -5,6 +5,7 @@
 #include <iostream>
 #include "experiment.h"
 #include "framefinder.h"
+#include "machinelearning.h"
 #include "objectfinder.h"
 #include "process.h"
 #include "tracker.h"
@@ -38,6 +39,7 @@ public:
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
     void stopAnalyzer();
     void resetAnalyzer();
+    const int getStatus() const { return m_status; }
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {
         m_imageGetterFunction = function;
@@ -78,6 +80,8 @@ public:
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 private:
+    int m_status = 0;
+
     void spinLockWait(int microseconds) const;
     void asyncStop();
 

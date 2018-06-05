@@ -33,12 +33,12 @@ public slots:
 
 private slots:
     void guiUpdateTimerElapsed();
-
     void on_buttonBox_clicked(QAbstractButton* button);
 
 private:
     enum class State { Acquiring, StoringImages, GettingData, StoringData, Finished };
     void stateChanged(State state);
+    void checkAnalyzerStatusMessage(const int status) const;
 
     State m_state;
     Setup m_setup;

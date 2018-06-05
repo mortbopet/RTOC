@@ -17,12 +17,12 @@ ExperimentRunner::ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* par
 
     // Setup future watchers to trigger state switching
     connect(&m_acqFutureWatcher, &QFutureWatcher<void>::finished,
-            [=] { stateChanged(State::StoringImages); });
-    connect(&m_storeImageFutureWatcher, &QFutureWatcher<void>::finished,
             [=] { stateChanged(State::GettingData); });
     connect(&m_getDataFutureWatcher, &QFutureWatcher<void>::finished,
             [=] { stateChanged(State::StoringData); });
     connect(&m_storeDataFutureWatcher, &QFutureWatcher<void>::finished,
+            [=] { stateChanged(State::StoringImages); });
+    connect(&m_storeImageFutureWatcher, &QFutureWatcher<void>::finished,
             [=] { stateChanged(State::Finished); });
 
     // Setup gui update timer - used for querying analyzer for current progress
@@ -55,29 +55,6 @@ void ExperimentRunner::stateChanged(State state) {
 
             ui->acqCount->setText(0);
             ui->dataextraction->setEnabled(false);
-            return;
-        }
-        case State::StoringImages: {
-            // ACQUISITION FINISHED
-            ui->infoLabel->setText("Storing images to disk...");
-
-            // make sure that the actual value of the acquired images is written
-            ui->acqCount->setText(QString::number(m_analyzer->m_experiment.processed.size()));
-
-            // Start image storing (Always startet, but quickly terminates if user did not set any
-            // store options
-
-            // Calculate size of progress bar
-            int nImages = 0;
-            nImages = m_setup.storeProcessed ? m_analyzer->m_experiment.processed.size() + nImages
-                                             : nImages;
-            nImages =
-                m_setup.storeRaw ? m_analyzer->m_experiment.rawBuffer.size() + nImages : nImages;
-
-            ui->acqProgress->setMaximum(nImages);
-            ui->acqProgress->setValue(0);
-            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages);
-            m_storeImageFutureWatcher.setFuture(future);
             return;
         }
         case State::GettingData: {
@@ -114,6 +91,31 @@ void ExperimentRunner::stateChanged(State state) {
             m_storeDataFutureWatcher.setFuture(future);
             return;
         }
+        case State::StoringImages: {
+            // ACQUISITION FINISHED
+            ui->infoLabel->setText("Storing images to disk...");
+
+            // make sure that the actual value of the acquired images is written
+            ui->acqCount->setText(
+                QString::number(m_analyzer->m_experiment.writeBuffer_processed.size()));
+
+            // Start image storing (Always startet, but quickly terminates if user did not set any
+            // store options
+
+            // Calculate size of progress bar
+            int nImages = 0;
+            nImages = m_setup.storeProcessed
+                          ? m_analyzer->m_experiment.writeBuffer_processed.size() + nImages
+                          : nImages;
+            nImages = m_setup.storeRaw ? m_analyzer->m_experiment.writeBuffer_raw.size() + nImages
+                                       : nImages;
+
+            ui->acqProgress->setMaximum(nImages);
+            ui->acqProgress->setValue(0);
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages);
+            m_storeImageFutureWatcher.setFuture(future);
+            return;
+        }
         case State::Finished: {
             // force data progress bar to 100%
             ui->dataProgress->setMaximum(1);
@@ -124,6 +126,10 @@ void ExperimentRunner::stateChanged(State state) {
             // window now
             ui->buttonBox->button(QDialogButtonBox::Abort)->setText("Close window");
             ui->buttonBox->button(QDialogButtonBox::Cancel)->hide();
+
+            // Check analyzer status
+            checkAnalyzerStatusMessage(m_analyzer->getStatus());
+
             return;
         }
     }
@@ -183,5 +189,17 @@ void ExperimentRunner::on_buttonBox_clicked(QAbstractButton* button) {
     } else {
         // Experiment is finished, so we can only (successfully) close the window at this point
         accept();
+    }
+}
+
+void ExperimentRunner::checkAnalyzerStatusMessage(const int status) const {
+    switch (status) {
+        case StatusBits::NoObjectsFound: {
+            QMessageBox::information(0, "Information",
+                                     "No objects found. Output data file will be empty");
+            break;
+        }
+        default:
+            break;
     }
 }
