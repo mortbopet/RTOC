@@ -16,13 +16,6 @@ int main(int argc, char** argv) {
         projectFileName = QString::fromLatin1(argv[1]);
     }
 
-    // Splash or nah
-    QPixmap pixmap(":/resources/splashscreen.png");
-    QSplashScreen splash(pixmap);
-    splash.show();
-    a.processEvents();
-    // -------------
-
     MainWindow window(projectFileName);
     window.show();
 
