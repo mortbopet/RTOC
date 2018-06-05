@@ -8,13 +8,9 @@
 
 #include "datacontainer.h"
 #include "framefinder.h"
+#include "imagewriter.h"
 
-// Clear function for std::queue
-template <typename T>
-void clear(std::queue<T>& q) {
-    std::queue<T> empty;
-    std::swap(q, empty);
-}
+#include "helper.h"
 
 /** @brief Struct for each Experiment. Used as a container for parameters.
  * More functions can be created to change those parameters
@@ -32,18 +28,18 @@ public:
     std::queue<cv::Mat> processed;
     std::queue<cv::Mat> raw;
 
-    // Write buffers are used for writing images to disk after analyzer is done with the images
-    std::queue<cv::Mat> writeBuffer_raw;
-    std::queue<cv::Mat> writeBuffer_processed;
+    // ImageWriters are used for writing images to disk after analyzer is done with the images
+    ImageWriter writeBuffer_raw;
+    ImageWriter writeBuffer_processed;
 
     double intensity_threshold;
     std::vector<std::unique_ptr<DataContainer>> data;
 
     void reset() {
-        clear(processed);
-        clear(raw);
-        clear(writeBuffer_processed);
-        clear(writeBuffer_raw);
+        clearQueue(processed);
+        clearQueue(raw);
+        writeBuffer_processed.clear();
+        writeBuffer_raw.clear();
         data.clear();
     }
 };

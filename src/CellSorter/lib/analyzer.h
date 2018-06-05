@@ -35,10 +35,11 @@ public:
     void selectBG();
     void runProcesses();
     void runAnalyzer(Setup setup);
-    void writeImages();
+    void writeImages(bool waitForFinish = true);
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
+    int acquiredImagesCnt() { return m_imageCnt; }
     void stopAnalyzer();
     void resetAnalyzer();
     const int getStatus() const { return m_status; }
@@ -83,6 +84,8 @@ public:
 
 private:
     int m_status = 0;
+
+    int m_imageCnt;
 
     void spinLockWait(int microseconds) const;
     void asyncStop();

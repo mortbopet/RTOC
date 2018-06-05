@@ -10,6 +10,7 @@ public:
     bool extractData;
     bool storeRaw;
     bool storeProcessed;
+    bool asyncImageWrite;
     long dataFlags = 0;
     std::string rawPrefix;
     std::string processedPrefix;
@@ -19,5 +20,4 @@ public:
 private:
 };
 
-
-#endif //CELLSORTER_SETUP_H
+#endif  // CELLSORTER_SETUP_H

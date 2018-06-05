@@ -116,6 +116,11 @@ void Analyzer::runAnalyzer(Setup setup) {
     // Set setup. This will be used other subsequent actions in an analyzer call
     m_setup = setup;
 
+    // Start image writers if we are doing asynchronous image writing
+    if (m_setup.asyncImageWrite) {
+        writeImages(false);
+    }
+
     bool success;
     while (true) {
         // Wait until we are supposed to get the next image
@@ -128,9 +133,8 @@ void Analyzer::runAnalyzer(Setup setup) {
                                           // further execution steps
             break;
         }
-        if (m_setup.storeRaw) {
-            m_experiment.raw.push(m_img.clone());
-        }
+        m_experiment.raw.push(m_img.clone());
+        m_imageCnt++;
 
         if (m_bg.dims == 0) {
             m_bg = m_img;
@@ -146,54 +150,30 @@ void Analyzer::runAnalyzer(Setup setup) {
  * @brief Saves current images in rawBuffer and processed to disk
  * @param setup
  */
-void Analyzer::writeImages() {
+void Analyzer::writeImages(bool waitForFinish) {
     fs::path experimentFolder = fs::path(m_setup.outputPath) / fs::path(m_setup.experimentName);
     fs::path rawPath = experimentFolder / fs::path(m_setup.rawPrefix);
     fs::path processedPath = experimentFolder / fs::path(m_setup.processedPrefix);
 
-    m_currentProcessingFrame = 0;
+    if (m_setup.storeProcessed)
+        m_experiment.writeBuffer_processed.startWriting(processedPath, m_setup.processedPrefix);
+    if (m_setup.storeRaw)
+        m_experiment.writeBuffer_raw.startWriting(rawPath, m_setup.rawPrefix);
 
-    if (m_setup.storeRaw) {
-        int index = 0;
-        while (!m_experiment.writeBuffer_raw.empty()) {
-            const auto image = m_experiment.writeBuffer_raw.front();
-            CHECK_ASYNC_STOP
-            m_currentProcessingFrame++;
-            // store raw
-            std::string filepath =
-                (rawPath / fs::path(m_setup.rawPrefix + "_" + to_string(index) + ".png")).string();
-            cv::imwrite(filepath, image);
-            index++;
-
-            // pop image from buffer since it has been saved
-            m_experiment.writeBuffer_raw.pop();
-        }
+    if (waitForFinish) {
+        // Wait for finished. This is NOT done when asynchronous image writing is enabled
+        if (m_setup.storeProcessed)
+            m_experiment.writeBuffer_processed.finishWriting();
+        if (m_setup.storeRaw)
+            m_experiment.writeBuffer_raw.finishWriting();
     }
-
-    // store processed
-    if (m_setup.storeProcessed) {
-        int index = 0;
-        while (!m_experiment.writeBuffer_processed.empty()) {
-            const auto image = m_experiment.writeBuffer_processed.front();
-            CHECK_ASYNC_STOP
-            m_currentProcessingFrame++;
-            std::string filepath = (processedPath / fs::path(m_setup.processedPrefix + "_" +
-                                                             to_string(index) + ".png"))
-                                       .string();
-            cv::imwrite(filepath, image);
-            index++;
-
-            // pop image from buffer since it has been saved
-            m_experiment.writeBuffer_processed.pop();
-        }
-    }
-    ASYNC_END
 }
 
 void Analyzer::resetAnalyzer() {
     m_experiment.reset();
     m_asyncStopAnalyzer = false;
     m_status = 0;
+    m_imageCnt = 0;
 }
 
 /**
@@ -211,6 +191,7 @@ void Analyzer::resetProcesses() {
  *
  */
 void Analyzer::findObjects() {
+    m_currentProcessingFrame = 0;
     if (m_setup.extractData) {
         while (!m_experiment.processed.empty() && !m_experiment.raw.empty()) {
             CHECK_ASYNC_STOP
@@ -219,11 +200,14 @@ void Analyzer::findObjects() {
             m_objectFinder.findObjects(m_experiment, m_setup);
 
             // Pop images from raw and processed to write buffers
-            m_experiment.writeBuffer_processed.push(m_experiment.processed.front());
-            m_experiment.writeBuffer_raw.push(m_experiment.raw.front());
+            if (m_setup.storeProcessed)
+                m_experiment.writeBuffer_processed.push(m_experiment.processed.front().clone());
+            if (m_setup.storeRaw)
+                m_experiment.writeBuffer_raw.push(m_experiment.raw.front().clone());
 
             m_experiment.processed.pop();
             m_experiment.raw.pop();
+            m_currentProcessingFrame++;
         }
 
         m_objectFinder.cleanObjects(m_experiment);

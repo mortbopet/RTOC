@@ -96,23 +96,16 @@ void ExperimentRunner::stateChanged(State state) {
             ui->infoLabel->setText("Storing images to disk...");
 
             // make sure that the actual value of the acquired images is written
-            ui->acqCount->setText(
-                QString::number(m_analyzer->m_experiment.writeBuffer_processed.size()));
+            ui->acqCount->setText(QString::number(m_analyzer->acquiredImagesCnt()));
 
-            // Start image storing (Always startet, but quickly terminates if user did not set any
-            // store options
-
-            // Calculate size of progress bar
-            int nImages = 0;
-            nImages = m_setup.storeProcessed
-                          ? m_analyzer->m_experiment.writeBuffer_processed.size() + nImages
-                          : nImages;
-            nImages = m_setup.storeRaw ? m_analyzer->m_experiment.writeBuffer_raw.size() + nImages
-                                       : nImages;
-
-            ui->acqProgress->setMaximum(nImages);
+            ui->acqProgress->setMaximum(0);
             ui->acqProgress->setValue(0);
-            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages);
+
+            // Start image acquisition. If asynchronous image writing has been enabled, the analyzer
+            // is already storing images. calling writeImages(true) ensures that this call is
+            // joining the ImageWriters with our execution - as in, we wait for the ImageWriters to
+            // finish writing all images from their queues
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages, true);
             m_storeImageFutureWatcher.setFuture(future);
             return;
         }
@@ -120,6 +113,11 @@ void ExperimentRunner::stateChanged(State state) {
             // force data progress bar to 100%
             ui->dataProgress->setMaximum(1);
             ui->dataProgress->setValue(1);
+
+            ui->acqProgress->setMaximum(1);
+            ui->acqProgress->setValue(1);
+
+            ui->processImageN->setText(ui->acqCount->text());
 
             ui->infoLabel->setText("Finished experiment");
             // Change the button box to be in a "finalized" state, because we can only exit the
