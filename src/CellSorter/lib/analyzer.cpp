@@ -210,7 +210,7 @@ void Analyzer::findObjects() {
             CHECK_ASYNC_STOP
             m_objectFinder.setRawImage(m_experiment.rawBuffer[i]);
             m_objectFinder.setProcessedImage(m_experiment.processed[i]);
-            m_objectFinder.findObjects(m_experiment);
+            m_objectFinder.findObjects(m_experiment,m_setup);
         }
 
         m_objectFinder.cleanObjects(m_experiment);
@@ -395,4 +395,8 @@ void Analyzer::processImage(cv::Mat& img, cv::Mat& bg) {
     for (const auto& process : m_processes) {
         process->doProcessing(img, bg, m_experiment);
     }
+}
+
+long Analyzer::getSetupDataFlags() {
+    return m_setup.dataFlags;
 }

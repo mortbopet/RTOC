@@ -9,6 +9,7 @@
 #include "process.h"
 #include "tracker.h"
 #include "machinelearning.h"
+#include "setup.h"
 
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
@@ -20,17 +21,6 @@
 
 #include <functional>
 
-struct Setup {
-    bool runProcessing;
-    bool extractData;
-    bool storeRaw;
-    bool storeProcessed;
-    long dataFlags = 0;
-    std::string rawPrefix;
-    std::string processedPrefix;
-    std::string outputPath;
-    std::string experimentName;
-};
 
 class Analyzer : public QObject {
     Q_OBJECT
@@ -64,6 +54,8 @@ public:
 
     void showImg(const int& delay);
     static void showImg(const cv::Mat& img, const int& delay);
+
+    long getSetupDataFlags();
 
     Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
     cv::Mat m_img;
