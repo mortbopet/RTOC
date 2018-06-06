@@ -80,6 +80,9 @@ void ExperimentRunner::stateChanged(State state) {
             ui->infoLabel->setText("Storing data to file...");
             // DATA GENERATION FINISHED
             // Export experiment data to file - should probably be async as to not block GUI
+            ui->dataProgress->setMaximum(1);
+            ui->dataProgress->setValue(1);
+
             std::string filename =
                 QDir(QDir(QString::fromStdString(m_setup.outputPath))
                          .filePath(QString::fromStdString(m_setup.experimentName)))
@@ -155,8 +158,6 @@ void ExperimentRunner::guiUpdateTimerElapsed() {
         // Set current image progress
         ui->acqCount->setText(QString::number(acquiredImages));
     } else if (m_state == State::StoringImages) {
-        int currentFrame = m_analyzer->m_currentProcessingFrame;
-        ui->acqProgress->setValue(currentFrame);
     } else if (m_state == State::GettingData) {
         int currentFrame = m_analyzer->m_currentProcessingFrame;
         ui->dataProgress->setValue(currentFrame);

@@ -163,9 +163,9 @@ void Analyzer::writeImages(bool waitForFinish) {
     if (waitForFinish) {
         // Wait for finished. This is NOT done when asynchronous image writing is enabled
         if (m_setup.storeProcessed)
-            m_experiment.writeBuffer_processed.finishWriting();
+            m_experiment.writeBuffer_processed.finishWriting(m_imageCnt);
         if (m_setup.storeRaw)
-            m_experiment.writeBuffer_raw.finishWriting();
+            m_experiment.writeBuffer_raw.finishWriting(m_imageCnt);
     }
 }
 
@@ -192,26 +192,30 @@ void Analyzer::resetProcesses() {
  */
 void Analyzer::findObjects() {
     m_currentProcessingFrame = 0;
-    if (m_setup.extractData) {
-        while (!m_experiment.processed.empty() && !m_experiment.raw.empty()) {
-            CHECK_ASYNC_STOP
+
+    while (!m_experiment.processed.empty() && !m_experiment.raw.empty()) {
+        CHECK_ASYNC_STOP
+        if (m_setup.extractData) {
             m_objectFinder.setRawImage(m_experiment.raw.front());
             m_objectFinder.setProcessedImage(m_experiment.processed.front());
             m_objectFinder.findObjects(m_experiment, m_setup);
-
-            // Pop images from raw and processed to write buffers
-            if (m_setup.storeProcessed)
-                m_experiment.writeBuffer_processed.push(m_experiment.processed.front().clone());
-            if (m_setup.storeRaw)
-                m_experiment.writeBuffer_raw.push(m_experiment.raw.front().clone());
-
-            m_experiment.processed.pop();
-            m_experiment.raw.pop();
-            m_currentProcessingFrame++;
         }
 
+        // Pop images from raw and processed to write buffers
+        if (m_setup.storeProcessed)
+            m_experiment.writeBuffer_processed.push(m_experiment.processed.front());
+        if (m_setup.storeRaw)
+            m_experiment.writeBuffer_raw.push(m_experiment.raw.front());
+
+        m_experiment.processed.pop();
+        m_experiment.raw.pop();
+        m_currentProcessingFrame++;
+    }
+
+    if (m_setup.extractData) {
         m_objectFinder.cleanObjects(m_experiment);
     }
+
     ASYNC_END
 }
 
