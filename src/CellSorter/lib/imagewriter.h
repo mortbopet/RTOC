@@ -16,7 +16,7 @@ namespace fs = boost::filesystem;
 
 class ImageWriter {
 public:
-    ImageWriter();
+    ImageWriter() {}
 
     void push(const cv::Mat& img) { m_queue.push(img); }
     void clear() {
