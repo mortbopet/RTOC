@@ -20,7 +20,7 @@ void Analyzer::stopAnalyzer() {
 #define ASYNC_END_SIDEEFFECT(function) \
     return;                            \
     async_stop:                        \
-    resetAnalyzer();                   \
+    reset();                           \
     function();                        \
     return;
 
@@ -28,7 +28,7 @@ void Analyzer::stopAnalyzer() {
 #define ASYNC_END    \
     return;          \
     async_stop:      \
-    resetAnalyzer(); \
+    reset();         \
     return;
 
 /**
@@ -197,8 +197,7 @@ void Analyzer::findObjects() {
     while (!m_experiment.processed.empty() && !m_experiment.raw.empty()) {
         CHECK_ASYNC_STOP
         if (m_setup.extractData) {
-            m_objectFinder.setRawImage(m_experiment.raw.front());
-            m_objectFinder.setProcessedImage(m_experiment.processed.front());
+            m_objectFinder.setImages(m_experiment.raw.front(),m_experiment.processed.front());
             m_objectFinder.findObjects(m_experiment, m_setup);
         }
 
