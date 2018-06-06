@@ -92,11 +92,10 @@ void Analyzer::processSingleFrame(cv::Mat& img, cv::Mat& bg) {
  *
  */
 
-namespace fs = boost::filesystem;
-
 namespace {
+namespace fs = boost::filesystem;
 typedef std::chrono::high_resolution_clock Clock;
-}
+}  // namespace
 
 using namespace std::chrono;
 

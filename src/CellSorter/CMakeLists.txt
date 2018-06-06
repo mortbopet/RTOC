@@ -5,6 +5,9 @@ set (CMAKE_CXX_STANDARD 14)
 cmake_policy(SET CMP0020 NEW)
 project(CellSorter)
 
+# Link with threads
+find_package (Threads)
+
 #Environment variable $OpenCV_DIR must be set to the "build" folder of OpenCV
 find_package(OpenCV REQUIRED)
 
@@ -130,7 +133,7 @@ else()
     find_package(Boost COMPONENTS system filesystem serialization REQUIRED)
 
     macro(set_link_libraries app)
-        target_link_libraries(${ARGV0} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY})
+        target_link_libraries(${ARGV0} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
     endmacro()
 
     set_link_libraries(CellSorter_lib)
