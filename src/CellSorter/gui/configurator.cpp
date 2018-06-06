@@ -8,7 +8,7 @@
 #include <QHeaderView>
 
 Configurator::Configurator(ProcessInterface* iface, Analyzer* analyzer, QWidget* parent)
-    : m_interface(iface), QWidget(parent), ui(new Ui::Configurator) {
+    : QWidget(parent), ui(new Ui::Configurator), m_interface(iface) {
     ui->setupUi(this);
 
     // Set icons
