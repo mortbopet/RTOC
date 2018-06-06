@@ -10,14 +10,26 @@ public:
     Machinelearning();
     virtual void loadModel(const std::string& path);
 
-    virtual double predictObject(DataContainer& dataContainer, double decisionBoundary = 0.5);
+    virtual void predictObject(DataContainer& dataContainer, double decisionBoundary=0.5);
 
     int get_XBoundary() const;
     void set_XBoundary(int m_XBoundary);
 
+    struct outputData {
+        double output;
+        double probabilityOut;
+        int label;
+
+        outputData(double output, double probabilityOut, int label) :
+                output(output), probabilityOut(probabilityOut), label(label) {}
+    };
+
+    const std::vector<outputData>& getResults() {return results;};
+
 protected:
     std::vector<int> xpos;
     std::vector<data::DataFlags> attributes;
+    std::vector<outputData> results;
     int findClosestXpos(const int& pos, DataContainer& dataContainer);
 
 private:
@@ -29,7 +41,7 @@ public:
     LogisticRegression();
     void loadModel(const std::string& path) override;
 
-    double predictObject(DataContainer& dataContainer, double decisionBoundary) override;
+    void predictObject(DataContainer& dataContainer, double decisionBoundary) override;
 
 private:
     std::vector<double> coefficients;

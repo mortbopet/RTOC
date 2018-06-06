@@ -19,9 +19,7 @@ Machinelearning::Machinelearning() {}
 
 void Machinelearning::loadModel(const std::string& path) {}
 
-double Machinelearning::predictObject(DataContainer& dataContainer, double decisionBoundary) {
-    return 0;
-}
+void Machinelearning::predictObject(DataContainer& dataContainer, double decisionBoundary) {}
 
 int Machinelearning::get_XBoundary() const {
     return _XBoundary;
@@ -74,7 +72,7 @@ void LogisticRegression::loadModel(const std::string& path) {
     }
 }
 
-double LogisticRegression::predictObject(DataContainer& dataContainer, double decisionBoundary) {
+void LogisticRegression::predictObject(DataContainer& dataContainer, double decisionBoundary) {
     // customParameter defines the decision boundary between the binary classification.
     // By default this should be set to 0.5.
 
@@ -96,9 +94,9 @@ double LogisticRegression::predictObject(DataContainer& dataContainer, double de
 
     // Checks if possibility is above the chosen threshold
     if (possibility >= decisionBoundary) {
-        return 1;
+        results.emplace_back(1, possibility, dataContainer[0]->getValue<int>(data::Label));
     } else {
-        return 0;
+        results.emplace_back(0, possibility, dataContainer[0]->getValue<int>(data::Label));
     }
 }
 
