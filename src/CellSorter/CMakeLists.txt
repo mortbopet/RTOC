@@ -12,6 +12,11 @@ find_package(OpenCV REQUIRED)
 file(GLOB LIB_SOURCES lib/*.cpp)
 file(GLOB LIB_HEADERS lib/*.h)
 
+# Define external files
+file(GLOB EXTERNAL
+    external/readerwriterqueue/*.cpp
+    external/readerwriterqueue/*.h)
+
 
 ######################################################################
 ## GUI setup
@@ -43,7 +48,7 @@ file(GLOB GUI_H gui/*.h)
 file ( GLOB UIS gui/*.ui)
 file ( GLOB RESOURCES ../*.qrc)
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES})
+add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES} ${EXTERNAL})
 target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
 ######################################################################
 ## endof GUI setup
