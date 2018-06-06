@@ -30,15 +30,16 @@ enum DataFlags {
     Symmetry = 1 << 14,
     Perimeter = 1 << 15,
     PixelIdxList = 1 << 16,
-    OutputValue = 1 << 17,
-    VerticalSymmetry = 1 << 18,
-    _ALL_FLAGS = 0xfffff
+    OutputValue = 1 << 17
+};
 
+enum DataMasks {
+    AllFlags = 0x3ffff  // Correct if dataFlags are added !
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
 // This mapping is used by DataObject for memory allocation
-static std::map<DataFlags, std::pair<int, size_t>> typeMap{{Area, std::make_pair(1, sizeof(double))},
+static std::map<DataFlags, std::pair<unsigned long, size_t>> typeMap{{Area, std::make_pair(1, sizeof(double))},
                                            {BoundingBox, std::make_pair(4, sizeof(cv::Rect))},
                                            {Centroid, std::make_pair(2, sizeof(cv::Point))},
                                            {Circularity, std::make_pair(1, sizeof(double))},
@@ -55,8 +56,7 @@ static std::map<DataFlags, std::pair<int, size_t>> typeMap{{Area, std::make_pair
                                            {Symmetry, std::make_pair(1, sizeof(double))},
                                            {Perimeter, std::make_pair(1, sizeof(double))},
                                            {PixelIdxList, std::make_pair(1, sizeof(std::vector<cv::Point>*))},
-                                           {OutputValue, std::make_pair(1, sizeof(double))},
-                                           {VerticalSymmetry, std::make_pair(1, sizeof(double))}};
+                                           {OutputValue, std::make_pair(1, sizeof(double))}};
 
 enum Export {
     Always = 1 << 0,
@@ -82,8 +82,7 @@ static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(
                                                                 {std::make_pair(Export::Gui, Solidity), "Solidity"},
                                                                 {std::make_pair(Export::Gui, Symmetry), "Symmetry"},
                                                                 {std::make_pair(Export::Gui, Perimeter), "Perimeter"},
-                                                                {std::make_pair(Export::Always, OutputValue), "Output value"},
-                                                                {std::make_pair(Export::Gui, VerticalSymmetry), "Vertical symmetry"}};
+                                                                {std::make_pair(Export::Always, OutputValue), "Output value"}};
 
 }  // namespace data
 
@@ -93,7 +92,7 @@ static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(
  */
 class DataObject {
 public:
-    DataObject(long dataFlags, size_t size);
+    DataObject(unsigned long dataFlags, size_t size);
     ~DataObject();
 
     template <typename T>
@@ -106,7 +105,7 @@ private:
     size_t getBytesToData(data::DataFlags flag);
 
     char* m_memory = nullptr;
-    int m_dataFlags;
+    unsigned long m_dataFlags;
     size_t m_size;  // Total allocated memory space
 };
 
@@ -149,11 +148,11 @@ void DataObject::setValue(data::DataFlags dataFlag, T value) {
 class DataContainer {
 public:
     DataContainer();
-    DataContainer(long flags);
+    DataContainer(unsigned long flags);
     ~DataContainer();
 
     void setDataFlags(data::DataFlags flag);  // sets ALL data flags
-    void setDataFlags(long flag);
+    void setDataFlags(unsigned long flag);
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
     std::vector<double> extractObjectInDoubles(int objIndex);
@@ -180,7 +179,7 @@ public:
 
 private:
     std::vector<DataObject*> m_data;
-    int m_dataFlags = 0;
+    unsigned long m_dataFlags = 0;
 
     bool m_locked = false;
     size_t m_objectSize;

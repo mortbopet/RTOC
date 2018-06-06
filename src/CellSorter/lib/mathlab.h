@@ -28,7 +28,7 @@ enum regionPropTypes {
 
 void bwareaopen(cv::Mat& im, double size);
 
-int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc);
+int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContainer& dc);
 
 double gradientScore(const cv::Mat& img, const cv::Rect& roi);
 double verticalSymmetry(const cv::Mat& img, const cv::Rect& roi, const double& majorAxisLength);

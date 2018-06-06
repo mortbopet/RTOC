@@ -177,6 +177,8 @@ void ObjectFinder::reset() {
 
     m_cellNum = 0;
     m_frameNum = 0;
+    m_newObject = false;
+    m_numObjects = 0;
     m_processedImg = nullptr;
     m_rawImg = nullptr;
 

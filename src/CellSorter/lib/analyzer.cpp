@@ -110,7 +110,7 @@ void Analyzer::spinLockWait(int micros) const {
 }
 
 void Analyzer::runAnalyzer(Setup setup) {
-    resetAnalyzer();
+    reset();
 
     // Set setup. This will be used other subsequent actions in an analyzer call
     m_setup = setup;
@@ -168,8 +168,10 @@ void Analyzer::writeImages(bool waitForFinish) {
     }
 }
 
-void Analyzer::resetAnalyzer() {
+void Analyzer::reset() {
     m_experiment.reset();
+    m_objectFinder.reset();
+
     m_asyncStopAnalyzer = false;
     m_status = 0;
     m_imageCnt = 0;

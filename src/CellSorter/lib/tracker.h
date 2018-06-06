@@ -6,7 +6,11 @@ struct Tracker {
     int cell_no;
     int frame_no;
 
-    Tracker() = default;
+    Tracker() {
+        centroid = cv::Point(0,0);
+        cell_no = 0;
+        frame_no = 0;
+    }
     explicit Tracker(int c) {
         centroid = cv::Point(0,0);
         cell_no = 0;

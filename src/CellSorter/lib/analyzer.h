@@ -41,7 +41,7 @@ public:
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
     int acquiredImagesCnt() { return m_imageCnt; }
     void stopAnalyzer();
-    void resetAnalyzer();
+    void reset();
     const int getStatus() const { return m_status; }
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {

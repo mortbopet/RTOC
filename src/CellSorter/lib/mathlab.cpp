@@ -22,9 +22,14 @@ void bwareaopen(cv::Mat& im, double size) {
     }
 }
 
-int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
+int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContainer& dc) {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+
+    // Return if zero contours found
+    if (contours.empty()) {
+        return 0;
+    }
 
     double area = 0.0;
     cv::Rect boundingBox;
@@ -121,28 +126,6 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
 
             dc[i]->setValue(data::Solidity, solidity);
         }
-        /// Symmetry
-        if (dataFlags & data::Symmetry) {
-            if ((round(centroid.x - 5.5) < 0 && round(centroid.x + 5.5) > img.cols) &&
-                (round(centroid.y - 22.5) < 0 && round(centroid.y + 22.5) > img.rows)) {
-                cv::Rect roi =
-                    cv::Rect((int)round(centroid.x - 4.5), (int)round(centroid.x + 4.5),
-                             (int)round(centroid.y - 22.5), (int)round(centroid.y + 22.5));
-
-                cv::Mat temp = cv::Mat(img, roi);
-                double im_min;
-                double im_max;
-                cv::minMaxIdx(temp, &im_min, &im_max);
-                temp -= im_min / (im_max - im_min);
-                cv::Mat flipped;
-                cv::flip(temp, flipped, 1);
-                cv::Mat d1;
-                cv::absdiff(temp, flipped, d1);
-                symmetry = cv::sum(d1)[0] / majorAxis;
-            }
-
-            dc[i]->setValue(data::Symmetry, symmetry);
-        }
         /// PixelIdxList
         if (dataFlags & data::PixelIdxList) {
             // Init black canvas
@@ -180,7 +163,8 @@ int regionProps(const cv::Mat& img, const int& dataFlags, DataContainer& dc) {
 double gradientScore(const cv::Mat& img, const cv::Rect& roi) {
     if ((roi.x > 0 && (roi.x + roi.width) < img.cols) && (roi.y > 0 && roi.y + roi.width < img.rows)) {
         // Load image from ROI
-        cv::Mat temp = cv::Mat(img, roi);
+        cv::Mat temp;
+        img(roi).copyTo(temp);
         // Get edges
         cv::Canny(temp, temp, 0.2, 0.7);
         // Sum up and return

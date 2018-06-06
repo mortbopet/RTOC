@@ -1,7 +1,7 @@
 #include "datacontainer.h"
 
 // --------------------- DataObject ---------------------------
-DataObject::DataObject(long dataFlags, size_t size) : m_dataFlags(dataFlags), m_size(size) {
+DataObject::DataObject(unsigned long dataFlags, size_t size) : m_dataFlags(dataFlags), m_size(size) {
     // Allocate the requested amount of memory
     m_memory = static_cast<char*>(malloc(m_size));
 }
@@ -32,7 +32,7 @@ size_t DataObject::getBytesToData(data::DataFlags flag) {
 
 // --------------------- DataContainer ------------------------
 DataContainer::DataContainer() {}
-DataContainer::DataContainer(long flags) : m_dataFlags(flags) {
+DataContainer::DataContainer(unsigned long flags) : m_dataFlags(flags) {
     calculateObjectSize();
 }
 
@@ -56,7 +56,7 @@ void DataContainer::setDataFlags(data::DataFlags flag) {
     calculateObjectSize();
 }
 
-void DataContainer::setDataFlags(long flag) {
+void DataContainer::setDataFlags(unsigned long flag) {
     clear();
     m_dataFlags = flag;
     calculateObjectSize();
