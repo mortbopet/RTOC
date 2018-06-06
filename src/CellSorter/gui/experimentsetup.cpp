@@ -122,6 +122,7 @@ void ExperimentSetup::setToolTips() {
 bool ExperimentSetup::verifyCanRunExperiment() {
     // Check whether the acquisitor has a valid source and is ready
     bool success = false;
+    m_interface->reset();
     m_interface->getNextImage(success);
     m_interface->reset();
     if (!success) {
