@@ -1,6 +1,7 @@
 #ifndef CELLSORTER_MACHINELEARNING_H
 #define CELLSORTER_MACHINELEARNING_H
 
+#include <memory>
 #include <vector>
 #include "datacontainer.h"
 
@@ -9,7 +10,7 @@ public:
     Machinelearning();
     virtual void loadModel(const std::string& path);
 
-    virtual double predictObject(DataContainer& dataContainer, double decisionBoundary=0.5);
+    virtual double predictObject(DataContainer& dataContainer, double decisionBoundary = 0.5);
 
     int get_XBoundary() const;
     void set_XBoundary(int m_XBoundary);

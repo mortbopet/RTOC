@@ -9,18 +9,19 @@ std::unique_ptr<Machinelearning> identifyModel(const std::string& path) {
     std::ifstream file(path);
     while (std::getline(file, line, ',')) {
         if (line == "LR") {
-            Machinelearning *model = new LogisticRegression();
-            auto ptr = std::unique_ptr<Machinelearning>{model};
-            return ptr;
+            return std::make_unique<LogisticRegression>();
         }
     }
+    return nullptr;
 }
 
 Machinelearning::Machinelearning() {}
 
 void Machinelearning::loadModel(const std::string& path) {}
 
-double Machinelearning::predictObject(DataContainer& dataContainer, double decisionBoundary) {}
+double Machinelearning::predictObject(DataContainer& dataContainer, double decisionBoundary) {
+    return 0;
+}
 
 int Machinelearning::get_XBoundary() const {
     return _XBoundary;
@@ -41,6 +42,7 @@ int Machinelearning::findClosestXpos(const int& pos, DataContainer& dataContaine
             index++;
         }
     }
+    return -1;
 }
 
 LogisticRegression::LogisticRegression() {}
@@ -100,12 +102,8 @@ double LogisticRegression::predictObject(DataContainer& dataContainer, double de
     }
 }
 
+ArtificialNeuralNetwork::ArtificialNeuralNetwork() {}
 
-ArtificialNeuralNetwork::ArtificialNeuralNetwork() {
-}
+DecisionTree::DecisionTree() {}
 
-DecisionTree::DecisionTree() {
-}
-
-NaiveBayes::NaiveBayes() {
-}
+NaiveBayes::NaiveBayes() {}
