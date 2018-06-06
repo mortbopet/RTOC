@@ -22,7 +22,7 @@ namespace fs = boost::filesystem;
 
 class ImageWriter {
 public:
-    ImageWriter() {}
+    ImageWriter() = default;
 
     void push(const cv::Mat& img) { m_queue.enqueue(img.clone()); }
     void clear() {
