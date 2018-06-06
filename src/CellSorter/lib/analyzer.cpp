@@ -132,16 +132,16 @@ void Analyzer::runAnalyzer(Setup setup) {
                                           // further execution steps
             break;
         }
-        m_experiment.raw.push(m_img.clone());
-        m_imageCnt++;
 
-        if (m_bg.dims == 0) {
+        if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
             m_bg = m_img;
         } else {
+            m_experiment.raw.push(m_img.clone());
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
                 m_experiment.processed.push(m_img.clone());
             }
+            m_imageCnt++;
         }
     }
 }
