@@ -75,7 +75,7 @@ int getRootSelectedIndex(QItemSelectionModel* model) {
 
 //! [0]
 TreeModel::TreeModel(processContainerPtr container, ProcessInterface* iface, QObject* parent)
-    : m_container(container), m_interface(iface), QAbstractItemModel(parent) {
+    : QAbstractItemModel(parent), m_interface(iface), m_container(container) {
     QStringList headers{"Index", "Process type", "Parameters", "Value"};
     QVector<QVariant> rootData;
     foreach (QString header, headers)

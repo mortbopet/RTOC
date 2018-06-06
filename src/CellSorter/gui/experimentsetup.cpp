@@ -15,7 +15,7 @@
 #include "ui_experimentrunner.h"
 
 ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent)
-    : m_analyzer(analyzer), m_interface(iface), QWidget(parent), ui(new Ui::ExperimentSetup) {
+    : QWidget(parent), ui(new Ui::ExperimentSetup), m_analyzer(analyzer), m_interface(iface) {
     ui->setupUi(this);
 
     // Create data options

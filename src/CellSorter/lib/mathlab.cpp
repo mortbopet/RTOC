@@ -40,7 +40,6 @@ int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContaine
     double majorAxis = 0.0;
     double minorAxis = 0.0;
     double solidity = 0.0;
-    double symmetry = 0.0;
     double perimeter = 0.0;
 
     int i = 0;  // dataContainer index

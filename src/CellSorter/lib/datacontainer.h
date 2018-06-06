@@ -181,7 +181,6 @@ private:
     std::vector<DataObject*> m_data;
     unsigned long m_dataFlags = 0;
 
-    bool m_locked = false;
     size_t m_objectSize;
 
 protected:

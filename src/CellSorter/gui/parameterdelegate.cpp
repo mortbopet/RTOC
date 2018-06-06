@@ -6,7 +6,7 @@
 #include <QSpinBox>
 
 ParameterDelegate::ParameterDelegate(QAbstractItemModel* model, QObject* parent)
-    : m_model(model), QStyledItemDelegate(parent) {}
+    : QStyledItemDelegate(parent), m_model(model) {}
 
 ParameterDelegate::~ParameterDelegate() {}
 
