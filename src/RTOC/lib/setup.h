@@ -1,6 +1,6 @@
 
-#ifndef CELLSORTER_SETUP_H
-#define CELLSORTER_SETUP_H
+#ifndef RTOC_SETUP_H
+#define RTOC_SETUP_H
 
 #include <string>
 
@@ -20,4 +20,4 @@ public:
 private:
 };
 
-#endif  // CELLSORTER_SETUP_H
+#endif  // RTOC_SETUP_H

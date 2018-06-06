@@ -1,5 +1,5 @@
-#ifndef CELLSORTER_CSHELPER_H
-#define CELLSORTER_CSHELPER_H
+#ifndef RTOC_CSHELPER_H
+#define RTOC_CSHELPER_H
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -99,4 +99,4 @@ private:
     std::function<cv::Mat&(bool& sucessful)> m_imageGetterFunction;
 };
 
-#endif  // CELLSORTER_CSHELPER_H
+#endif  // RTOC_CSHELPER_H

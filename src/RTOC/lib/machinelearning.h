@@ -1,5 +1,5 @@
-#ifndef CELLSORTER_MACHINELEARNING_H
-#define CELLSORTER_MACHINELEARNING_H
+#ifndef RTOC_MACHINELEARNING_H
+#define RTOC_MACHINELEARNING_H
 
 #include <memory>
 #include <vector>
@@ -72,4 +72,4 @@ private:
 
 std::unique_ptr<Machinelearning> identifyModel(const std::string& path);
 
-#endif  // CELLSORTER_MACHINELEARNING_H
+#endif  // RTOC_MACHINELEARNING_H

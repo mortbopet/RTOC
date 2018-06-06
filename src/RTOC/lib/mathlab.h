@@ -1,5 +1,5 @@
-#ifndef CELLSORTER_MATLAB_EXT_H
-#define CELLSORTER_MATLAB_EXT_H
+#ifndef RTOC_MATLAB_EXT_H
+#define RTOC_MATLAB_EXT_H
 
 #include <iterator>
 #include <opencv/cv.hpp>
@@ -71,4 +71,4 @@ std::vector<T> find(std::vector<T>& v, T& term) {
 
 }  // namespace mathlab
 
-#endif  // CELLSORTER_MATLAB_EXT_H
+#endif  // RTOC_MATLAB_EXT_H

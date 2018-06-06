@@ -1,5 +1,5 @@
-#ifndef CELLSORTER_OBJECTFINDER_H
-#define CELLSORTER_OBJECTFINDER_H
+#ifndef RTOC_OBJECTFINDER_H
+#define RTOC_OBJECTFINDER_H
 
 #include <algorithm>
 #include <vector>
@@ -53,4 +53,4 @@ private:
 
 
 
-#endif //CELLSORTER_OBJECTFINDER_H
+#endif //RTOC_OBJECTFINDER_H

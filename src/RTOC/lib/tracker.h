@@ -1,5 +1,5 @@
-#ifndef CELLSORTER_TRACKER_H
-#define CELLSORTER_TRACKER_H
+#ifndef RTOC_TRACKER_H
+#define RTOC_TRACKER_H
 
 struct Tracker {
     cv::Point centroid{};
@@ -19,4 +19,4 @@ struct Tracker {
     bool operator==(Tracker& rhs) { return frame_no == rhs.frame_no; }
 };
 
-#endif  // CELLSORTER_TRACKER_H
+#endif  // RTOC_TRACKER_H

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set (CMAKE_CXX_STANDARD 14)
 
 cmake_policy(SET CMP0020 NEW)
-project(CellSorter)
+project(RTOC)
 
 # Link with threads
 find_package (Threads)
@@ -51,8 +51,8 @@ file(GLOB GUI_H gui/*.h)
 file ( GLOB UIS gui/*.ui)
 file ( GLOB RESOURCES ../*.qrc)
 
-add_library(CellSorter_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES} ${EXTERNAL})
-target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
+add_library(RTOC_lib ${LIB_SOURCES} ${LIB_HEADERS} ${GUI_SRC} ${GUI_H} ${UIS} ${RESOURCES} ${EXTERNAL})
+target_link_libraries(RTOC_lib Qt5::Core Qt5::Widgets)
 ######################################################################
 ## endof GUI setup
 ######################################################################
@@ -61,11 +61,11 @@ target_link_libraries(CellSorter_lib Qt5::Core Qt5::Widgets)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
-# Create executables for cellsorter
+# Create executables for RTOC
 add_executable(${PROJECT_NAME} main.cpp)
 
 # Link OpenCV libraries
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} CellSorter_lib)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} RTOC_lib)
 
 
 SET(BUILD_TESTS OFF CACHE BOOL "Build with Catch unit tests")
@@ -73,7 +73,7 @@ if(${BUILD_TESTS})
 ######################################################################
 ## Catch2 setup - TEST PROJECT
 ######################################################################
-set (TEST_EXECUTABLE "CellSorter_test")
+set (TEST_EXECUTABLE "RTOC_test")
 
 # Prepare catch2 library
 set(CATCH_INCLUDE_DIR tst_catch/catch.hpp)
@@ -85,8 +85,8 @@ file(GLOB CATCH_TEST_SOURCES tst/*.cpp)
 add_executable(${TEST_EXECUTABLE} ${CATCH_TEST_SOURCES})
 # Link catch
 target_link_libraries(${TEST_EXECUTABLE} Catch)
-# Link OpenCV and Cellsorter lib
-target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} CellSorter_lib)
+# Link OpenCV and RTOC lib
+target_link_libraries(${TEST_EXECUTABLE} ${OpenCV_LIBS} RTOC_lib)
 
 ######################################################################
 ## endof Catch2 setup
@@ -105,7 +105,7 @@ if(WIN32)
     message(STATUS ${BOOST_INCLUDEDIR})
 
     # include boost
-    target_include_directories(CellSorter_lib PUBLIC ${BOOST_INCLUDEDIR})
+    target_include_directories(RTOC_lib PUBLIC ${BOOST_INCLUDEDIR})
     target_include_directories(${PROJECT_NAME} PUBLIC ${BOOST_INCLUDEDIR})
 
     macro(set_link_libraries app)
@@ -120,7 +120,7 @@ if(WIN32)
     endmacro()
 
     # On windows, the app has been compiled with boost 1_66 and MSVC-14 (MSVC2015)
-    set_link_libraries(CellSorter_lib)
+    set_link_libraries(RTOC_lib)
     set_link_libraries(${PROJECT_NAME})
     if(${BUILD_TESTS})
     set_link_libraries( ${TEST_EXECUTABLE})
@@ -136,7 +136,7 @@ else()
         target_link_libraries(${ARGV0} ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SERIALIZATION_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
     endmacro()
 
-    set_link_libraries(CellSorter_lib)
+    set_link_libraries(RTOC_lib)
     set_link_libraries(${PROJECT_NAME})
     if(${BUILD_TESTS})
     set_link_libraries(${TEST_EXECUTABLE})
@@ -186,7 +186,7 @@ SET(BUILD_IRONMAN OFF CACHE BOOL "Build acquisition related tools")
 if(${BUILD_IRONMAN})
     add_definitions(-DBUILD_IRONMAN)
     add_subdirectory(ironman_lib)
-    target_link_libraries(CellSorter_lib ironman_lib)
+    target_link_libraries(RTOC_lib ironman_lib)
 endif()
 ######################################################################
 ## end of IronMan camera lib setup
