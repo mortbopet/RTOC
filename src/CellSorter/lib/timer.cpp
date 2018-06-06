@@ -25,21 +25,21 @@ long Timer::toc() {
     return duration;
 }
 
-double Timer::toc(int time_mode) {
+double Timer::toc(TIME_MODE time_mode) {
     // Get toc
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point t0 = time_point;
     long duration = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
     switch (time_mode) {
-        case MICROSECONDS:
+        case TIME_MODE::MICROSECONDS:
             break;
-        case MILLISECONDS:
+        case TIME_MODE::MILLISECONDS:
             duration /= (double)1000;
             break;
-        case SECONDS:
+        case TIME_MODE::SECONDS:
             duration /= (double)10000000;
             break;
-        case MINUTES:
+        case TIME_MODE::MINUTES:
             duration /= (double)60000000;
             break;
         default:
