@@ -8,6 +8,8 @@
 
 #include <thread>
 
+#include "timer.h"
+
 #include "helper.h"
 #include "setup.h"
 
@@ -57,13 +59,18 @@ private:
         // When deasserted, m_queue will be emptied
         cv::Mat front;
         bool queueHasValue = false;
+
         // Monitor queue until
         //  1. targetImageCount has been set (this will be set when the imageWriter is told to stop
         //  executing
         //  and
         //  2. our index (image count) is equals to the target image count
         while (!(m_targetImageCount >= 0 && m_targetImageCount == m_index)) {
-            queueHasValue = m_queue.wait_dequeue_timed(front, std::chrono::seconds(5));
+            // To not create a high-priority thread, we do small thread sleeps to enable OS to
+            // schedule our writeThreaded() call as low priority
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+            queueHasValue = m_queue.wait_dequeue_timed(front, std::chrono::milliseconds(1));
             if (queueHasValue) {
                 std::string filepath =
                     (m_path / fs::path(m_prefix + "_" + std::to_string(m_index) + ".png")).string();
@@ -71,8 +78,14 @@ private:
                 m_index++;
             } else {
                 // error in writing images - did not find the expected amt of images in the queue,
-                // as what the analyzer told the ImageWriter to write!
-                break;
+                // as what the analyzer told the ImageWriter to write before timeout
+
+                /** @todo when real-time object-finder is implemented, below should break. current
+                 * situation is quite dangerous since imagewriter ONLY stops if all images have been
+                 * written. We cannot yet implement a timeout on imeagewriter, since imagewriter is
+                 * started during acquisition, and thus, if acquisition is long, imageWriter would
+                 * timeout*/
+                // break;
             }
         }
         m_finishedWriting = true;
