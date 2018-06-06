@@ -9,7 +9,7 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
         m_dataFlags = setup.dataFlags;
     }
     //
-    m_numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_connectedComponents);
+    m_numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_cc);
 
     for (int i = 0; i < m_numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -22,7 +22,7 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
             if (m_frameTracker.empty()) {
                 m_newObject = true;
             } else {
-                m_centroid = m_connectedComponents[i]->getValue<cv::Point>(data::Centroid);
+                m_centroid = m_cc[i]->getValue<cv::Point>(data::Centroid);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
                 m_dist = res.first;
                 m_track = res.second;
@@ -39,7 +39,7 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
             }
         }
 
-        writeToDataVector(m_newObject, i, experiment);
+        writeToDataVector(i, experiment);
     }
     m_frameNum++;
     return m_numObjects;
@@ -114,91 +114,55 @@ std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& obje
     return {p.first, listOfObjects.at(p.second)};
 }
 
-void ObjectFinder::setRawImage(const cv::Mat& image) {
-    m_rawImg = &image;
-}
-
-void ObjectFinder::setProcessedImage(const cv::Mat& image) {
-    m_processedImg = &image;
-}
 
 
 /**
  * @brief
  * @param newObject
- * @param cc_number
+ * @param cc_i
  * @param experiment
  */
-void ObjectFinder::writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment) {
-
-
-    if (newObject) {
-        experiment.data.emplace_back(new DataContainer(data::_ALL_FLAGS));
-
-        assert(m_cellNum <= experiment.data.size());
-        experiment.data[m_cellNum]->appendNew();
-
-        (*experiment.data[m_cellNum])[0]->setValue(data::Inlet, experiment.inlet);
-        (*experiment.data[m_cellNum])[0]->setValue(data::Outlet, experiment.outlet);
-        (*experiment.data[m_cellNum])[0]->setValue(data::Label, m_cellNum);
-
-        (*experiment.data[m_cellNum])[0]->setValue(data::Frame, m_frameNum);
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::Centroid, m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid));
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::BoundingBox, m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox));
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::Major_axis, m_connectedComponents[cc_number]->getValue<double>(data::Major_axis));
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::Eccentricity, m_connectedComponents[cc_number]->getValue<double>(data::Eccentricity));
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::Circularity, m_connectedComponents[cc_number]->getValue<double>(data::Circularity));
-        (*experiment.data[m_cellNum])[0]->setValue(data::Symmetry,
-                                                   m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::GradientScore,
-                mathlab::gradientScore(*m_rawImg,
-                                      m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox)));
-        (*experiment.data[m_cellNum])[0]->setValue(
-                data::VerticalSymmetry,
-                mathlab::verticalSymmetry(*m_rawImg,
-                                          m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox),
-                                          m_connectedComponents[cc_number]->getValue<double>(data::Major_axis)));
-
+void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
+    int i;
+    if (m_newObject) {
+        experiment.data.emplace_back(new DataContainer(data::AllFlags));
+        i = m_cellNum;
         m_track.cell_no = m_cellNum;
         m_cellNum++;
     } else {
-
-        assert(m_track.cell_no <= experiment.data.size());
-
-        experiment.data[m_track.cell_no]->appendNew();
-        auto index = experiment.data[m_track.cell_no]->size() - 1;
-
-        (*experiment.data[m_track.cell_no])[index]->setValue(data::Frame, m_frameNum);
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Centroid, m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid));
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::BoundingBox, m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox));
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Major_axis, m_connectedComponents[cc_number]->getValue<double>(data::Major_axis));
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Eccentricity, m_connectedComponents[cc_number]->getValue<double>(data::Eccentricity));
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Circularity, m_connectedComponents[cc_number]->getValue<double>(data::Circularity));
-        (*experiment.data[m_track.cell_no])[index]->setValue(
-                data::Symmetry, m_connectedComponents[cc_number]->getValue<double>(data::Symmetry));
-        (*experiment.data[m_track.cell_no])[0]->setValue(
-                data::GradientScore,
-                mathlab::gradientScore(*m_rawImg,
-                                       m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox)));
-        (*experiment.data[m_track.cell_no])[0]->setValue(
-                data::VerticalSymmetry,
-                mathlab::verticalSymmetry(*m_rawImg,
-                                          m_connectedComponents[cc_number]->getValue<cv::Rect>(data::BoundingBox),
-                                          m_connectedComponents[cc_number]->getValue<double>(data::Major_axis)));
+        i = m_track.cell_no;
     }
+    assert(i < experiment.data.size());
+    experiment.data[i]->appendNew();
+
+    // Get some data (should be moved)
+    double gradientScore = mathlab::gradientScore(*m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox));
+    double symmetry = mathlab::verticalSymmetry(*m_rawImg,
+                                              m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox),
+                                              m_cc[cc_i]->getValue<double>(data::Major_axis));
+
+    auto dc_ptr = (*experiment.data[i]).back();
+    dc_ptr->setValue(data::Area, m_cc[cc_i]->getValue<double>(data::Area));
+    dc_ptr->setValue(data::BoundingBox, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox));
+    dc_ptr->setValue(data::Centroid, m_centroid);
+    dc_ptr->setValue(data::Circularity, m_cc[cc_i]->getValue<double>(data::Circularity));
+    dc_ptr->setValue(data::ConvexArea, m_cc[cc_i]->getValue<double>(data::ConvexArea));
+    dc_ptr->setValue(data::Eccentricity, m_cc[cc_i]->getValue<double>(data::Eccentricity));
+    dc_ptr->setValue(data::Frame, m_frameNum);
+    dc_ptr->setValue(data::GradientScore, gradientScore);
+    dc_ptr->setValue(data::Inlet, experiment.inlet);
+    dc_ptr->setValue(data::Outlet, experiment.outlet);
+    dc_ptr->setValue(data::Label, m_cellNum);
+    dc_ptr->setValue(data::Major_axis, m_cc[cc_i]->getValue<double>(data::Major_axis));
+    dc_ptr->setValue(data::Minor_axis, m_cc[cc_i]->getValue<double>(data::Minor_axis));
+    dc_ptr->setValue(data::Solidity, m_cc[cc_i]->getValue<double>(data::Solidity));
+    dc_ptr->setValue(data::Symmetry, symmetry);
+    dc_ptr->setValue(data::Perimeter, m_cc[cc_i]->getValue<double>(data::Perimeter));
+    double outputValue = 0.0;
+    dc_ptr->setValue(data::OutputValue, outputValue);
+
     m_track.frame_no = m_frameNum;
-    m_track.centroid = m_connectedComponents[cc_number]->getValue<cv::Point>(data::Centroid);
+    m_track.centroid = m_centroid;
     m_trackerList.push_back(m_track);
 }
 
@@ -219,5 +183,11 @@ void ObjectFinder::reset() {
 }
 
 ObjectFinder::ObjectFinder() {
-    m_connectedComponents.setDataFlags(0xffff);
+    m_cc.setDataFlags(data::AllFlags);
 }
+
+void ObjectFinder::setImages(const cv::Mat &raw, const cv::Mat &processed) {
+    m_rawImg = &raw;
+    m_processedImg = &processed;
+}
+

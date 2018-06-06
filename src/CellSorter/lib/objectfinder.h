@@ -20,8 +20,7 @@ public:
 
     unsigned long cleanObjects(Experiment& e);
 
-    void setRawImage(const cv::Mat& image);
-    void setProcessedImage(const cv::Mat& image);
+    void setImages(const cv::Mat& raw, const cv::Mat& processed);
 
     void setConditions(const Experiment& experiment);
 
@@ -37,17 +36,18 @@ private:
     int m_frameNum = 0;
     bool m_newObject = false;
     int m_numObjects = 0;
-    long m_dataFlags = 0;
+    unsigned long m_dataFlags = 0;
     double m_dist;
     double m_distThreshold;
-    int m_countThreshold = 25;
     cv::Point m_centroid;
-    DataContainer m_connectedComponents;
+    int m_countThreshold = 25;
+    DataContainer m_cc;
 
     std::vector<std::function<bool (const DataContainer*)>> m_conditions;
 
     std::pair<double, Tracker> findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects);
-    void writeToDataVector(const bool& newObject, const int& cc_number, Experiment& experiment);
+    void writeToDataVector(const int& index, Experiment& experiment);
+
 
 };
 
