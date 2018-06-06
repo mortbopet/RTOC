@@ -1,5 +1,5 @@
-#ifndef RTOC_FOLDERACQUISITION_H
-#define RTOC_FOLDERACQUISITION_H
+#ifndef CELLSORTER_FOLDERACQUISITION_H
+#define CELLSORTER_FOLDERACQUISITION_H
 
 #include <QDir>
 #include <QStringList>
@@ -8,6 +8,7 @@
 #include "opencv/cv.hpp"
 
 #include "../lib/framefinder.h"
+
 
 class FolderAcquisition {
 public:
@@ -25,6 +26,8 @@ private:
     int m_nImages;
     QDir m_dir;
     QFileInfoList m_imageFileList;
+
 };
 
-#endif  // RTOC_FOLDERACQUISITION_H
+
+#endif //CELLSORTER_FOLDERACQUISITION_H

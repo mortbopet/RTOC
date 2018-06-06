@@ -1,5 +1,5 @@
-#ifndef RTOC_PROCESS_H
-#define RTOC_PROCESS_H
+#ifndef CELLSORTER_PROCESS_H
+#define CELLSORTER_PROCESS_H
 
 #include <cmath>
 #include <cstdint>
@@ -323,4 +323,4 @@ void serialize(Archive& ar, processContainerPtr& g, const unsigned int version) 
 }  // namespace serialization
 }  // namespace boost
 
-#endif  // RTOC_PROCESS_H
+#endif  // CELLSORTER_PROCESS_H
