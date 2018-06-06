@@ -32,7 +32,6 @@ public:
 
     void loadImagesFromText();
     void setBG(const cv::Mat& bg);
-    void selectBG();
     void runProcesses();
     void runAnalyzer(Setup setup);
     void writeImages(bool waitForFinish = true);
@@ -49,16 +48,11 @@ public:
     }
 
     void findObjects();
-    void cleanObjects();
 
     void exportExperiment(const std::string& path);
 
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);
-    bool storeData(const std::string& path);
-
-    void showImg(const int& delay);
-    static void showImg(const cv::Mat& img, const int& delay);
 
     long getSetupDataFlags();
 

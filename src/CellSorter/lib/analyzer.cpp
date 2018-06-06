@@ -134,7 +134,7 @@ void Analyzer::runAnalyzer(Setup setup) {
         }
 
         if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
-            m_bg = m_img;
+            m_img.copyTo(m_bg);
         } else {
             m_experiment.raw.push(m_img.clone());
             if (m_setup.runProcessing) {
@@ -145,6 +145,7 @@ void Analyzer::runAnalyzer(Setup setup) {
         }
     }
 }
+
 /**
  * @brief Saves current images in rawBuffer and processed to disk
  * @param setup
@@ -219,88 +220,6 @@ void Analyzer::findObjects() {
     ASYNC_END
 }
 
-/**
- * @brief Clean Object-vector from objects with insufficient data
- * @details
- *
- * @warning NOT FULLY IMPLEMENTED
- */
-void Analyzer::cleanObjects() {
-    if (m_setup.extractData) {
-        unsigned int count_threshold = 25;
-
-        auto n = m_experiment.data.size();
-        std::vector<bool> remove(n);
-
-        for (unsigned long i = 0; i < n; i++) {
-            CHECK_ASYNC_STOP
-            DataContainer* dc = m_experiment.data[i].get();
-            cv::Rect bb_i = (*dc).front()->getValue<cv::Rect>(data::BoundingBox);
-            cv::Rect bb_o = (*dc).back()->getValue<cv::Rect>(data::BoundingBox);
-            remove.at(i) = (*dc).size() < 25 || ((bb_i.x + bb_i.width) > m_experiment.inlet - 1) ||
-                           ((bb_o.x + bb_o.width) < m_experiment.outlet);
-        }
-
-        /// Following should be part of dependent experiment subclass
-        /// Where subclass type_of_experiment includes the different remove-conditions ig
-        /// __def: remove_cond1():__
-        ///     [thresh = count_threshold](const auto& dc) {
-        ///         return (*dc).size() < thresh;
-        ///     }
-        ///
-        // Remove objects with less than #count_threshold frames
-        m_experiment.data.erase(std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
-                                               [thresh = count_threshold](const auto& dc) {
-                                                   return (*dc).size() < thresh;
-                                               }),
-                                m_experiment.data.end());
-
-        // Remove objects not represented before inlet
-        m_experiment.data.erase(
-            std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
-                           [inlet = m_experiment.inlet](const auto& dc) {
-                               cv::Rect bb_i =
-                                   (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
-                               return ((bb_i.x + bb_i.width) > inlet - 1);
-                           }),
-            m_experiment.data.end());
-
-        // Remove objects not represented after outlet
-        m_experiment.data.erase(
-            std::remove_if(m_experiment.data.begin(), m_experiment.data.end(),
-                           [outlet = m_experiment.outlet](const auto& dc) {
-                               cv::Rect bb_o =
-                                   (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
-                               return ((bb_o.x + bb_o.width) < outlet);
-                           }),
-            m_experiment.data.end());
-    }
-    ASYNC_END
-}
-
-/**
- * @brief function for storing data from experiment
- * @details Stores the contents of `m_experiment.data` to some external file
- *
- * @param path
- * @return
- */
-bool Analyzer::storeData(const std::string& path) {
-    return false;
-}
-
-/// Debug helpers
-void Analyzer::showImg(const int& delay) {
-    cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Display window", m_img);
-    cv::waitKey(delay);
-}
-/// Debug helpers
-void Analyzer::showImg(const cv::Mat& img, const int& delay) {
-    cv::namedWindow("Display window", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Display window", img);
-    cv::waitKey(delay);
-}
 
 /**
  * @brief
