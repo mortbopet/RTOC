@@ -60,6 +60,8 @@ void ExperimentSetup::connectWidgets() {
     connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->asyncImgWrite, &QCheckBox::toggled, [=] { updateCurrentSetup(); });
+    connect(ui->setAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(true); });
+    connect(ui->unsetAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(false); });
 }
 
 ExperimentSetup::~ExperimentSetup() {
@@ -271,4 +273,10 @@ void ExperimentSetup::on_experimentType_currentIndexChanged(int index) {
     } else {
         ui->extractData->setEnabled(true);
     }
+}
+
+void ExperimentSetup::setAllDataFlagsState(bool state) {
+    auto flags = ui->extractData->findChildren<QCheckBox*>();
+    for (const auto& flag : flags)
+        flag->setChecked(state);
 }

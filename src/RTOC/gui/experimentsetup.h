@@ -3,8 +3,8 @@
 
 #include <QWidget>
 
-#include "../lib/setup.h"
 #include "../lib/analyzer.h"
+#include "../lib/setup.h"
 #include "acquisitioninterface.h"
 
 #include "boost/serialization/nvp.hpp"
@@ -60,6 +60,7 @@ private slots:
 private:
     void setToolTips();
     void setupDataOptions();
+    void setAllDataFlagsState(bool state);
     Ui::ExperimentSetup* ui;
 
     Analyzer* m_analyzer;
