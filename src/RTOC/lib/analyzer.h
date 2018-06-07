@@ -34,6 +34,7 @@ public:
     void setBG(const cv::Mat& bg);
     void runProcesses();
     void runAnalyzer(Setup setup);
+    void setup(const Setup& setup);
     void writeImages(bool waitForFinish = true);
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
@@ -86,7 +87,7 @@ private:
 
     Setup m_setup;
 
-    ObjectFinder m_objectFinder;
+    ObjectFinder* m_objectFinder;
 
     bool m_asyncStopAnalyzer = false;  // called externally when analyzer should stop preliminarily
 

@@ -12,6 +12,7 @@ public:
     bool storeProcessed;
     bool asyncImageWrite;
     unsigned long dataFlags = 0;
+    unsigned long conditionFlags = 0;
     std::string rawPrefix;
     std::string processedPrefix;
     std::string outputPath;

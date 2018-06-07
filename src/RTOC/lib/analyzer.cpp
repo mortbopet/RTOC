@@ -148,6 +148,22 @@ void Analyzer::runAnalyzer(Setup setup) {
     }
 }
 
+
+void Analyzer::setup(const Setup& setup) {
+    // Set setup. This will be used other subsequent actions in an analyzer call
+    m_setup = setup;
+
+    // Start image writers if we are doing asynchronous image writing
+    if (m_setup.asyncImageWrite) {
+        writeImages(false);
+    }
+
+    // Set ObjectFinder
+    m_objectFinder = new ObjectFinder(&m_experiment, &m_setup);
+
+}
+
+
 /**
  * @brief Saves current images in rawBuffer and processed to disk
  * @param setup
@@ -180,7 +196,7 @@ void Analyzer::asyncStop() {
 
 void Analyzer::reset() {
     m_experiment.reset();
-    m_objectFinder.reset();
+    m_objectFinder->reset();
 
     m_asyncStopAnalyzer = false;
     m_status = 0;
@@ -208,8 +224,8 @@ void Analyzer::findObjects() {
     while (m_experiment.processed.peek() != nullptr) {
         CHECK_ASYNC_STOP
         if (m_setup.extractData) {
-            m_objectFinder.setImages(m_experiment.raw.peek(), m_experiment.processed.peek());
-            m_objectFinder.findObjects(m_experiment, m_setup);
+            m_objectFinder->setImages(m_experiment.raw.peek(),m_experiment.processed.peek());
+            m_objectFinder->findObjects();
         }
 
         // Pop images from raw and processed to write buffers
@@ -225,7 +241,7 @@ void Analyzer::findObjects() {
     }
 
     if (m_setup.extractData) {
-        m_objectFinder.cleanObjects(m_experiment);
+        m_objectFinder->cleanObjects();
     }
 
     ASYNC_END

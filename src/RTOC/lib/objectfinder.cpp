@@ -1,14 +1,38 @@
 #include "objectfinder.h"
 
+
+// --------------------- ObjectHandler ---------------------
+ObjectHandler::ObjectHandler(Experiment* experiment) : m_experiment(experiment) {}
+
+void ObjectHandler::setup(long handleFlags) {
+    if (FrameCount & handleFlags) {
+        add(frameCount);
+    }
+    if (FrameBeforeInlet & handleFlags) {
+        add(frameBeforeInlet);
+    }
+    if (FrameAfterOutlet & handleFlags) {
+        add(frameAfterOutlet);
+    }
+}
+
+
+// --------------------- ObjectFinder ---------------------
+ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup) : m_experiment(experiment), m_setup(setup) {
+    m_cc.setDataFlags(data::AllFlags);
+    handler = new ObjectHandler(experiment);
+    handler->setup(m_setup->conditionFlags); // set flags
+}
+
 /**
  * @brief Main method of objectfinder
  * @return Count of found objects
  */
-int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
-    if (m_dataFlags != setup.dataFlags) {
-        m_dataFlags = setup.dataFlags;
+int ObjectFinder::findObjects() {
+    if (m_dataFlags != m_setup->dataFlags) {
+        m_dataFlags = m_setup->dataFlags;
     }
-    //
+
     m_numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_cc);
 
     for (int i = 0; i < m_numObjects; i++) {
@@ -28,7 +52,7 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
                 m_track = res.second;
 
                 // Set threshold
-                if (m_centroid.x <= experiment.inlet - 5) {
+                if (m_centroid.x <= m_experiment->inlet - 5) {
                     m_distThreshold = 5.0;  // Should be a settable variable
                 } else {
                     m_distThreshold = 20.0;  // Should be a settable variable
@@ -39,10 +63,14 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
             }
         }
 
-        writeToDataVector(i, experiment);
+        writeToDataVector(i, *m_experiment);
     }
     m_frameNum++;
     return m_numObjects;
+}
+
+bool ObjectFinder::handleObject(const DataContainer& dataContainer) {
+    return handler->invoke_all(&dataContainer);
 }
 
 /**
@@ -50,53 +78,19 @@ int ObjectFinder::findObjects(Experiment& experiment, const Setup& setup) {
  * @param e Experiment
  * @return How many objects that have been removed
  */
-unsigned long ObjectFinder::cleanObjects(Experiment& e) {
-    unsigned long length = e.data.size();
+unsigned long ObjectFinder::cleanObjects() {
+    auto data = &m_experiment->data; // Increase readability
 
-    // Check if object reached outlet
-    e.data.erase(std::remove_if(e.data.begin(), e.data.end(),
-                                [&](const auto& dc) -> bool {
-                                    cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(
-                                        data::BoundingBox);
-                                    return ((bb_o.x + bb_o.width) < e.outlet);
-                                }),
-                 e.data.end());
-    // Check if object found before inlet
-    e.data.erase(std::remove_if(e.data.begin(), e.data.end(),
-                                [&](const auto& dc) -> bool {
-                                    cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(
-                                        data::BoundingBox);
-                                    return ((bb_i.x + bb_i.width) > e.inlet - 1);
-                                }),
-                 e.data.end());
-    // Check if object has more than m_countThreshold
-    e.data.erase(
-        std::remove_if(e.data.begin(), e.data.end(),
-                       [&](const auto& dc) -> bool { return (*dc).size() < m_countThreshold; }),
-        e.data.end());
+    unsigned long length = data->size();    // Get initial count of objects
 
-    return length - e.data.size();
+    // Use erase, remove-if
+    data->erase(std::remove_if(data->begin(), data->end(), [&](const auto& dc) -> bool {
+        return handler->invoke_all(dc.get());
+    }), data->end());
+
+    return length - data->size();   // Return new count of objects
 }
 
-/**
- * @brief
- * @warning NOT REALLY IMPLEMENTED
- * @param experiment
- */
-void ObjectFinder::setConditions(const Experiment& experiment) {
-    m_conditions.emplace_back([&](const DataContainer* dc) -> bool {
-        cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
-        return ((bb_o.x + bb_o.width) < experiment.outlet);
-    });
-
-    m_conditions.emplace_back([&](const DataContainer* dc) -> bool {
-        cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
-        return ((bb_i.x + bb_i.width) > experiment.inlet - 1);
-    });
-
-    m_conditions.emplace_back(
-        [&](const DataContainer* dc) -> bool { return (*dc).size() < m_countThreshold; });
-}
 
 /**
  * @brief
@@ -134,7 +128,7 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
     } else {
         i = m_track.cell_no;
     }
-    assert(i < experiment.data.size());
+    assert(i < experiment.data.size()); // debug
     experiment.data[i]->appendNew();
 
     // Get some data (should be moved)
@@ -184,10 +178,6 @@ void ObjectFinder::reset() {
     m_numObjects = 0;
     m_processedImg = nullptr;
     m_rawImg = nullptr;
-}
-
-ObjectFinder::ObjectFinder() {
-    m_cc.setDataFlags(data::AllFlags);
 }
 
 void ObjectFinder::setImages(const cv::Mat* raw, const cv::Mat* processed) {
