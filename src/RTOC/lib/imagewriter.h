@@ -31,6 +31,7 @@ public:
         m_running = false;
         m_finishedWriting = false;
         m_targetImageCount = -1;
+        m_forceStop = false;
     }
 
     void startWriting(const fs::path& path, const std::string& prefix) {
@@ -51,12 +52,15 @@ public:
             ;
     }
 
+    void forceStop() { m_forceStop = true; }
+
 private:
     void writeThreaded() {
         // Will monitor m_queue until m_run is deasserted
         // When deasserted, m_queue will be emptied
         cv::Mat front;
         bool queueHasValue = false;
+        m_index = 0;
 
         // Monitor queue until
         //  1. targetImageCount has been set (this will be set when the imageWriter is told to stop
@@ -64,6 +68,11 @@ private:
         //  and
         //  2. our index (image count) is equals to the target image count
         while (!(m_targetImageCount >= 0 && m_targetImageCount == m_index)) {
+            if (m_forceStop) {
+                // Halt image writer
+                clearCamel(m_queue);
+                goto finish;
+            }
             // To not create a high-priority thread, we do small thread sleeps to enable OS to
             // schedule our writeThreaded() call as low priority
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -86,11 +95,13 @@ private:
                 // break;
             }
         }
+    finish:
         m_finishedWriting = true;
     }
 
     bool m_finishedWriting = false;
     bool m_running = false;
+    bool m_forceStop = false;
 
     moodycamel::BlockingReaderWriterQueue<cv::Mat> m_queue;
 

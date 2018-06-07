@@ -20,6 +20,7 @@ void Analyzer::stopAnalyzer() {
 #define ASYNC_END_SIDEEFFECT(function) \
     return;                            \
     async_stop:                        \
+    asyncStop();                       \
     reset();                           \
     function();                        \
     return;
@@ -28,6 +29,7 @@ void Analyzer::stopAnalyzer() {
 #define ASYNC_END \
     return;       \
     async_stop:   \
+    asyncStop();  \
     reset();      \
     return;
 
@@ -167,6 +169,13 @@ void Analyzer::writeImages(bool waitForFinish) {
         if (m_setup.storeRaw)
             m_experiment.writeBuffer_raw.finishWriting(m_imageCnt);
     }
+}
+
+void Analyzer::asyncStop() {
+    // stops all objects which are handled by analyzer
+    // stop objectfinder before image writers!
+    m_experiment.writeBuffer_processed.forceStop();
+    m_experiment.writeBuffer_raw.forceStop();
 }
 
 void Analyzer::reset() {
