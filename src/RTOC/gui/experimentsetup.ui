@@ -138,12 +138,8 @@
             <layout class="QGridLayout" name="gridLayout_8">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout_7">
-               <item row="1" column="0">
-                <widget class="QLabel" name="l_rectime">
-                 <property name="text">
-                  <string>Recording time (ms):</string>
-                 </property>
-                </widget>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="fps"/>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="l_fps">
@@ -155,8 +151,40 @@
                <item row="1" column="1">
                 <widget class="QSpinBox" name="rectime"/>
                </item>
-               <item row="2" column="1">
-                <widget class="QSpinBox" name="fps"/>
+               <item row="1" column="0">
+                <widget class="QLabel" name="l_rectime">
+                 <property name="text">
+                  <string>Recording time (ms):</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Inlet/Outlet</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <widget class="QCheckBox" name="outletIsSet">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string>Is set</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="setOutlet">
+                   <property name="text">
+                    <string>Set</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </item>

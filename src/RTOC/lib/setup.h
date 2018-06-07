@@ -4,6 +4,8 @@
 
 #include <string>
 
+#include <utility>
+
 class Setup {
 public:
     bool runProcessing;
@@ -13,6 +15,8 @@ public:
     bool asyncImageWrite;
     unsigned long dataFlags = 0;
     unsigned long conditionFlags = 0;
+    std::pair<int, int> inlet;
+    std::pair<int, int> outlet;
     std::string rawPrefix;
     std::string processedPrefix;
     std::string outputPath;

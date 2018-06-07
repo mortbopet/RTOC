@@ -57,6 +57,8 @@ private slots:
 
     void on_experimentType_currentIndexChanged(int index);
 
+    void on_setOutlet_clicked();
+
 private:
     void setToolTips();
     void setupDataOptions();

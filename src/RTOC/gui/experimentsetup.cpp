@@ -12,6 +12,7 @@
 
 #include "../lib/datacontainer.h"
 #include "experimentrunner.h"
+#include "inletoutletwidget.h"
 #include "ui_experimentrunner.h"
 
 ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent)
@@ -243,6 +244,7 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
+    // SERIALIZE_CHECKBOX(ar, ui->outletIsSet, outletIsSet);
     for (auto dataOption : ui->extractData->findChildren<QCheckBox*>()) {
         bool v = dataOption->isChecked();
         QString name = dataOption->text();
@@ -279,4 +281,36 @@ void ExperimentSetup::setAllDataFlagsState(bool state) {
     auto flags = ui->extractData->findChildren<QCheckBox*>();
     for (const auto& flag : flags)
         flag->setChecked(state);
+}
+
+void ExperimentSetup::on_setOutlet_clicked() {
+    // Get an image from the acquisitor
+    // Check whether the acquisitor has a valid source and is ready
+    bool success = false;
+    m_interface->reset();
+    auto img = m_interface->getNextImage(success);
+    m_interface->reset();
+    if (!success) {
+        QMessageBox::warning(
+            this, "Error",
+            QString("Could not retrieve image from acquisition source. Has a valid acquisition "
+                    "source been set up in the Acquisition tab?"));
+        return;
+    }
+
+    //
+    QImage image = QImage(img.data, img.cols, img.rows, QImage::Format_Grayscale8);
+    InletOutletWidget w(image);
+
+    if (ui->outletIsSet->isChecked()) {
+        // load values
+        w.load(m_currentSetup.inlet, true);
+        w.load(m_currentSetup.outlet, false);
+    }
+
+    if (w.exec() == QDialog::Accepted) {
+        ui->outletIsSet->setChecked(true);
+        m_currentSetup.inlet = std::pair<int, int>(w.inletX, w.inletY);
+        m_currentSetup.outlet = std::pair<int, int>(w.outletX, w.outletY);
+    };
 }
