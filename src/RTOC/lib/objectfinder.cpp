@@ -69,6 +69,45 @@ int ObjectFinder::findObjects() {
     return m_numObjects;
 }
 
+// -------------------------- Concurrent Object Finder --------------------------
+void ObjectFinder::runThreaded() {
+    m_experiment->m_currentProcessingFrame = 0;
+
+    while (true) {
+        if (m_forceStop) {
+            // If we should stop
+            break;
+        }
+
+        if (m_setup->extractData) {
+            // Wait here until images are ready
+            m_experiment->processed.wait_dequeue(m_processedImg);
+            m_experiment->raw.wait_dequeue(m_rawImg);
+
+            // Run ObjectFinder
+            findObjects();
+        }
+
+        // Pop images from raw and processed to write buffers
+        if (m_setup->storeProcessed) {
+            m_experiment->writeBuffer_processed.push(m_experiment->processed.peek()->clone());
+        }
+        if (m_setup->storeRaw)
+            m_experiment->writeBuffer_raw.push(m_experiment->raw.peek()->clone());
+
+        // Pop from original queue
+        m_experiment->processed.pop();
+        m_experiment->raw.pop();
+
+        m_experiment->m_currentProcessingFrame++;
+    }
+
+    if (m_setup->extractData) {
+        cleanObjects();
+    }
+
+}
+
 bool ObjectFinder::handleObject(const DataContainer& dataContainer) {
     return handler->invoke_all(&dataContainer);
 }

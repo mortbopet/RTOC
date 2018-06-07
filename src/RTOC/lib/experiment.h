@@ -28,12 +28,15 @@ public:
     int outlet = 210;
     int cellNum = 0;  // Used for cell registration
 
+    // Queues containing processed and raw images
     moodycamel::BlockingReaderWriterQueue<cv::Mat> processed;
     moodycamel::BlockingReaderWriterQueue<cv::Mat> raw;
 
     // ImageWriters are used for writing images to disk after analyzer is done with the images
     ImageWriter writeBuffer_raw;
     ImageWriter writeBuffer_processed;
+
+    long m_currentProcessingFrame = 0;
 
     double intensity_threshold;
     std::vector<std::unique_ptr<DataContainer>> data;
@@ -44,6 +47,7 @@ public:
         writeBuffer_processed.clear();
         writeBuffer_raw.clear();
         data.clear();
+        m_currentProcessingFrame = 0;
     }
 };
 

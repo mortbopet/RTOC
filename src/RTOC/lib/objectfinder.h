@@ -99,6 +99,8 @@ public:
     ObjectFinder(Experiment* experiment, Setup* setup);
 
     int findObjects();
+    void runThreaded();
+
     bool handleObject(const DataContainer& dataContainer);
 
     unsigned long cleanObjects();
@@ -110,7 +112,11 @@ public:
     Experiment* m_experiment;
     Setup* m_setup;
 
+    void forceStop() { m_forceStop = true; }
+
 private:
+
+
 
     ObjectHandler* handler;
 
@@ -131,6 +137,9 @@ private:
 
     std::pair<double, Tracker> findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects);
     void writeToDataVector(const int& index, Experiment& experiment);
+
+    // Concurrency
+    bool m_forceStop = false;
 };
 
 
