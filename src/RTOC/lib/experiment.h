@@ -2,7 +2,6 @@
 #define EXPERIMENT_H
 
 #include <opencv/cv.hpp>
-#include <queue>
 #include <string>
 #include <vector>
 
@@ -11,6 +10,9 @@
 #include "imagewriter.h"
 
 #include "helper.h"
+
+#define NDEBUG
+#include "../external/readerwriterqueue/readerwriterqueue.h"
 
 /** @brief Struct for each Experiment. Used as a container for parameters.
  * More functions can be created to change those parameters
@@ -25,8 +27,9 @@ public:
     int inlet = 80;
     int outlet = 210;
     int cellNum = 0;  // Used for cell registration
-    std::queue<cv::Mat> processed;
-    std::queue<cv::Mat> raw;
+
+    moodycamel::BlockingReaderWriterQueue<cv::Mat> processed;
+    moodycamel::BlockingReaderWriterQueue<cv::Mat> raw;
 
     // ImageWriters are used for writing images to disk after analyzer is done with the images
     ImageWriter writeBuffer_raw;
@@ -36,8 +39,8 @@ public:
     std::vector<std::unique_ptr<DataContainer>> data;
 
     void reset() {
-        clearQueue(processed);
-        clearQueue(raw);
+        clearCamel(processed);
+        clearCamel(raw);
         writeBuffer_processed.clear();
         writeBuffer_raw.clear();
         data.clear();

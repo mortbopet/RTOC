@@ -69,7 +69,8 @@ void ExperimentRunner::stateChanged(State state) {
             ui->dataextraction->setEnabled(true);
 
             // Setup data extraction toolbar
-            ui->dataProgress->setMaximum(m_analyzer->m_experiment.processed.size() - 1);
+            ui->dataProgress->setMaximum(0);
+            ui->dataProgress->setValue(0);
 
             // Start data extraction
             QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::findObjects);
@@ -143,13 +144,14 @@ void ExperimentRunner::guiUpdateTimerElapsed() {
     }
 
     if (m_state == State::Acquiring) {
-        size_t acquiredImages = m_analyzer->m_experiment.processed.size();
+        size_t acquiredImages = m_analyzer->acquiredImagesCnt();
 
         // Guesstimate current FPS rate
         static int preTime = 0;
         static int preSize = 0;
         double currentFps = ((acquiredImages - preSize) * 1000.0) / (ms - preTime);
         preTime = ms;
+
         preSize = acquiredImages;
 
         if (currentFps > 0) {

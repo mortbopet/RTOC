@@ -6,11 +6,11 @@
 
 #include "opencv/cv.hpp"
 
-#include "tracker.h"
-#include "mathlab.h"
-#include "framefinder.h"
 #include "experiment.h"
+#include "framefinder.h"
+#include "mathlab.h"
 #include "setup.h"
+#include "tracker.h"
 
 class ObjectFinder {
 public:
@@ -20,7 +20,7 @@ public:
 
     unsigned long cleanObjects(Experiment& e);
 
-    void setImages(const cv::Mat& raw, const cv::Mat& processed);
+    void setImages(const cv::Mat* raw, const cv::Mat* processed);
 
     void setConditions(const Experiment& experiment);
 
@@ -43,14 +43,11 @@ private:
     int m_countThreshold = 25;
     DataContainer m_cc;
 
-    std::vector<std::function<bool (const DataContainer*)>> m_conditions;
+    std::vector<std::function<bool(const DataContainer*)>> m_conditions;
 
-    std::pair<double, Tracker> findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects);
+    std::pair<double, Tracker> findNearestObject(const cv::Point& object,
+                                                 const std::vector<Tracker>& listOfObjects);
     void writeToDataVector(const int& index, Experiment& experiment);
-
-
 };
 
-
-
-#endif //RTOC_OBJECTFINDER_H
+#endif  // RTOC_OBJECTFINDER_H

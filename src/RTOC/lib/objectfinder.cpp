@@ -54,19 +54,26 @@ unsigned long ObjectFinder::cleanObjects(Experiment& e) {
     unsigned long length = e.data.size();
 
     // Check if object reached outlet
-    e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool {
-        cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
-        return ((bb_o.x + bb_o.width) < e.outlet);
-    }), e.data.end());
+    e.data.erase(std::remove_if(e.data.begin(), e.data.end(),
+                                [&](const auto& dc) -> bool {
+                                    cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(
+                                        data::BoundingBox);
+                                    return ((bb_o.x + bb_o.width) < e.outlet);
+                                }),
+                 e.data.end());
     // Check if object found before inlet
-    e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool  {
-        cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
-        return ((bb_i.x + bb_i.width) > e.inlet - 1);
-    }), e.data.end());
+    e.data.erase(std::remove_if(e.data.begin(), e.data.end(),
+                                [&](const auto& dc) -> bool {
+                                    cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(
+                                        data::BoundingBox);
+                                    return ((bb_i.x + bb_i.width) > e.inlet - 1);
+                                }),
+                 e.data.end());
     // Check if object has more than m_countThreshold
-    e.data.erase(std::remove_if(e.data.begin(), e.data.end(), [&](const auto& dc) -> bool {
-        return (*dc).size() < m_countThreshold;
-    }), e.data.end());
+    e.data.erase(
+        std::remove_if(e.data.begin(), e.data.end(),
+                       [&](const auto& dc) -> bool { return (*dc).size() < m_countThreshold; }),
+        e.data.end());
 
     return length - e.data.size();
 }
@@ -77,23 +84,18 @@ unsigned long ObjectFinder::cleanObjects(Experiment& e) {
  * @param experiment
  */
 void ObjectFinder::setConditions(const Experiment& experiment) {
-    m_conditions.emplace_back(
-            [&](const DataContainer* dc) -> bool {
-                cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
-                return ((bb_o.x + bb_o.width) < experiment.outlet);
-            });
+    m_conditions.emplace_back([&](const DataContainer* dc) -> bool {
+        cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
+        return ((bb_o.x + bb_o.width) < experiment.outlet);
+    });
+
+    m_conditions.emplace_back([&](const DataContainer* dc) -> bool {
+        cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
+        return ((bb_i.x + bb_i.width) > experiment.inlet - 1);
+    });
 
     m_conditions.emplace_back(
-            [&](const DataContainer* dc) -> bool  {
-                cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
-                return ((bb_i.x + bb_i.width) > experiment.inlet - 1);
-            });
-
-    m_conditions.emplace_back(
-            [&](const DataContainer* dc) -> bool {
-                return (*dc).size() < m_countThreshold;
-            });
-
+        [&](const DataContainer* dc) -> bool { return (*dc).size() < m_countThreshold; });
 }
 
 /**
@@ -101,7 +103,9 @@ void ObjectFinder::setConditions(const Experiment& experiment) {
  * @param listOfObjects
  * @return <distance, Tracker-object>
  */
-std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects) {
+std::pair<double, Tracker>
+ObjectFinder::findNearestObject(const cv::Point& object,
+                                const std::vector<Tracker>& listOfObjects) {
     std::vector<double> d;
     // Calculate distances
     for (const Tracker& cc : listOfObjects) {
@@ -113,8 +117,6 @@ std::pair<double, Tracker> ObjectFinder::findNearestObject(const cv::Point& obje
     std::pair<double, unsigned long> p = mathlab::min<double>(d);
     return {p.first, listOfObjects.at(p.second)};
 }
-
-
 
 /**
  * @brief
@@ -136,10 +138,11 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
     experiment.data[i]->appendNew();
 
     // Get some data (should be moved)
-    double gradientScore = mathlab::gradientScore(*m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox));
-    double symmetry = mathlab::verticalSymmetry(*m_rawImg,
-                                              m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox),
-                                              m_cc[cc_i]->getValue<double>(data::Major_axis));
+    double gradientScore =
+        mathlab::gradientScore(*m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox));
+    double symmetry =
+        mathlab::verticalSymmetry(*m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox),
+                                  m_cc[cc_i]->getValue<double>(data::Major_axis));
 
     auto dc_ptr = (*experiment.data[i]).back();
     dc_ptr->setValue(data::Area, m_cc[cc_i]->getValue<double>(data::Area));
@@ -181,15 +184,13 @@ void ObjectFinder::reset() {
     m_numObjects = 0;
     m_processedImg = nullptr;
     m_rawImg = nullptr;
-
 }
 
 ObjectFinder::ObjectFinder() {
     m_cc.setDataFlags(data::AllFlags);
 }
 
-void ObjectFinder::setImages(const cv::Mat &raw, const cv::Mat &processed) {
-    m_rawImg = &raw;
-    m_processedImg = &processed;
+void ObjectFinder::setImages(const cv::Mat* raw, const cv::Mat* processed) {
+    m_rawImg = raw;
+    m_processedImg = processed;
 }
-

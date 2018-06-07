@@ -25,10 +25,10 @@ void Analyzer::stopAnalyzer() {
     return;
 
 // End statement for a CHECK_ASYNC_STOP function, with no sideeffects
-#define ASYNC_END    \
-    return;          \
-    async_stop:      \
-    reset();         \
+#define ASYNC_END \
+    return;       \
+    async_stop:   \
+    reset();      \
     return;
 
 /**
@@ -136,10 +136,10 @@ void Analyzer::runAnalyzer(Setup setup) {
         if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
             m_img.copyTo(m_bg);
         } else {
-            m_experiment.raw.push(m_img.clone());
+            m_experiment.raw.enqueue(m_img.clone());
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
-                m_experiment.processed.push(m_img.clone());
+                m_experiment.processed.enqueue(m_img.clone());
             }
             m_imageCnt++;
         }
@@ -195,18 +195,20 @@ void Analyzer::resetProcesses() {
 void Analyzer::findObjects() {
     m_currentProcessingFrame = 0;
 
-    while (!m_experiment.processed.empty() && !m_experiment.raw.empty()) {
+    // Consume until queue is empty
+    while (m_experiment.processed.peek() != nullptr) {
         CHECK_ASYNC_STOP
         if (m_setup.extractData) {
-            m_objectFinder.setImages(m_experiment.raw.front(),m_experiment.processed.front());
+            m_objectFinder.setImages(m_experiment.raw.peek(), m_experiment.processed.peek());
             m_objectFinder.findObjects(m_experiment, m_setup);
         }
 
         // Pop images from raw and processed to write buffers
-        if (m_setup.storeProcessed)
-            m_experiment.writeBuffer_processed.push(m_experiment.processed.front());
+        if (m_setup.storeProcessed) {
+            m_experiment.writeBuffer_processed.push(m_experiment.processed.peek()->clone());
+        }
         if (m_setup.storeRaw)
-            m_experiment.writeBuffer_raw.push(m_experiment.raw.front());
+            m_experiment.writeBuffer_raw.push(m_experiment.raw.peek()->clone());
 
         m_experiment.processed.pop();
         m_experiment.raw.pop();
@@ -219,7 +221,6 @@ void Analyzer::findObjects() {
 
     ASYNC_END
 }
-
 
 /**
  * @brief

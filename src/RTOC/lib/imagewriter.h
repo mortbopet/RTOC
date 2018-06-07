@@ -27,9 +27,7 @@ public:
     void push(const cv::Mat& img) { m_queue.enqueue(img.clone()); }
     void clear() {
         // clear queue
-        bool r = true;
-        while (r)
-            r = m_queue.pop();
+        clearCamel(m_queue);
         m_running = false;
         m_finishedWriting = false;
         m_targetImageCount = -1;
