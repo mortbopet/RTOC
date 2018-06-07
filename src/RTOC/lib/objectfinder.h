@@ -18,7 +18,7 @@
 namespace {
 class ObjectHandler {
 public:
-    ObjectHandler(Experiment *experiment);
+    explicit ObjectHandler(Experiment *experiment);
 
     void setup(long handleFlags);
 
@@ -99,13 +99,12 @@ public:
     ObjectFinder(Experiment* experiment, Setup* setup);
 
     int findObjects();
-    void runThreaded();
 
-    bool handleObject(const DataContainer& dataContainer);
+    void startThread();
+
+    bool approveContainer(const DataContainer &dataContainer);
 
     unsigned long cleanObjects();
-
-    void setImages(const cv::Mat* raw, const cv::Mat* processed);
 
     void reset();
 
@@ -116,6 +115,7 @@ public:
 
 private:
 
+    void findObjectsThreaded();
 
 
     ObjectHandler* handler;
@@ -123,8 +123,8 @@ private:
     Tracker m_track;
     std::vector<Tracker> m_trackerList, m_frameTracker;
 
-    const cv::Mat* m_processedImg;
-    const cv::Mat* m_rawImg;
+    cv::Mat m_processedImg;
+    cv::Mat m_rawImg;
     int m_cellNum = 0;
     int m_frameNum = 0;
     bool m_newObject = false;
@@ -139,6 +139,7 @@ private:
     void writeToDataVector(const int& index, Experiment& experiment);
 
     // Concurrency
+    bool m_running = false;
     bool m_forceStop = false;
 };
 

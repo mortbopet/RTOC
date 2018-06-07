@@ -179,7 +179,6 @@ void Analyzer::writeImages(bool waitForFinish) {
         m_experiment.writeBuffer_raw.startWriting(rawPath, m_setup.rawPrefix);
 
     if (waitForFinish) {
-        // Wait for finished. This is NOT done when asynchronous image writing is enabled
         if (m_setup.storeProcessed)
             m_experiment.writeBuffer_processed.finishWriting(m_imageCnt);
         if (m_setup.storeRaw)
@@ -190,8 +189,10 @@ void Analyzer::writeImages(bool waitForFinish) {
 void Analyzer::asyncStop() {
     // stops all objects which are handled by analyzer
     // stop objectfinder before image writers!
+    m_objectFinder->forceStop();
     m_experiment.writeBuffer_processed.forceStop();
     m_experiment.writeBuffer_raw.forceStop();
+    reset();
 }
 
 void Analyzer::reset() {
@@ -218,33 +219,7 @@ void Analyzer::resetProcesses() {
  *
  */
 void Analyzer::findObjects() {
-    m_currentProcessingFrame = 0;
-
-    // Consume until queue is empty
-    while (m_experiment.processed.peek() != nullptr) {
-        CHECK_ASYNC_STOP
-        if (m_setup.extractData) {
-            m_objectFinder->setImages(m_experiment.raw.peek(),m_experiment.processed.peek());
-            m_objectFinder->findObjects();
-        }
-
-        // Pop images from raw and processed to write buffers
-        if (m_setup.storeProcessed) {
-            m_experiment.writeBuffer_processed.push(m_experiment.processed.peek()->clone());
-        }
-        if (m_setup.storeRaw)
-            m_experiment.writeBuffer_raw.push(m_experiment.raw.peek()->clone());
-
-        m_experiment.processed.pop();
-        m_experiment.raw.pop();
-        m_currentProcessingFrame++;
-    }
-
-    if (m_setup.extractData) {
-        m_objectFinder->cleanObjects();
-    }
-
-    ASYNC_END
+    m_objectFinder->startThread();
 }
 
 /**
@@ -351,4 +326,8 @@ void Analyzer::processImage(cv::Mat& img, cv::Mat& bg) {
 
 long Analyzer::getSetupDataFlags() {
     return m_setup.dataFlags;
+}
+
+const Experiment *Analyzer::getExperiment() {
+    return &m_experiment;
 }

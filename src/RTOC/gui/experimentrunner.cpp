@@ -163,7 +163,7 @@ void ExperimentRunner::guiUpdateTimerElapsed() {
         ui->acqCount->setText(QString::number(acquiredImages));
     } else if (m_state == State::StoringImages) {
     } else if (m_state == State::GettingData) {
-        int currentFrame = m_analyzer->m_experiment.m_currentProcessingFrame;
+        long currentFrame = m_analyzer->getExperiment()->m_currentProcessingFrame;
         ui->dataProgress->setValue(currentFrame);
         ui->processImageN->setText(QString::number(currentFrame));
     }

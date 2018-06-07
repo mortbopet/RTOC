@@ -33,7 +33,7 @@ int ObjectFinder::findObjects() {
         m_dataFlags = m_setup->dataFlags;
     }
 
-    m_numObjects = mathlab::regionProps(*m_processedImg, 0xffff, m_cc);
+    m_numObjects = mathlab::regionProps(m_processedImg, 0xffff, m_cc);
 
     for (int i = 0; i < m_numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -70,45 +70,70 @@ int ObjectFinder::findObjects() {
 }
 
 // -------------------------- Concurrent Object Finder --------------------------
-void ObjectFinder::runThreaded() {
-    m_experiment->m_currentProcessingFrame = 0;
+void ObjectFinder::findObjectsThreaded() {
+    auto waitTime = std::chrono::microseconds(1);
+    bool pImg_loaded;
+    bool rImg_loaded;
 
     while (true) {
         if (m_forceStop) {
-            // If we should stop
-            break;
+            // If asyncStop is invoked, we can't promise anything on the data
+            m_experiment->data.clear();
+            goto finish;
+        }
+        // Try to dequeue images
+        pImg_loaded = m_experiment->processed.wait_dequeue_timed(m_processedImg, waitTime);
+        rImg_loaded = m_experiment->raw.wait_dequeue_timed(m_rawImg, waitTime);
+        if (pImg_loaded && rImg_loaded) {
+            if (m_setup->extractData) {
+                findObjects();
+            }
+
+            // Done using them Pop images from raw and processed to write buffers
+            if (m_setup->storeProcessed) {
+                m_experiment->writeBuffer_processed.push(m_experiment->processed.peek());
+            }
+            if (m_setup->storeRaw) {
+                m_experiment->writeBuffer_raw.push(m_experiment->raw.peek());
+            }
+
+            // Pop from original queue
+            m_experiment->processed.pop();
+            m_experiment->raw.pop();
+
+            m_experiment->m_currentProcessingFrame++;
+        } else {
+            // If images are not found, what then!?
         }
 
-        if (m_setup->extractData) {
-            // Wait here until images are ready
-            m_experiment->processed.wait_dequeue(m_processedImg);
-            m_experiment->raw.wait_dequeue(m_rawImg);
-
-            // Run ObjectFinder
-            findObjects();
-        }
-
-        // Pop images from raw and processed to write buffers
-        if (m_setup->storeProcessed) {
-            m_experiment->writeBuffer_processed.push(m_experiment->processed.peek()->clone());
-        }
-        if (m_setup->storeRaw)
-            m_experiment->writeBuffer_raw.push(m_experiment->raw.peek()->clone());
-
-        // Pop from original queue
-        m_experiment->processed.pop();
-        m_experiment->raw.pop();
-
-        m_experiment->m_currentProcessingFrame++;
     }
 
+/*
+ * Cleaning up before closing thread
+ */
+finish:
     if (m_setup->extractData) {
         cleanObjects();
     }
-
+    m_running = false;
 }
 
-bool ObjectFinder::handleObject(const DataContainer& dataContainer) {
+
+void ObjectFinder::startThread() {
+    if (!m_running) {
+        m_running = true;
+
+        // Setup last parameters before starting thread
+        if (m_dataFlags != m_setup->dataFlags) {
+            m_dataFlags = m_setup->dataFlags;
+        }
+        m_experiment->m_currentProcessingFrame = 0;
+        std::thread t(&ObjectFinder::findObjectsThreaded, this);
+        t.detach();
+    }
+}
+
+bool ObjectFinder::approveContainer(const DataContainer &dataContainer) {
     return handler->invoke_all(&dataContainer);
 }
 
@@ -172,9 +197,9 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
 
     // Get some data (should be moved)
     double gradientScore =
-        mathlab::gradientScore(*m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox));
+        mathlab::gradientScore(m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox));
     double symmetry =
-        mathlab::verticalSymmetry(*m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox),
+        mathlab::verticalSymmetry(m_rawImg, m_cc[cc_i]->getValue<cv::Rect>(data::BoundingBox),
                                   m_cc[cc_i]->getValue<double>(data::Major_axis));
 
     auto dc_ptr = (*experiment.data[i]).back();
@@ -215,11 +240,7 @@ void ObjectFinder::reset() {
     m_frameNum = 0;
     m_newObject = false;
     m_numObjects = 0;
-    m_processedImg = nullptr;
-    m_rawImg = nullptr;
+    m_processedImg.release();
+    m_rawImg.release();
 }
 
-void ObjectFinder::setImages(const cv::Mat* raw, const cv::Mat* processed) {
-    m_rawImg = raw;
-    m_processedImg = processed;
-}

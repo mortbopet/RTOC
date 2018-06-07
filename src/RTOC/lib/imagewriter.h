@@ -24,7 +24,7 @@ class ImageWriter {
 public:
     ImageWriter() = default;
 
-    void push(const cv::Mat& img) { m_queue.enqueue(img.clone()); }
+    void push(cv::Mat* img) { m_queue.enqueue(img->clone()); }
     void clear() {
         // clear queue
         clearCamel(m_queue);
@@ -95,8 +95,10 @@ private:
                 // break;
             }
         }
+
     finish:
         m_finishedWriting = true;
+        m_running = false;
     }
 
     bool m_finishedWriting = false;

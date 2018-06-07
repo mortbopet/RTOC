@@ -57,7 +57,8 @@ public:
 
     long getSetupDataFlags();
 
-    Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
+    const Experiment* getExperiment();
+
     cv::Mat m_img;
     cv::Mat m_bg;
     int m_currentProcessingFrame;
@@ -88,6 +89,7 @@ private:
     Setup m_setup;
 
     ObjectFinder* m_objectFinder;
+    Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
 
     bool m_asyncStopAnalyzer = false;  // called externally when analyzer should stop preliminarily
 
