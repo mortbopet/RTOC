@@ -5,7 +5,6 @@
 #include <chrono>
 
 #include <QDebug>
-#include <QSplashScreen>
 
 int main(int argc, char** argv) {
     Q_INIT_RESOURCE(icons);
@@ -17,6 +16,10 @@ int main(int argc, char** argv) {
     }
 
     MainWindow window(projectFileName);
+
+    QCoreApplication::setApplicationName("RTOC");
+    window.setWindowTitle(QCoreApplication::applicationName());
+
     window.show();
 
     return a.exec();

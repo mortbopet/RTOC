@@ -124,6 +124,8 @@ void ExperimentRunner::stateChanged(State state) {
             ui->processImageN->setText(ui->acqCount->text());
 
             ui->infoLabel->setText("Finished experiment");
+            setWindowTitle("Finished experiment");
+
             // Change the button box to be in a "finalized" state, because we can only exit the
             // window now
             ui->buttonBox->button(QDialogButtonBox::Abort)->setText("Close window");
