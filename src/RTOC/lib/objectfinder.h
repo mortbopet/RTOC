@@ -18,7 +18,7 @@
 namespace {
 class ObjectHandler {
 public:
-    explicit ObjectHandler(Experiment *experiment, unsigned long conditionFlags);
+    explicit ObjectHandler(Experiment *experiment, unsigned long conditionFlags = Conditions::AllConditions);
 
 
 
@@ -57,7 +57,8 @@ public:
     enum Conditions {
         FrameCount = 1 << 0,
         FrameBeforeInlet = 1 << 1,
-        FrameAfterOutlet = 1 << 2
+        FrameAfterOutlet = 1 << 2,
+        AllConditions = 0x7
     };
 
 

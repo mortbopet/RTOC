@@ -2,7 +2,7 @@
 
 
 // --------------------- ObjectHandler ---------------------
-ObjectHandler::ObjectHandler(Experiment* experiment, unsigned long conditionFlags) : m_experiment(experiment) {
+ObjectHandler::ObjectHandler(Experiment* experiment, unsigned long conditionFlags) : m_experiment(experiment), m_conditionFlags(conditionFlags) {
     m_conditionFlags = conditionFlags;
     setup();
 }
@@ -22,8 +22,8 @@ void ObjectHandler::setup() {
 
 // --------------------- ObjectFinder ---------------------
 ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup) : m_experiment(experiment), m_setup(setup) {
-    m_cc.setDataFlags(data::AllFlags);
-    handler = new ObjectHandler(experiment, setup->conditionFlags);
+    m_cc.setDataFlags(data::AllFlags);      // Initialize ConnectedComponents-DataContainer
+    handler = new ObjectHandler(experiment);
 }
 
 /**
@@ -118,11 +118,11 @@ void ObjectFinder::findObjectsThreaded() {
             if (m_setup->storeRaw) {
                 m_experiment->writeBuffer_raw.push(m_rawImg);
             }
-
+            /*
             // Pop from original queue
             m_experiment->processed.pop();
             m_experiment->raw.pop();
-
+            */
             m_experiment->m_currentProcessingFrame++;
         } else {
             // A set of raw and processed images are not yet ready, check again
