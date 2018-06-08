@@ -235,7 +235,7 @@ void ExperimentSetup::on_setExperimentPath_clicked() {
 }
 
 template <class Archive>
-void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
+void ExperimentSetup::serialize(Archive& ar, const unsigned int version) {
     SERIALIZE_CHECKBOX(ar, ui->storeRaw, storeRaw);
     SERIALIZE_CHECKBOX(ar, ui->storeProcessed, storeProcessed);
     SERIALIZE_COMBOBOX(ar, ui->experimentType, experimentType);
@@ -244,7 +244,6 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
-    // SERIALIZE_CHECKBOX(ar, ui->outletIsSet, outletIsSet);
     for (auto dataOption : ui->extractData->findChildren<QCheckBox*>()) {
         bool v = dataOption->isChecked();
         QString name = dataOption->text();
@@ -252,6 +251,9 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) const {
         ar& boost::serialization::make_nvp(name.toStdString().c_str(), v);
         dataOption->setChecked(v);
     }
+
+    SERIALIZE_CHECKBOX(ar, ui->inletOutletIsSet, inletOutletIsSet);
+    ar& boost::serialization::make_nvp("m_currentSetup", m_currentSetup);
 }
 
 EXPLICIT_INSTANTIATE_XML_ARCHIVE(ExperimentSetup)
@@ -302,14 +304,14 @@ void ExperimentSetup::on_setOutlet_clicked() {
     QImage image = QImage(img.data, img.cols, img.rows, QImage::Format_Grayscale8);
     InletOutletWidget w(image);
 
-    if (ui->outletIsSet->isChecked()) {
+    if (ui->inletOutletIsSet->isChecked()) {
         // load values
         w.load(m_currentSetup.inlet, true);
         w.load(m_currentSetup.outlet, false);
     }
 
     if (w.exec() == QDialog::Accepted) {
-        ui->outletIsSet->setChecked(true);
+        ui->inletOutletIsSet->setChecked(true);
         m_currentSetup.inlet = std::pair<int, int>(w.inletX, w.inletY);
         m_currentSetup.outlet = std::pair<int, int>(w.outletX, w.outletY);
     };

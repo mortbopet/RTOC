@@ -5,6 +5,7 @@
 
 #include <QGraphicsEllipseItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QScrollBar>
 
 QPointF InletOutletScene::keepInRect(QPointF pos) {
     auto rect = sceneRect();
@@ -110,7 +111,7 @@ InletOutletWidget::InletOutletWidget(const QImage& image, QWidget* parent)
     m_scene->addPixmap(QPixmap::fromImage(image));
     m_scene->setSceneRect(image.rect());
 
-    ui->graphicsView->setMinimumSize(image.size());
+    ui->graphicsView->setMinimumSize(image.size() * 1.1);
 
     connect(m_scene, &InletOutletScene::pointMoved, this, &InletOutletWidget::setPointText);
     connect(m_scene, &InletOutletScene::unlockButtons, this, &InletOutletWidget::unlockButtons);
@@ -121,6 +122,7 @@ InletOutletWidget::InletOutletWidget(const QImage& image, QWidget* parent)
 void InletOutletWidget::load(const std::pair<int, int>& p, bool inletOrOutlet) {
     auto state = inletOrOutlet ? State::setInlet : State::setOutlet;
     m_scene->load(state, QPointF(p.first, p.second));
+    unlockButtons();
 }
 
 InletOutletWidget::~InletOutletWidget() {

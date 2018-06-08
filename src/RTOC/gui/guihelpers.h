@@ -15,11 +15,17 @@ int GetIndexOfItem(const QComboBox& box, const QVariant& item);
 
 // To have template definitions of widget serializers in .cpp file, we need to explicitely
 // instantiate for the required archives (in our case, xml archives)
-#define EXPLICIT_INSTANTIATE_XML_ARCHIVE(classname)                   \
+#define EXPLICIT_INSTANTIATE_CONST_XML_ARCHIVE(classname)             \
     template void classname::serialize<boost::archive::xml_iarchive>( \
         boost::archive::xml_iarchive&, const unsigned int) const;     \
     template void classname::serialize<boost::archive::xml_oarchive>( \
         boost::archive::xml_oarchive&, const unsigned int) const;
+
+#define EXPLICIT_INSTANTIATE_XML_ARCHIVE(classname)                   \
+    template void classname::serialize<boost::archive::xml_iarchive>( \
+        boost::archive::xml_iarchive&, const unsigned int);           \
+    template void classname::serialize<boost::archive::xml_oarchive>( \
+        boost::archive::xml_oarchive&, const unsigned int);
 
 // Serialization macros for various GUI types to load/store gui state
 #define SERIALIZE_CHECKBOX(ar, o, name) \
@@ -63,6 +69,12 @@ inline void load(Archive& ar, QString& so, const unsigned int) {
 template <class Archive>
 inline void serialize(Archive& ar, QString& s, const unsigned int file_version) {
     boost::serialization::split_free(ar, s, file_version);
+}
+
+template <class Archive, typename T1, typename T2>
+inline void serialize(Archive& ar, std::pair<T1, T2>& s, const unsigned int file_version) {
+    ar& make_nvp("first", s.first);
+    ar& make_nvp("second", s.second);
 }
 
 }  // namespace serialization

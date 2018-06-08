@@ -258,4 +258,4 @@ void Configurator::serialize(Archive& ar, const unsigned int version) const {
     ar& boost::serialization::make_nvp("imagedisplayerwidget", *m_imagedisplayer);
 }
 
-EXPLICIT_INSTANTIATE_XML_ARCHIVE(Configurator)
+EXPLICIT_INSTANTIATE_CONST_XML_ARCHIVE(Configurator)

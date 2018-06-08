@@ -167,7 +167,7 @@ void MainWindow::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_CHECKBOX(ar, ui->enableFF, EnableFrameFinder);
 }
 
-EXPLICIT_INSTANTIATE_XML_ARCHIVE(MainWindow)
+EXPLICIT_INSTANTIATE_CONST_XML_ARCHIVE(MainWindow)
 
 void MainWindow::loadProjectFile(const QString& filename) {
     if (!filename.isNull()) {
