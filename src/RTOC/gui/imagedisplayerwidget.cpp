@@ -46,6 +46,9 @@ ImageDisplayerWidget::ImageDisplayerWidget(QWidget* parent)
     connect(&m_directoryIndexingWatcher, &QFutureWatcher<void>::finished, this,
             &ImageDisplayerWidget::directoryIndexingFinished);
 
+    // Set default image text
+    ui->image->setText("Please set an image folder path");
+
     // Initialize
     reset();
 }
@@ -99,6 +102,7 @@ void ImageDisplayerWidget::refreshImage() {
 }
 
 void ImageDisplayerWidget::displayImage(int index) {
+    ui->image->setText("");
     // display image at index from the current selected directory
     if (!m_imageFileList.isEmpty() && m_imageFileList.size() > index) {
         if (m_analyzer != nullptr) {
@@ -210,7 +214,7 @@ void ImageDisplayerWidget::on_ips_editingFinished() {
     m_playTimer.setInterval(interval);
     m_playTimer.start();
 
-    ui->ips->clearFocus(); // remove focus from spinbox after edit
+    ui->ips->clearFocus();  // remove focus from spinbox after edit
 }
 
 void ImageDisplayerWidget::on_setPath_clicked() {
