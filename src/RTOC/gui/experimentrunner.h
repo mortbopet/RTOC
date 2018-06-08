@@ -36,7 +36,7 @@ private slots:
     void on_buttonBox_clicked(QAbstractButton* button);
 
 private:
-    enum class State { Acquiring, StoringImages, GettingData, StoringData, Finished };
+    enum class State { Acquiring, Storing, Finished };
     void stateChanged(State state);
     void checkAnalyzerStatusMessage(const int status) const;
 
@@ -49,9 +49,7 @@ private:
 
     // A future is set for each state change
     QFutureWatcher<void> m_acqFutureWatcher;
-    QFutureWatcher<void> m_storeImageFutureWatcher;
-    QFutureWatcher<void> m_storeDataFutureWatcher;
-    QFutureWatcher<void> m_getDataFutureWatcher;
+    QFutureWatcher<void> m_storeFutureWatcher;
 };
 
 #endif  // EXPERIMENTRUNNER_H

@@ -17,12 +17,8 @@ ExperimentRunner::ExperimentRunner(Analyzer* analyzer, Setup setup, QWidget* par
 
     // Setup future watchers to trigger state switching
     connect(&m_acqFutureWatcher, &QFutureWatcher<void>::finished,
-            [=] { stateChanged(State::GettingData); });
-    connect(&m_getDataFutureWatcher, &QFutureWatcher<void>::finished,
-            [=] { stateChanged(State::StoringData); });
-    connect(&m_storeDataFutureWatcher, &QFutureWatcher<void>::finished,
-            [=] { stateChanged(State::StoringImages); });
-    connect(&m_storeImageFutureWatcher, &QFutureWatcher<void>::finished,
+            [=] { stateChanged(State::Storing); });
+    connect(&m_storeFutureWatcher, &QFutureWatcher<void>::finished,
             [=] { stateChanged(State::Finished); });
 
     // Setup gui update timer - used for querying analyzer for current progress
@@ -57,47 +53,9 @@ void ExperimentRunner::stateChanged(State state) {
             ui->dataextraction->setEnabled(false);
             return;
         }
-        case State::GettingData: {
-            ui->infoLabel->setText("Extracting data from images...");
-
-            // force acqProgressbar to 100%
-            ui->acqProgress->setMaximum(1);
-            ui->acqProgress->setValue(1);
-
-            // disable acquisition view and enable data extraction view
-            ui->acq->setEnabled(false);
-            ui->dataextraction->setEnabled(true);
-
-            // Setup data extraction toolbar
-            ui->dataProgress->setMaximum(0);
-            ui->dataProgress->setValue(0);
-
-            // Start data extraction
-            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::findObjects);
-            m_getDataFutureWatcher.setFuture(future);
-            return;
-        }
-        case State::StoringData: {
-            ui->infoLabel->setText("Storing data to file...");
-            // DATA GENERATION FINISHED
-            // Export experiment data to file - should probably be async as to not block GUI
-            ui->dataProgress->setMaximum(1);
-            ui->dataProgress->setValue(1);
-
-            std::string filename =
-                QDir(QDir(QString::fromStdString(m_setup.outputPath))
-                         .filePath(QString::fromStdString(m_setup.experimentName)))
-                    .filePath("data.someFormat")
-                    .toStdString();
-
-            QFuture<void> future =
-                QtConcurrent::run(m_analyzer, &Analyzer::exportExperiment, filename);
-            m_storeDataFutureWatcher.setFuture(future);
-            return;
-        }
-        case State::StoringImages: {
-            // ACQUISITION FINISHED
-            ui->infoLabel->setText("Storing images to disk...");
+        case State::Storing: {
+            // ACQUISITION FINISHED - wait for analyzer to finish writing data
+            ui->infoLabel->setText("Storing remaining images & data to disk...");
 
             // make sure that the actual value of the acquired images is written
             ui->acqCount->setText(QString::number(m_analyzer->acquiredImagesCnt()));
@@ -105,12 +63,8 @@ void ExperimentRunner::stateChanged(State state) {
             ui->acqProgress->setMaximum(0);
             ui->acqProgress->setValue(0);
 
-            // Start image acquisition. If asynchronous image writing has been enabled, the analyzer
-            // is already storing images. calling writeImages(true) ensures that this call is
-            // joining the ImageWriters with our execution - as in, we wait for the ImageWriters to
-            // finish writing all images from their queues
-            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::writeImages, true);
-            m_storeImageFutureWatcher.setFuture(future);
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::asyncStop);
+            m_storeFutureWatcher.setFuture(future);
             return;
         }
         case State::Finished: {
@@ -161,11 +115,6 @@ void ExperimentRunner::guiUpdateTimerElapsed() {
         }
         // Set current image progress
         ui->acqCount->setText(QString::number(acquiredImages));
-    } else if (m_state == State::StoringImages) {
-    } else if (m_state == State::GettingData) {
-        long currentFrame = m_analyzer->getExperiment()->m_currentProcessingFrame;
-        ui->dataProgress->setValue(currentFrame);
-        ui->processImageN->setText(QString::number(currentFrame));
     }
 }
 
@@ -185,7 +134,7 @@ void ExperimentRunner::on_buttonBox_clicked(QAbstractButton* button) {
     if (m_state != State::Finished) {
         if (button == ui->buttonBox->button(QDialogButtonBox::Abort)) {
             // Stop acquisition and run data processing
-            m_analyzer->stopAnalyzer();
+            stateChanged(State::Storing);
         } else if (button == ui->buttonBox->button(QDialogButtonBox::Cancel)) {
             this->reject();
         }

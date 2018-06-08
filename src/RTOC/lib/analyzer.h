@@ -41,6 +41,7 @@ public:
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
     int acquiredImagesCnt() { return m_imageCnt; }
     void stopAnalyzer();
+    void asyncStop();
     void reset();
     const int getStatus() const { return m_status; }
 
@@ -83,7 +84,6 @@ private:
     int m_imageCnt;
 
     void spinLockWait(int microseconds) const;
-    void asyncStop();
 
     Setup m_setup;
 

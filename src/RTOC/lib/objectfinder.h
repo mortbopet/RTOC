@@ -2,8 +2,8 @@
 #define RTOC_OBJECTFINDER_H
 
 #include <algorithm>
-#include <vector>
 #include <functional>
+#include <vector>
 
 #include "opencv/cv.hpp"
 
@@ -13,41 +13,10 @@
 #include "setup.h"
 #include "tracker.h"
 
-
 // --------------------- ObjectHandler ---------------------
 namespace {
 class ObjectHandler {
-public:
-    explicit ObjectHandler(Experiment *experiment, unsigned long conditionFlags = Conditions::AllConditions);
-
-
-
-    bool invoke_all(const DataContainer *dc) {
-        for (auto &&fn : m_conditionFunctions) {
-            if (fn(this, dc)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-private:
-    // Class members
-    Experiment *m_experiment;
-    unsigned long m_conditionFlags = 0;
-
-    void setup();
-
-    template<typename Function>
-    void add(Function &&fn) {
-        m_conditionFunctions.emplace_back(std::forward<Function>(fn));
-    }
-
-    std::vector<std::function<bool(const ObjectHandler *, const DataContainer *dc)>> m_conditionFunctions;
-
-
-
-// -------------------- Conditions --------------------
+    // -------------------- Conditions --------------------
 public:
     /*
      *  All conditions should have a corresponding enum,
@@ -61,14 +30,12 @@ public:
         AllConditions = 0x7
     };
 
-
 private:
-// Decision parameters
+    // Decision parameters
 
     int m_countThreshold = 25;
 
-
-// Decision methods/functions
+    // Decision methods/functions
 
     /*  Are required to follow the template:
      *  static bool condition(const ObjectHandler* handler, const DataContainer* dc) {
@@ -81,23 +48,51 @@ private:
      *  }
      *
      */
-    static bool frameCount(const ObjectHandler *handler, const DataContainer *dc) {
+    static bool frameCount(const ObjectHandler* handler, const DataContainer* dc) {
         return (*dc).size() < (*handler).m_countThreshold;
     }
 
-    static bool frameBeforeInlet(const ObjectHandler *handler, const DataContainer *dc) {
+    static bool frameBeforeInlet(const ObjectHandler* handler, const DataContainer* dc) {
         auto e = (*handler).m_experiment;
         cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
         return ((bb_i.x + bb_i.width) > e->inlet - 1);
     }
 
-    static bool frameAfterOutlet(const ObjectHandler *handler, const DataContainer *dc) {
+    static bool frameAfterOutlet(const ObjectHandler* handler, const DataContainer* dc) {
         auto e = (*handler).m_experiment;
         cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
         return ((bb_o.x + bb_o.width) < e->outlet);
     }
+    // done
+public:
+    explicit ObjectHandler(Experiment* experiment,
+                           unsigned long conditionFlags = Conditions::AllConditions);
+
+    bool invoke_all(const DataContainer* dc) {
+        for (auto&& fn : m_conditionFunctions) {
+            if (fn(this, dc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+private:
+    // Class members
+    Experiment* m_experiment;
+    unsigned long m_conditionFlags = 0;
+
+    void setup();
+
+    template <typename Function>
+    void add(Function&& fn) {
+        m_conditionFunctions.emplace_back(std::forward<Function>(fn));
+    }
+
+    std::vector<std::function<bool(const ObjectHandler*, const DataContainer* dc)>>
+        m_conditionFunctions;
 };
-} // namespace
+}  // namespace
 
 // --------------------- ObjectFinder ---------------------
 class ObjectFinder {
@@ -109,7 +104,7 @@ public:
     void startThread();
     void waitForThreadToFinish(int targetImageCount);
 
-    bool approveContainer(const DataContainer &dataContainer);
+    bool approveContainer(const DataContainer& dataContainer);
 
     unsigned long cleanObjects();
 
@@ -121,9 +116,7 @@ public:
     void forceStop() { m_forceStop = true; }
 
 private:
-
     void findObjectsThreaded();
-
 
     ObjectHandler* handler;
 
@@ -142,7 +135,8 @@ private:
     cv::Point m_centroid;
     DataContainer m_cc;
 
-    std::pair<double, Tracker> findNearestObject(const cv::Point& object, const std::vector<Tracker>& listOfObjects);
+    std::pair<double, Tracker> findNearestObject(const cv::Point& object,
+                                                 const std::vector<Tracker>& listOfObjects);
     void writeToDataVector(const int& index, Experiment& experiment);
 
     // Concurrency
@@ -151,12 +145,5 @@ private:
     bool m_forceStop = false;
     bool m_finishedWriting;
 };
-
-
-
-
-
-
-
 
 #endif  // RTOC_OBJECTFINDER_H
