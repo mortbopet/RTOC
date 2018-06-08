@@ -61,7 +61,6 @@ public:
 
     cv::Mat m_img;
     cv::Mat m_bg;
-    int m_currentProcessingFrame;
 
     // Serialization function for project storage
     template <class Archive>
