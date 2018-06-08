@@ -61,6 +61,8 @@ void InletOutletScene::setPoint(QGraphicsEllipseItem** i, const QPointF& p, Qt::
     } else {
         (*i)->setVisible(true);
         (*i)->setPos(p);
+        (*i)->setPen(QPen(c, 3, Qt::SolidLine));
+        (*i)->setBrush(c);
     }
 
     if (m_state == State::setInlet || m_state == State::setOutlet) {
@@ -73,7 +75,8 @@ void InletOutletScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     auto pos = keepInRect(event->scenePos());
 
     if (m_state == State::setInlet || m_state == State::setOutlet) {
-        setPoint(&mousePoint, pos, Qt::yellow);
+        auto c = m_state == State::setInlet ? Qt::green : Qt::red;
+        setPoint(&mousePoint, pos, c);
     } else {
         if (mousePoint)
             mousePoint->setVisible(false);
