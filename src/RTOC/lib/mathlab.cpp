@@ -182,7 +182,8 @@ double gradientScore(const cv::Mat& img, const cv::Rect& roi) {
 double verticalSymmetry(const cv::Mat& img, const cv::Rect& roi, const double& majorAxisLength) {
     if ((roi.x > 0 && (roi.x + roi.width) < img.cols) && (roi.y > 0 && roi.y + roi.width < img.rows)) {
         // Load image from ROI
-        cv::Mat temp = cv::Mat(img, roi);
+        cv::Mat temp;
+        img(roi).copyTo(temp);
         // Get min/max values
         double tMin;
         double tMax;
