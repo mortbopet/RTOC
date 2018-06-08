@@ -111,15 +111,19 @@ void Analyzer::spinLockWait(int micros) const {
     };
 }
 
-void Analyzer::runAnalyzer(Setup setup) {
+void Analyzer::runAnalyzer(const Setup& s) {
     reset();
 
     // Set setup. This will be used other subsequent actions in an analyzer call
-    m_setup = setup;
+    setup(s);
 
     // Start image writers if we are doing asynchronous image writing
     if (m_setup.asyncImageWrite) {
         writeImages(false);
+    }
+    // Start objectFinder if we are extracting data
+    if (m_setup.extractData) {
+        findObjects();
     }
 
     bool success;
@@ -153,13 +157,17 @@ void Analyzer::setup(const Setup& setup) {
     // Set setup. This will be used other subsequent actions in an analyzer call
     m_setup = setup;
 
+    // Setup objectFinder if we are extracting data
+    if (m_setup.extractData) {
+        m_objectFinder = new ObjectFinder(&m_experiment, &m_setup);
+        m_objectFinder->startThread();
+    }
+
     // Start image writers if we are doing asynchronous image writing
     if (m_setup.asyncImageWrite) {
         writeImages(false);
     }
 
-    // Set ObjectFinder
-    m_objectFinder = new ObjectFinder(&m_experiment, &m_setup);
 
 }
 
@@ -179,6 +187,8 @@ void Analyzer::writeImages(bool waitForFinish) {
         m_experiment.writeBuffer_raw.startWriting(rawPath, m_setup.rawPrefix);
 
     if (waitForFinish) {
+        if (m_setup.extractData)
+            m_objectFinder->waitForThreadToFinish(m_imageCnt);
         if (m_setup.storeProcessed)
             m_experiment.writeBuffer_processed.finishWriting(m_imageCnt);
         if (m_setup.storeRaw)
@@ -186,6 +196,11 @@ void Analyzer::writeImages(bool waitForFinish) {
     }
 }
 
+/*
+
+
+
+*/
 void Analyzer::asyncStop() {
     // stops all objects which are handled by analyzer
     // stop objectfinder before image writers!
@@ -197,11 +212,16 @@ void Analyzer::asyncStop() {
 
 void Analyzer::reset() {
     m_experiment.reset();
-    m_objectFinder->reset();
+    // Only reset object if initialized
+    if (m_objectFinder != nullptr) {
+        m_objectFinder->reset();
+    }
 
     m_asyncStopAnalyzer = false;
     m_status = 0;
     m_imageCnt = 0;
+    m_bg.release();
+    m_img.release();
 }
 
 /**

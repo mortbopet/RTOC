@@ -1,5 +1,6 @@
 #include "experimentsetup.h"
 #include "ui_experimentsetup.h"
+#include "ui_experimentrunner.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -10,9 +11,6 @@
 
 #include "guihelpers.h"
 
-#include "../lib/datacontainer.h"
-#include "experimentrunner.h"
-#include "inletoutletwidget.h"
 #include "ui_experimentrunner.h"
 
 ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface, QWidget* parent)

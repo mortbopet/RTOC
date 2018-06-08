@@ -18,9 +18,9 @@
 namespace {
 class ObjectHandler {
 public:
-    explicit ObjectHandler(Experiment *experiment);
+    explicit ObjectHandler(Experiment *experiment, unsigned long conditionFlags);
 
-    void setup(long handleFlags);
+
 
     bool invoke_all(const DataContainer *dc) {
         for (auto &&fn : m_conditionFunctions) {
@@ -32,8 +32,11 @@ public:
     }
 
 private:
-    // Class members - do not edit
+    // Class members
     Experiment *m_experiment;
+    unsigned long m_conditionFlags = 0;
+
+    void setup();
 
     template<typename Function>
     void add(Function &&fn) {
@@ -42,7 +45,9 @@ private:
 
     std::vector<std::function<bool(const ObjectHandler *, const DataContainer *dc)>> m_conditionFunctions;
 
-// -------------------- CONDITIONS --------------------
+
+
+// -------------------- Conditions --------------------
 public:
     /*
      *  All conditions should have a corresponding enum,
@@ -101,6 +106,7 @@ public:
     int findObjects();
 
     void startThread();
+    void waitForThreadToFinish(int targetImageCount);
 
     bool approveContainer(const DataContainer &dataContainer);
 
@@ -139,8 +145,10 @@ private:
     void writeToDataVector(const int& index, Experiment& experiment);
 
     // Concurrency
+    long m_targetImageCount;
     bool m_running = false;
     bool m_forceStop = false;
+    bool m_finishedWriting;
 };
 
 

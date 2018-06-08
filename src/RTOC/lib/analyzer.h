@@ -33,7 +33,7 @@ public:
     void loadImagesFromText();
     void setBG(const cv::Mat& bg);
     void runProcesses();
-    void runAnalyzer(Setup setup);
+    void runAnalyzer(const Setup& setup);
     void setup(const Setup& setup);
     void writeImages(bool waitForFinish = true);
     void resetProcesses();

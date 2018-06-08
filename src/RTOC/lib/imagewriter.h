@@ -24,7 +24,7 @@ class ImageWriter {
 public:
     ImageWriter() = default;
 
-    void push(cv::Mat* img) { m_queue.enqueue(img->clone()); }
+    void push(const cv::Mat& img) { m_queue.enqueue(img.clone()); }
     void clear() {
         // clear queue
         clearCamel(m_queue);
@@ -39,6 +39,7 @@ public:
             m_running = true;
             m_path = path;
             m_prefix = prefix;
+            m_index = 0;
             std::thread t(&ImageWriter::writeThreaded, this);
             t.detach();
         }
@@ -60,14 +61,13 @@ private:
         // When deasserted, m_queue will be emptied
         cv::Mat front;
         bool queueHasValue = false;
-        m_index = 0;
 
         // Monitor queue until
         //  1. targetImageCount has been set (this will be set when the imageWriter is told to stop
         //  executing
         //  and
         //  2. our index (image count) is equals to the target image count
-        while (!(m_targetImageCount >= 0 && m_targetImageCount == m_index)) {
+        while (!(m_targetImageCount >= 0 && m_targetImageCount <= m_index)) {
             if (m_forceStop) {
                 // Halt image writer
                 clearCamel(m_queue);

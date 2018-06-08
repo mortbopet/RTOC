@@ -2,16 +2,19 @@
 
 
 // --------------------- ObjectHandler ---------------------
-ObjectHandler::ObjectHandler(Experiment* experiment) : m_experiment(experiment) {}
+ObjectHandler::ObjectHandler(Experiment* experiment, unsigned long conditionFlags) : m_experiment(experiment) {
+    m_conditionFlags = conditionFlags;
+    setup();
+}
 
-void ObjectHandler::setup(long handleFlags) {
-    if (FrameCount & handleFlags) {
+void ObjectHandler::setup() {
+    if (FrameCount & m_conditionFlags) {
         add(frameCount);
     }
-    if (FrameBeforeInlet & handleFlags) {
+    if (FrameBeforeInlet & m_conditionFlags) {
         add(frameBeforeInlet);
     }
-    if (FrameAfterOutlet & handleFlags) {
+    if (FrameAfterOutlet & m_conditionFlags) {
         add(frameAfterOutlet);
     }
 }
@@ -20,12 +23,11 @@ void ObjectHandler::setup(long handleFlags) {
 // --------------------- ObjectFinder ---------------------
 ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup) : m_experiment(experiment), m_setup(setup) {
     m_cc.setDataFlags(data::AllFlags);
-    handler = new ObjectHandler(experiment);
-    handler->setup(m_setup->conditionFlags); // set flags
+    handler = new ObjectHandler(experiment, setup->conditionFlags);
 }
 
 /**
- * @brief Main method of objectfinder
+ * @brief
  * @return Count of found objects
  */
 int ObjectFinder::findObjects() {
@@ -70,31 +72,51 @@ int ObjectFinder::findObjects() {
 }
 
 // -------------------------- Concurrent Object Finder --------------------------
+/**
+ *
+ * @param targetImageCount
+ */
+void ObjectFinder::waitForThreadToFinish(int targetImageCount) {
+    // Set target images that we require to be written to disk and wait for finished image
+    // writing
+    m_targetImageCount = targetImageCount;
+    while (!m_finishedWriting)
+        ;
+}
+
+/**
+ *
+ */
 void ObjectFinder::findObjectsThreaded() {
     auto waitTime = std::chrono::microseconds(1);
-    bool pImg_loaded;
-    bool rImg_loaded;
+    bool pImg_ready;
+    bool rImg_ready;
 
-    while (true) {
+    while (!(m_targetImageCount >= 0 && m_targetImageCount <= m_experiment->m_currentProcessingFrame)) {
         if (m_forceStop) {
             // If asyncStop is invoked, we can't promise anything on the data
             m_experiment->data.clear();
             goto finish;
         }
-        // Try to dequeue images
-        pImg_loaded = m_experiment->processed.wait_dequeue_timed(m_processedImg, waitTime);
-        rImg_loaded = m_experiment->raw.wait_dequeue_timed(m_rawImg, waitTime);
-        if (pImg_loaded && rImg_loaded) {
+        pImg_ready = m_experiment->processed.peek() != nullptr;
+        rImg_ready = m_experiment->raw.peek() != nullptr;
+
+        if (pImg_ready && rImg_ready) {
+            // Images are ready, blocking-wait for load
+            m_experiment->processed.wait_dequeue(m_processedImg);
+            m_experiment->raw.wait_dequeue(m_rawImg);
+
+            // Extract data if set
             if (m_setup->extractData) {
                 findObjects();
             }
 
             // Done using them Pop images from raw and processed to write buffers
             if (m_setup->storeProcessed) {
-                m_experiment->writeBuffer_processed.push(m_experiment->processed.peek());
+                m_experiment->writeBuffer_processed.push(m_processedImg);
             }
             if (m_setup->storeRaw) {
-                m_experiment->writeBuffer_raw.push(m_experiment->raw.peek());
+                m_experiment->writeBuffer_raw.push(m_rawImg);
             }
 
             // Pop from original queue
@@ -103,18 +125,16 @@ void ObjectFinder::findObjectsThreaded() {
 
             m_experiment->m_currentProcessingFrame++;
         } else {
-            // If images are not found, what then!?
+            // A set of raw and processed images are not yet ready, check again
         }
 
-    }
-
-/*
- * Cleaning up before closing thread
- */
+    } // endof while()
+// Cleaning up before closing thread
 finish:
     if (m_setup->extractData) {
         cleanObjects();
     }
+    m_finishedWriting = true;
     m_running = false;
 }
 
@@ -122,6 +142,8 @@ finish:
 void ObjectFinder::startThread() {
     if (!m_running) {
         m_running = true;
+        m_finishedWriting = false;
+        m_targetImageCount = -1;
 
         // Setup last parameters before starting thread
         if (m_dataFlags != m_setup->dataFlags) {
@@ -231,8 +253,6 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
  * Resets ObjectFinder members, prior to new experiment
  */
 void ObjectFinder::reset() {
-    m_track = Tracker();
-
     m_trackerList.clear();
     m_frameTracker.clear();
 

@@ -15,6 +15,10 @@
 
 #include "guihelpers.h"
 
+#include "../lib/datacontainer.h"
+#include "experimentrunner.h"
+#include "inletoutletwidget.h"
+
 enum class ExperimentTypes {
     Acquisition,
     AcquisitionAndProcessing,
