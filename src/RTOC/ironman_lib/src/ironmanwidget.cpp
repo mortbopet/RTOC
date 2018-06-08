@@ -175,4 +175,4 @@ void IronManWidget::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_LINEEDIT(ar, m_ui->configPath, ConfigPath);
 }
 
-EXPLICIT_INSTANTIATE_XML_ARCHIVE(IronManWidget)
+EXPLICIT_INSTANTIATE_CONST_XML_ARCHIVE(IronManWidget)
