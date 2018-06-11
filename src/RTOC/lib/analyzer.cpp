@@ -20,8 +20,7 @@ void Analyzer::stopAnalyzer() {
 #define ASYNC_END_SIDEEFFECT(function) \
     return;                            \
     async_stop:                        \
-    asyncStop();                       \
-    softReset();                       \
+    forceStop();                       \
     function();                        \
     return;
 
@@ -29,8 +28,7 @@ void Analyzer::stopAnalyzer() {
 #define ASYNC_END \
     return;       \
     async_stop:   \
-    asyncStop();  \
-    softReset();  \
+    forceStop();  \
     return;
 
 /**
@@ -220,10 +218,13 @@ void Analyzer::stop() {
 /**
  *
  */
-void Analyzer::asyncStop() {
+void Analyzer::forceStop() {
     // stops all objects which are handled by analyzer
     // stop objectfinder before image writers!
-    m_objectFinder->forceStop();
+    m_asyncStopAnalyzer = true;
+    if (m_objectFinder) {
+        m_objectFinder->forceStop();
+    }
     m_experiment.writeBuffer_processed.forceStop();
     m_experiment.writeBuffer_raw.forceStop();
     softReset();
@@ -241,7 +242,7 @@ void Analyzer::softReset() {
     m_experiment.reset();
 
     // Only reset object if initialized
-    if (m_objectFinder != nullptr) {
+    if (m_objectFinder) {
         m_objectFinder->reset();
     }
 

@@ -106,9 +106,7 @@ void ExperimentSetup::setToolTips() {
         "<nobr>Folder which all experiment related files</nobr> will be written to");
     ui->l_etype->setToolTip(
         "<nobr>Set the experiment type to match</nobr>set experiment-specific parameters");
-    ui->l_fps->setToolTip(
-        "<nobr>Frames per second. This value is used for</nobr> bounding the rate at which "
-        "the acquisition source is requested images.");
+
     ui->l_rectime->setToolTip(
         "<nobr>Stop acquisition after recording time has elapsed.</nobr> Set to 0 to do continuous "
         "acquisition (manual stop of experiment).");

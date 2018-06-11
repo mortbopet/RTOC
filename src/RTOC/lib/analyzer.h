@@ -41,7 +41,7 @@ public:
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);
     int acquiredImagesCnt() { return m_imageCnt; }
     void stopAnalyzer();
-    void asyncStop();
+    void forceStop();
     void stop();
     void softReset();
     void hardReset();
@@ -89,7 +89,7 @@ private:
 
     Setup m_setup;
 
-    ObjectFinder* m_objectFinder;
+    ObjectFinder* m_objectFinder = nullptr;
     Experiment m_experiment;  // CHECK IF THOSE CAN BE PRIVATE
 
     bool m_asyncStopAnalyzer = false;  // called externally when analyzer should stop preliminarily
