@@ -175,6 +175,7 @@ void MainWindow::loadProjectFile(const QString& filename) {
             std::ifstream ifs(filename.toStdString());
             {
                 boost::archive::xml_iarchive ia(ifs);
+                ia >> boost::serialization::make_nvp("configurator", *m_configurator);
                 ia >> boost::serialization::make_nvp("MainWindow", *this);
                 ia >> boost::serialization::make_nvp("analyzer", *m_analyzer);
                 ia >> boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
@@ -207,6 +208,7 @@ void MainWindow::on_actionStore_project_file_triggered() {
             std::ofstream ofs(filename.toStdString());
             {
                 boost::archive::xml_oarchive oa(ofs);
+                oa << boost::serialization::make_nvp("configurator", *m_configurator);
                 oa << boost::serialization::make_nvp("MainWindow", *this);
                 oa << boost::serialization::make_nvp("analyzer", *m_analyzer);
                 oa << boost::serialization::make_nvp("experimentsetup", *m_experimentSetup);
