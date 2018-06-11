@@ -8,6 +8,7 @@
 #include "datacontainer.h"
 #include "framefinder.h"
 #include "imagewriter.h"
+#include "mathlab.h"
 
 #include "helper.h"
 
@@ -28,6 +29,10 @@ public:
 
     int inlet = 80;
     int outlet = 210;
+    mathlab::Line inlet_line;
+    mathlab::Line outlet_line;
+
+
     int cellNum = 0;  // Used for cell registration
 
     // Queues containing processed and raw images
@@ -50,6 +55,13 @@ public:
         writeBuffer_raw.clear();
         data.clear();
         m_currentProcessingFrame = 0;
+    }
+
+    void setInletOutletLines(std::pair<int, int>& inlet, std::pair<int, int>& outlet) {
+        inlet_line.m = -((double) (inlet.first - outlet.first) / (outlet.second - outlet.first));
+        inlet_line.q = (-inlet_line.m) * inlet.first + inlet.second;
+        outlet_line.m = inlet_line.m;
+        outlet_line.q = (-outlet_line.m) * outlet.first + outlet.second;
     }
 };
 

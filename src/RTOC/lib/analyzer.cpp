@@ -161,6 +161,9 @@ void Analyzer::setup(const Setup& setup) {
     // Set setup. This will be used other subsequent actions in an analyzer call
     m_setup = setup;
 
+    // Calculate inlet/outlet lines
+    m_experiment.setInletOutletLines(m_setup.inlet, m_setup.outlet);
+
     // Setup objectFinder if we are extracting data
     if (m_setup.extractData) {
         m_objectFinder = new ObjectFinder(&m_experiment, &m_setup);
