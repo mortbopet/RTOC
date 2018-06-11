@@ -94,9 +94,7 @@ void ObjectFinder::findObjectsThreaded() {
 
     while (!(m_targetImageCount >= 0 && m_targetImageCount <= m_experiment->m_currentProcessingFrame)) {
         if (m_forceStop) {
-            // If asyncStop is invoked, we can't promise anything on the data
-            m_experiment->data.clear();
-            goto finish;
+            goto asyncStop;
         }
         pImg_ready = m_experiment->processed.peek() != nullptr;
         rImg_ready = m_experiment->raw.peek() != nullptr;
@@ -118,23 +116,22 @@ void ObjectFinder::findObjectsThreaded() {
             if (m_setup->storeRaw) {
                 m_experiment->writeBuffer_raw.push(m_rawImg);
             }
-            /*
-            // Pop from original queue
-            m_experiment->processed.pop();
-            m_experiment->raw.pop();
-            */
             m_experiment->m_currentProcessingFrame++;
         } else {
-            // A set of raw and processed images are not yet ready, check again
+            // A set of raw and processed images are not yet ready, so we wait
         }
 
-    } // endof while()
-// Cleaning up before closing thread
-finish:
+    }
+    // All frames analyzed - clean objects that don't meet conditions set in ObjectHandler
     if (m_setup->extractData) {
         cleanObjects();
     }
+    // Save data
+
+
     m_finishedWriting = true;
+// If m_forceStop is invoked, stop without calling cleanObjects()
+asyncStop:
     m_running = false;
 }
 

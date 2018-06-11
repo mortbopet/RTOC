@@ -16,7 +16,7 @@
 // --------------------- ObjectHandler ---------------------
 namespace {
 class ObjectHandler {
-    // -------------------- Conditions --------------------
+    // --------------------- Conditions --------------------
 public:
     /*
      *  All conditions should have a corresponding enum,
@@ -48,22 +48,35 @@ private:
      *  }
      *
      */
+
+    /**
+     * Legibility of found-object based on image-count
+     * @return
+     */
     static bool frameCount(const ObjectHandler* handler, const DataContainer* dc) {
         return (*dc).size() < (*handler).m_countThreshold;
     }
-
+    /**
+     * Legibility of found-object based on whether first frame of object has object before inlet
+     * @return
+     */
     static bool frameBeforeInlet(const ObjectHandler* handler, const DataContainer* dc) {
         auto e = (*handler).m_experiment;
         cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
         return ((bb_i.x + bb_i.width) > e->inlet - 1);
     }
-
+    /**
+     * Legibility of found-object based on whether last frame of object has object after outlet
+     * @return
+     */
     static bool frameAfterOutlet(const ObjectHandler* handler, const DataContainer* dc) {
         auto e = (*handler).m_experiment;
         cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
         return ((bb_o.x + bb_o.width) < e->outlet);
     }
-    // done
+
+
+    // ------------ Class methods and variables ------------
 public:
     explicit ObjectHandler(Experiment* experiment,
                            unsigned long conditionFlags = Conditions::AllConditions);
@@ -94,7 +107,7 @@ private:
 };
 }  // namespace
 
-// --------------------- ObjectFinder ---------------------
+// ---------------------- ObjectFinder ---------------------
 class ObjectFinder {
 public:
     ObjectFinder(Experiment* experiment, Setup* setup);
