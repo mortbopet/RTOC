@@ -13,7 +13,9 @@
 #include "helper.h"
 #include "setup.h"
 
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 #include "../external/readerwriterqueue/readerwriterqueue.h"
 
 namespace {
@@ -69,7 +71,6 @@ private:
 
     int m_index = 0;
     int m_targetImageCount = -1;
-    
 
     void writeThreaded() {
         // Will monitor m_queue until m_run is deasserted
@@ -115,7 +116,6 @@ private:
         m_finishedWriting = true;
         m_running = false;
     }
-
 };
 
 #endif  // IMAGEWRITER_H

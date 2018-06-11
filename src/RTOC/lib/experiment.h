@@ -11,7 +11,9 @@
 
 #include "helper.h"
 
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 #include "../external/readerwriterqueue/readerwriterqueue.h"
 
 /** @brief Struct for each Experiment. Used as a container for parameters.

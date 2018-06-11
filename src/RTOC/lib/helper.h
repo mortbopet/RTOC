@@ -1,7 +1,9 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 #include "../external/readerwriterqueue/readerwriterqueue.h"
 
 // Clear function for std::queue
