@@ -44,6 +44,8 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
     ui->processedPrefix->setValidator(validator);
     ui->experimentName->setValidator(validator);
 
+    ui->rectime->setRange(0, 999999999);
+
     connectWidgets();
 
     // Update current setup to load default GUI values
@@ -60,6 +62,8 @@ void ExperimentSetup::connectWidgets() {
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->setAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(true); });
     connect(ui->unsetAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(false); });
+    connect(ui->rectime, QOverload<int>::of(&QSpinBox::valueChanged),
+            [=] { updateCurrentSetup(); });
 }
 
 ExperimentSetup::~ExperimentSetup() {
@@ -74,6 +78,7 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
+    m_currentSetup.recordingTime = ui->rectime->value();
 
     m_currentSetup.extractData = false;
     m_currentSetup.runProcessing = true;
@@ -109,7 +114,7 @@ void ExperimentSetup::setToolTips() {
 
     ui->l_rectime->setToolTip(
         "<nobr>Stop acquisition after recording time has elapsed.</nobr> Set to 0 to do continuous "
-        "acquisition (manual stop of experiment).");
+        "acquisition");
     ui->experimentName->setToolTip(
         "Experiment name will be used in generation of folder & file names");
 }
@@ -235,6 +240,7 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) {
     SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
+    SERIALIZE_SPINBOX(ar, ui->rectime, recordingTime);
     for (auto dataOption : ui->extractData->findChildren<QCheckBox*>()) {
         bool v = dataOption->isChecked();
         QString name = dataOption->text();

@@ -20,6 +20,7 @@ public:
     bool storeProcessed;
     unsigned long dataFlags = 0;
     unsigned long conditionFlags = 0;
+    unsigned int recordingTime = 0;  // in ms
     std::pair<int, int> inlet;
     std::pair<int, int> outlet;
     std::string rawPrefix;

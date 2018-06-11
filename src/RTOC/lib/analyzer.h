@@ -81,7 +81,6 @@ public:
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 private:
-    void runWithoutObjectFinder();
     void spinLockWait(int microseconds) const;
 
     int m_status = 0;

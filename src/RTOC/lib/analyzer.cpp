@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <chrono>
+#include "../external/timer/timer.h"
 
 void Analyzer::stopAnalyzer() {
     // Sets async stop flag. This flag is checked various places in the different analysis steps. If
@@ -110,45 +110,14 @@ void Analyzer::spinLockWait(int micros) const {
 }
 
 void Analyzer::runAnalyzer(const Setup& s) {
+    Timer t;
     softReset();
 
     // Set setup. This will be used other subsequent actions in an analyzer call
     setup(s);
 
-    // Start objectFinder if we are extracting data
-    if (m_setup.extractData) {
-        bool success;
-        while (true) {
-            m_img = m_imageGetterFunction(success);
-
-            if (!success || m_asyncStopAnalyzer) {
-                m_asyncStopAnalyzer = false;  // reset, such that the same flag can be used to stop
-                                              // further execution steps
-                break;
-            }
-
-            if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
-                // set bg
-                m_bg = m_img.clone();
-            }
-            m_experiment.raw.enqueue(m_img.clone());
-            if (m_setup.runProcessing) {
-                processImage(m_img, m_bg);
-                m_experiment.processed.enqueue(m_img.clone());
-            }
-            m_imageCnt++;
-        }
-
-    } else {
-        // Separate acquisition function for running without object finder. In case of no object
-        // finder, we need to push images directly onto the image writer after processing has
-        // elapsed
-        runWithoutObjectFinder();
-    }
-}
-
-void Analyzer::runWithoutObjectFinder() {
     bool success;
+    t.tic();
     while (true) {
         m_img = m_imageGetterFunction(success);
 
@@ -157,17 +126,29 @@ void Analyzer::runWithoutObjectFinder() {
                                           // further execution steps
             break;
         }
+        if (s.recordingTime != 0 && t.toc() > s.recordingTime) {
+            // Recording time has elapsed, break execution
+            break;
+        }
 
         if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
             // set bg
             m_bg = m_img.clone();
         }
-
-        m_experiment.writeBuffer_raw.push(m_img.clone());
-        if (m_setup.runProcessing) {
-            processImage(m_img, m_bg);
-            m_experiment.writeBuffer_processed.push(m_img.clone());
+        if (m_setup.extractData) {
+            m_experiment.raw.enqueue(m_img.clone());
+            if (m_setup.runProcessing) {
+                processImage(m_img, m_bg);
+                m_experiment.processed.enqueue(m_img.clone());
+            }
+        } else {
+            m_experiment.writeBuffer_raw.push(m_img.clone());
+            if (m_setup.runProcessing) {
+                processImage(m_img, m_bg);
+                m_experiment.writeBuffer_processed.push(m_img.clone());
+            }
         }
+
         m_imageCnt++;
     }
 }
