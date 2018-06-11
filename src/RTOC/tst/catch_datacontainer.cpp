@@ -25,7 +25,9 @@ TEST_CASE("DataContainer Class Test", "[full], [datacontainer]") {
         REQUIRE_THROWS(container[0]->setValue(data::Eccentricity, true));
     }
     SECTION("size/length of container") {}
-    SECTION("clear container") {}
+    SECTION("clear container") {
+
+    }
     SECTION("clear dataFlags") {}
 }
 
@@ -533,3 +535,61 @@ TEST_CASE("typeMap", "[full], [datacontainer]") {
 }
 
 
+TEST_CASE("Vector of unique_ptr of DataContainer", "[full], [datacontainer]") {
+    std::vector<std::unique_ptr<DataContainer>> vec_dc;
+
+    SECTION("Emplace back") {
+        REQUIRE_NOTHROW(vec_dc.emplace_back(new DataContainer(data::AllFlags)));
+        REQUIRE_NOTHROW(vec_dc.emplace_back(new DataContainer(data::AllFlags)));
+    }
+    SECTION("Clear vector with empty DataContainers") {
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+
+        REQUIRE_NOTHROW(vec_dc.clear());
+    }
+    SECTION("Clear vector with non-empty DataContainers with empty DataObjects") {
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc[0]->appendNew();
+
+        REQUIRE_NOTHROW(vec_dc.clear());
+
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc[0]->appendNew();
+        vec_dc[1]->appendNew();
+        vec_dc[0]->appendNew();
+
+        REQUIRE_NOTHROW(vec_dc.clear());
+    }
+    SECTION("Clear vector with non-empty DataContainers with empty DataObjects") {
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc[0]->appendNew();
+        (*vec_dc[0]).back()->setValue(data::Area, 23.5);
+
+        REQUIRE_NOTHROW(vec_dc.clear());
+
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc[0]->appendNew();
+        (*vec_dc[0]).back()->setValue(data::Area, 23.5);
+        vec_dc[1]->appendNew();
+        (*vec_dc[1]).back()->setValue(data::Area, 45.7);
+        vec_dc[0]->appendNew();
+        (*vec_dc[0]).back()->setValue(data::Area, 34.6);
+
+        REQUIRE_NOTHROW(vec_dc.clear());
+        
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc.emplace_back(new DataContainer(data::AllFlags));
+        vec_dc[0]->appendNew();
+        (*vec_dc[0]).back()->setValue(data::ConvexArea, 23.5);
+        vec_dc[1]->appendNew();
+        (*vec_dc[1]).back()->setValue(data::ConvexArea, 45.7);
+        vec_dc[0]->appendNew();
+        (*vec_dc[0]).back()->setValue(data::Eccentricity, 34.6);
+
+        REQUIRE_NOTHROW(vec_dc.clear());
+    }
+
+}
