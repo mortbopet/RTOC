@@ -35,7 +35,7 @@ public:
     void runProcesses();
     void runAnalyzer(const Setup& setup);
     void setup(const Setup& setup);
-    void writeImages(bool waitForFinish = true);
+    void writeImages();
     void resetProcesses();
     void processSingleFrame(cv::Mat& img);
     void processSingleFrame(cv::Mat& img, cv::Mat& bg);

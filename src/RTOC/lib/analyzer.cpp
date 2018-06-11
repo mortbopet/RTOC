@@ -130,16 +130,17 @@ void Analyzer::runAnalyzer(const Setup& s) {
             }
 
             if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
-                m_img.copyTo(m_bg);
-            } else {
-                m_experiment.raw.enqueue(m_img.clone());
-                if (m_setup.runProcessing) {
-                    processImage(m_img, m_bg);
-                    m_experiment.processed.enqueue(m_img.clone());
-                }
-                m_imageCnt++;
+                // set bg
+                m_bg = m_img.clone();
             }
+            m_experiment.raw.enqueue(m_img.clone());
+            if (m_setup.runProcessing) {
+                processImage(m_img, m_bg);
+                m_experiment.processed.enqueue(m_img.clone());
+            }
+            m_imageCnt++;
         }
+
     } else {
         // Separate acquisition function for running without object finder. In case of no object
         // finder, we need to push images directly onto the image writer after processing has
@@ -160,15 +161,16 @@ void Analyzer::runWithoutObjectFinder() {
         }
 
         if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
-            m_img.copyTo(m_bg);
-        } else {
-            m_experiment.writeBuffer_raw.push(m_img.clone());
-            if (m_setup.runProcessing) {
-                processImage(m_img, m_bg);
-                m_experiment.writeBuffer_processed.push(m_img.clone());
-            }
-            m_imageCnt++;
+            // set bg
+            m_bg = m_img.clone();
         }
+
+        m_experiment.writeBuffer_raw.push(m_img.clone());
+        if (m_setup.runProcessing) {
+            processImage(m_img, m_bg);
+            m_experiment.writeBuffer_processed.push(m_img.clone());
+        }
+        m_imageCnt++;
     }
 }
 
@@ -182,15 +184,15 @@ void Analyzer::setup(const Setup& setup) {
         m_objectFinder->startThread();
     }
 
-    // Start image writers if we are doing asynchronous image writing
-    writeImages(false);
+    // Start image writers
+    writeImages();
 }
 
 /**
  * @brief Saves current images in rawBuffer and processed to disk
  * @param setup
  */
-void Analyzer::writeImages(bool waitForFinish) {
+void Analyzer::writeImages() {
     fs::path experimentFolder = fs::path(m_setup.outputPath) / fs::path(m_setup.experimentName);
     fs::path rawPath = experimentFolder / fs::path(m_setup.rawPrefix);
     fs::path processedPath = experimentFolder / fs::path(m_setup.processedPrefix);
@@ -199,21 +201,11 @@ void Analyzer::writeImages(bool waitForFinish) {
         m_experiment.writeBuffer_processed.startWriting(processedPath, m_setup.processedPrefix);
     if (m_setup.storeRaw)
         m_experiment.writeBuffer_raw.startWriting(rawPath, m_setup.rawPrefix);
-
-    if (waitForFinish) {
-        if (m_setup.extractData)
-            m_objectFinder->waitForThreadToFinish(m_imageCnt);
-        if (m_setup.storeProcessed)
-            m_experiment.writeBuffer_processed.finishWriting(m_imageCnt);
-        if (m_setup.storeRaw)
-            m_experiment.writeBuffer_raw.finishWriting(m_imageCnt);
-    }
 }
 
 void Analyzer::stop() {
-    writeImages(true);
-
     // Wait for threads to finish
+    m_asyncStopAnalyzer = true;
     if (m_setup.extractData)
         m_objectFinder->waitForThreadToFinish(m_imageCnt);
     if (m_setup.storeProcessed)

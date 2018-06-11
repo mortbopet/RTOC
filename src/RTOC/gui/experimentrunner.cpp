@@ -56,6 +56,7 @@ void ExperimentRunner::stateChanged(State state) {
         case State::Storing: {
             // ACQUISITION FINISHED - wait for analyzer to finish writing data
             ui->infoLabel->setText("Storing remaining images & data to disk...");
+            ui->buttonBox->button(QDialogButtonBox::Abort)->setEnabled(false);
 
             // make sure that the actual value of the acquired images is written
             ui->acqCount->setText(QString::number(m_analyzer->acquiredImagesCnt()));
@@ -82,6 +83,7 @@ void ExperimentRunner::stateChanged(State state) {
 
             // Change the button box to be in a "finalized" state, because we can only exit the
             // window now
+            ui->buttonBox->button(QDialogButtonBox::Abort)->setEnabled(true);
             ui->buttonBox->button(QDialogButtonBox::Abort)->setText("Close window");
             ui->buttonBox->button(QDialogButtonBox::Cancel)->hide();
 
