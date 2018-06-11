@@ -42,7 +42,9 @@ public:
     int acquiredImagesCnt() { return m_imageCnt; }
     void stopAnalyzer();
     void asyncStop();
-    void reset();
+    void stop();
+    void softReset();
+    void hardReset();
     const int getStatus() const { return m_status; }
 
     void setImageGetterFunction(std::function<cv::Mat&(bool&)> function) {

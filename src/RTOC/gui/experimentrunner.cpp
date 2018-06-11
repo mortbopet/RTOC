@@ -63,7 +63,7 @@ void ExperimentRunner::stateChanged(State state) {
             ui->acqProgress->setMaximum(0);
             ui->acqProgress->setValue(0);
 
-            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::asyncStop);
+            QFuture<void> future = QtConcurrent::run(m_analyzer, &Analyzer::stop);
             m_storeFutureWatcher.setFuture(future);
             return;
         }

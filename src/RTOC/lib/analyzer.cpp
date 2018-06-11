@@ -21,7 +21,7 @@ void Analyzer::stopAnalyzer() {
     return;                            \
     async_stop:                        \
     asyncStop();                       \
-    reset();                           \
+    softReset();                       \
     function();                        \
     return;
 
@@ -30,7 +30,7 @@ void Analyzer::stopAnalyzer() {
     return;       \
     async_stop:   \
     asyncStop();  \
-    reset();      \
+    softReset();  \
     return;
 
 /**
@@ -112,7 +112,7 @@ void Analyzer::spinLockWait(int micros) const {
 }
 
 void Analyzer::runAnalyzer(const Setup& s) {
-    reset();
+    softReset();
 
     // Set setup. This will be used other subsequent actions in an analyzer call
     setup(s);
@@ -196,32 +196,62 @@ void Analyzer::writeImages(bool waitForFinish) {
     }
 }
 
-/*
+void Analyzer::stop() {
+    writeImages(true);
 
+    // Wait for threads to finish
+    if (m_setup.extractData)
+        m_objectFinder->waitForThreadToFinish(m_imageCnt);
+    if (m_setup.storeProcessed)
+        m_experiment.writeBuffer_processed.finishWriting(m_imageCnt);
+    if (m_setup.storeRaw)
+        m_experiment.writeBuffer_raw.finishWriting(m_imageCnt);
 
+    // All done, we can reset
+    softReset();
+}
 
-*/
+/**
+ *
+ */
 void Analyzer::asyncStop() {
     // stops all objects which are handled by analyzer
     // stop objectfinder before image writers!
     m_objectFinder->forceStop();
     m_experiment.writeBuffer_processed.forceStop();
     m_experiment.writeBuffer_raw.forceStop();
-    reset();
+    softReset();
 }
 
-void Analyzer::reset() {
+/**
+ *  Soft reset analyzer
+ *
+ *  The concept is that all classes and workers handle they own reset
+ *  and as analyzer is the operational owner of the classes, it only calls
+ *  there respective reset methods.
+ */
+void Analyzer::softReset() {
+    // Reset connected classes
     m_experiment.reset();
+
     // Only reset object if initialized
     if (m_objectFinder != nullptr) {
         m_objectFinder->reset();
     }
 
+    // Reset Analyzer class
     m_asyncStopAnalyzer = false;
     m_status = 0;
     m_imageCnt = 0;
     m_bg.release();
     m_img.release();
+}
+
+/**
+ *
+ */
+void Analyzer::hardReset() {
+
 }
 
 /**
