@@ -117,20 +117,40 @@ void Analyzer::runAnalyzer(const Setup& s) {
     // Set setup. This will be used other subsequent actions in an analyzer call
     setup(s);
 
-    // Start image writers if we are doing asynchronous image writing
-    if (m_setup.asyncImageWrite) {
-        writeImages(false);
-    }
     // Start objectFinder if we are extracting data
     if (m_setup.extractData) {
-        findObjects();
-    }
+        bool success;
+        while (true) {
+            m_img = m_imageGetterFunction(success);
 
+            if (!success || m_asyncStopAnalyzer) {
+                m_asyncStopAnalyzer = false;  // reset, such that the same flag can be used to stop
+                                              // further execution steps
+                break;
+            }
+
+            if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
+                m_img.copyTo(m_bg);
+            } else {
+                m_experiment.raw.enqueue(m_img.clone());
+                if (m_setup.runProcessing) {
+                    processImage(m_img, m_bg);
+                    m_experiment.processed.enqueue(m_img.clone());
+                }
+                m_imageCnt++;
+            }
+        }
+    } else {
+        // Separate acquisition function for running without object finder. In case of no object
+        // finder, we need to push images directly onto the image writer after processing has
+        // elapsed
+        runWithoutObjectFinder();
+    }
+}
+
+void Analyzer::runWithoutObjectFinder() {
     bool success;
     while (true) {
-        // Wait until we are supposed to get the next image
-        // spinLockWait(100);
-
         m_img = m_imageGetterFunction(success);
 
         if (!success || m_asyncStopAnalyzer) {
@@ -142,16 +162,15 @@ void Analyzer::runAnalyzer(const Setup& s) {
         if (m_bg.cols != m_img.cols || m_bg.rows != m_img.rows) {
             m_img.copyTo(m_bg);
         } else {
-            m_experiment.raw.enqueue(m_img.clone());
+            m_experiment.writeBuffer_raw.push(m_img.clone());
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
-                m_experiment.processed.enqueue(m_img.clone());
+                m_experiment.writeBuffer_processed.push(m_img.clone());
             }
             m_imageCnt++;
         }
     }
 }
-
 
 void Analyzer::setup(const Setup& setup) {
     // Set setup. This will be used other subsequent actions in an analyzer call
@@ -164,13 +183,8 @@ void Analyzer::setup(const Setup& setup) {
     }
 
     // Start image writers if we are doing asynchronous image writing
-    if (m_setup.asyncImageWrite) {
-        writeImages(false);
-    }
-
-
+    writeImages(false);
 }
-
 
 /**
  * @brief Saves current images in rawBuffer and processed to disk
@@ -250,9 +264,7 @@ void Analyzer::softReset() {
 /**
  *
  */
-void Analyzer::hardReset() {
-
-}
+void Analyzer::hardReset() {}
 
 /**
  * @brief Clears the process tree
@@ -378,6 +390,6 @@ long Analyzer::getSetupDataFlags() {
     return m_setup.dataFlags;
 }
 
-const Experiment *Analyzer::getExperiment() {
+const Experiment* Analyzer::getExperiment() {
     return &m_experiment;
 }

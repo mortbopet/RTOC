@@ -81,11 +81,11 @@ public:
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 private:
-    int m_status = 0;
-
-    int m_imageCnt;
-
+    void runWithoutObjectFinder();
     void spinLockWait(int microseconds) const;
+
+    int m_status = 0;
+    int m_imageCnt;
 
     Setup m_setup;
 

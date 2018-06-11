@@ -18,7 +18,6 @@ public:
     bool extractData;
     bool storeRaw;
     bool storeProcessed;
-    bool asyncImageWrite;
     unsigned long dataFlags = 0;
     unsigned long conditionFlags = 0;
     std::pair<int, int> inlet;
@@ -35,7 +34,6 @@ public:
         ar& BOOST_SERIALIZATION_NVP(extractData);
         ar& BOOST_SERIALIZATION_NVP(storeRaw);
         ar& BOOST_SERIALIZATION_NVP(storeProcessed);
-        ar& BOOST_SERIALIZATION_NVP(asyncImageWrite);
         ar& BOOST_SERIALIZATION_NVP(dataFlags);
         ar& BOOST_SERIALIZATION_NVP(conditionFlags);
 

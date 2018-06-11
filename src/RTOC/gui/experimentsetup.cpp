@@ -1,6 +1,6 @@
 #include "experimentsetup.h"
-#include "ui_experimentsetup.h"
 #include "ui_experimentrunner.h"
+#include "ui_experimentsetup.h"
 
 #include <QCheckBox>
 #include <QFileDialog>
@@ -58,7 +58,6 @@ void ExperimentSetup::connectWidgets() {
     connect(ui->experimentPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->processedPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
     connect(ui->rawPrefix, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
-    connect(ui->asyncImgWrite, &QCheckBox::toggled, [=] { updateCurrentSetup(); });
     connect(ui->setAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(true); });
     connect(ui->unsetAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(false); });
 }
@@ -75,12 +74,12 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
-    m_currentSetup.asyncImageWrite = ui->asyncImgWrite->isChecked();
 
     m_currentSetup.extractData = false;
     m_currentSetup.runProcessing = true;
     switch (ui->experimentType->currentData(Qt::UserRole).value<ExperimentTypes>()) {
         case ExperimentTypes::Acquisition: {
+            ui->storeProcessed->setChecked(false);
             m_currentSetup.storeProcessed = false;  // can't store images when we haven't made them!
             m_currentSetup.runProcessing = false;
             break;
@@ -115,9 +114,6 @@ void ExperimentSetup::setToolTips() {
         "acquisition (manual stop of experiment).");
     ui->experimentName->setToolTip(
         "Experiment name will be used in generation of folder & file names");
-    ui->asyncImgWrite->setToolTip(
-        "<nobr>Images will be stored after processing has been applied</nobr> to the image. "
-        "Recommended for long-running experiments where memory may run out.");
 }
 
 bool ExperimentSetup::verifyCanRunExperiment() {
@@ -237,7 +233,6 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) {
     SERIALIZE_CHECKBOX(ar, ui->storeRaw, storeRaw);
     SERIALIZE_CHECKBOX(ar, ui->storeProcessed, storeProcessed);
     SERIALIZE_COMBOBOX(ar, ui->experimentType, experimentType);
-    SERIALIZE_CHECKBOX(ar, ui->asyncImgWrite, asyncImgWrite);
     SERIALIZE_LINEEDIT(ar, ui->experimentName, ExperimentName);
     SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
