@@ -19,6 +19,7 @@
  *      Example: a cv::Point has param numbers = 2
  *  4. Create guiMap, that follow the format <std::pair<Dataflags enum, Export enum>, gui string>
  *       - gui string is the string value that will be shown in the GUI
+ *  5. Add variables to export in method DataContainer::extractObjectInDoubles
  */
 namespace data {
 // Enumeration of the various parameters that can be extracted from an image, using open CV
