@@ -11,6 +11,13 @@
 #include "datacontainer.h"
 
 namespace mathlab {
+
+struct Line {
+    // Follows the equation $y = m x + q$
+    double m;
+    double q;
+};
+
 enum regionPropTypes {
     Area = data::Area,
     BoundingBox = data::BoundingBox,
@@ -26,6 +33,11 @@ enum regionPropTypes {
     PixelIdxList = data::PixelIdxList
 };
 
+enum regionPropMasks {
+    AllRegionPropVariables = 0x0001f8bf,
+    WithoutPixelIdxList = 0x0001f8bf
+};
+
 void bwareaopen(cv::Mat& im, double size);
 
 int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContainer& dc);
@@ -39,6 +51,7 @@ void floodFill(cv::Mat& img);
 void floodFill(cv::Mat& img, const cv::Point& p);
 
 double dist(const cv::Point& p0, const cv::Point& p1);
+double relativeX(cv::Point &point, mathlab::Line &line);
 
 template <typename T>
 std::pair<T, unsigned long> min(const std::vector<T>& v) {
@@ -68,6 +81,8 @@ std::vector<T> find(std::vector<T>& v, T& term) {
     }
     return out;
 }
+
+
 
 }  // namespace mathlab
 

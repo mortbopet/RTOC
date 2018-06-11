@@ -231,4 +231,10 @@ double dist(const cv::Point& p0, const cv::Point& p1) {
     return cv::sqrt(d.x * d.x + d.y * d.y);
 }
 
+double relativeX(cv::Point &point, mathlab::Line &line) {
+    double num = line.m * point.x + line.q - point.y;
+    double denom = sqrt(line.m*line.m + 1);
+    return num/denom;
+}
+
 }  // namespace mathlab
