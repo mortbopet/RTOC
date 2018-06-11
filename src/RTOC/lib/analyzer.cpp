@@ -136,16 +136,20 @@ void Analyzer::runAnalyzer(const Setup& s) {
             m_bg = m_img.clone();
         }
         if (m_setup.extractData) {
+            // Push data to raw and processed image buffers
             m_experiment.raw.enqueue(m_img.clone());
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
                 m_experiment.processed.enqueue(m_img.clone());
             }
         } else {
-            m_experiment.writeBuffer_raw.push(m_img.clone());
+            // Push data directly to write buffers
+            if (m_setup.storeRaw)
+                m_experiment.writeBuffer_raw.push(m_img.clone());
             if (m_setup.runProcessing) {
                 processImage(m_img, m_bg);
-                m_experiment.writeBuffer_processed.push(m_img.clone());
+                if (m_setup.storeProcessed)
+                    m_experiment.writeBuffer_processed.push(m_img.clone());
             }
         }
 
