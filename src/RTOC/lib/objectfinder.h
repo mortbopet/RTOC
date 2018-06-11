@@ -75,7 +75,6 @@ private:
         return ((bb_o.x + bb_o.width) < e->outlet);
     }
 
-
     // ------------ Class methods and variables ------------
 public:
     explicit ObjectHandler(Experiment* experiment,
@@ -156,7 +155,7 @@ private:
     long m_targetImageCount;
     bool m_running = false;
     bool m_forceStop = false;
-    bool m_finishedWriting;
+    volatile bool m_finishedWriting;
 };
 
 #endif  // RTOC_OBJECTFINDER_H

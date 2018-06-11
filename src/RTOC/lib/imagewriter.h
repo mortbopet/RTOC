@@ -51,14 +51,14 @@ public:
         // Set target images that we require to be written to disk and wait for finished image
         // writing
         m_targetImageCount = targetImageCount;
-        while (!m_finishedWriting)
-            ;
+        while (!m_finishedWriting) {
+        }
     }
 
     void forceStop() { m_forceStop = true; }
 
 private:
-    bool m_finishedWriting = false;
+    volatile bool m_finishedWriting = false;  // avoid optimizing finishWriting() while loop
     bool m_running = false;
     bool m_forceStop = false;
 
