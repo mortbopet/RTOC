@@ -7,7 +7,7 @@ TEST_CASE("exists()", "[full], [framefinder]") {
         REQUIRE(framefinder::exists("./Makefile"));
         REQUIRE(!framefinder::exists("./Makefsidfj"));
         REQUIRE(framefinder::exists("./CMakeFiles/"));
-        REQUIRE(framefinder::exists("./CMakeFiles/CellSorter_test.dir/"));
+        REQUIRE(framefinder::exists("./CMakeFiles/RTOC.dir/"));
     }
 }
 
@@ -55,7 +55,3 @@ TEST_CASE("framefinder::extractBetween", "[full], [framefinder]") {
     }
 }
 
-// TEST_CASE("get_files", "[full], [framefinder]") {
-//     std::vector<Frame> frames;
-//     std::string folder = "./";
-// }
