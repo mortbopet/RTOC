@@ -99,10 +99,12 @@ std::vector<double> DataContainer::extractObjectInDoubles(int objIndex) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::GradientScore));
     }
     if (data::Inlet & m_dataFlags) {
-        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Inlet));
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Inlet).x);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Inlet).y);
     }
     if (data::Outlet & m_dataFlags) {
-        returnVector.push_back(m_data[objIndex]->getValue<int>(data::Outlet));
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Outlet).x);
+        returnVector.push_back(m_data[objIndex]->getValue<cv::Point>(data::Outlet).y);
     }
     if (data::Label & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<int>(data::Label));
@@ -124,6 +126,9 @@ std::vector<double> DataContainer::extractObjectInDoubles(int objIndex) {
     }
     if (data::OutputValue & m_dataFlags) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::OutputValue));
+    }
+    if (data::RelativeXpos & m_dataFlags) {
+        returnVector.push_back(m_data[objIndex]->getValue<int>(data::RelativeXpos));
     }
     return returnVector;
 }
@@ -170,4 +175,8 @@ DataContainer::~DataContainer() {
     for (auto object : m_data) {
         delete object;
     }
+}
+
+unsigned long DataContainer::getDataFlags() {
+    return m_dataFlags;
 }

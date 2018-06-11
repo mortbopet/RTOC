@@ -9,8 +9,18 @@
 
 #include "opencv/cv.hpp"
 
+/**
+ *  When creating a new parameter for the DataContainer, the following procedure should be followed:
+ *
+ *  1. Create DataFlags-enum (appending the already existing ones)
+ *  2. Correct the DataMasks (AllFlags mask all parameters - no expections)
+ *  3. Create typeMap, that follows the format <Dataflags enum, std::pair<param numbers, sizeof(type)>>
+ *       - param numbers indicate the count of values under the new parameter.
+ *      Example: a cv::Point has param numbers = 2
+ *  4. Create guiMap, that follow the format <std::pair<Dataflags enum, Export enum>, gui string>
+ *       - gui string is the string value that will be shown in the GUI
+ */
 namespace data {
-
 // Enumeration of the various parameters that can be extracted from an image, using open CV
 enum DataFlags {
     Area = 1 << 0,
@@ -30,11 +40,12 @@ enum DataFlags {
     Symmetry = 1 << 14,
     Perimeter = 1 << 15,
     PixelIdxList = 1 << 16,
-    OutputValue = 1 << 17
+    OutputValue = 1 << 17,
+    RelativeXpos = 1 << 18
 };
 
 enum DataMasks {
-    AllFlags = 0x3ffff  // Correct if dataFlags are added !
+    AllFlags = 0x7ffff  // Correct if dataFlags are added !
 };
 
 // Mapping between DataFlags and the corresponding datatype that the openCV operation returns
@@ -47,8 +58,8 @@ static std::map<DataFlags, std::pair<unsigned long, size_t>> typeMap{{Area, std:
                                            {Eccentricity, std::make_pair(1, sizeof(double))},
                                            {Frame, std::make_pair(1, sizeof(int))},
                                            {GradientScore, std::make_pair(1, sizeof(double))},
-                                           {Inlet, std::make_pair(1, sizeof(int))},
-                                           {Outlet, std::make_pair(1, sizeof(int))},
+                                           {Inlet, std::make_pair(2, sizeof(cv::Point))},
+                                           {Outlet, std::make_pair(2, sizeof(cv::Point))},
                                            {Label, std::make_pair(1, sizeof(int))},
                                            {Major_axis, std::make_pair(1, sizeof(double))},
                                            {Minor_axis, std::make_pair(1, sizeof(double))},
@@ -56,7 +67,8 @@ static std::map<DataFlags, std::pair<unsigned long, size_t>> typeMap{{Area, std:
                                            {Symmetry, std::make_pair(1, sizeof(double))},
                                            {Perimeter, std::make_pair(1, sizeof(double))},
                                            {PixelIdxList, std::make_pair(1, sizeof(std::vector<cv::Point>*))},
-                                           {OutputValue, std::make_pair(1, sizeof(double))}};
+                                           {OutputValue, std::make_pair(1, sizeof(double))},
+                                           {RelativeXpos, std::make_pair(1, sizeof(double))}};
 
 enum Export {
     Always = 1 << 0,
@@ -82,7 +94,8 @@ static std::map<std::pair<bool, DataFlags>, std::string> guiMap{{std::make_pair(
                                                                 {std::make_pair(Export::Gui, Solidity), "Solidity"},
                                                                 {std::make_pair(Export::Gui, Symmetry), "Symmetry"},
                                                                 {std::make_pair(Export::Gui, Perimeter), "Perimeter"},
-                                                                {std::make_pair(Export::Always, OutputValue), "Output value"}};
+                                                                {std::make_pair(Export::Always, OutputValue), "Output value"},
+                                                                {std::make_pair(Export::Always, RelativeXpos), "Relative Xpos"}};
 
 }  // namespace data
 
@@ -153,6 +166,7 @@ public:
 
     void setDataFlags(data::DataFlags flag);  // sets ALL data flags
     void setDataFlags(unsigned long flag);
+    unsigned long getDataFlags();
     void addDataFlag(data::DataFlags flag);  // OR's a flag onto the data collection flags
 
     std::vector<double> extractObjectInDoubles(int objIndex);

@@ -103,17 +103,17 @@ TEST_CASE("Individual dataFlags and values (basic)", "[full], [datacontainer]") 
         DataContainer container(data::Inlet);
 
         container.appendNew();
-        container[0]->setValue(data::Inlet, 80);
-        int res = container[0]->getValue<int>(data::Inlet);
-        REQUIRE(res == 80);
+        container[0]->setValue(data::Inlet, cv::Point(12,34));
+        auto res = container[0]->getValue<cv::Point>(data::Inlet);
+        REQUIRE(res == cv::Point(12,34));
     }
     SECTION("Outlet") {
         DataContainer container(data::Outlet);
 
         container.appendNew();
-        container[0]->setValue(data::Outlet, 180);
-        int res = container[0]->getValue<int>(data::Outlet);
-        REQUIRE(res == 180);
+        container[0]->setValue(data::Outlet, cv::Point(12,34));
+        auto res = container[0]->getValue<cv::Point>(data::Outlet);
+        REQUIRE(res == cv::Point(12,34));
     }
     SECTION("Label") {
         DataContainer container(data::Label);
@@ -177,7 +177,7 @@ TEST_CASE("Individual dataFlags and values (basic)", "[full], [datacontainer]") 
 TEST_CASE("All dataFlags set and values", "[full], [datacontainer]") {
     DataContainer container;
 
-    SECTION("set all data-types, read chronologic") {
+    SECTION("set all data-types, read/write chronologic") {
         container.setDataFlags(0xffff);
         container.appendNew();
         container[0]->setValue(data::Area, 254.89);
@@ -188,8 +188,8 @@ TEST_CASE("All dataFlags set and values", "[full], [datacontainer]") {
         container[0]->setValue(data::Eccentricity, 2.43);
         container[0]->setValue(data::Frame, 5);
         container[0]->setValue(data::GradientScore, 5.005);
-        container[0]->setValue(data::Inlet, 80);
-        container[0]->setValue(data::Outlet, 180);
+        container[0]->setValue(data::Inlet, cv::Point(12,34));
+        container[0]->setValue(data::Outlet, cv::Point(12,34));
         container[0]->setValue(data::Label, 21950);
         container[0]->setValue(data::Major_axis, 5.342);
         container[0]->setValue(data::Minor_axis, 3.43);
@@ -205,8 +205,8 @@ TEST_CASE("All dataFlags set and values", "[full], [datacontainer]") {
         REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
         REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
         REQUIRE(container[0]->getValue<double>(data::GradientScore) == 5.005);
-        REQUIRE(container[0]->getValue<int>(data::Inlet) == 80);
-        REQUIRE(container[0]->getValue<int>(data::Outlet) == 180);
+        REQUIRE(container[0]->getValue<cv::Point>(data::Inlet) == cv::Point(12,34));
+        REQUIRE(container[0]->getValue<cv::Point>(data::Outlet) == cv::Point(12,34));
         REQUIRE(container[0]->getValue<int>(data::Label) == 21950);
         REQUIRE(container[0]->getValue<double>(data::Major_axis) == 5.342);
         REQUIRE(container[0]->getValue<double>(data::Minor_axis) == 3.43);
@@ -215,7 +215,7 @@ TEST_CASE("All dataFlags set and values", "[full], [datacontainer]") {
         REQUIRE(container[0]->getValue<double>(data::Perimeter) == 3.433);
         // assert get.PixelIdxList here
     }
-    SECTION("set all data-types, read chronologic") {
+    SECTION("set all data-types, read randomly") {
         container.setDataFlags(0xffff);
         container.appendNew();
         container[0]->setValue(data::Area, 254.89);
@@ -226,8 +226,8 @@ TEST_CASE("All dataFlags set and values", "[full], [datacontainer]") {
         container[0]->setValue(data::Eccentricity, 2.43);
         container[0]->setValue(data::Frame, 5);
         container[0]->setValue(data::GradientScore, 5.005);
-        container[0]->setValue(data::Inlet, 80);
-        container[0]->setValue(data::Outlet, 180);
+        container[0]->setValue(data::Inlet, cv::Point(12,34));
+        container[0]->setValue(data::Outlet, cv::Point(42,34));
         container[0]->setValue(data::Label, 21950);
         container[0]->setValue(data::Major_axis, 5.342);
         container[0]->setValue(data::Minor_axis, 3.43);
@@ -241,8 +241,46 @@ TEST_CASE("All dataFlags set and values", "[full], [datacontainer]") {
         REQUIRE(container[0]->getValue<double>(data::Minor_axis) == 3.43);
         REQUIRE(container[0]->getValue<double>(data::Major_axis) == 5.342);
         REQUIRE(container[0]->getValue<int>(data::Label) == 21950);
-        REQUIRE(container[0]->getValue<int>(data::Outlet) == 180);
-        REQUIRE(container[0]->getValue<int>(data::Inlet) == 80);
+        REQUIRE(container[0]->getValue<cv::Point>(data::Outlet) == cv::Point(42,34));
+        REQUIRE(container[0]->getValue<cv::Point>(data::Inlet) == cv::Point(12,34));
+        REQUIRE(container[0]->getValue<double>(data::GradientScore) == 5.005);
+        REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
+        REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
+        REQUIRE(container[0]->getValue<double>(data::ConvexArea) == 25.5);
+        REQUIRE(container[0]->getValue<double>(data::Circularity) == 0.543);
+        REQUIRE(container[0]->getValue<cv::Point>(data::Centroid) == cv::Point(11, 22));
+        REQUIRE(container[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0, 5, 10, 15));
+        REQUIRE(container[0]->getValue<double>(data::Area) == 254.89);
+        // assert get.PixelIdxList here
+    }
+    SECTION("set all data-types, read randomly") {
+        container.setDataFlags(0xffff);
+        container.appendNew();
+        container[0]->setValue(data::Frame, 5);
+        container[0]->setValue(data::Inlet, cv::Point(12,34));
+        container[0]->setValue(data::Outlet, cv::Point(42,34));
+        container[0]->setValue(data::Circularity, 0.543);
+        container[0]->setValue(data::Area, 254.89);
+        container[0]->setValue(data::GradientScore, 5.005);
+        container[0]->setValue(data::Label, 21950);
+        container[0]->setValue(data::Major_axis, 5.342);
+        container[0]->setValue(data::BoundingBox, cv::Rect(0, 5, 10, 15));
+        container[0]->setValue(data::Minor_axis, 3.43);
+        container[0]->setValue(data::Eccentricity, 2.43);
+        container[0]->setValue(data::ConvexArea, 25.5);
+        container[0]->setValue(data::Solidity, 0.9948);
+        container[0]->setValue(data::Symmetry, 34.943);
+        container[0]->setValue(data::Centroid, cv::Point(11, 22));
+        container[0]->setValue(data::Perimeter, 3.433);
+        // set PixelIdxList here
+        REQUIRE(container[0]->getValue<double>(data::Perimeter) == 3.433);
+        REQUIRE(container[0]->getValue<double>(data::Symmetry) == 34.943);
+        REQUIRE(container[0]->getValue<double>(data::Solidity) == 0.9948);
+        REQUIRE(container[0]->getValue<double>(data::Minor_axis) == 3.43);
+        REQUIRE(container[0]->getValue<double>(data::Major_axis) == 5.342);
+        REQUIRE(container[0]->getValue<int>(data::Label) == 21950);
+        REQUIRE(container[0]->getValue<cv::Point>(data::Outlet) == cv::Point(42,34));
+        REQUIRE(container[0]->getValue<cv::Point>(data::Inlet) == cv::Point(12,34));
         REQUIRE(container[0]->getValue<double>(data::GradientScore) == 5.005);
         REQUIRE(container[0]->getValue<int>(data::Frame) == 5);
         REQUIRE(container[0]->getValue<double>(data::Eccentricity) == 2.43);
@@ -323,17 +361,17 @@ TEST_CASE("All combinations with data::Area (1+1)", "[full], [datacontainer]") {
         dc.addDataFlag(data::Inlet);
         dc.appendNew();
         dc[0]->setValue(data::Area, 254.89);
-        dc[0]->setValue(data::Inlet, 80);
+        dc[0]->setValue(data::Inlet, cv::Point(180,230));
         REQUIRE(dc[0]->getValue<double>(data::Area) == 254.89);
-        REQUIRE(dc[0]->getValue<int>(data::Inlet) == 80);
+        REQUIRE(dc[0]->getValue<cv::Point>(data::Inlet) == cv::Point(180,230));
     }
     SECTION("Area + Outlet") {
         dc.addDataFlag(data::Outlet);
         dc.appendNew();
         dc[0]->setValue(data::Area, 254.89);
-        dc[0]->setValue(data::Outlet, 180);
+        dc[0]->setValue(data::Outlet, cv::Point(180,230));
         REQUIRE(dc[0]->getValue<double>(data::Area) == 254.89);
-        REQUIRE(dc[0]->getValue<int>(data::Outlet) == 180);
+        REQUIRE(dc[0]->getValue<cv::Point>(data::Outlet) == cv::Point(180,230));
     }
     SECTION("Area + Label") {
         dc.addDataFlag(data::Label);
@@ -382,6 +420,14 @@ TEST_CASE("All combinations with data::Area (1+1)", "[full], [datacontainer]") {
         dc[0]->setValue(data::Perimeter, 3.433);
         REQUIRE(dc[0]->getValue<double>(data::Area) == 254.89);
         REQUIRE(dc[0]->getValue<double>(data::Perimeter) == 3.433);
+    }
+    SECTION("Area + RelativeXpos") {
+        dc.addDataFlag(data::RelativeXpos);
+        dc.appendNew();
+        dc[0]->setValue(data::Area, 254.89);
+        dc[0]->setValue(data::RelativeXpos, 3.33);
+        REQUIRE(dc[0]->getValue<double>(data::Area) == 254.89);
+        REQUIRE(dc[0]->getValue<double>(data::RelativeXpos) == 3.33);
     }
 }
 
@@ -451,17 +497,17 @@ TEST_CASE("All combinations with data::BoundingBox (1+1)", "[full], [datacontain
         dc.addDataFlag(data::Inlet);
         dc.appendNew();
         dc[0]->setValue(data::BoundingBox, cv::Rect(0, 5, 10, 15));
-        dc[0]->setValue(data::Inlet, 80);
+        dc[0]->setValue(data::Inlet, cv::Point(180,230));
         REQUIRE(dc[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0, 5, 10, 15));
-        REQUIRE(dc[0]->getValue<int>(data::Inlet) == 80);
+        REQUIRE(dc[0]->getValue<cv::Point>(data::Inlet) == cv::Point(180,230));
     }
     SECTION("BoundingBox + Outlet") {
         dc.addDataFlag(data::Outlet);
         dc.appendNew();
         dc[0]->setValue(data::BoundingBox, cv::Rect(0, 5, 10, 15));
-        dc[0]->setValue(data::Outlet, 180);
+        dc[0]->setValue(data::Outlet, cv::Point(180,230));
         REQUIRE(dc[0]->getValue<cv::Rect>(data::BoundingBox) == cv::Rect(0, 5, 10, 15));
-        REQUIRE(dc[0]->getValue<int>(data::Outlet) == 180);
+        REQUIRE(dc[0]->getValue<cv::Point>(data::Outlet) == cv::Point(180,230));
     }
     SECTION("BoundingBox + Label") {
         dc.addDataFlag(data::Label);
@@ -522,8 +568,8 @@ TEST_CASE("typeMap", "[full], [datacontainer]") {
     REQUIRE(data::typeMap[data::Eccentricity].second == 8);
     REQUIRE(data::typeMap[data::Frame].second == 4);
     REQUIRE(data::typeMap[data::GradientScore].second == 8);
-    REQUIRE(data::typeMap[data::Inlet].second == 4);
-    REQUIRE(data::typeMap[data::Outlet].second == 4);
+    REQUIRE(data::typeMap[data::Inlet].second == 8);
+    REQUIRE(data::typeMap[data::Outlet].second == 8);
     REQUIRE(data::typeMap[data::Label].second == 4);
     REQUIRE(data::typeMap[data::Major_axis].second == 8);
     REQUIRE(data::typeMap[data::Minor_axis].second == 8);
@@ -532,6 +578,7 @@ TEST_CASE("typeMap", "[full], [datacontainer]") {
     REQUIRE(data::typeMap[data::Perimeter].second == 8);
     REQUIRE(data::typeMap[data::PixelIdxList].second == 8);
     REQUIRE(data::typeMap[data::OutputValue].second == 8);
+    REQUIRE(data::typeMap[data::RelativeXpos].second == 8);
 }
 
 
