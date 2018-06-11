@@ -56,6 +56,21 @@ public:
     void forceStop() { m_forceStop = true; }
 
 private:
+    bool m_finishedWriting = false;
+    bool m_running = false;
+    bool m_forceStop = false;
+
+    moodycamel::BlockingReaderWriterQueue<cv::Mat> m_queue;
+
+    Setup m_setup;
+
+    fs::path m_path;
+    std::string m_prefix;
+
+    int m_index = 0;
+    int m_targetImageCount = -1;
+    
+
     void writeThreaded() {
         // Will monitor m_queue until m_run is deasserted
         // When deasserted, m_queue will be emptied
@@ -101,19 +116,6 @@ private:
         m_running = false;
     }
 
-    bool m_finishedWriting = false;
-    bool m_running = false;
-    bool m_forceStop = false;
-
-    moodycamel::BlockingReaderWriterQueue<cv::Mat> m_queue;
-
-    Setup m_setup;
-
-    fs::path m_path;
-    std::string m_prefix;
-
-    int m_index = 0;
-    int m_targetImageCount = -1;
 };
 
 #endif  // IMAGEWRITER_H
