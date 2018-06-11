@@ -70,7 +70,7 @@ void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props
     // Morphologic close background
     cv::morphologyEx(bg_edge, bg_edge, cv::MORPH_CLOSE, se_edge);
     // Insert black vertical rectangle at (inlet - 10 : inlet + 10)
-    cv::rectangle(bg_edge, cv::Rect(props.inlet - 10, 0, 20, bg.cols), cv::Scalar(0), cv::FILLED);
+    // cv::rectangle(bg_edge, cv::Rect(props.inlet - 10, 0, 20, bg.cols), cv::Scalar(0), cv::FILLED);
     // Open up (bwareaopen equivalent)
     mathlab::bwareaopen(bg_edge, 100);
     // Invert background cut and bitwise 'and' with image
