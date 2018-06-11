@@ -196,6 +196,10 @@ void Analyzer::stop() {
     if (m_setup.storeRaw)
         m_experiment.writeBuffer_raw.finishWriting(m_imageCnt);
 
+    // Export experiment data
+    if (m_setup.extractData)
+        exportExperiment(m_setup.experimentName);
+
     // All done, we can reset
     softReset();
 }
@@ -315,7 +319,11 @@ bool Analyzer::loadSetup(const string& path) {
  * @return
  */
 
-void Analyzer::exportExperiment(const string& path) {
+void Analyzer::exportExperiment(const string& name) {
+    const fs::path experimentFolder =
+        fs::path(m_setup.outputPath) / fs::path(m_setup.experimentName);
+    const std::string path =
+        fs::path(experimentFolder / fs::path(name) / fs::path(".txt")).string();
     if (m_experiment.data.empty()) {
         // No objects to export
         m_status |= StatusBits::NoObjectsFound;

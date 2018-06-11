@@ -53,7 +53,7 @@ public:
 
     void findObjects();
 
-    void exportExperiment(const std::string& path);
+    void exportExperiment(const std::string& name);
 
     bool storeSetup(const std::string& path);
     bool loadSetup(const std::string& path);
