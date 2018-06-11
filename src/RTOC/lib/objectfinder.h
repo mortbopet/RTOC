@@ -145,6 +145,7 @@ private:
     double m_dist;
     double m_distThreshold;
     cv::Point m_centroid;
+    double m_xpos;
     DataContainer m_cc;
 
     std::pair<double, Tracker> findNearestObject(const cv::Point& object,

@@ -35,7 +35,7 @@ int ObjectFinder::findObjects() {
         m_dataFlags = m_setup->dataFlags;
     }
 
-    m_numObjects = mathlab::regionProps(m_processedImg, 0xffff, m_cc);
+    m_numObjects = mathlab::regionProps(m_processedImg, mathlab::WithoutPixelIdxList, m_cc);
 
     for (int i = 0; i < m_numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -49,15 +49,16 @@ int ObjectFinder::findObjects() {
                 m_newObject = true;
             } else {
                 m_centroid = m_cc[i]->getValue<cv::Point>(data::Centroid);
+                m_xpos = mathlab::relativeX(m_centroid, m_experiment->inlet_line);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
                 m_dist = res.first;
                 m_track = res.second;
 
                 // Set threshold
-                if (m_centroid.x <= m_experiment->inlet - 5) {
-                    m_distThreshold = 5.0;  // Should be a settable variable
+                if (m_xpos < 0) {
+                    m_distThreshold = 5.0;  // Todo: Should be a settable variable
                 } else {
-                    m_distThreshold = 20.0;  // Should be a settable variable
+                    m_distThreshold = 20.0;  // Todo: Should be a settable variable
                 }
 
                 // Determine whether new or not from threshold
@@ -230,8 +231,8 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
     dc_ptr->setValue(data::Eccentricity, m_cc[cc_i]->getValue<double>(data::Eccentricity));
     dc_ptr->setValue(data::Frame, m_frameNum);
     dc_ptr->setValue(data::GradientScore, gradientScore);
-    dc_ptr->setValue(data::Inlet, experiment.inlet);
-    dc_ptr->setValue(data::Outlet, experiment.outlet);
+    dc_ptr->setValue(data::Inlet, m_setup->inlet);
+    dc_ptr->setValue(data::Outlet, m_setup->outlet);
     dc_ptr->setValue(data::Label, m_cellNum);
     dc_ptr->setValue(data::Major_axis, m_cc[cc_i]->getValue<double>(data::Major_axis));
     dc_ptr->setValue(data::Minor_axis, m_cc[cc_i]->getValue<double>(data::Minor_axis));
@@ -240,6 +241,7 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
     dc_ptr->setValue(data::Perimeter, m_cc[cc_i]->getValue<double>(data::Perimeter));
     double outputValue = 0.0;
     dc_ptr->setValue(data::OutputValue, outputValue);
+    dc_ptr->setValue(data::RelativeXpos, m_xpos);
 
     m_track.frame_no = m_frameNum;
     m_track.centroid = m_centroid;
