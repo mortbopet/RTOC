@@ -20,8 +20,6 @@ Machinelearning::Machinelearning() {}
 
 void Machinelearning::loadModel(const std::string& path) {}
 
-void Machinelearning::predictObject_interpolation(DataContainer& dataContainer, double decisionBoundary) {}
-
 void Machinelearning::predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) {}
 
 int Machinelearning::get_XBoundary() const {
