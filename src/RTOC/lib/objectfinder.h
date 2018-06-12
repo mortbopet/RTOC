@@ -31,10 +31,6 @@ public:
     };
 
 private:
-    // Decision parameters
-
-    int m_countThreshold = 25;
-
     // Decision methods/functions
 
     /*  Are required to follow the template:
@@ -54,7 +50,7 @@ private:
      * @return
      */
     static bool frameCount(const ObjectHandler* handler, const DataContainer* dc) {
-        return (*dc).size() < (*handler).m_countThreshold;
+        return (*dc).size() < (*handler).m_setup->countThreshold;
     }
     /**
      * Legibility of found-object based on whether first frame of object has object before inlet
@@ -77,7 +73,7 @@ private:
 
     // ------------ Class methods and variables ------------
 public:
-    explicit ObjectHandler(Experiment* experiment,
+    explicit ObjectHandler(Experiment* experiment, Setup* setup,
                            unsigned long conditionFlags = Conditions::AllConditions);
 
     bool invoke_all(const DataContainer* dc) {
@@ -92,6 +88,7 @@ public:
 private:
     // Class members
     Experiment* m_experiment;
+    Setup* m_setup;
     unsigned long m_conditionFlags = 0;
 
     void setup();

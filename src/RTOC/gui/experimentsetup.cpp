@@ -7,7 +7,6 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QThread>
-#include <QToolTip>
 
 #include "guihelpers.h"
 
@@ -19,10 +18,6 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
 
     // Create data options
     setupDataOptions();
-
-    // setup tooltips
-    ui->help->setIcon(QIcon(":/icons/resources/question.svg"));
-    setToolTips();
 
     ui->run->setIcon(QIcon(":/icons/resources/play-button.svg"));
 
@@ -64,6 +59,12 @@ void ExperimentSetup::connectWidgets() {
     connect(ui->unsetAllFlags, &QPushButton::clicked, [=] { setAllDataFlagsState(false); });
     connect(ui->rectime, QOverload<int>::of(&QSpinBox::valueChanged),
             [=] { updateCurrentSetup(); });
+    connect(ui->distanceThresholdInlet, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            [=] { updateCurrentSetup(); });
+    connect(ui->distanceThresholdPath, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            [=] { updateCurrentSetup(); });
+    connect(ui->countThreshold, QOverload<int>::of(&QSpinBox::valueChanged),
+            [=] { updateCurrentSetup(); });
 }
 
 ExperimentSetup::~ExperimentSetup() {
@@ -79,6 +80,9 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.recordingTime = ui->rectime->value();
+    m_currentSetup.countThreshold = ui->countThreshold->value();
+    m_currentSetup.distanceThresholdInlet = ui->distanceThresholdInlet->value();
+    m_currentSetup.distanceThresholdPath = ui->distanceThresholdPath->value();
 
     m_currentSetup.extractData = false;
     m_currentSetup.runProcessing = true;
@@ -101,22 +105,6 @@ void ExperimentSetup::updateCurrentSetup() {
             break;
         }
     }
-}
-
-void ExperimentSetup::setToolTips() {
-    connect(ui->help, &QPushButton::clicked,
-            [=] { QToolTip::showText(QCursor::pos(), ui->help->toolTip()); });
-    ui->help->setToolTip("<nobr>Hover over labels to receive tooltip</nobr> for the given action");
-    ui->l_outputpath->setToolTip(
-        "<nobr>Folder which all experiment related files</nobr> will be written to");
-    ui->l_etype->setToolTip(
-        "<nobr>Set the experiment type to match</nobr>set experiment-specific parameters");
-
-    ui->l_rectime->setToolTip(
-        "<nobr>Stop acquisition after recording time has elapsed.</nobr> Set to 0 to do continuous "
-        "acquisition");
-    ui->experimentName->setToolTip(
-        "Experiment name will be used in generation of folder & file names");
 }
 
 bool ExperimentSetup::verifyCanRunExperiment() {
@@ -241,6 +229,9 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) {
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
     SERIALIZE_SPINBOX(ar, ui->rectime, recordingTime);
+    SERIALIZE_SPINBOX(ar, ui->distanceThresholdInlet, distanceThresholdInlet);
+    SERIALIZE_SPINBOX(ar, ui->distanceThresholdPath, distanceThresholdPath);
+    SERIALIZE_SPINBOX(ar, ui->countThreshold, countThreshold);
     for (auto dataOption : ui->extractData->findChildren<QCheckBox*>()) {
         bool v = dataOption->isChecked();
         QString name = dataOption->text();

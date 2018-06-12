@@ -18,6 +18,9 @@ public:
     bool extractData;
     bool storeRaw;
     bool storeProcessed;
+    int countThreshold;
+    double distanceThresholdInlet;
+    double distanceThresholdPath;
     unsigned long dataFlags = 0;
     unsigned long conditionFlags = 0;
     unsigned int recordingTime = 0;  // in ms
@@ -37,6 +40,9 @@ public:
         ar& BOOST_SERIALIZATION_NVP(storeProcessed);
         ar& BOOST_SERIALIZATION_NVP(dataFlags);
         ar& BOOST_SERIALIZATION_NVP(conditionFlags);
+        ar& BOOST_SERIALIZATION_NVP(countThreshold);
+        ar& BOOST_SERIALIZATION_NVP(distanceThresholdInlet);
+        ar& BOOST_SERIALIZATION_NVP(distanceThresholdPath);
 
         ar& BOOST_SERIALIZATION_NVP(inlet);
         ar& BOOST_SERIALIZATION_NVP(outlet);

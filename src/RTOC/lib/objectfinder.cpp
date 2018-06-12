@@ -1,8 +1,8 @@
 #include "objectfinder.h"
 
-
 // --------------------- ObjectHandler ---------------------
-ObjectHandler::ObjectHandler(Experiment* experiment, unsigned long conditionFlags) : m_experiment(experiment), m_conditionFlags(conditionFlags) {
+ObjectHandler::ObjectHandler(Experiment* experiment, Setup* s, unsigned long conditionFlags)
+    : m_experiment(experiment), m_setup(s), m_conditionFlags(conditionFlags) {
     m_conditionFlags = conditionFlags;
     setup();
 }
@@ -19,11 +19,11 @@ void ObjectHandler::setup() {
     }
 }
 
-
 // --------------------- ObjectFinder ---------------------
-ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup) : m_experiment(experiment), m_setup(setup) {
-    m_cc.setDataFlags(data::AllFlags);      // Initialize ConnectedComponents-DataContainer
-    handler = new ObjectHandler(experiment);
+ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup)
+    : m_experiment(experiment), m_setup(setup) {
+    m_cc.setDataFlags(data::AllFlags);  // Initialize ConnectedComponents-DataContainer
+    handler = new ObjectHandler(experiment, setup);
 }
 
 /**
@@ -55,14 +55,10 @@ int ObjectFinder::findObjects() {
                 m_track = res.second;
 
                 // Set threshold
-                if (m_xpos < 0) {
-                    m_distThreshold = 5.0;  // Todo: Should be a settable variable
-                } else {
-                    m_distThreshold = 20.0;  // Todo: Should be a settable variable
-                }
-
+                double distThresh =
+                    m_xpos < 0 ? m_setup->distanceThresholdInlet : m_setup->distanceThresholdPath;
                 // Determine whether new or not from threshold
-                m_newObject = m_dist > m_distThreshold;
+                m_newObject = m_dist > distThresh;
             }
         }
 
@@ -93,7 +89,8 @@ void ObjectFinder::findObjectsThreaded() {
     bool pImg_ready;
     bool rImg_ready;
 
-    while (!(m_targetImageCount >= 0 && m_targetImageCount <= m_experiment->m_currentProcessingFrame)) {
+    while (!(m_targetImageCount >= 0 &&
+             m_targetImageCount <= m_experiment->m_currentProcessingFrame)) {
         if (m_forceStop) {
             goto asyncStop;
         }
@@ -121,7 +118,6 @@ void ObjectFinder::findObjectsThreaded() {
         } else {
             // A set of raw and processed images are not yet ready, so we wait
         }
-
     }
     // All frames analyzed - clean objects that don't meet conditions set in ObjectHandler
     if (m_setup->extractData) {
@@ -129,13 +125,11 @@ void ObjectFinder::findObjectsThreaded() {
     }
     // Save data
 
-
     m_finishedWriting = true;
 // If m_forceStop is invoked, stop without calling cleanObjects()
 asyncStop:
     m_running = false;
 }
-
 
 void ObjectFinder::startThread() {
     if (!m_running) {
@@ -153,7 +147,7 @@ void ObjectFinder::startThread() {
     }
 }
 
-bool ObjectFinder::approveContainer(const DataContainer &dataContainer) {
+bool ObjectFinder::approveContainer(const DataContainer& dataContainer) {
     return handler->invoke_all(&dataContainer);
 }
 
@@ -163,18 +157,18 @@ bool ObjectFinder::approveContainer(const DataContainer &dataContainer) {
  * @return How many objects that have been removed
  */
 unsigned long ObjectFinder::cleanObjects() {
-    auto data = &m_experiment->data; // Increase readability
+    auto data = &m_experiment->data;  // Increase readability
 
-    unsigned long length = data->size();    // Get initial count of objects
+    unsigned long length = data->size();  // Get initial count of objects
 
     // Use erase, remove-if
-    data->erase(std::remove_if(data->begin(), data->end(), [&](const auto& dc) -> bool {
-        return handler->invoke_all(dc.get());
-    }), data->end());
+    data->erase(
+        std::remove_if(data->begin(), data->end(),
+                       [&](const auto& dc) -> bool { return handler->invoke_all(dc.get()); }),
+        data->end());
 
-    return length - data->size();   // Return new count of objects
+    return length - data->size();  // Return new count of objects
 }
-
 
 /**
  * @brief
@@ -212,7 +206,7 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
     } else {
         i = m_track.cell_no;
     }
-    assert(i < experiment.data.size()); // debug
+    assert(i < experiment.data.size());  // debug
     experiment.data[i]->appendNew();
 
     // Get some data (should be moved)
@@ -262,4 +256,3 @@ void ObjectFinder::reset() {
     m_processedImg.release();
     m_rawImg.release();
 }
-
