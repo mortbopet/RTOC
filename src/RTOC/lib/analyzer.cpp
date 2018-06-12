@@ -355,6 +355,8 @@ void Analyzer::exportExperiment(const string& name) {
         CHECK_ASYNC_STOP
         out << "Observation" << (i + 1) << " " << m_experiment.data[i]->size() << "\n";
 
+        ml_model->predictObject(*m_experiment.data[i], "Inverse distance weighting");
+
         // Goes through all objects
         for (int j = 0; j < m_experiment.data[i]->size(); j++) {
             // Extracts vector of doubles from object
@@ -365,6 +367,7 @@ void Analyzer::exportExperiment(const string& name) {
             out << "\n";
         }
     }
+    ml_model->outputToFile("/Users/eskidlbs/Desktop/Output_data/results_predictions.txt");
     out.close();
     ASYNC_END_SIDEEFFECT(([&out]() { out.close(); }))
 }
