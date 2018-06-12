@@ -275,6 +275,9 @@ bool Analyzer::loadSetup(const string& path) {
  */
 
 void Analyzer::exportExperiment(const string& path) {
+    std::unique_ptr<Machinelearning> ml_model = identifyModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
+    ml_model->loadModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
+
     if (m_experiment.data.empty()) {
         // No objects to export
         m_status |= StatusBits::NoObjectsFound;
@@ -303,6 +306,8 @@ void Analyzer::exportExperiment(const string& path) {
         CHECK_ASYNC_STOP
         out << "Observation" << (i + 1) << " " << m_experiment.data[i]->size() << "\n";
 
+        ml_model->predictObject(*m_experiment.data[i], "Inverse distance weighting");
+
         // Goes through all objects
         for (int j = 0; j < m_experiment.data[i]->size(); j++) {
             // Extracts vector of doubles from object
@@ -313,6 +318,7 @@ void Analyzer::exportExperiment(const string& path) {
             out << "\n";
         }
     }
+    ml_model->outputToFile("/Users/eskidlbs/Desktop/Output_data/results_predictions.txt");
     out.close();
     ASYNC_END_SIDEEFFECT(([&out]() { out.close(); }))
 }
