@@ -209,10 +209,14 @@ void ImageDisplayerWidget::on_imageSlider_sliderMoved(int position) {
 
 void ImageDisplayerWidget::on_ips_editingFinished() {
     // convert fps to ms and set interval
-    m_playTimer.stop();
+    bool running = m_playTimer.isActive();
+    if (running) {
+        m_playTimer.stop();
+    }
     int interval = 1000.0 / ui->ips->value();
     m_playTimer.setInterval(interval);
-    m_playTimer.start();
+    if (running)
+        m_playTimer.start();
 
     ui->ips->clearFocus();  // remove focus from spinbox after edit
 }
