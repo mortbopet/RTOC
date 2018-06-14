@@ -38,7 +38,7 @@ Binarize::Binarize() {
     m_maxVal.setRange(0, 255);
     m_maxVal.setValue(255);
     m_edgeThreshold.setRange(0, 255);
-    m_edgeThreshold.setValue(0);
+    m_edgeThreshold.setValue(50);
 }
 
 void Binarize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -55,11 +55,30 @@ void Normalize::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) co
 }
 
 SubtractBG::SubtractBG() {
+    m_subtractMethod.setOptions(map<SubtractMethod, string>{{SubtractMethod::dynamicBackground, "Dynamic"},
+                                                       {SubtractMethod::staticBackground, "Static"}});
+    m_subtractMethod.setValue(SubtractMethod::staticBackground);
+
+    m_alpha.setRange(0, 1);
+    m_alpha.setValue(0.25);
+    m_movementThreshold.setRange(0, 1);
+    m_movementThreshold.setValue(0.025);
     m_edgeThreshold.setRange(0, 1);
     m_edgeThreshold.setValue(0.272);
 }
 
 void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props) const {
+    if (m_subtractMethod.getValue() == dynamicBackground) {
+        if (oldImg.size() == img.size()) {
+            double crit = 0.0;
+            cv::minMaxIdx(oldImg - img, nullptr, &crit);
+            if ( (crit/128) <= m_movementThreshold.getValue()) {
+                bg = (1 - m_alpha.getValue()) * bg + m_alpha.getValue() * img;
+            }
+        }
+        oldImg = img.clone();
+    }
+
     cv::Mat bg_edge, diff;
     cv::Mat se_edge = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(30, 1));
 
@@ -78,8 +97,20 @@ void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props
     cv::bitwise_and(diff, bg_edge, img);
 }
 
+Canny::Canny() {
+    m_lowThreshold.setRange(0, 255);
+    m_lowThreshold.setValue(0);
+    m_highThreshold.setRange(0, 255);
+    m_highThreshold.setValue(255);
+}
+
 void Canny::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
     cv::Canny(img, img, m_lowThreshold.getValue(), m_highThreshold.getValue());
+}
+
+ClearBorder::ClearBorder() {
+    m_borderWidth.setRange(0, 255);
+    m_borderWidth.setValue(2);
 }
 
 void ClearBorder::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -94,17 +125,8 @@ void ClearBorder::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) 
         }
     }
 }
-ClearBorder::ClearBorder() {
-    m_borderWidth.setRange(0, 255);
-    m_borderWidth.setValue(2);
-}
 
-Canny::Canny() {
-    m_lowThreshold.setRange(0, 255);
-    m_lowThreshold.setValue(0);
-    m_highThreshold.setRange(0, 255);
-    m_highThreshold.setValue(255);
-}
+
 FloodFillProcess::FloodFillProcess() {}
 
 void FloodFillProcess::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
@@ -127,7 +149,7 @@ PropFilter::PropFilter() {
 }
 
 void PropFilter::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) const {
-    int flags = m_regionPropsTypes.getValue() | data::PixelIdxList;
+    int flags = m_regionPropsTypes.getValue() | data::Centroid | data::PixelIdxList;
     double l[2] = {m_lowerLimit.getValue(), m_upperLimit.getValue()};
     DataContainer blobs(flags);
 
@@ -136,12 +158,14 @@ void PropFilter::doProcessing(cv::Mat& img, cv::Mat&, const Experiment& props) c
     // Loop through all blobs
     for (int i = 0; i < count; i++) {
         double res = blobs[i]->getValue<double>(static_cast<data::DataFlags>(m_regionPropsTypes.getValue()));
+
         // If criteria met - erase blob
         if (res < l[0] || res > l[1]) {
             auto vector2 = blobs[i]->getValue<std::vector<cv::Point>*>(data::PixelIdxList);
             mathlab::removePixels(img, vector2);
         }
     }
+
 }
 
 // Export all process types for serialization

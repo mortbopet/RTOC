@@ -181,14 +181,26 @@ public:
 
 class SubtractBG : public ProcessBase, public NameGenerator<SubtractBG> {
 public:
+    mutable cv::Mat oldImg;
+
+    enum SubtractMethod{
+        staticBackground = 1 << 0,
+        dynamicBackground = 1 << 1
+    };
     SETUP_PROCESS(SubtractBG, "Subtract background")
 
+    CREATE_ENUM_PARM_DEFAULT(SubtractMethod, m_subtractMethod, "Subtract_method", SubtractMethod::staticBackground);
+    CREATE_VALUE_PARM(double, m_alpha, "Alpha");
+    CREATE_VALUE_PARM(double, m_movementThreshold, "Movement_threshold");
     CREATE_VALUE_PARM(double, m_edgeThreshold, "Edge_threshold");
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned int version) {
         ar& boost::serialization::make_nvp("processbase",
                                            boost::serialization::base_object<ProcessBase>(*this));
+        ar& BOOST_SERIALIZATION_NVP(m_subtractMethod);
+        ar& BOOST_SERIALIZATION_NVP(m_alpha);
+        ar& BOOST_SERIALIZATION_NVP(m_movementThreshold);
         ar& BOOST_SERIALIZATION_NVP(m_edgeThreshold);
     }
 };
