@@ -42,8 +42,8 @@ int Machinelearning::findClosestXpos(const int& pos, DataContainer& dataContaine
     for (int i = 0; i < _XBoundary; i++) {
         int index = 0;
         for (const auto& object : dataContainer) {
-            auto centroid = object->getValue<cv::Point>(data::Centroid);
-            if ((centroid.x > (pos - i)) && (centroid.x < (pos + i))) {
+            auto rel_xpos = object->getValue<double>(data::RelativeXpos);
+            if ((rel_xpos > (pos - i)) && (rel_xpos < (pos + i))) {
                 return index;
             }
             index++;
@@ -57,8 +57,8 @@ double Machinelearning::interpolation_inverseDistance(const int &pos, DataContai
     double numerator = 0;
     double denominator = 0;
     for (const auto &item : dataContainer) {
-        numerator += (item->getValue<double>(attribute) * 1/pow((0.01 + abs(pos - item->getValue<cv::Point>(data::Centroid).x)),2));
-        denominator += 1/pow((0.01 + abs(pos - item->getValue<cv::Point>(data::Centroid).x)),2);
+        numerator += (item->getValue<double>(attribute) * 1/pow((0.01 + abs(pos - item->getValue<double>(data::RelativeXpos))),2));
+        denominator += 1/pow((0.01 + abs(pos - item->getValue<double>(data::RelativeXpos))),2);
     }
     return (numerator / denominator); // Returns interpolated value
 }
@@ -72,8 +72,8 @@ double Machinelearning::interpolation_average(const int &pos, DataContainer &dat
     for (int i = 0; i < _XBoundary; i++) {
         int index = 0;
         for (const auto &object : dataContainer) {
-            auto centroid = object->getValue<cv::Point>(data::Centroid);
-            if ((centroid.x > (pos - i)) && (centroid.x < (pos))) {
+            auto rel_xpos = object->getValue<double>(data::RelativeXpos);
+            if ((rel_xpos > (pos - i)) && (rel_xpos < (pos))) {
                 lowIndex = index;
                 lowDistance = i;
             }
@@ -83,8 +83,8 @@ double Machinelearning::interpolation_average(const int &pos, DataContainer &dat
     for (int j = 0; j < _XBoundary; j++) {
         int index = 0;
         for (const auto& object : dataContainer) {
-            auto centroid = object->getValue<cv::Point>(data::Centroid);
-            if ((centroid.x > (pos)) && (centroid.x < (pos + j))) {
+            auto rel_xpos = object->getValue<double>(data::RelativeXpos);
+            if ((rel_xpos > (pos)) && (rel_xpos < (pos + j))) {
                 highIndex = index;
                 highDistance = j;
             }
@@ -112,7 +112,7 @@ void LogisticRegression::loadModel(const std::string& path) {
                 flag = 1;
             }
         } else if (counter % 3 == 0) {
-            xpos.push_back(std::stoi(line));
+            relativeXpos.push_back(std::stoi(line));
         } else if (counter % 3 == 1) {
             for (const auto& item : data::guiMap) {
                 if (item.second == line) {
@@ -131,10 +131,10 @@ void LogisticRegression::predictObject(DataContainer& dataContainer, std::string
     // By default this should be set to 0.5.
 
     double possibility = 0;
-    for (int i = 0; i < xpos.size(); i++) {
+    for (int i = 0; i < relativeXpos.size(); i++) {
         if (interpolation_style == "Closest data point") {
             // First, find the object with the given x-position
-            int index = findClosestXpos(xpos[i], dataContainer);
+            int index = findClosestXpos(relativeXpos[i], dataContainer);
 
             // Next, extract the right attribute and multiply its coefficient onto the model
             // Make arguement change with attribute-type
@@ -142,11 +142,11 @@ void LogisticRegression::predictObject(DataContainer& dataContainer, std::string
             possibility += (attributeValue * coefficients[i]);
 
         } else if (interpolation_style == "Average of closest data points") {
-            auto attributeValue = interpolation_average(xpos[i], dataContainer, attributes[i]);
+            auto attributeValue = interpolation_average(relativeXpos[i], dataContainer, attributes[i]);
             possibility += (attributeValue * coefficients[i]);
 
         } else if (interpolation_style == "Inverse distance weighting") {
-            auto attributeValue = interpolation_inverseDistance(xpos[i], dataContainer, attributes[i]);
+            auto attributeValue = interpolation_inverseDistance(relativeXpos[i], dataContainer, attributes[i]);
             possibility += (attributeValue * coefficients[i]);
         }
     }

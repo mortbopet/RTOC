@@ -36,7 +36,7 @@ public:
     const std::vector<outputData>& getResults() {return results;};
 
 protected:
-    std::vector<int> xpos;
+    std::vector<int> relativeXpos;
     std::vector<data::DataFlags> attributes;
     std::vector<outputData> results;
     int findClosestXpos(const int& pos, DataContainer& dataContainer);
