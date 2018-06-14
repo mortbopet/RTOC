@@ -4,20 +4,13 @@
 #include <memory>
 #include <vector>
 #include "datacontainer.h"
-//namespace inp {
-//static std::map<std::string, int> guiMap {
-//        {"Closest data point", 0},
-//        {"Average of closest data points", 1},
-//        {"Inverse distance weighting", 2}
-//};
-//}
 
 class Machinelearning {
 public:
     Machinelearning();
     virtual void loadModel(const std::string& path);
 
-    virtual int predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary=0.5);
+    virtual int predictObject(DataContainer& dataContainer);
 
     int get_XBoundary() const;
     void set_XBoundary(int m_XBoundary);
@@ -52,9 +45,15 @@ public:
     LogisticRegression();
     void loadModel(const std::string& path) override;
 
-    int predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) override;
+    int predictObject(DataContainer& dataContainer) override;
+    double getDecisionBoundary() {return decisionBoundary;};
+    void setDecisionBoundary(int value) {decisionBoundary = value;};
+    std::string getInterpolation_style() {return interpolation_style;};
+    void setInterpolation_style(std::string style) {interpolation_style = style;};
 
 private:
+    double decisionBoundary = 0.5;
+    std::string interpolation_style = "Inverse distance weighting";
     std::vector<double> coefficients;
     int intercept;
 };

@@ -20,10 +20,7 @@ Machinelearning::Machinelearning() {}
 
 void Machinelearning::loadModel(const std::string& path) {}
 
-// Todo: (Eskild) Why 3 arguments?
-int Machinelearning::predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) {
-    return 0;
-}
+int Machinelearning::predictObject(DataContainer& dataContainer) {}
 
 int Machinelearning::get_XBoundary() const {
     return _XBoundary;
@@ -129,7 +126,7 @@ void LogisticRegression::loadModel(const std::string& path) {
     }
 }
 
-int LogisticRegression::predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) {
+int LogisticRegression::predictObject(DataContainer& dataContainer) {
     // customParameter defines the decision boundary between the binary classification.
     // By default this should be set to 0.5.
 
