@@ -123,7 +123,6 @@ void ObjectFinder::findObjectsThreaded() {
     if (m_setup->extractData) {
         cleanObjects();
     }
-    // Save data
 
     m_finishedWriting = true;
 // If m_forceStop is invoked, stop without calling cleanObjects()
