@@ -58,7 +58,7 @@ public:
     }
 
     void setInletOutletLines(std::pair<int, int>& inlet, std::pair<int, int>& outlet) {
-        inlet_line.m = -((double) (inlet.first - outlet.first) / (outlet.second - outlet.first));
+        inlet_line.m = -((double) (inlet.first - outlet.first) / (inlet.second - outlet.second));
         inlet_line.q = (-inlet_line.m) * inlet.first + inlet.second;
         outlet_line.m = inlet_line.m;
         outlet_line.q = (-outlet_line.m) * outlet.first + outlet.second;
