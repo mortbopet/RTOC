@@ -17,7 +17,7 @@ public:
     Machinelearning();
     virtual void loadModel(const std::string& path);
 
-    virtual void predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary=0.5);
+    virtual int predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary=0.5);
 
     int get_XBoundary() const;
     void set_XBoundary(int m_XBoundary);
@@ -52,7 +52,7 @@ public:
     LogisticRegression();
     void loadModel(const std::string& path) override;
 
-    void predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) override;
+    int predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) override;
 
 private:
     std::vector<double> coefficients;
