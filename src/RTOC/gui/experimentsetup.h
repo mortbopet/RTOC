@@ -63,6 +63,8 @@ private slots:
 
     void on_setOutlet_clicked();
 
+    void on_setModelPath_clicked();
+
 private:
     void setToolTips();
     void setupDataOptions();

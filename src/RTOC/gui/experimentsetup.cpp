@@ -65,8 +65,7 @@ void ExperimentSetup::connectWidgets() {
             [=] { updateCurrentSetup(); });
     connect(ui->countThreshold, QOverload<int>::of(&QSpinBox::valueChanged),
             [=] { updateCurrentSetup(); });
-    connect(ui->modelPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
-
+    connect(ui->modelPath, &QLineEdit::textChanged, [=] { updateCurrentSetup(); });
 }
 
 ExperimentSetup::~ExperimentSetup() {
@@ -146,6 +145,26 @@ bool ExperimentSetup::verifyCanRunExperiment() {
             this, "Error",
             QString("Please set different names for processed and raw image prefixes"));
         return false;
+    }
+
+    // Setup specific setup
+    switch (ui->experimentType->currentData(Qt::UserRole).value<ExperimentTypes>()) {
+        case ExperimentTypes::Acquisition: {
+            break;
+        }
+        case ExperimentTypes::AcquisitionAndProcessing: {
+            break;
+        }
+        case ExperimentTypes::AcquisitionAndExtraction: {
+            break;
+        }
+        case ExperimentTypes::AcquisitionAndRealTimeID: {
+            if (ui->modelPath->text().isEmpty()) {
+                QMessageBox::warning(this, "Error", QString("No model path set"));
+                return false;
+            }
+            break;
+        }
     }
 
     return true;
@@ -307,4 +326,11 @@ void ExperimentSetup::on_setOutlet_clicked() {
         m_currentSetup.inlet = std::pair<int, int>(w.inletX, w.inletY);
         m_currentSetup.outlet = std::pair<int, int>(w.outletX, w.outletY);
     };
+}
+
+void ExperimentSetup::on_setModelPath_clicked() {
+    auto filename = QFileDialog::getOpenFileName(this, "Open model file", QDir::currentPath(),
+                                                 "txt file (*.txt)");
+    if (!filename.isNull())
+        ui->modelPath->setText(filename);
 }
