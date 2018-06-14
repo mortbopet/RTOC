@@ -128,7 +128,7 @@ std::vector<double> DataContainer::extractObjectInDoubles(int objIndex) {
         returnVector.push_back(m_data[objIndex]->getValue<double>(data::OutputValue));
     }
     if (data::RelativeXpos & m_dataFlags) {
-        returnVector.push_back(m_data[objIndex]->getValue<int>(data::RelativeXpos));
+        returnVector.push_back(m_data[objIndex]->getValue<double>(data::RelativeXpos));
     }
     return returnVector;
 }
