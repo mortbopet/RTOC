@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>598</width>
-    <height>604</height>
+    <height>805</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -235,6 +235,13 @@
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="1" column="0">
          <layout class="QGridLayout" name="gridLayout_9">
+          <item row="4" column="0">
+           <widget class="QLabel" name="modelLabel">
+            <property name="text">
+             <string>Model</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="1">
            <widget class="QSpinBox" name="countThreshold">
             <property name="maximum">
@@ -307,6 +314,20 @@
             </property>
             <property name="value">
              <double>20.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="modelPath">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Set</string>
             </property>
            </widget>
           </item>

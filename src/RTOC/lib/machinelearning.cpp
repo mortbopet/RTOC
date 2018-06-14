@@ -20,7 +20,10 @@ Machinelearning::Machinelearning() {}
 
 void Machinelearning::loadModel(const std::string& path) {}
 
-int Machinelearning::predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) {}
+// Todo: (Eskild) Why 3 arguments?
+int Machinelearning::predictObject(DataContainer& dataContainer, std::string interpolation_style, double decisionBoundary) {
+    return 0;
+}
 
 int Machinelearning::get_XBoundary() const {
     return _XBoundary;

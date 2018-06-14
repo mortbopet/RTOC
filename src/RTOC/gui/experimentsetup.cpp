@@ -65,6 +65,8 @@ void ExperimentSetup::connectWidgets() {
             [=] { updateCurrentSetup(); });
     connect(ui->countThreshold, QOverload<int>::of(&QSpinBox::valueChanged),
             [=] { updateCurrentSetup(); });
+    connect(ui->modelPath, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
+
 }
 
 ExperimentSetup::~ExperimentSetup() {
@@ -77,6 +79,7 @@ void ExperimentSetup::updateCurrentSetup() {
     m_currentSetup.rawPrefix = ui->rawPrefix->text().toStdString();
     m_currentSetup.processedPrefix = ui->processedPrefix->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
+    m_currentSetup.modelPath = ui->modelPath->text().toStdString();
     m_currentSetup.experimentName = ui->experimentName->text().toStdString();
     m_currentSetup.outputPath = ui->experimentPath->text().toStdString();
     m_currentSetup.recordingTime = ui->rectime->value();
@@ -226,6 +229,7 @@ void ExperimentSetup::serialize(Archive& ar, const unsigned int version) {
     SERIALIZE_COMBOBOX(ar, ui->experimentType, experimentType);
     SERIALIZE_LINEEDIT(ar, ui->experimentName, ExperimentName);
     SERIALIZE_LINEEDIT(ar, ui->experimentPath, ExperimentPath);
+    SERIALIZE_LINEEDIT(ar, ui->modelPath, ModelPath);
     SERIALIZE_LINEEDIT(ar, ui->processedPrefix, ProcessedPrefix);
     SERIALIZE_LINEEDIT(ar, ui->rawPrefix, RawPrefix);
     SERIALIZE_SPINBOX(ar, ui->rectime, recordingTime);

@@ -48,6 +48,14 @@ int ObjectFinder::findObjects() {
             if (m_frameTracker.empty()) {
                 m_newObject = true;
             } else {
+
+                /* Todo: (Jens) create check to see if old found objects disappeared
+                 * then use objecthandler to check if it's a valid object
+                 * then perfom classification with chosen machinelearning model.
+                 * After classification, write the data to data vector (only first frame)
+                 *
+                 */
+
                 m_centroid = m_cc[i]->getValue<cv::Point>(data::Centroid);
                 m_xpos = mathlab::relativeX(m_centroid, m_experiment->inlet_line);
                 auto res = findNearestObject(m_centroid, m_frameTracker);

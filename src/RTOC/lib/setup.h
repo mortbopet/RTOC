@@ -29,6 +29,7 @@ public:
     std::string rawPrefix;
     std::string processedPrefix;
     std::string outputPath;
+    std::string modelPath;
     std::string experimentName;
 
     friend class boost::serialization::access;
