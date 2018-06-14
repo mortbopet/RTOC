@@ -57,18 +57,21 @@ private:
      * @return
      */
     static bool frameBeforeInlet(const ObjectHandler* handler, const DataContainer* dc) {
-        auto e = (*handler).m_experiment;
-        cv::Rect bb_i = (*dc).front()->template getValue<cv::Rect>(data::BoundingBox);
-        return ((bb_i.x + bb_i.width) > e->inlet - 1);
+        auto e = (*handler).m_experiment;   // Pointer to Experiment
+
+        auto xpos = (*dc).front()->template getValue<double>(data::RelativeXpos);
+        return xpos > 0;
     }
     /**
      * Legibility of found-object based on whether last frame of object has object after outlet
      * @return
      */
     static bool frameAfterOutlet(const ObjectHandler* handler, const DataContainer* dc) {
-        auto e = (*handler).m_experiment;
-        cv::Rect bb_o = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
-        return ((bb_o.x + bb_o.width) < e->outlet);
+        auto e = (*handler).m_experiment;   // Pointer to Experiment
+
+        auto centroid = (*dc).back()->template getValue<cv::Point>(data::Centroid);
+        auto xpos = mathlab::relativeX(centroid, e->outlet_line);
+        return xpos < 0;
     }
 
     // ------------ Class methods and variables ------------
