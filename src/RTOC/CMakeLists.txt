@@ -177,7 +177,7 @@ if(APPLE)
             COMMAND ${PATH_TO_MACDEPLOYQT} ${PROJECT_NAME}_App.app
             WORKING_DIRECTORY
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-            COMMENT “Prepare for deployment”
+            COMMENT "Running macOs deployment lezgooo"
             VERBATIM)
     else()
         message(WARNING "macdeployqt not found. Not able to deploy macOs bundle")
