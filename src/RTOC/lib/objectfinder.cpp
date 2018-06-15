@@ -22,8 +22,13 @@ void ObjectHandler::setup() {
 // --------------------- ObjectFinder ---------------------
 ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup)
     : m_experiment(experiment), m_setup(setup) {
-    m_cc.setDataFlags(data::AllFlags);  // Initialize ConnectedComponents-DataContainer
+    // Initialize ConnectedComponents-DataContainer
+    m_cc.setDataFlags(data::AllFlags);
+    // Setup ObjectHandler helper-class
     handler = new ObjectHandler(experiment, setup);
+    // Setup Machinelearning helper-class
+    ml_model = new Machinelearning();
+    ml_model->loadModel(setup->modelPath);
 }
 
 /**
@@ -37,24 +42,18 @@ int ObjectFinder::findObjects() {
 
     m_numObjects = mathlab::regionProps(m_processedImg, mathlab::WithoutPixelIdxList, m_cc);
 
+    Tracker term(m_frameNum - 1);
+    m_frameTracker = mathlab::find<Tracker>(m_trackerList, term);
+
     for (int i = 0; i < m_numObjects; i++) {
         if (m_cellNum <= 0) {
             m_newObject = true;
         } else {
-            Tracker term(m_frameNum - 1);
 
-            m_frameTracker = mathlab::find<Tracker>(m_trackerList, term);
 
             if (m_frameTracker.empty()) {
                 m_newObject = true;
             } else {
-
-                /* Todo: (Jens) create check to see if old found objects disappeared
-                 * then use objecthandler to check if it's a valid object
-                 * then perfom classification with chosen machinelearning model.
-                 * After classification, write the data to data vector (only first frame)
-                 *
-                 */
 
                 m_centroid = m_cc[i]->getValue<cv::Point>(data::Centroid);
                 m_xpos = mathlab::relativeX(m_centroid, m_experiment->inlet_line);
@@ -72,6 +71,17 @@ int ObjectFinder::findObjects() {
 
         writeToDataVector(i, *m_experiment);
     }
+
+    // Go thru objects not found in this frame
+    for (const Tracker& t : m_frameTracker) {
+        if (!t.found) {
+            if (approveContainer(*m_experiment->data[t.cell_no].get())) {
+                int type = ml_model->predictObject(*m_experiment->data[t.cell_no].get(),"Average of closest data points",0.5);
+                m_experiment->data[t.cell_no]->front()->setValue(data::OutputValue, type);
+            }
+        }
+    }
+
     m_frameNum++;
     return m_numObjects;
 }
@@ -179,22 +189,23 @@ unsigned long ObjectFinder::cleanObjects() {
 
 /**
  * @brief
- * @param listOfObjects
+ * @param objects
  * @return <distance, Tracker-object>
  */
 std::pair<double, Tracker>
 ObjectFinder::findNearestObject(const cv::Point& object,
-                                const std::vector<Tracker>& listOfObjects) {
+                                std::vector<Tracker>& objects) {
     std::vector<double> d;
     // Calculate distances
-    for (const Tracker& cc : listOfObjects) {
+    for (const Tracker& cc : objects) {
         auto dist = mathlab::dist(object, cc.centroid);
         if (dist < -10)
             dist = 100;
         d.push_back(dist);
     }
     std::pair<double, unsigned long> p = mathlab::min<double>(d);
-    return {p.first, listOfObjects.at(p.second)};
+    objects.at(p.second).found = true;
+    return {p.first, objects.at(p.second)};
 }
 
 /**

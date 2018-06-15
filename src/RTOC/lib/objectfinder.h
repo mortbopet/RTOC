@@ -9,6 +9,7 @@
 
 #include "experiment.h"
 #include "framefinder.h"
+#include "machinelearning.h"
 #include "mathlab.h"
 #include "setup.h"
 #include "tracker.h"
@@ -131,7 +132,7 @@ private:
     void findObjectsThreaded();
 
     ObjectHandler* handler;
-     // Machinelearning* ml_model;
+    Machinelearning* ml_model;
 
     Tracker m_track;
     std::vector<Tracker> m_trackerList, m_frameTracker;
@@ -150,7 +151,7 @@ private:
     DataContainer m_cc;
 
     std::pair<double, Tracker> findNearestObject(const cv::Point& object,
-                                                 const std::vector<Tracker>& listOfObjects);
+                                                 std::vector<Tracker>& objects);
     void writeToDataVector(const int& index, Experiment& experiment);
 
     // Concurrency
