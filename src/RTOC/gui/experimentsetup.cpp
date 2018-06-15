@@ -272,6 +272,8 @@ EXPLICIT_INSTANTIATE_XML_ARCHIVE(ExperimentSetup)
 
 void ExperimentSetup::on_experimentType_currentIndexChanged(int index) {
     const auto type = ui->experimentType->currentData(Qt::UserRole).value<ExperimentTypes>();
+    ui->setModelPath->setEnabled(false);
+    ui->modelPath->setEnabled(false);
 
     if (type == ExperimentTypes::Acquisition) {
         // disable storeProcessed stuff
@@ -288,6 +290,11 @@ void ExperimentSetup::on_experimentType_currentIndexChanged(int index) {
         return;
     } else {
         ui->extractData->setEnabled(true);
+    }
+
+    if (type == ExperimentTypes::AcquisitionAndRealTimeID) {
+        ui->setModelPath->setEnabled(true);
+        ui->modelPath->setEnabled(true);
     }
 }
 
