@@ -103,7 +103,12 @@ double Machinelearning::interpolation_average(const int& pos, DataContainer& dat
              dataContainer[highIndex]->getValue<double>(attribute)));
 }
 
-LogisticRegression::LogisticRegression() {}
+LogisticRegression::LogisticRegression() {
+    // These values should be set some other place,
+    // would be "nice to have" in the GUI
+    decisionBoundary = 0.5;
+    interpolation_style = "Inverse distance weighting";
+}
 
 void LogisticRegression::loadModel(const std::string& path) {
     std::string line;
