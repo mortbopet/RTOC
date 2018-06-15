@@ -26,9 +26,11 @@ ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup)
     m_cc.setDataFlags(data::AllFlags);
     // Setup ObjectHandler helper-class
     handler = new ObjectHandler(experiment, setup);
-    // Setup Machinelearning helper-class
-    ml_model = new Machinelearning();
-    ml_model->loadModel(setup->modelPath);
+    if (m_setup->classifyObjects) {
+        // Setup Machinelearning helper-class
+        ml_model = new Machinelearning();
+        ml_model->loadModel(setup->modelPath);
+    }
 }
 
 /**
@@ -49,12 +51,10 @@ int ObjectFinder::findObjects() {
         if (m_cellNum <= 0) {
             m_newObject = true;
         } else {
-
-
             if (m_frameTracker.empty()) {
                 m_newObject = true;
             } else {
-
+                // Find relative xpos and nearest object from previous frame
                 m_centroid = m_cc[i]->getValue<cv::Point>(data::Centroid);
                 m_xpos = mathlab::relativeX(m_centroid, m_experiment->inlet_line);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
@@ -72,12 +72,18 @@ int ObjectFinder::findObjects() {
         writeToDataVector(i, *m_experiment);
     }
 
-    // Go thru objects not found in this frame
-    for (const Tracker& t : m_frameTracker) {
-        if (!t.found) {
-            if (approveContainer(*m_experiment->data[t.cell_no].get())) {
-                int type = ml_model->predictObject(*m_experiment->data[t.cell_no].get(),"Average of closest data points",0.5);
-                m_experiment->data[t.cell_no]->front()->setValue(data::OutputValue, type);
+    // Classify objects
+    if (m_setup->classifyObjects) {
+        // Go thru objects not found in this frame
+        for (const Tracker& t : m_frameTracker) {
+            if (!t.found) {
+                if (approveContainer(*m_experiment->data[t.cell_no].get())) {
+                    int type = ml_model->predictObject(*m_experiment->data[t.cell_no].get());
+                    m_experiment->data[t.cell_no]->front()->setValue(data::OutputValue, (double) type);
+
+                    // debug
+                    std::cout << "Found a object of type: " << type << std::endl;
+                }
             }
         }
     }
@@ -273,4 +279,12 @@ void ObjectFinder::reset() {
     m_numObjects = 0;
     m_processedImg.release();
     m_rawImg.release();
+}
+
+/**
+ * Lock to ensure thread is closed
+ */
+void ObjectFinder::waitForThreadToClose() {
+    while (m_running)
+        ;
 }

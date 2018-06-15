@@ -116,6 +116,7 @@ public:
 
     void startThread();
     void waitForThreadToFinish(int targetImageCount);
+    void waitForThreadToClose();
 
     bool approveContainer(const DataContainer& dataContainer);
 
@@ -156,8 +157,8 @@ private:
 
     // Concurrency
     long m_targetImageCount;
-    bool m_running = false;
     bool m_forceStop = false;
+    volatile bool m_running = false;
     volatile bool m_finishedWriting;
 };
 

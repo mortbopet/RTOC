@@ -216,6 +216,7 @@ void Analyzer::forceStop() {
     m_asyncStopAnalyzer = true;
     if (m_objectFinder) {
         m_objectFinder->forceStop();
+        m_objectFinder->waitForThreadToClose();
     }
     m_experiment.writeBuffer_processed.forceStop();
     m_experiment.writeBuffer_raw.forceStop();
