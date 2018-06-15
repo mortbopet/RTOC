@@ -30,7 +30,7 @@ cv::Mat* GenericCameraWidget::getNextImage(bool &successful) {
         successful = false;
     }
 
-    if (!m_image.data) {
+    if (m_image.empty()) {
         successful = false;
     }
 
