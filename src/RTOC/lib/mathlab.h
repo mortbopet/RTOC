@@ -16,6 +16,9 @@ struct Line {
     // Follows the equation $y = m x + q$
     double m;
     double q;
+    // If $m \to \infty
+    bool straight;
+    int x;
 };
 
 enum regionPropTypes {

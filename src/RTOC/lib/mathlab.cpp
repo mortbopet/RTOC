@@ -166,8 +166,12 @@ double gradientScore(const cv::Mat& img, const cv::Rect& roi) {
         img(roi).copyTo(temp);
         // Get edges
         cv::Canny(temp, temp, 0.2, 0.7);
-        // Sum up and return
-        return cv::sum(temp(cv::Range(6, 7), cv::Range::all()))[0];
+        // Set midrows
+        auto midPoint = temp.rows / 2;
+        // Check if row range exist
+        if (midPoint+1 <= temp.rows && midPoint-1 >= 0) {
+            return cv::sum(temp(cv::Range(midPoint-1, midPoint+1), cv::Range::all()))[0];
+        }
     }
     return -1;
 }
@@ -232,9 +236,13 @@ double dist(const cv::Point& p0, const cv::Point& p1) {
 }
 
 double relativeX(cv::Point &point, mathlab::Line &line) {
-    double num = line.m * point.x + line.q - point.y;
-    double denom = sqrt(line.m*line.m + 1);
-    return num/denom;
+    if (line.straight) {
+        return point.x - line.x;
+    } else {
+        double num = line.m * point.x + line.q - point.y;
+        double denom = sqrt(line.m*line.m + 1);
+        return num/denom;
+    }
 }
 
 }  // namespace mathlab
