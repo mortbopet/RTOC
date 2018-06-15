@@ -181,7 +181,6 @@
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad_project_file">
    <property name="text">
     <string>Load project file</string>
