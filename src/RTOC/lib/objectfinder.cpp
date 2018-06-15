@@ -28,7 +28,7 @@ ObjectFinder::ObjectFinder(Experiment* experiment, Setup* setup)
     handler = new ObjectHandler(experiment, setup);
     if (m_setup->classifyObjects) {
         // Setup Machinelearning helper-class
-        ml_model = new Machinelearning();
+        ml_model = identifyModel(setup->modelPath);
         ml_model->loadModel(setup->modelPath);
     }
 }
@@ -46,6 +46,7 @@ int ObjectFinder::findObjects() {
 
     Tracker term(m_frameNum - 1);
     m_frameTracker = mathlab::find<Tracker>(m_trackerList, term);
+    m_trackerList = m_frameTracker;
 
     for (int i = 0; i < m_numObjects; i++) {
         if (m_cellNum <= 0) {
@@ -59,13 +60,14 @@ int ObjectFinder::findObjects() {
                 m_xpos = mathlab::relativeX(m_centroid, m_experiment->inlet_line);
                 auto res = findNearestObject(m_centroid, m_frameTracker);
                 m_dist = res.first;
-                m_track = res.second;
+                m_track = m_frameTracker.at(res.second);
 
                 // Set threshold
                 double distThresh =
                     m_xpos < 0 ? m_setup->distanceThresholdInlet : m_setup->distanceThresholdPath;
                 // Determine whether new or not from threshold
                 m_newObject = m_dist > distThresh;
+                m_frameTracker.at(res.second).found = !m_newObject;
             }
         }
 
@@ -77,12 +79,9 @@ int ObjectFinder::findObjects() {
         // Go thru objects not found in this frame
         for (const Tracker& t : m_frameTracker) {
             if (!t.found) {
-                if (approveContainer(*m_experiment->data[t.cell_no].get())) {
+                if (!handler->invoke_all(m_experiment->data[t.cell_no].get())) {
                     int type = ml_model->predictObject(*m_experiment->data[t.cell_no].get());
                     m_experiment->data[t.cell_no]->front()->setValue(data::OutputValue, (double) type);
-
-                    // debug
-                    std::cout << "Found a object of type: " << type << std::endl;
                 }
             }
         }
@@ -198,7 +197,7 @@ unsigned long ObjectFinder::cleanObjects() {
  * @param objects
  * @return <distance, Tracker-object>
  */
-std::pair<double, Tracker>
+std::pair<double, unsigned long>
 ObjectFinder::findNearestObject(const cv::Point& object,
                                 std::vector<Tracker>& objects) {
     std::vector<double> d;
@@ -210,8 +209,7 @@ ObjectFinder::findNearestObject(const cv::Point& object,
         d.push_back(dist);
     }
     std::pair<double, unsigned long> p = mathlab::min<double>(d);
-    objects.at(p.second).found = true;
-    return {p.first, objects.at(p.second)};
+    return {p.first, p.second};
 }
 
 /**
@@ -263,6 +261,7 @@ void ObjectFinder::writeToDataVector(const int& cc_i, Experiment& experiment) {
 
     m_track.frame_no = m_frameNum;
     m_track.centroid = m_centroid;
+    m_track.found = false;
     m_trackerList.push_back(m_track);
 }
 

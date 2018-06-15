@@ -133,7 +133,7 @@ private:
     void findObjectsThreaded();
 
     ObjectHandler* handler;
-    Machinelearning* ml_model;
+    std::unique_ptr<Machinelearning> ml_model;
 
     Tracker m_track;
     std::vector<Tracker> m_trackerList, m_frameTracker;
@@ -151,7 +151,7 @@ private:
     double m_xpos;
     DataContainer m_cc;
 
-    std::pair<double, Tracker> findNearestObject(const cv::Point& object,
+    std::pair<double, unsigned long> findNearestObject(const cv::Point& object,
                                                  std::vector<Tracker>& objects);
     void writeToDataVector(const int& index, Experiment& experiment);
 
