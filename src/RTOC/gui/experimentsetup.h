@@ -79,6 +79,8 @@ private:
 
     // Functions related to running the experiment
     bool setupExperimentDirectory() const;
+
+    QList<QCheckBox*> m_dataOptionCheckboxes;
 };
 
 #endif  // EXPERIMENTSETUP_H

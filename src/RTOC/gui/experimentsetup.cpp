@@ -179,6 +179,7 @@ void ExperimentSetup::setupDataOptions() {
         if (std::get<0>(option.first) == 1) {
             QCheckBox* checkbox = new QCheckBox(QString::fromStdString(option.second));
             ui->dataLayout->addWidget(checkbox, row, column);
+            m_dataOptionCheckboxes.append(checkbox);
 
             // Create connector slot for each checkbox which sets its corresponding bit in dataFlags
             // to the state reported by QCheckBox::toggled
@@ -291,9 +292,9 @@ void ExperimentSetup::on_experimentType_currentIndexChanged(int index) {
 }
 
 void ExperimentSetup::setAllDataFlagsState(bool state) {
-    auto flags = ui->extractData->findChildren<QCheckBox*>();
-    for (const auto& flag : flags)
-        flag->setChecked(state);
+    for (const auto& option : m_dataOptionCheckboxes)
+        option->setChecked(state);
+    update();
 }
 
 void ExperimentSetup::on_setOutlet_clicked() {
