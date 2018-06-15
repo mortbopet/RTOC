@@ -21,6 +21,20 @@ file(GLOB EXTERNAL
     external/readerwriterqueue/*.cpp
     external/readerwriterqueue/*.h)
 
+######################################################################
+## Test-images and presets
+######################################################################
+
+## copy test images to output directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../test_images DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+## copy processing presets to output directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../presets DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+
+
+######################################################################
+## endof Test-images and presets
+######################################################################
+
 
 ######################################################################
 ## GUI setup
@@ -153,7 +167,8 @@ endif()
 ######################################################################
 ## macOS deployment
 ######################################################################
-if(APPLE)
+set(DEPLOY_MAC OFF CACHE BOOL "Deploy to macOs (macdeployqt required)")
+if(APPLE AND DEPLOY_MAC)
     include(BundleUtilities)
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11")
     set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
@@ -236,7 +251,3 @@ endif()
 
 
 
-
-## copy test images to output directory
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../test_images DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../presets DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
