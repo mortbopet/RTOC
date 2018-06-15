@@ -55,7 +55,7 @@ private:
     double decisionBoundary = 0.5;
     std::string interpolation_style = "Inverse distance weighting";
     std::vector<double> coefficients;
-    int intercept;
+    double intercept;
 };
 
 class ArtificialNeuralNetwork : public Machinelearning {
