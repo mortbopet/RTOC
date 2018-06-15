@@ -16,6 +16,18 @@ std::unique_ptr<Machinelearning> identifyModel(const std::string& path) {
     return nullptr;
 }
 
+//bool verifyModel(const std::string& path) {
+//    if (!identifyModel(path)) {
+//        return false;
+//    }
+//    std::unique_ptr<Machinelearning> test_model = identifyModel(path);
+//    if (!test_model->loadModel(path)) {
+//        return false;
+//    }
+//
+//
+//}
+
 Machinelearning::Machinelearning() {}
 
 void Machinelearning::loadModel(const std::string& path) {}

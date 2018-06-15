@@ -82,6 +82,7 @@ int ObjectFinder::findObjects() {
                 if (!handler->invoke_all(m_experiment->data[t.cell_no].get())) {
                     int type = ml_model->predictObject(*m_experiment->data[t.cell_no].get());
                     m_experiment->data[t.cell_no]->front()->setValue(data::OutputValue, (double) type);
+                    //std::cout << "Cell classified as: " << type << "\n";
                 }
             }
         }
