@@ -32,7 +32,9 @@ public:
 private slots:
     void cameraSelectedWithoutAcqBuilt();
     void acqSelectionChanged(int index);
+    /* TODO: FRAMEFINDER
     void ffStateChanged(int state);
+     */
 
     void loadProjectFile(const QString& filename);
     void on_actionLoad_project_file_triggered();

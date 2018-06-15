@@ -38,6 +38,7 @@ MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
     ui->configLayout->addWidget(m_configurator);
     ui->experimentLayout->addWidget(m_experimentSetup);
 
+    /*  TODO: FRAMEFINDER - NOT IMPLEMENTED
     ui->ffhelp->setIcon(QIcon(":/icons/resources/question.svg"));
     ui->ffhelp->setToolTip(
         "<nobr>Enabling frame finder will reduce the number</nobr> of images which are processed. "
@@ -54,11 +55,14 @@ MainWindow::MainWindow(const QString& projectFilePath, QWidget* parent)
     connect(ui->fftresh, &QSpinBox::editingFinished,
             [=] { m_acqInterface->setFFThresh(ui->fftresh->value()); });
 
-    // setup acquisition source combobox
-    setupAcqCombobox();
 
     // Connect frame finder checkbox to acquisitionInterface
     connect(ui->enableFF, &QCheckBox::stateChanged, this, &MainWindow::ffStateChanged);
+
+    */
+    // setup acquisition source combobox
+    setupAcqCombobox();
+
 
 #ifdef BUILD_IRONMAN
     m_acquisitionWdiget = new IronManWidget(this);
@@ -122,13 +126,13 @@ void MainWindow::acqSelectionChanged(int index) {
         }
     }
 }
-
+/* TODO: FRAMEFINDER
 void MainWindow::ffStateChanged(int state) {
     m_acqInterface->setFFState(state);
     ui->fftresh->setEnabled(state);
     ui->fftreshlabel->setEnabled(state);
 }
-
+*/
 void MainWindow::setupAcqCombobox() {
     ui->acqSource->addItem("Image folder", QVariant::fromValue(AcqSource::Folder));
     ui->acqSource->addItem("Generic camera", QVariant::fromValue(AcqSource::Webcam));
@@ -163,8 +167,10 @@ MainWindow::~MainWindow() {
 template <class Archive>
 void MainWindow::serialize(Archive& ar, const unsigned int version) const {
     SERIALIZE_COMBOBOX(ar, ui->acqSource, AcquisitionSource);
+    /*  TODO: FRAMEFINDER
     SERIALIZE_SPINBOX(ar, ui->fftresh, FramefinderTreshold);
     SERIALIZE_CHECKBOX(ar, ui->enableFF, EnableFrameFinder);
+     */
 }
 
 EXPLICIT_INSTANTIATE_CONST_XML_ARCHIVE(MainWindow)

@@ -58,37 +58,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QCheckBox" name="enableFF">
-              <property name="text">
-               <string>Enable frame finder</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="fftreshlabel">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>threshold:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="fftresh">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="ffhelp">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>
