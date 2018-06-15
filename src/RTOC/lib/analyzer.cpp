@@ -170,8 +170,10 @@ void Analyzer::setup(const Setup& setup) {
         m_objectFinder->startThread();
     }
 
-    // Start image writers
-    writeImages();
+    if (m_setup.storeImagesDuringExperiment) {
+        // Start image writers
+        writeImages();
+    }
 }
 
 /**
@@ -190,6 +192,9 @@ void Analyzer::writeImages() {
 }
 
 void Analyzer::stop() {
+    // Start writing images (Does nothing if imagewriters are already running)
+    writeImages();
+
     // Wait for threads to finish
     m_asyncStopAnalyzer = true;
     if (m_setup.extractData)
@@ -326,8 +331,7 @@ bool Analyzer::loadSetup(const string& path) {
 void Analyzer::exportExperiment(const string& name) {
     const fs::path experimentFolder =
         fs::path(m_setup.outputPath) / fs::path(m_setup.experimentName);
-    const std::string path =
-        fs::path(experimentFolder / fs::path(name)).string();
+    const std::string path = fs::path(experimentFolder / fs::path(name)).string();
     if (m_experiment.data.empty()) {
         // No objects to export
         m_status |= StatusBits::NoObjectsFound;
@@ -353,7 +357,8 @@ void Analyzer::exportExperiment(const string& name) {
 
     // TODO: Eskild
     // Load model
-    // std::unique_ptr<Machinelearning> ml_model = identifyModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
+    // std::unique_ptr<Machinelearning> ml_model =
+    // identifyModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
     // ml_model->loadModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
 
     // Goes through all containers

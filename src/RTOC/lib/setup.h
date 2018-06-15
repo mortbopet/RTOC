@@ -19,6 +19,7 @@ public:
     bool classifyObjects = false; // eg use machinelearning module
     bool storeRaw;
     bool storeProcessed;
+    bool storeImagesDuringExperiment;
     int countThreshold;
     double distanceThresholdInlet;
     double distanceThresholdPath;
@@ -40,6 +41,7 @@ public:
         ar& BOOST_SERIALIZATION_NVP(extractData);
         ar& BOOST_SERIALIZATION_NVP(storeRaw);
         ar& BOOST_SERIALIZATION_NVP(storeProcessed);
+        ar& BOOST_SERIALIZATION_NVP(storeImagesDuringExperiment);
         ar& BOOST_SERIALIZATION_NVP(dataFlags);
         ar& BOOST_SERIALIZATION_NVP(conditionFlags);
         ar& BOOST_SERIALIZATION_NVP(countThreshold);

@@ -25,6 +25,13 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
     connect(ui->storeRaw, &QCheckBox::clicked, ui->rawPrefix, &QLineEdit::setEnabled);
     connect(ui->storeProcessed, &QCheckBox::clicked, ui->processedPrefix, &QLineEdit::setEnabled);
 
+    ui->storeImagesDuringExperimentLabel->setIcon(QIcon(":/icons/resources/question.svg"));
+    ui->storeImagesDuringExperimentLabel->setToolTip(
+        "<nobr>Images will be written to memory during experiment execution.</nobr> This is "
+        "usefull if a long-running experiment will run, where the size of the acquired images are "
+        "greater than the currently accessible amount of RAM. Warning: enabling this will most "
+        "likely reduce fps drastically.");
+
     // Populate experiment types
     for (const auto& item : etDescriptors.keys()) {
         ui->experimentType->addItem(etDescriptors[item], QVariant::fromValue(item));
@@ -49,6 +56,7 @@ ExperimentSetup::ExperimentSetup(Analyzer* analyzer, AcquisitionInterface* iface
 
 void ExperimentSetup::connectWidgets() {
     // Connect all editors to updateSetup
+    connect(ui->storeImagesDuringExperiment, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
     connect(ui->storeRaw, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
     connect(ui->storeProcessed, &QCheckBox::clicked, [=] { updateCurrentSetup(); });
     connect(ui->experimentName, &QLineEdit::editingFinished, [=] { updateCurrentSetup(); });
@@ -73,6 +81,7 @@ ExperimentSetup::~ExperimentSetup() {
 }
 
 void ExperimentSetup::updateCurrentSetup() {
+    m_currentSetup.storeImagesDuringExperiment = ui->storeImagesDuringExperiment->isChecked();
     m_currentSetup.storeRaw = ui->storeRaw->isChecked();
     m_currentSetup.storeProcessed = ui->storeProcessed->isChecked();
     m_currentSetup.rawPrefix = ui->rawPrefix->text().toStdString();
