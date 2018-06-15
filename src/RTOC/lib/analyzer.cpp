@@ -355,19 +355,10 @@ void Analyzer::exportExperiment(const string& name) {
     // Add number of containers
     out << "\n" << m_experiment.data.size() << "\n";
 
-    // TODO: Eskild
-    // Load model
-    // std::unique_ptr<Machinelearning> ml_model =
-    // identifyModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
-    // ml_model->loadModel("/Users/eskidlbs/fagprojekt/src/RTOC/model.txt");
-
     // Goes through all containers
     for (int i = 0; i < m_experiment.data.size(); i++) {
         // CHECK_ASYNC_STOP
         out << "Observation" << (i + 1) << " " << m_experiment.data[i]->size() << "\n";
-
-        // TODO: Eskild
-        // ml_model->predictObject(*m_experiment.data[i], "Inverse distance weighting");
 
         // Goes through all objects
         for (int j = 0; j < m_experiment.data[i]->size(); j++) {
@@ -379,9 +370,6 @@ void Analyzer::exportExperiment(const string& name) {
             out << "\n";
         }
     }
-
-    // TODO: Eskild
-    // ml_model->outputToFile("/Users/eskidlbs/Desktop/Output_data/results_predictions.txt");
     out.close();
     // ASYNC_END_SIDEEFFECT(([&out]() { out.close(); }))
 }
