@@ -102,16 +102,20 @@ void ExperimentSetup::updateCurrentSetup() {
             ui->storeProcessed->setChecked(false);
             m_currentSetup.storeProcessed = false;  // can't store images when we haven't made them!
             m_currentSetup.runProcessing = false;
+            m_currentSetup.classifyObjects = false;
             break;
         }
         case ExperimentTypes::AcquisitionAndProcessing: {
             break;
+            m_currentSetup.classifyObjects = false;
         }
         case ExperimentTypes::AcquisitionAndExtraction: {
             m_currentSetup.extractData = true;
+            m_currentSetup.classifyObjects = false;
             break;
         }
         case ExperimentTypes::AcquisitionAndRealTimeID: {
+            m_currentSetup.classifyObjects = true;
             m_currentSetup.extractData = true;
             break;
         }
