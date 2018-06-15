@@ -77,7 +77,7 @@ int ObjectFinder::findObjects() {
     // Classify objects
     if (m_setup->classifyObjects) {
         // Go thru objects not found in this frame
-        for (const Tracker& t : m_frameTracker) {
+        for (Tracker& t : m_frameTracker) {
             if (!t.found) {
                 if (!handler->invoke_all(m_experiment->data[t.cell_no].get())) {
                     int type = ml_model->predictObject(*m_experiment->data[t.cell_no].get());
