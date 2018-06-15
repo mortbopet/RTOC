@@ -16,6 +16,7 @@ public:
     Setup() {}
     bool runProcessing;
     bool extractData;
+    bool classifyObjects = false; // eg use machinelearning module
     bool storeRaw;
     bool storeProcessed;
     int countThreshold;
