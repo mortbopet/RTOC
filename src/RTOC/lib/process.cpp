@@ -62,7 +62,7 @@ SubtractBG::SubtractBG() {
     m_alpha.setRange(0, 1);
     m_alpha.setValue(0.25);
     m_movementThreshold.setRange(0, 1);
-    m_movementThreshold.setValue(0.025);
+    m_movementThreshold.setValue(0.05);
     m_edgeThreshold.setRange(0, 1);
     m_edgeThreshold.setValue(0.272);
 }
@@ -71,8 +71,8 @@ void SubtractBG::doProcessing(cv::Mat& img, cv::Mat& bg, const Experiment& props
     if (m_subtractMethod.getValue() == dynamicBackground) {
         if (oldImg.size() == img.size()) {
             double crit = 0.0;
-            cv::minMaxIdx(oldImg - img, nullptr, &crit);
-            if ( (crit/128) <= m_movementThreshold.getValue()) {
+            cv::minMaxIdx(cv::abs(oldImg - img), nullptr, &crit);
+            if ( (crit/128) <= m_movementThreshold.getValue()) {        // normalized with 128 to set-able range in gui
                 bg = (1 - m_alpha.getValue()) * bg + m_alpha.getValue() * img;
             }
         }
