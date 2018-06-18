@@ -27,13 +27,8 @@ public:
     Experiment() {}
     ~Experiment() {}
 
-    int inlet = 80;
-    int outlet = 210;
     mathlab::Line inlet_line;
     mathlab::Line outlet_line;
-
-
-    int cellNum = 0;  // Used for cell registration
 
     // Queues containing processed and raw images
     moodycamel::BlockingReaderWriterQueue<cv::Mat> processed;
@@ -45,7 +40,7 @@ public:
 
     long m_currentProcessingFrame = 0;
 
-    double intensity_threshold;
+    // Vector containing found objects
     std::vector<std::unique_ptr<DataContainer>> data;
 
     void reset() {
