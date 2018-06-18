@@ -22,6 +22,13 @@ void bwareaopen(cv::Mat& im, double size) {
     }
 }
 
+/**
+ *
+ * @param img
+ * @param dataFlags
+ * @param dc
+ * @return
+ */
 int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContainer& dc) {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(img, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
@@ -72,7 +79,7 @@ int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContaine
             if (dataFlags & data::ConvexArea)
                 dc[i]->setValue(data::ConvexArea, convexArea);
         }
-        /// Major Axis
+        /// Major Axis and Minor Axis
         if (dataFlags &
             (data::Major_axis | data::Minor_axis | data::Eccentricity | data::Symmetry)) {
             if (contour.size() > 5) {
@@ -84,6 +91,11 @@ int regionProps(const cv::Mat& img, const unsigned long& dataFlags, DataContaine
                     dc[i]->setValue(data::Major_axis, majorAxis);
                 if (dataFlags & data::Minor_axis)
                     dc[i]->setValue(data::Minor_axis, minorAxis);
+            } else {
+                if (dataFlags & data::Major_axis)
+                    dc[i]->setValue(data::Major_axis, 0.0);
+                if (dataFlags & data::Minor_axis)
+                    dc[i]->setValue(data::Minor_axis, 0.0);
             }
         }
         /// Perimeter
