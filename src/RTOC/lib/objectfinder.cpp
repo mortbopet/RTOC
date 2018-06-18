@@ -205,7 +205,7 @@ ObjectFinder::findNearestObject(const cv::Point& object,
     // Calculate distances
     for (const Tracker& cc : objects) {
         auto dist = mathlab::dist(object, cc.centroid);
-        if (dist < -10)
+        if (dist < -10) // Todo: Is this even necessary?
             dist = 100;
         d.push_back(dist);
     }
