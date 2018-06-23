@@ -7,7 +7,7 @@ Real Time Object Classification
 
 This project is derived from the master thesis by Lisa O. Aagensen, DTU Physics. The initial goal was to not only speed up the process in acquiring images and processing these images for data extraction, but also to work towards a real-time approach where images are acquired and analyzed while found objects are classified by a loaded ML model.
 
-[Video on how to use the program here.](https://www.youtube.com/watch?v=9l0NIpTe4tE)
+[Video on how to use the application](https://www.youtube.com/watch?v=9l0NIpTe4tE)
 
 
 # Build instructions
@@ -23,8 +23,14 @@ This project is derived from the master thesis by Lisa O. Aagensen, DTU Physics.
 
 
 ## MacOS
-As we have encountered some bugs, **macOS 10.13 High Sierra is not recommended**.
+**Note:**
+As we have encountered some bugs, _**macOS 10.13 High Sierra is not recommended**_.
+
+**Note:**
+This build only includes acquisition from folder as for now.
+
 This build have both been tested with default gcc and clang compilers from Xcode Command Line Tools on macOS 10.12 Sierra, thus this setup is recommended.
+
 To install Xcode Command Line Tools, run
 ```
 $ xcode-select --install
