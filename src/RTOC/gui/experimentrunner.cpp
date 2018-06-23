@@ -135,6 +135,8 @@ void ExperimentRunner::reject() {
 void ExperimentRunner::on_buttonBox_clicked(QAbstractButton* button) {
     if (m_state != State::Finished) {
         if (button == ui->buttonBox->button(QDialogButtonBox::Abort)) {
+            // Disable the futureWatcher as to not call stateChanged twice
+            disconnect(&m_acqFutureWatcher, 0, 0, 0);
             // Stop acquisition and run data processing
             stateChanged(State::Storing);
         } else if (button == ui->buttonBox->button(QDialogButtonBox::Cancel)) {
