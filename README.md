@@ -11,14 +11,53 @@ This project is derived from the master thesis by Lisa O. Aagensen, DTU Physics.
 
 
 # Build instructions
-**Note:** for easy configuration, debuggin etc., it can be highly recommended use QtCreator (bundled with most Qt installations) when working with the project.
+**Note:** for easy configuration, debugging etc., it can be highly recommended use QtCreator (bundled with most Qt installations) when working with the project.
 ### Dependencies:
  - Boost (1.66.0 or higher) https://www.boost.org/
  - OpenCV (3.4.1 or higher) https://opencv.org/
  - Qt (5.8 or higher) https://www.qt.io/download
  - CMake (3.8 or higher) https://cmake.org/
 
-## Linux & OSX
+
+## Linux
+
+
+## MacOS
+As we have encountered some bugs, **macOS 10.13 High Sierra is not recommended**.
+This build have both been tested with default gcc and clang compilers from Xcode Command Line Tools on macOS 10.12 Sierra, thus this setup is recommended.
+To install Xcode Command Line Tools, run
+```
+$ xcode-select --install
+```
+Afterwards, you can test if the tools are successfully installed by running
+```
+$ xcode-select -p
+/path/to/CommandLineTools
+```
+
+Regarding the dependencies, use your favorite package manager. We recommend ```brew```, as then installation should be rather smooth, simply run
+
+```
+$ brew install boost
+$ brew install opencv
+$ brew install qt
+```
+
+To get CMake, it is highly recommended to get the GUI version. Latest binaries are found [here](https://cmake.org/download/).
+
+Once your working environment is setup, you should be able to start building:
+
+1. Launch the CMake app
+2. Select the path to your source and build directories.
+3. Configure
+    - If warnings are created from missing directories, set the right paths and reconfigure.
+4. Generate
+
+Now you are fully ready to initialize the build
+
+5. Run ```$ cd /path/to/build```
+6. Run ```$ make```
+
 
 ## Windows
 On Windows, a compiler needs to be available - *make sure that your compiler version matches the one which your boost version has been built with*. [Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) can be downloaded for free, to access the MSVC compiler.
