@@ -71,8 +71,10 @@ private:
         auto e = (*handler).m_experiment;   // Pointer to Experiment
 
         auto centroid = (*dc).back()->template getValue<cv::Point>(data::Centroid);
+        auto box = (*dc).back()->template getValue<cv::Rect>(data::BoundingBox);
         auto xpos = mathlab::relativeX(centroid, e->outlet_line);
-        return xpos < 0;
+
+        return xpos < -(box.width/2);
     }
 
     // ------------ Class methods and variables ------------
