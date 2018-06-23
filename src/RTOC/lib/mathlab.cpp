@@ -251,7 +251,7 @@ double relativeX(cv::Point &point, mathlab::Line &line) {
     if (line.straight) {
         return point.x - line.x;
     } else {
-        double num = line.m * point.x + line.q - point.y;
+        double num = -(line.m * point.x + line.q - point.y);
         double denom = sqrt(line.m*line.m + 1);
         return num/denom;
     }
