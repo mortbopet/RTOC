@@ -7,21 +7,30 @@
 	<item class_id="1" tracking_level="0" version="0">
 		<tx class_id="2" class_name="SubtractBG" tracking_level="1" version="0" object_id="_0">
 			<processbase class_id="3" tracking_level="0" version="0"></processbase>
-			<m_edgeThreshold class_id="4" tracking_level="0" version="0">
-				<m_val>2.70000000000000018e-01</m_val>
+			<m_subtractMethod class_id="4" tracking_level="0" version="0">
+				<m_val>2</m_val>
+			</m_subtractMethod>
+			<m_alpha class_id="5" tracking_level="0" version="0">
+				<m_val>2.50000000000000000e-01</m_val>
+			</m_alpha>
+			<m_movementThreshold>
+				<m_val>2.99999999999999989e-02</m_val>
+			</m_movementThreshold>
+			<m_edgeThreshold>
+				<m_val>2.72000000000000020e-01</m_val>
 			</m_edgeThreshold>
 		</tx>
 	</item>
 	<item>
-		<tx class_id="5" class_name="Normalize" tracking_level="1" version="0" object_id="_1">
+		<tx class_id="6" class_name="Normalize" tracking_level="1" version="0" object_id="_1">
 			<processbase></processbase>
-			<m_normalizeStrength class_id="6" tracking_level="0" version="0">
-				<m_val>4095</m_val>
+			<m_normalizeStrength class_id="7" tracking_level="0" version="0">
+				<m_val>4096</m_val>
 			</m_normalizeStrength>
 		</tx>
 	</item>
 	<item>
-		<tx class_id="7" class_name="Binarize" tracking_level="1" version="0" object_id="_2">
+		<tx class_id="8" class_name="Binarize" tracking_level="1" version="0" object_id="_2">
 			<processbase></processbase>
 			<m_edgeThreshold>
 				<m_val>5.00000000000000000e+01</m_val>
@@ -32,9 +41,9 @@
 		</tx>
 	</item>
 	<item>
-		<tx class_id="8" class_name="Morph" tracking_level="1" version="0" object_id="_3">
+		<tx class_id="9" class_name="Morph" tracking_level="1" version="0" object_id="_3">
 			<processbase></processbase>
-			<m_morphType class_id="9" tracking_level="0" version="0">
+			<m_morphType class_id="10" tracking_level="0" version="0">
 				<m_val>2</m_val>
 			</m_morphType>
 			<m_morphValueX>
@@ -46,7 +55,7 @@
 		</tx>
 	</item>
 	<item>
-		<tx class_id_reference="8" object_id="_4">
+		<tx class_id_reference="9" object_id="_4">
 			<processbase></processbase>
 			<m_morphType>
 				<m_val>3</m_val>
@@ -60,12 +69,12 @@
 		</tx>
 	</item>
 	<item>
-		<tx class_id="10" class_name="FloodFillProcess" tracking_level="1" version="0" object_id="_5">
+		<tx class_id="11" class_name="FloodFillProcess" tracking_level="1" version="0" object_id="_5">
 			<processbase></processbase>
 		</tx>
 	</item>
 	<item>
-		<tx class_id="11" class_name="ClearBorder" tracking_level="1" version="0" object_id="_6">
+		<tx class_id="12" class_name="ClearBorder" tracking_level="1" version="0" object_id="_6">
 			<processbase></processbase>
 			<m_borderWidth>
 				<m_val>2</m_val>
@@ -73,9 +82,9 @@
 		</tx>
 	</item>
 	<item>
-		<tx class_id="12" class_name="PropFilter" tracking_level="1" version="0" object_id="_7">
+		<tx class_id="13" class_name="PropFilter" tracking_level="1" version="0" object_id="_7">
 			<processbase></processbase>
-			<m_regionPropsTypes class_id="13" tracking_level="0" version="0">
+			<m_regionPropsTypes class_id="14" tracking_level="0" version="0">
 				<m_val>16</m_val>
 			</m_regionPropsTypes>
 			<m_lowerLimit>
@@ -87,7 +96,7 @@
 		</tx>
 	</item>
 	<item>
-		<tx class_id_reference="12" object_id="_8">
+		<tx class_id_reference="13" object_id="_8">
 			<processbase></processbase>
 			<m_regionPropsTypes>
 				<m_val>2048</m_val>
@@ -96,7 +105,7 @@
 				<m_val>0.00000000000000000e+00</m_val>
 			</m_lowerLimit>
 			<m_upperLimit>
-				<m_val>6.50000000000000000e+01</m_val>
+				<m_val>8.00000000000000000e+01</m_val>
 			</m_upperLimit>
 		</tx>
 	</item>

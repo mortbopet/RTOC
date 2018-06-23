@@ -34,4 +34,4 @@ A new(er) version of boost is currently required for building RTOC. On Windows,w
 ### Building with SiliconSoftware support
 RTOC contains an interface to a SiliconSoftware microEnable 5 VQ8-CXP6D ironman framegrabber card. To build support for this interface, a SiliconSoftware runtime installation must be present on the system. RTOC has been built using [SiliconSoftware Runtime v.5.1.1](https://silicon.software/blog-runtime-551/).
 
-To enable support for the framegrabber, one must set the "**BUILD_INROMAN"** flag in the CMake configuration to "**ON**". The configuration of this can be a bit tricky, and sometimes fails - running the CMake configuration a couple of times in succession usually fixes the issues (These are issues in the CMake files provided by the SiliconSoftware libraries.)
+To enable support for the framegrabber, one must set the "**BUILD_IRONMAN"** flag in the CMake configuration to "**ON**". The configuration of this can be a bit tricky, and sometimes fails - running the CMake configuration a couple of times in succession usually fixes the issues (These are issues in the CMake files provided by the SiliconSoftware libraries.)
